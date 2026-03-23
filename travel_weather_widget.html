@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Itinerary Weather</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 2rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      color: #1a1a1a;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: #f5f5f3;
+      border-radius: 8px;
+      padding: 1rem;
+      flex: 1 1 140px;
+      min-width: 130px;
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: #888780;
+      margin-bottom: 4px;
+    }
+
+    .card-temp {
+      font-size: 24px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    .card-dates {
+      font-size: 12px;
+      color: #888780;
+      margin-top: 2px;
+    }
+
+    .card-detail {
+      font-size: 11px;
+      color: #b4b2a9;
+      margin-top: 6px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      margin-bottom: 1rem;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #888780;
+      padding-top: 0.75rem;
+      border-top: 0.5px solid #e0dfdb;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .card { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌍 Travel itinerary — average weather by stop</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">🇦🇪 Abu Dhabi</div>
+      <div class="card-temp">~25°C</div>
+      <div class="card-dates">Dec 21 (transit)</div>
+      <div class="card-detail">High 26 / Low 18 · Sunny</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇺🇸 New York (Round 1)</div>
+      <div class="card-temp">~4°C</div>
+      <div class="card-dates">Dec 22–24</div>
+      <div class="card-detail">High 6 / Low −1 · Cold, possibly snowy</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇺🇸 North Miami Beach</div>
+      <div class="card-temp">~21°C</div>
+      <div class="card-dates">Dec 24 – Jan 3</div>
+      <div class="card-detail">High 24 / Low 17 · Warm &amp; mostly sunny</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇩🇴 Puerto Plata</div>
+      <div class="card-temp">~23°C</div>
+      <div class="card-dates">Jan 5</div>
+      <div class="card-detail">High 28 / Low 17 · Tropical, some rain</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇻🇮 St. Thomas (USVI)</div>
+      <div class="card-temp">~26°C</div>
+      <div class="card-dates">Jan 6</div>
+      <div class="card-detail">High 28 / Low 23 · Warm &amp; breezy</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇻🇬 Tortola (BVI)</div>
+      <div class="card-temp">~25°C</div>
+      <div class="card-dates">Jan 7</div>
+      <div class="card-detail">High 28 / Low 21 · Warm &amp; mostly sunny</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇧🇸 Great Stirrup Cay</div>
+      <div class="card-temp">~23°C</div>
+      <div class="card-dates">Jan 9</div>
+      <div class="card-detail">High 25 / Low 18 · Warm, breezy</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🇺🇸 New York (Round 2)</div>
+      <div class="card-temp">~1°C</div>
+      <div class="card-dates">Jan 10–13</div>
+      <div class="card-detail">High 4 / Low −2 · Cold &amp; wintry</div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="tempChart"></canvas>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: #378ADD;"></div>
+      <span>Avg high (°C)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: #B5D4F4;"></div>
+      <span>Avg low (°C)</span>
+    </div>
+  </div>
+
+  <script>
+    const labels = [
+      'Abu Dhabi (Dec 21)',
+      'NYC Round 1 (Dec 22–24)',
+      'N. Miami Beach (Dec 24–Jan 3)',
+      'Puerto Plata (Jan 5)',
+      'St. Thomas (Jan 6)',
+      'Tortola (Jan 7)',
+      'Gr. Stirrup Cay (Jan 9)',
+      'NYC Round 2 (Jan 10–13)'
+    ];
+    const highs = [26, 6, 24, 28, 28, 28, 25, 4];
+    const lows  = [18, -1, 17, 17, 23, 21, 18, -2];
+
+    new Chart(document.getElementById('tempChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'High (°C)', data: highs, backgroundColor: '#378ADD', borderRadius: 4 },
+          { label: 'Low (°C)',  data: lows,  backgroundColor: '#B5D4F4', borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '°C' }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { font: { size: 10 }, color: '#888780', autoSkip: false, maxRotation: 30 },
+            grid: { display: false }
+          },
+          y: {
+            ticks: { font: { size: 11 }, color: '#888780', callback: v => v + '°C' },
+            grid: { color: 'rgba(136,135,128,0.15)' }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
