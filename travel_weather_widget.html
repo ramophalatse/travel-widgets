@@ -8,10 +8,30 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg:           #ffffff;
+      --bg-card:      #f5f5f3;
+      --text-primary: #1a1a1a;
+      --text-muted:   #888780;
+      --text-faint:   #b4b2a9;
+      --border:       #e0dfdb;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:           #191919;
+        --bg-card:      #252525;
+        --text-primary: #e8e6e1;
+        --text-muted:   #888780;
+        --text-faint:   #5f5e5a;
+        --border:       #333330;
+      }
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #ffffff;
-      color: #1a1a1a;
+      background: var(--bg);
+      color: var(--text-primary);
       padding: 2rem 1.5rem;
       max-width: 900px;
       margin: 0 auto;
@@ -21,7 +41,7 @@
       font-size: 18px;
       font-weight: 500;
       margin-bottom: 1.5rem;
-      color: #1a1a1a;
+      color: var(--text-primary);
     }
 
     .cards {
@@ -32,7 +52,7 @@
     }
 
     .card {
-      background: #f5f5f3;
+      background: var(--bg-card);
       border-radius: 8px;
       padding: 1rem;
       flex: 1 1 140px;
@@ -41,25 +61,25 @@
 
     .card-label {
       font-size: 12px;
-      color: #888780;
+      color: var(--text-muted);
       margin-bottom: 4px;
     }
 
     .card-temp {
       font-size: 24px;
       font-weight: 500;
-      color: #1a1a1a;
+      color: var(--text-primary);
     }
 
     .card-dates {
       font-size: 12px;
-      color: #888780;
+      color: var(--text-muted);
       margin-top: 2px;
     }
 
     .card-detail {
       font-size: 11px;
-      color: #b4b2a9;
+      color: var(--text-faint);
       margin-top: 6px;
     }
 
@@ -74,9 +94,9 @@
       display: flex;
       gap: 16px;
       font-size: 12px;
-      color: #888780;
+      color: var(--text-muted);
       padding-top: 0.75rem;
-      border-top: 0.5px solid #e0dfdb;
+      border-top: 0.5px solid var(--border);
       flex-wrap: wrap;
     }
 
@@ -158,11 +178,11 @@
 
   <div class="legend">
     <div class="legend-item">
-      <div class="legend-swatch" style="background: #378ADD;"></div>
+      <div class="legend-swatch" id="swatch-high"></div>
       <span>Avg high (°C)</span>
     </div>
     <div class="legend-item">
-      <div class="legend-swatch" style="background: #B5D4F4;"></div>
+      <div class="legend-swatch" id="swatch-low"></div>
       <span>Avg low (°C)</span>
     </div>
   </div>
@@ -181,13 +201,28 @@
     const highs = [26, 6, 24, 28, 28, 28, 25, 4];
     const lows  = [18, -1, 17, 17, 23, 21, 18, -2];
 
-    new Chart(document.getElementById('tempChart'), {
+    function getColors(isDark) {
+      return {
+        barHigh: isDark ? '#5aa3e8' : '#378ADD',
+        barLow:  isDark ? '#2d5f8a' : '#B5D4F4',
+        tick:    isDark ? '#666460' : '#888780',
+        grid:    isDark ? 'rgba(200,198,192,0.1)' : 'rgba(136,135,128,0.15)',
+      };
+    }
+
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    let c = getColors(mq.matches);
+
+    document.getElementById('swatch-high').style.background = c.barHigh;
+    document.getElementById('swatch-low').style.background  = c.barLow;
+
+    const chart = new Chart(document.getElementById('tempChart'), {
       type: 'bar',
       data: {
         labels,
         datasets: [
-          { label: 'High (°C)', data: highs, backgroundColor: '#378ADD', borderRadius: 4 },
-          { label: 'Low (°C)',  data: lows,  backgroundColor: '#B5D4F4', borderRadius: 4 }
+          { label: 'High (°C)', data: highs, backgroundColor: c.barHigh, borderRadius: 4 },
+          { label: 'Low (°C)',  data: lows,  backgroundColor: c.barLow,  borderRadius: 4 }
         ]
       },
       options: {
@@ -201,15 +236,27 @@
         },
         scales: {
           x: {
-            ticks: { font: { size: 10 }, color: '#888780', autoSkip: false, maxRotation: 30 },
+            ticks: { font: { size: 10 }, color: c.tick, autoSkip: false, maxRotation: 30 },
             grid: { display: false }
           },
           y: {
-            ticks: { font: { size: 11 }, color: '#888780', callback: v => v + '°C' },
-            grid: { color: 'rgba(136,135,128,0.15)' }
+            ticks: { font: { size: 11 }, color: c.tick, callback: v => v + '°C' },
+            grid: { color: c.grid }
           }
         }
       }
+    });
+
+    mq.addEventListener('change', e => {
+      const nc = getColors(e.matches);
+      chart.data.datasets[0].backgroundColor = nc.barHigh;
+      chart.data.datasets[1].backgroundColor = nc.barLow;
+      chart.options.scales.x.ticks.color = nc.tick;
+      chart.options.scales.y.ticks.color = nc.tick;
+      chart.options.scales.y.grid.color  = nc.grid;
+      chart.update();
+      document.getElementById('swatch-high').style.background = nc.barHigh;
+      document.getElementById('swatch-low').style.background  = nc.barLow;
     });
   </script>
 
