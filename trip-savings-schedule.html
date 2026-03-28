@@ -151,6 +151,54 @@
 
   .metric-value.accent { color: var(--accent); }
 
+  .metric-editable {
+    position: relative;
+    cursor: text;
+  }
+
+  .metric-editable .metric-value {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .metric-editable .edit-icon {
+    opacity: 0;
+    font-size: 11px;
+    color: var(--text-faint);
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+
+  .metric-editable:hover .edit-icon { opacity: 1; }
+
+  .metric-editable input[type=number] {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--accent);
+    outline: none;
+    width: 100%;
+    padding: 0;
+    letter-spacing: -0.02em;
+    -moz-appearance: textfield;
+  }
+
+  .metric-editable input[type=number]::-webkit-outer-spin-button,
+  .metric-editable input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .metric-editable .display-val { cursor: text; }
+
+  .input-hint {
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+
   .control-row {
     display: flex;
     align-items: center;
@@ -365,9 +413,14 @@
       <div class="metric-label">Total owing</div>
       <div class="metric-value" id="s-total">—</div>
     </div>
-    <div class="metric">
-      <div class="metric-label">Already paid</div>
-      <div class="metric-value">R73,500</div>
+    <div class="metric metric-editable" id="paid-metric" title="Click to edit">
+      <div class="metric-label">Already set aside</div>
+      <div class="metric-value" id="paid-display">
+        <span class="display-val" id="paid-display-val">R73,500</span>
+        <span class="edit-icon">✎</span>
+      </div>
+      <input type="number" id="paid-input" value="73500" min="0" step="500" style="display:none">
+      <div class="input-hint" id="paid-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric">
       <div class="metric-label">Still to save</div>
@@ -412,7 +465,6 @@
 
 <script>
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
-const ALREADY = 73500;
 const START = new Date(2026, 3, 1);
 
 const PAYMENTS = [
@@ -425,6 +477,10 @@ const PAYMENTS = [
 
 const TOTAL_NEEDED = PAYMENTS.reduce((s, p) => s + p.amount, 0);
 
+function getAlready() {
+  return Math.max(0, +document.getElementById('paid-input').value || 0);
+}
+
 function monthLabel(d) {
   return d.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' });
 }
@@ -435,9 +491,10 @@ function monthsBetween(a, b) {
 
 function render() {
   const monthly = +document.getElementById('monthly').value;
+  const already = getAlready();
   document.getElementById('monthly-out').textContent = FMT(monthly);
   document.getElementById('s-total').textContent = FMT(TOTAL_NEEDED);
-  document.getElementById('s-still').textContent = FMT(TOTAL_NEEDED - ALREADY);
+  document.getElementById('s-still').textContent = FMT(Math.max(0, TOTAL_NEEDED - already));
   document.getElementById('s-months').textContent = monthsBetween(START, new Date(2026, 11, 22));
   document.getElementById('footer-rate').textContent =
     'Monthly target: ' + FMT(monthly) + ' · ' + Math.round(monthly / 30).toLocaleString('en-ZA') + ' per day';
@@ -447,7 +504,7 @@ function render() {
   const end = new Date(2027, 1, 1);
   while (cur <= end) { months.push(new Date(cur)); cur.setMonth(cur.getMonth() + 1); }
 
-  let balance = ALREADY;
+  let balance = already;
   let minBalance = Infinity;
   const tbody = document.getElementById('sched-body');
   tbody.innerHTML = '';
@@ -520,6 +577,40 @@ function render() {
   }
 }
 
+function commitPaid() {
+  const val = Math.max(0, +document.getElementById('paid-input').value || 0);
+  document.getElementById('paid-input').value = val;
+  document.getElementById('paid-display-val').textContent = FMT(val);
+  document.getElementById('paid-display').style.display = 'flex';
+  document.getElementById('paid-input').style.display = 'none';
+  document.getElementById('paid-hint').style.display = 'none';
+  render();
+}
+
+function openPaidEdit() {
+  document.getElementById('paid-display').style.display = 'none';
+  const inp = document.getElementById('paid-input');
+  inp.style.display = 'block';
+  document.getElementById('paid-hint').style.display = 'block';
+  inp.focus();
+  inp.select();
+}
+
+document.getElementById('paid-metric').addEventListener('click', function(e) {
+  if (document.getElementById('paid-input').style.display === 'none') openPaidEdit();
+});
+
+document.getElementById('paid-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') commitPaid();
+  if (e.key === 'Escape') {
+    document.getElementById('paid-display').style.display = 'flex';
+    this.style.display = 'none';
+    document.getElementById('paid-hint').style.display = 'none';
+  }
+});
+
+document.getElementById('paid-input').addEventListener('blur', commitPaid);
+document.getElementById('paid-input').addEventListener('input', render);
 document.getElementById('monthly').addEventListener('input', render);
 render();
 </script>
