@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>China · Korea · Taiwan · Japan — Regent Splendor 2028</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf9f7; --bg2: #f2f0eb; --bg3: #e8e5de;
+  --card: #ffffff; --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.14);
+  --text: #1a1916; --text2: #5a5750; --text3: #9a9590;
+  --accent: #c17f3a; --accent-bg: rgba(193,127,58,0.10); --accent-text: #8a5a20;
+  --teal: #2a7a6a; --teal-bg: rgba(42,122,106,0.10); --teal-text: #1a5a4a;
+  --warn: #9a7020; --warn-bg: rgba(154,112,32,0.10); --warn-text: #7a5810;
+  --blue: #3060a0; --blue-bg: rgba(48,96,160,0.10); --blue-text: #204080;
+  --red: #b04040;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-hover: 0 2px 8px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.06);
+  --radius: 12px; --radius-sm: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141412; --bg2: #1c1b18; --bg3: #252420;
+    --card: #1e1d1a; --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8; --text2: #a09a90; --text3: #6a6560;
+    --accent: #d4955a; --accent-bg: rgba(212,149,90,0.12); --accent-text: #e4a870;
+    --teal: #4aaa96; --teal-bg: rgba(74,170,150,0.12); --teal-text: #6abcaa;
+    --warn: #c09040; --warn-bg: rgba(192,144,64,0.12); --warn-text: #d0a858;
+    --blue: #6090d0; --blue-bg: rgba(96,144,208,0.12); --blue-text: #80aae0;
+    --red: #d06060;
+    --shadow: 0 1px 3px rgba(0,0,0,0.30), 0 4px 12px rgba(0,0,0,0.20);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.40), 0 8px 24px rgba(0,0,0,0.25);
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+.site-header { background: var(--bg2); border-bottom: 1px solid var(--border2); padding: 2.5rem 1.5rem 2rem; text-align: center; }
+.header-eyebrow { font-family: 'DM Sans', system-ui, sans-serif; font-size: 11px; font-weight: 300; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.6rem; }
+.header-title { font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; font-size: clamp(2rem, 5vw, 3.2rem); color: var(--text); line-height: 1.15; margin-bottom: 0.5rem; }
+.header-title em { color: var(--accent); font-style: italic; }
+.header-sub { font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; font-weight: 300; color: var(--text2); margin-bottom: 1.2rem; }
+.header-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.meta-pill { font-size: 11px; font-weight: 400; padding: 4px 12px; border-radius: 20px; background: var(--card); border: 1px solid var(--border2); color: var(--text2); }
+.meta-pill.accent { background: var(--accent-bg); border-color: var(--accent); color: var(--accent-text); }
+.nav-wrapper { position: sticky; top: 0; z-index: 100; background: var(--card); border-bottom: 1px solid var(--border2); box-shadow: var(--shadow); }
+.nav-tabs { display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 0.5rem; }
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab { flex-shrink: 0; font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; font-weight: 400; color: var(--text2); background: none; border: none; border-bottom: 2px solid transparent; padding: 0.9rem 1rem; cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; }
+.nav-tab:hover { color: var(--accent); }
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.tab-emoji { margin-right: 5px; }
+main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.leg-panel { display: none; }
+.leg-panel.active { display: block; }
+.leg-intro { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1.1rem; margin-bottom: 1.25rem; font-size: 12px; color: var(--text2); display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.leg-intro span { display: flex; align-items: center; gap: 4px; }
+.day-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.85rem; box-shadow: var(--shadow); overflow: hidden; }
+.day-card-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 1rem 1.1rem; cursor: pointer; gap: 1rem; }
+.day-card-header:hover { background: var(--bg2); }
+.day-card-header-left { flex: 1; }
+.day-label { font-size: 11px; font-weight: 300; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+.day-title { font-family: 'Playfair Display', Georgia, serif; font-size: 15px; font-weight: 600; color: var(--text); }
+.day-card-header-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; padding-top: 2px; }
+.chevron { width: 18px; height: 18px; stroke: var(--text3); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; flex-shrink: 0; }
+.day-card.open .chevron { transform: rotate(180deg); }
+.day-card-body { display: none; padding: 0 1.1rem 1.1rem; border-top: 1px solid var(--border); }
+.day-card.open .day-card-body { display: block; }
+.activities { margin: 0.9rem 0 0.75rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.activity-row { display: grid; grid-template-columns: 56px 1fr; gap: 0 0.75rem; }
+.time-col { font-size: 11px; font-weight: 300; color: var(--text3); padding-top: 2px; white-space: nowrap; }
+.act-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.act-note { font-size: 12px; font-weight: 300; color: var(--text2); margin-top: 2px; line-height: 1.5; }
+.act-cost { font-size: 11px; color: var(--accent-text); margin-top: 3px; }
+.excursion-tag { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 4px; background: var(--teal-bg); color: var(--teal-text); margin-top: 4px; border: 1px solid rgba(42,122,106,0.2); }
+.excursion-tag.paid { background: var(--accent-bg); color: var(--accent-text); border-color: rgba(193,127,58,0.2); }
+.excursion-tag.warn { background: var(--warn-bg); color: var(--warn-text); border-color: rgba(154,112,32,0.2); }
+.pill { display: inline-flex; align-items: center; font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+.pill-ok { background: var(--teal-bg); color: var(--teal-text); }
+.pill-warn { background: var(--warn-bg); color: var(--warn-text); }
+.pill-info { background: var(--blue-bg); color: var(--blue-text); }
+.pill-special { background: var(--accent-bg); color: var(--accent-text); }
+.pill-transit { background: var(--bg3); color: var(--text2); }
+.notice { font-size: 12px; padding: 0.6rem 0.9rem; border-radius: var(--radius-sm); margin: 0.6rem 0; line-height: 1.5; }
+.notice-warn { background: var(--warn-bg); color: var(--warn-text); border-left: 3px solid var(--warn); }
+.notice-info { background: var(--blue-bg); color: var(--blue-text); border-left: 3px solid var(--blue); }
+.notice-accent { background: var(--accent-bg); color: var(--accent-text); border-left: 3px solid var(--accent); }
+.notice-teal { background: var(--teal-bg); color: var(--teal-text); border-left: 3px solid var(--teal); }
+.day-total-bar { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.9rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+.budget-track { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.budget-fill { height: 100%; border-radius: 3px; }
+.budget-fill.ok { background: var(--teal); }
+.budget-fill.warn { background: var(--accent); }
+.budget-fill.over { background: var(--red); }
+.total-amount { font-size: 11px; font-weight: 500; color: var(--text2); white-space: nowrap; }
+.restaurant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0.7rem 0; }
+.restaurant-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.7rem 0.85rem; }
+.restaurant-card.featured { border-color: var(--accent); background: var(--accent-bg); }
+.rest-badge { font-size: 10px; font-weight: 500; color: var(--accent-text); margin-bottom: 3px; }
+.rest-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.rest-desc { font-size: 11px; font-weight: 300; color: var(--text2); line-height: 1.45; }
+.rest-cost { font-size: 11px; color: var(--accent-text); margin-top: 4px; }
+.summary-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+.summary-header { margin-bottom: 0.75rem; }
+.summary-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.summary-sub { font-size: 11px; font-weight: 300; color: var(--text3); margin-top: 2px; }
+.summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.summary-table td { padding: 5px 0; color: var(--text); }
+.summary-table td:last-child { text-align: right; font-weight: 500; }
+.summary-table tr + tr td { border-top: 1px solid var(--border); }
+.summary-table tr.deduction td { color: var(--teal-text); }
+.summary-table tr.total td { font-weight: 500; font-size: 14px; border-top: 2px solid var(--border2) !important; padding-top: 8px; }
+.section-divider { font-size: 11px; font-weight: 300; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; padding: 0.5rem 0; margin: 0.5rem 0 0.25rem; border-top: 1px solid var(--border); }
+@media (max-width: 600px) {
+  .site-header { padding: 1.75rem 1rem 1.5rem; }
+  .nav-tab { font-size: 12px; padding: 0.75rem 0.75rem; }
+  .day-card-header { padding: 0.85rem 0.9rem; }
+  .activity-row { grid-template-columns: 48px 1fr; }
+  .restaurant-grid { grid-template-columns: 1fr; }
+  main { padding: 1rem 0.75rem 3rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-eyebrow">Luxury Cruise · April–May 2028</div>
+  <h1 class="header-title">China · Korea · Taiwan · <em>Japan</em></h1>
+  <p class="header-sub">27 days · Ramo &amp; Fez · Seven Seas Splendor</p>
+  <div class="header-meta">
+    <span class="meta-pill accent">4 Apr – 1 May 2028</span>
+    <span class="meta-pill">Concierge Suite D</span>
+    <span class="meta-pill">HKG → Tokyo</span>
+    <span class="meta-pill">ZAR 797,167 confirmed</span>
+    <span class="meta-pill">Deposit paid ✓</span>
+  </div>
+</header>
+
+<nav class="nav-wrapper">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showLeg('precruz', this)"><span class="tab-emoji">✈️</span>Pre-Cruise</button>
+    <button class="nav-tab" onclick="showLeg('taiwan', this)"><span class="tab-emoji">🇹🇼</span>Taiwan</button>
+    <button class="nav-tab" onclick="showLeg('okinawa', this)"><span class="tab-emoji">🏝️</span>Okinawa</button>
+    <button class="nav-tab" onclick="showLeg('chinakr', this)"><span class="tab-emoji">🌏</span>China &amp; Korea</button>
+    <button class="nav-tab" onclick="showLeg('japanw', this)"><span class="tab-emoji">⛩️</span>Japan West</button>
+    <button class="nav-tab" onclick="showLeg('osaka', this)"><span class="tab-emoji">⭐</span>Osaka &amp; Shimizu</button>
+    <button class="nav-tab" onclick="showLeg('tokyo', this)"><span class="tab-emoji">🗼</span>Tokyo</button>
+    <button class="nav-tab" onclick="showLeg('budget', this)"><span class="tab-emoji">💰</span>Budget</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 1: PRE-CRUISE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel active" id="panel-precruz">
+  <div class="leg-intro">
+    <span>📅 4–6 Apr 2028</span>
+    <span>🏨 The Langham Hong Kong (5 Apr, 1 night)</span>
+    <span>🚢 Embark 6 Apr, Hong Kong</span>
+  </div>
+
+  <div class="day-card open">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Thu 4 Apr · Day 1</div>
+        <div class="day-title">Departure — Johannesburg → Hong Kong</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Transit</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">OR Tambo</div>
+          <div>
+            <div class="act-name">Depart Johannesburg</div>
+            <div class="act-note">Flight to Hong Kong via Dubai or direct (Cathay Pacific). Flights TBD — check prices Nov 2026. Options: CX Premium Economy ZAR 22,910pp · CX Business ZAR 28,828pp · EK Business via Dubai ZAR 31,287pp for 2 pax total.</div>
+            <div class="act-cost">Budget target: ~ZAR 52,000 for 2 pax</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-warn">⚠️ Action: Revisit and book flights in early November 2026. Returning after 1 May is significantly more expensive (+ZAR 29K) — stick to 1 May departure.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:0%"></div></div>
+        <div class="total-amount">In-flight</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card open">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Fri 5 Apr · Day 2</div>
+        <div class="day-title">Hong Kong — The Langham</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-info">Pre-cruise hotel</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">06:30</div>
+          <div>
+            <div class="act-name">Arrive Hong Kong International Airport</div>
+            <div class="act-note">Regent staff meet and arrange transfer to Langham. Airport Express: HKG → Hong Kong Station, 24 min, HK$115pp — then taxi to Langham (~10 min, HK$40).</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">~10:30</div>
+          <div>
+            <div class="act-name">Check in — The Langham Hong Kong, Tsim Sha Tsui</div>
+            <div class="act-note">King room, booked via RSSC pre-cruise package. ★★★★★ property in Tsim Sha Tsui with direct harbour access.</div>
+            <div class="act-cost">ZAR 5,523 confirmed</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Explore Tsim Sha Tsui</div>
+            <div class="act-note">Victoria Harbour waterfront promenade · Hong Kong Museum of Art · Avenue of Stars · Kowloon Park. Fez: Canton Road for luxury retail (Chanel, LV, Hermès all within 5 min). Dinner: Tim Ho Wan (world's most affordable Michelin dim sum) or book a harbour-view restaurant for a languid evening arrival dinner.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:30%"></div></div>
+        <div class="total-amount">Hotel confirmed · ~ZAR 1,500 spend</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card open">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sat 6 Apr · Day 3</div>
+        <div class="day-title">Hong Kong Embarkation — Seven Seas Splendor</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Board ship</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">Late checkout + morning Hong Kong</div>
+            <div class="act-note">Dimsum breakfast at hotel or nearby. Light morning walk — Jade Market (Kansu Street) for jade jewellery browsing if Fez is interested. Pack and check out.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">~Noon</div>
+          <div>
+            <div class="act-name">Transfer to Kai Tak Cruise Terminal</div>
+            <div class="act-note">RSSC-arranged transfer. Check in for Seven Seas Splendor. Concierge Suite D — upgraded from Serenity Suite F1 under promotion. Explore the ship, attend welcome briefing, champagne on the suite balcony.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:20%"></div></div>
+        <div class="total-amount">Hotel checkout · ~ZAR 1,000 spend</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 2: TAIWAN -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-taiwan">
+  <div class="leg-intro">
+    <span>📅 7–8 Apr 2028</span>
+    <span>🚢 Port: Keelung</span>
+    <span>🌡️ 20–25°C, spring, can shower</span>
+    <span>✅ Visa-free for SA passports</span>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sun 7 Apr · Day 4</div>
+        <div class="day-title">Keelung (Taipei) — National Palace Museum + Taipei City</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE tours</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">KEE-001 Highlights of Taipei — FREE, ~5hrs</div>
+            <div class="act-note">National Palace Museum (open Sundays — 700,000 artefacts, jade cabbage, ivory balls, bronzes from the imperial collection) · Chiang Kai-shek Memorial Hall · city drive through Taipei.</div>
+            <div class="excursion-tag">RSSC FREE tour — book early</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Independent: Xinyi District + Taipei 101</div>
+            <div class="act-note">MRT into Taipei city from Keelung (~40 min). Xinyi district: Eslite Spectrum bookstore/lifestyle mall (Fez), Taipei 101 observation deck (optional, NT$600pp). Or Zhongshan District for boutiques and design shops.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-info">KEE-001 confirmed open on Sundays. Apr 7 = Sunday. All plans stand.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:25%"></div></div>
+        <div class="total-amount">~ZAR 1,200 (transport + spend)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Mon 8 Apr · Day 5</div>
+        <div class="day-title">Keelung — Yehliu Geopark + Night Market Street Food</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE tours</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">KEE-003 Keelung &amp; Yehliu Geopark — FREE, ~4.5hrs</div>
+            <div class="act-note">Yehliu Geopark: lunar-landscape rock formations carved by millennia of erosion — the famous Queen's Head mushroom rock, sea candles, honeycomb rocks. Otherworldly coastal scenery. Done before noon.</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Keelung Miaokou Night Market (afternoon setup)</div>
+            <div class="act-note">One of Taiwan's best street-food strips — walkable from port, sets up from early afternoon. Or head back into Taipei: Dadaocheng old-quarter market street (teas, textiles, snacks, excellent for Fez).</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-accent">Keelung Miaokou food highlights: oyster vermicelli, tian bu la fish cake skewers, pork blood rice, scallion pancakes with egg — eat several small things, not one big dish.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:20%"></div></div>
+        <div class="total-amount">~ZAR 800 (market + transport)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 3: OKINAWA ISLANDS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-okinawa">
+  <div class="leg-intro">
+    <span>📅 9–11 Apr 2028</span>
+    <span>🏝️ Ishigaki + Miyakojima + Sea Day</span>
+    <span>🌡️ 22–26°C, subtropical</span>
+    <span>🐢 Sea turtles, coral, white sand</span>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Tue 9 Apr · Day 6</div>
+        <div class="day-title">Ishigaki — Blue Cave Snorkelling + Kabira Bay</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Fully independent</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">Pre-booked snorkelling charter — Blue Cave + Coral Reef</div>
+            <div class="act-note">English-speaking operator (book 3–6 months out via TripAdvisor/Google Maps). Half-day, 3.5–4hrs on water. Blue Cave (青の洞窟): deep cobalt light refraction. Yonehara/Kabira reef: sea turtles (very common in April), high coral diversity, tropical fish. Ask about manta ray conditions at Manta Scramble near Kabira Bay — peak Jun–Nov but April sightings occur.</div>
+            <div class="act-cost">~¥8,000–12,000pp (~ZAR 800–1,200pp)</div>
+            <div class="excursion-tag paid">Pre-book independently</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Midday</div>
+          <div>
+            <div class="act-name">Kabira Bay viewpoint + glass-bottom boat</div>
+            <div class="act-note">Taxi from port (~20 min, ¥1,500–2,000 one-way). No swimming (pearl oyster farming) but the elevated lookout over turquoise water and white sandspits is extraordinary. Glass-bottom boat from bay operators independently: ¥1,500pp.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Ishigaki town — craft shopping + Yaeyama soba</div>
+            <div class="act-note">Euglena Mall / Miramare shopping street: Okinawan crafts, shisa figurines, sea-salt products, Yaeyama textiles. Ishigaki Salt (石垣の塩) — Japan's most-awarded sea salt, excellent souvenir. Yaeyama soba for lunch: lighter/more delicate than Okinawan, clear pork broth.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-warn">⚠️ ACTION REQUIRED: Pre-book snorkelling operator 3–6 months before sailing. Confirm English-speaking guide, confirm April manta ray conditions, confirm Blue Cave access.</div>
+      <div class="notice notice-teal">Fallback if snorkelling unavailable: ISH-004 Glass-Bottom Boat &amp; Textile Factory (FREE RSSC, 5.25hrs, meal) — at least gets you on Kabira Bay.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:55%"></div></div>
+        <div class="total-amount">~ZAR 3,500 (charter + transport)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Wed 10 Apr · Day 7</div>
+        <div class="day-title">Hirara (Miyakojima) — Japan's Finest Beach Day</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Fully independent</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-info">No RSSC excursions at this port. Entirely independent. Ship departs 17:00 — return to port by 16:30.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">08:00</div>
+          <div>
+            <div class="act-name">Sunayama Beach</div>
+            <div class="act-note">Natural rock arch framing the open sea, best in early morning light. Fine white sand, uncrowded. Short taxi from Hirara port.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">09:30</div>
+          <div>
+            <div class="act-name">Irabu Bridge + Sawada no Hama, Irabu Island</div>
+            <div class="act-note">3.5km bridge (one of Japan's longest) — open Pacific one side, turquoise reef the other. Cross to Sawada no Hama: calm, shallow, clear bay, almost no facilities. Undiscovered luxury beach. Ideal for a quiet wade.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">12:00</div>
+          <div>
+            <div class="act-name">Hirara town lunch — Miyako soba</div>
+            <div class="act-note">Lighter and more delicate than Okinawan soba — clear pork and bonito broth, thin noodles. Ask the taxi driver for the local, non-tourist spot.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">13:30</div>
+          <div>
+            <div class="act-name">Yonaha Maehama Beach ⭐</div>
+            <div class="act-note">Arguably the finest beach in Japan. 7km powder-white sand, pale turquoise to deep blue water, shallow far out. Miyakojima Tokyu Resort sells day-use beach access with sun loungers — perfect luxury beach afternoon. Fez decompresses, Ramo walks the waterline.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">16:00</div>
+          <div>
+            <div class="act-name">Return to port</div>
+            <div class="act-note">30 min drive. Comfortable before 17:00 departure.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-warn">⚠️ ACTION REQUIRED: Pre-arrange private taxi charter (¥20,000–30,000, ~ZAR 2,000–3,000 for vehicle, full day) OR rental car. Flat island, easy to navigate. Book closer to sailing.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:50%"></div></div>
+        <div class="total-amount">~ZAR 3,000 (taxi charter + day-use beach)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Thu 11 Apr · Day 8</div>
+        <div class="day-title">Day at Sea — East China Sea</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Sea day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">All day</div>
+          <div>
+            <div class="act-name">Rest, spa, ship exploration</div>
+            <div class="act-note">Two consecutive active shore days — allow a genuine recovery day. Splendor spa has extensive treatments. Deck 12 pool if warm enough. Review Shanghai plan and confirm DMZ passport submission requirements for Seoul.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:10%"></div></div>
+        <div class="total-amount">Ship-inclusive</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 4: CHINA & KOREA -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-chinakr">
+  <div class="leg-intro">
+    <span>📅 12–18 Apr 2028</span>
+    <span>🇨🇳 Shanghai (2 days) · 🇰🇷 Seoul (2 days) · Jeju (1 day)</span>
+    <span>🌡️ 12–20°C (Shanghai) · 12–18°C (Korea)</span>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Wed 12 Apr · Day 9</div>
+        <div class="day-title">Shanghai — Best of Shanghai + Acrobatic Show</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE tours</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-warn">⚠️ ACTION REQUIRED: Confirm China visa/entry policy for SA passports before sailing. China offered visa-free access to SA citizens (up to 15 days) from late 2024 — verify current policy remains in force.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">All day</div>
+          <div>
+            <div class="act-name">SHA-001 Best of Shanghai — FREE, 8hrs, includes meal</div>
+            <div class="act-note">Pudong skyline · Yu Yuan Gardens (Ming dynasty, intricate rockery and pavilions) · Jade Buddha Temple · Shanghai Museum. Full city orientation in one day.</div>
+            <div class="excursion-tag">RSSC FREE tour — book early</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">SHA-E01 Chinese Acrobatic Show — Complimentary all guests</div>
+            <div class="act-note">Portman Theater, ~3hrs. Included for all Splendor guests. Extraordinary feats of balance, flexibility, and human architecture.</div>
+            <div class="excursion-tag">Complimentary for all guests</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:15%"></div></div>
+        <div class="total-amount">~ZAR 500 (incidentals)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Thu 13 Apr · Day 10</div>
+        <div class="day-title">Shanghai — Water Town Zhujiajiao + French Concession</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE + independent</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">SHA-004 Water Town of Zhujiajiao — FREE, ~5hrs</div>
+            <div class="act-note">1,700-year-old canal settlement. Qing dynasty stone-arch bridges, whitewashed lanes, traditional boat rides through the waterways. One of China's best-preserved ancient water towns, 50km from Shanghai.</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Independent: French Concession + Tianzifang</div>
+            <div class="act-note">French Concession: tree-lined lanes, art deco mansions, boutique cafés, Xintiandi luxury shopping in restored shikumen houses (Fez). Tianzifang: narrow art alleyways filled with independent designers, ceramics, xiaolongbao (soup dumplings), scallion pancakes, bubble tea.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-accent">Shanghai xiaolongbao at Din Tai Fung or a queue-worthy local hole-in-the-wall are both excellent — the skin should be translucent and not torn. Dip in black vinegar + ginger.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:25%"></div></div>
+        <div class="total-amount">~ZAR 1,500 (shopping + food)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Fri 14 Apr · Day 11</div>
+        <div class="day-title">Day at Sea — Yellow Sea</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Sea day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">All day</div>
+          <div>
+            <div class="act-name">Rest + Seoul logistics prep</div>
+            <div class="act-note">Submit passport details to RSSC Destination Desk for DMZ tour (INC-003) — required 24hrs before port. Incheon port is 1hr+ drive from central Seoul; keep this in mind when planning timing.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:5%"></div></div>
+        <div class="total-amount">Ship-inclusive</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sat 15 Apr · Day 12</div>
+        <div class="day-title">Seoul — DMZ Third Tunnel &amp; North Korea Sightline</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE tours</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">All day</div>
+          <div>
+            <div class="act-name">INC-003 DMZ &amp; Third Tunnel — likely FREE, 8hrs, meal</div>
+            <div class="act-note">Freedom Bridge · military briefing · Third Tunnel of Aggression (dug by North Korea, discovered 1978, 73m underground — the smallest room you'll ever feel largest in) · Dora Observatory: sightline into North Korea with binoculars — see Kaesong, the propaganda village, the North Korean flag on the world's 4th-largest flagpole. Free time in Insadong (traditional craft street) on return.</div>
+            <div class="excursion-tag">RSSC FREE tour — passport required 24hrs prior</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-warn">⚠️ Submit passport numbers, nationalities, and birthdates to RSSC Destination Desk 24hrs before port. Tour subject to cancellation if military conditions change on the day.</div>
+      <div class="notice notice-info">Verify INC-003 pricing when excursion bookings open — listed as "likely FREE" but confirm with RSSC.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:20%"></div></div>
+        <div class="total-amount">~ZAR 800 (Insadong shopping)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sun 16 Apr · Day 13</div>
+        <div class="day-title">Seoul — Gyeongbokgung Palace + Gwangjang Market</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE + independent</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">INC-011 Best of Seoul — FREE, 7.5hrs, meal</div>
+            <div class="act-note">Gyeongbokgung Palace (Royal Guard changing ceremony) · National Folk Museum · Cheonggyecheon stream restoration walk · Insadong traditional craft street.</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Gwangjang Market (independent)</div>
+            <div class="act-note">Seoul's oldest covered market. Bindaetteok (mung bean pancakes, eaten hot off the griddle), yukhoe (Korean beef tartare with sesame oil and pine nuts), mayak gimbap (tiny addictive rice rolls). ~20 min taxi from Gyeongbokgung.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Optional: INC-019 Seoul Night &amp; Temple Cuisine — $159pp</div>
+            <div class="act-note">Temple cuisine dinner (Buddhist vegetarian tasting menu, extraordinary) · Dongdaemun Design Plaza (DDP, Zaha Hadid building lit at night) · Sebit Islets floating pavilions. Only book if ship departure time allows.</div>
+            <div class="act-cost">$159pp = ~ZAR 5,800 for 2</div>
+            <div class="excursion-tag paid">Verify ship departure time first</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:55%"></div></div>
+        <div class="total-amount">~ZAR 6,500 (if evening tour booked)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Mon 17 Apr · Day 14</div>
+        <div class="day-title">Day at Sea — Yellow Sea</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Sea day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">All day</div>
+          <div>
+            <div class="act-name">Recovery + Jeju planning</div>
+            <div class="act-note">Seoul was two very full days. Genuine rest. Review Jeju plan — confirm CHJ-004 Women Divers tour is booked. Check tattoo policy if applicable for any onsen tours ahead.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:5%"></div></div>
+        <div class="total-amount">Ship-inclusive</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Wed 18 Apr · Day 15</div>
+        <div class="day-title">Jeju — Haenyeo Divers + Lava Cave + Black Pork</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE tours</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">CHJ-004 Women Divers &amp; Spirited Garden — FREE, 3.75hrs</div>
+            <div class="act-note">Haenyeo free-divers: UNESCO-listed women (70s/80s) who dive 10–20m on a single breath with no oxygen equipment, collecting sea urchin and abalone. A living tradition. Spirited Garden: one farmer's life work — 40 years of bonsai from Jeju's natural forest, extraordinary scale and age.</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Early afternoon</div>
+          <div>
+            <div class="act-name">Manjanggul Lava Cave (independent taxi, ~30 min)</div>
+            <div class="act-note">7.4km lava tube — one of the world's largest lava tunnels. The main attraction: a 7.6m lava column, the world's largest. 11°C inside — bring a layer. ~90 min walk through the illuminated cave. Entry ¥2,000pp.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Mid afternoon</div>
+          <div>
+            <div class="act-name">Dongmun Market</div>
+            <div class="act-note">Hallabong tangerines (Jeju's famous clementine-mandarin hybrid), black sesame tteok rice cake, haenyeo seafood stalls, sea urchin on rice.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Heukdwaeji Street — Jeju black pork dinner</div>
+            <div class="act-note">Jeju black pork (heukdwaeji) is distinctly different from mainland pork — a native pig breed with darker, richer meat. Order samgyeopsal (belly) + moksal (neck cut). Grilled table-side. Walk in or book early at the restaurant strip.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:30%"></div></div>
+        <div class="total-amount">~ZAR 2,000 (cave entry + transport + dinner)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 5: JAPAN WEST -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-japanw">
+  <div class="leg-intro">
+    <span>📅 19–23 Apr 2028</span>
+    <span>🇯🇵 Nagasaki · Kagoshima · Beppu · Hiroshima · Kochi</span>
+    <span>🌡️ 11–21°C, mild spring</span>
+    <span>✅ Visa-free for SA passports</span>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Thu 19 Apr · Day 16</div>
+        <div class="day-title">Nagasaki — Peace Museum + Glover Garden + Cathedral</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">FREE tours</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">NGS-005 Best of Nagasaki — FREE, 4hrs, moderate</div>
+            <div class="act-note">Atomic Bomb Museum: among the world's most candid and moving museums. Clock stopped at 11:02am on 9 August 1945. Peace Memorial Park near the hypocentre. Dejima: the Dutch trading post — Japan's only connection to the outside world during 200 years of Edo-period isolation.</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Early afternoon</div>
+          <div>
+            <div class="act-name">Glover Garden (shuttle/taxi, ~10 min)</div>
+            <div class="act-note">Thomas Glover's hillside estate. 19th-century foreign merchant mansions with harbour panorama. Glover was the Scottish merchant who inspired the setting for Madame Butterfly. ~90 min walk.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Mid afternoon</div>
+          <div>
+            <div class="act-name">Oura Cathedral + Hamanomachi arcade</div>
+            <div class="act-note">Oura Cathedral (5 min from Glover): Japan's only pre-Meiji Gothic church (UNESCO, built 1864) — the site where hidden Christians revealed themselves after 250 years of underground practice. Then Hamanomachi shopping arcade: Arita/Hasami ceramics, Fukusaya Castella cake (est. 1624 — a Portuguese-origin sponge cake, Nagasaki's most famous export).</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Late afternoon</div>
+          <div>
+            <div class="act-name">Shikairo restaurant — champon noodles</div>
+            <div class="act-note">The 130-year-old restaurant that invented champon: a rich pork-bone broth loaded with seafood, pork, and vegetables — thick and deeply satisfying. Also order sara udon (crispy noodles with the same toppings). Not to be missed.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:30%"></div></div>
+        <div class="total-amount">~ZAR 2,000 (transport + shopping + dinner)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Fri 20 Apr · Day 17</div>
+        <div class="day-title">Kagoshima — Volcanic Sand Bath + Sengan-en Garden</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Wonder &amp; pleasure</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-accent">Context: Day after Nagasaki's heavy WWII content — deliberately shift register to wonder and pleasure. No WWII sites today (skip Chiran to avoid back-to-back memorials).</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">KOJ-WT1 Ibusuki Sand Bath — verify pricing</div>
+            <div class="act-note">Buried to the neck in naturally heated volcanic black sand — the heat penetrates from below. One of the most unusual wellness experiences in Japan. Then rinsed off in natural hot spring water. 3.75hrs total. Nothing remotely like this at any other port on the itinerary.</div>
+            <div class="excursion-tag warn">⚠️ Verify pricing when excursion bookings open. If too expensive, book independently at Ibusuki Iwasaki Hotel (walk-ins accepted).</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">KOJ-006 Senganen Garden &amp; Museum — FREE, 3.25hrs</div>
+            <div class="act-note">17th-century Shimazu clan estate with Sakurajima volcano as its deliberate borrowed landscape backdrop. Extraordinary garden design. Shoko Shuseikan Museum: Japan's first Western-style factory (Meiji-era industrial heritage, UNESCO).</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Late afternoon</div>
+          <div>
+            <div class="act-name">Public ferry to Sakurajima (optional)</div>
+            <div class="act-note">¥160pp, 15 min crossing, runs every 15 min. Arimura Lava Observatory and lava field trail — walk across volcanic rock within sight of the still-active volcano. A short but memorable excursion.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Kurobuta black pork tonkatsu dinner</div>
+            <div class="act-note">Kagoshima's Berkshire-breed black pork, raised on sweet potatoes — extraordinary marbling. Order tonkatsu specifically. Tenmonkan arcade area has specialist restaurants. Also: taste Satsuma shochu (sweet potato distilled spirit, Kagoshima's indigenous drink).</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:45%"></div></div>
+        <div class="total-amount">~ZAR 3,500 (sand bath TBD + ferry + dinner)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sat 21 Apr · Day 18</div>
+        <div class="day-title">Beppu — Seven Hells + Steam Kitchen + Onsen</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Geothermal day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-accent">Beppu is Japan's geothermal capital. The city literally steams. Thread continues from Kagoshima's volcanic sand bath — but Beppu is about spectacle and food, not bathing.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">All 7 Jigoku Hells — independent self-guided circuit</div>
+            <div class="act-note">Combined ticket ~¥2,200pp. RSSC tours only cover 2 hells — the full circuit is superior. Two clusters ~2km apart (taxi between ¥700). Highlights: Umi (Sea Hell — cobalt blue boiling pool), Chinoike (Blood Pond — iron-red, most photogenic), Tatsumaki (Tornado geyser every ~30 min), Oniyama (crocodile farm heated by spring water). Leave Blood Pond for last — most dramatic.</div>
+            <div class="act-cost">~¥2,200pp + taxi ZAR 800 total</div>
+            <div class="excursion-tag paid">Independent — superior to RSSC tours</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Midday</div>
+          <div>
+            <div class="act-name">Kannawa jigoku-mushi steam kitchen</div>
+            <div class="act-note">Natural geothermal vents cook your food. Order: jigoku tamago (geothermal eggs, firm white, creamy yolk), sweet potato (imo), corn, dumplings. The whole Kannawa district smells of sulphur and rises in steam from street-level vents — genuinely extraordinary streetscape. ~1hr.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">BE9-004 Beppu Hot Spring Experience — FREE, 3hrs</div>
+            <div class="act-note">Communal onsen soak in Kannawa onsen. Authentic Beppu experience beyond the visual hells.</div>
+            <div class="excursion-tag warn">⚠️ Full nudity required (Japanese standard). Tattoos prohibited. If not comfortable: substitute Yufuin independently (30–40 min bus, ¥1,500–2,500 one-way) — Lake Kinrin, boutique shops, gallery cafés, perfect for Fez.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-info">Yufuin Yunotsubo Street (if visiting): best artisan shopping on this day — ceramics, handmade accessories, local sweets, craft glass. Myoban-yu bath salts near Kannawa are excellent souvenirs.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:25%"></div></div>
+        <div class="total-amount">~ZAR 1,800 (hells entry + taxi + food)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sun 22 Apr · Day 19</div>
+        <div class="day-title">Hiroshima — Peace Museum + Miyajima Island ⭐</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Most significant day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-accent">The most emotionally significant port of the entire itinerary. Two world-class experiences with completely different energy: weight and beauty. Cherry blossom likely still present in Peace Park (late sakura season).</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">Peace Memorial Museum — independent self-guided</div>
+            <div class="act-note">Take FREE shuttle to city, then tram ¥180pp to Peace Memorial Park. Do this without a tour guide — this museum demands your own pace. Sequence: Children's Peace Monument (Sadako and the thousand cranes) → Cenotaph → Flame of Peace (aligned through arch to the Dome) → Atomic Bomb Dome exterior (left standing exactly as it fell) → Museum interior: 90 min minimum. Victims' personal belongings, watch stopped at 8:15am, shadow burned permanently into stone steps. Entry ¥200pp. Come out before noon.</div>
+            <div class="act-cost">¥200pp entry — self-guided</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">HIR-003 Miyajima Island — FREE RSSC, 4.25hrs</div>
+            <div class="act-note">RSSC handles JR train + ferry logistics to Miyajima (UNESCO World Heritage). Floating Itsukushima Shrine (13th century, built over water — the great torii gate rises from the sea at high tide). Free-roaming Shika deer that have lived alongside the shrine for centuries. Omotesando shopping arcade. If time: Daishoin Temple above the shrine — far less crowded, hauntingly atmospheric mountain Buddhist temple.</div>
+            <div class="excursion-tag">RSSC FREE tour — book separately from museum morning</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Hiroshima-style okonomiyaki dinner</div>
+            <div class="act-note">Okonomiyaki-mura (Okonomiyaki Village): 6-storey building, 25+ stalls, each with their own recipe. Hiroshima style is layered (noodles + egg + cabbage + pork + batter) — completely distinct from Osaka-style. Any stall is excellent. Order the soba-iri (with noodles) version.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-info">Miyajima souvenir: momiji manju — maple leaf-shaped cakes, warm, freshly baked (sweet bean or custard). Buy from a bakery with a visible oven, not a packet. Also: Miyajima lacquerware shamoji (rice paddles) are the island's iconic craft.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:20%"></div></div>
+        <div class="total-amount">~ZAR 1,500 (tram + museum + dinner)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Mon 23 Apr · Day 20</div>
+        <div class="day-title">Kochi — Chef-Led Bonito Tataki + Kochi Castle</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Culinary day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-accent">Tomorrow is 17 hours in Osaka — the biggest port day of the cruise. Today: excellent but not punishing. Arrive back on board with energy intact.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">KZC-1GT Chef-Led Tataki Culinary Tradition — $179pp, 4hrs, max 18 guests</div>
+            <div class="act-note">Ship's chef leads. Browse Hirome Market stalls (Kochi's covered food hall). Stroll past Kochi Castle exterior. Then: Tosa Tataki Dojo — sear your own bonito fillet over a straw-fuelled open flame. Katsuo no tataki: bonito is leaner than tuna, deep red, seared outside but raw inside, served with ginger, green onion, garlic chips, yuzu ponzu. You cannot have it like this outside Kochi.</div>
+            <div class="act-cost">$179pp × 2 = $358 (~ZAR 6,600)</div>
+            <div class="excursion-tag paid">Book early — 18 guest limit</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">KZC-005 Kochi Castle &amp; Katsurahama Beach — FREE, 3.5hrs</div>
+            <div class="act-note">One of Japan's 12 original castles (not a replica) — original wooden interior, Edo-period architecture. Katsurahama: scenic Pacific beach (no swimming, strong currents) with the famous bronze statue of Sakamoto Ryoma — the Meiji-era visionary who modernised Japan, Kochi's most beloved son. 200 steps at the castle.</div>
+            <div class="excursion-tag">RSSC FREE tour</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Late afternoon</div>
+          <div>
+            <div class="act-name">Return early via shuttle — rest onboard</div>
+            <div class="act-note">Tomorrow is 17 hours in Osaka. Be on board and rested.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-info">Fez shopping in Hirome Market: yuzu products (ponzu, cookies, yuzu liqueur, yuzu jam) — uniquely Kochi, excellent gifts. Premium katsuobushi (dried bonito flakes, aged honkarebushi variety) unavailable in most stores outside Kochi.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:60%"></div></div>
+        <div class="total-amount">~ZAR 7,500 (chef tour + transport)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 6: OSAKA & SHIMIZU -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-osaka">
+  <div class="leg-intro">
+    <span>📅 24–26 Apr 2028</span>
+    <span>⭐ Osaka: 17hrs (longest port day)</span>
+    <span>🗻 Shimizu: green tea + fresh sushi</span>
+    <span>🌡️ 12–19°C Osaka · 10–18°C Shimizu</span>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Tue 24 Apr · Day 21 ⭐ PRIORITY</div>
+        <div class="day-title">Osaka — Fushimi Inari Kyoto + Osaka Castle + Dotonbori Night</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">17-hour stop</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-teal">Monday confirmed open: Osaka Castle ✓ · Fushimi Inari (24/7 outdoor) ✓ · Namba/Dotonbori ✓ · Shinsaibashi ✓ · Kuromon Market (majority) ✓. Monday is actually excellent — fewer Japanese domestic tourists than weekends.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">8:00–13:00</div>
+          <div>
+            <div class="act-name">Fushimi Inari Taisha, Kyoto (independent)</div>
+            <div class="act-note">FREE shuttle or taxi to Namba → JR Yamatoji Line to JR Inari (~35–40 min, ¥580pp). Arrive 9am. The ten-thousand torii gate tunnel winding up Mt. Inari: orange gates dedicated to the deity of good harvest and business. Walk to Yotsutsuji intersection (halfway, ~40 min) for panoramic Kyoto views. Allow 90–120 min total at the shrine. Outdoor, free to enter, 24/7 — zero Monday closure issues.</div>
+            <div class="act-cost">¥580pp each way — self-guided, free entry</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Optional</div>
+          <div>
+            <div class="act-name">Gion Hanamicoji Street add-on (Kyoto)</div>
+            <div class="act-note">15-min taxi (~¥1,500) from Fushimi Inari. Kyoto's preserved machiya (townhouse) district and geisha quarter. Beautiful 45–60 min walk, photography, boutique browsing. More atmospheric than Nishiki Market for first-time visitors.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">13:00–16:30</div>
+          <div>
+            <div class="act-name">Osaka Castle + Kuromon Market</div>
+            <div class="act-note">Take FREE OSA-008 RSSC tour (drops at Namba) OR go independently. Osaka Castle: massive stone walls brought from across Japan, cherry blossom park (1,200 trees), tower interior by elevator (¥600pp). Then: Kuromon Ichiba Market (5 min from Namba) — Osaka's "kitchen": fresh sea urchin on rice, crab legs, wagyu skewers, premium produce. Browse and graze.</div>
+            <div class="excursion-tag">OSA-008 RSSC FREE — or independent</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">17:00–late</div>
+          <div>
+            <div class="act-name">Dotonbori + Shinsaibashi + Evening Street Food Circuit</div>
+            <div class="act-note">The soul of Osaka. Dotonbori canal at dusk: Glico Running Man neon, 3D-style crabs and dragons, restaurants overhanging the canal. Street food non-negotiables: takoyaki at Aizuya or Kukuru (eat standing) · kushikatsu at Daruma (NO double-dipping in sauce) · okonomiyaki at Fukutaro or Mizuno. Then Hozenji Yokocho: moss-covered stone alley, 300-year-old Fudo Myo statue, tiny izakayas — the most atmospheric 10 minutes in Osaka. Do this at night.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">All evening</div>
+          <div>
+            <div class="act-name">Shinsaibashi Covered Arcade — Fez shopping priority</div>
+            <div class="act-note">600m covered arcade (longest in Japan). Uniqlo flagship · Louis Vuitton Osaka · local accessory boutiques · cosmetics · ceramics. Shinsaibashi OPA and SOGO department stores adjacent. Takashimaya Osaka nearby (high-end, excellent basement food hall). Don Quijote 5-storey megastore open until midnight.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-info">Alternative if no Kyoto: Full Osaka day — Kuromon breakfast → OSA-004 FREE (Osaka Castle + Shitennoji 6th-century temple) → Shinsekai lunch (kushikatsu) → Sumiyoshi Taisha shrine → Shinsaibashi → Dotonbori evening. Rich full day, no long drives.</div>
+      <div class="notice notice-warn">Confirm last return shuttle time from Namba to ship — RSSC typically runs late shuttles for extended port days. Last return is critical to confirm at Destination Desk before leaving ship.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:55%"></div></div>
+        <div class="total-amount">~ZAR 5,000 (JR trains + food + shopping)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Wed 25 Apr · Day 22</div>
+        <div class="day-title">Day at Sea — Pacific Ocean</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Sea day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">All day</div>
+          <div>
+            <div class="act-name">Full recovery after Osaka — genuine rest</div>
+            <div class="act-note">17-hour Osaka day will have been intense. Sleep in. Spa. Pool. Confirm Shimizu tour booking (SMZ-1GT — if not already done, check availability at Destination Desk). Review Tokyo plan and hotel upgrade decision.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:5%"></div></div>
+        <div class="total-amount">Ship-inclusive</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Fri 26 Apr · Day 23</div>
+        <div class="day-title">Shimizu — Chef-Led Tea Picking + Sushi Making</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Final port — beautiful wind-down</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-accent">Shizuoka Prefecture: Japan's #1 green tea region + Tsukiji-rival tuna markets. Late April = peak first-flush sencha season. The emotional register is quiet and sensory — Osaka was the blockbuster; let Shimizu be beautiful. Mt Fuji views are weather-dependent: treat any sighting as a bonus.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">SMZ-1GT Chef-Led Green Tea &amp; Fish — $169pp, 5hrs, max 18 guests</div>
+            <div class="act-note">At Yamataka Sakurai tea farm: pick sencha leaves (late April = peak first flush), learn to process and brew your own cup. Then: Shimizu Sushi Museum — a chef walks you through rolling and shaping your own sushi, which you then eat. Small group (18 max), chef-led, genuinely hands-on. Nothing like this at any other port.</div>
+            <div class="act-cost">$169pp × 2 = $338 (~ZAR 6,200)</div>
+            <div class="excursion-tag paid">Book early — 18 guest limit, April peak season</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Miho no Matsubara (if Fuji is clear) — or relax</div>
+            <div class="act-note">If Fuji is clear: taxi to Miho no Matsubara (~30 min from port) — 50,000-pine coastal grove with Fuji rising behind it. One of Japan's most iconic views. Walk the grove, photograph. If clouded: SMZ-006 FREE RSSC (cable car to Kunozan Toshogu Shrine — red lacquer Tokugawa shrine, stunning regardless of Fuji). Or simply: Kashi-no-Ichi waterfront fish market (walkable from ship), browse, snack, sit in a café. This is the last port — a slower afternoon is perfectly appropriate.</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice notice-info">Alternative to SMZ-1GT: SMZ-009 FREE — Master chef dismantles a whole tuna piece by piece (a record tuna sold for $3.1M) + fresh sashimi lunch (5hrs). If Fez prefers theatre of fresh fish over hands-on tea picking, swap the tours.</div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:55%"></div></div>
+        <div class="total-amount">~ZAR 7,000 (chef tour + transport)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- LEG 7: TOKYO -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-tokyo">
+  <div class="leg-intro">
+    <span>📅 27–30 Apr 2028 (4 days)</span>
+    <span>🏨 Granbell Hotel Shinjuku ★★★ (review upgrade)</span>
+    <span>🌡️ 11–18°C, post-cherry-blossom, Golden Week from Apr 29</span>
+    <span>✈️ Depart 1 May</span>
+  </div>
+
+  <div class="notice notice-warn" style="margin-bottom:1rem;">⚠️ HOTEL FLAG: Granbell Shinjuku is ★★★ Economy Double (~$145/night). This is a significant tier mismatch with RSSC Concierge Suite + Langham. Upgrade to Park Hyatt Tokyo (Shinjuku, floors 39–52, ~$600–900/night) or Hyatt Regency Tokyo (~$300–450/night). Additional cost: ~ZAR 22,000–37,000 for 3 nights. <strong>Action: Check Park Hyatt Tokyo availability for 27–30 Apr 2028 before finalising.</strong></div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sat 27 Apr · Disembark Day</div>
+        <div class="day-title">Disembark Splendor → Transfer → Shinjuku Check-in</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Arrival day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">Disembark Seven Seas Splendor — Yokohama port</div>
+            <div class="act-note">Splendor docks at Yokohama (Osanbashi Pier or Daikoku Futo). Pre-book private car transfer from port to hotel — you'll have luggage and 27 days of travel behind you. Hotel concierge can arrange. ~1.5hrs.</div>
+            <div class="act-cost">Private car ~¥15,000–20,000 (~ZAR 1,400–1,800)</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Check in + Shinjuku Gyoen</div>
+            <div class="act-note">Check in to hotel (~15:00). Light walk to Shinjuku Gyoen (national garden, stunning in afternoon light, ¥500 entry, closes 18:30). Or simply: Kabukichō area and the tiny Golden Gai drinking lanes — six narrow alleys, ~200 micro-bars, each with 5-8 seats.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Omoide Yokocho ("Memory Lane") dinner</div>
+            <div class="act-note">Under the train tracks, steps from Shinjuku West Exit — a warren of tiny smoky yakitori stalls. The perfect low-key first Tokyo evening. Skewered chicken, pork belly, gizzards over charcoal. Asahi draught.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:25%"></div></div>
+        <div class="total-amount">~ZAR 2,500 (transfer + dinner)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sun 28 Apr · Tokyo Day 1</div>
+        <div class="day-title">Asakusa · Senso-ji · Ueno · Yanaka</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">East Tokyo</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-info">Get a Suica IC card at Shinjuku or Yokohama station — used for trains, metro, buses, and convenience stores across Tokyo.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Early</div>
+          <div>
+            <div class="act-name">Senso-ji Temple, Asakusa</div>
+            <div class="act-note">Tokyo's oldest Buddhist temple (7th century). Go early before the crowds. Walk the Nakamise-dori shopping street for omiyage gifts, fans, and ceramics. The Thunder Gate (Kaminarimon) at dawn is worth the early start.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Mid-morning</div>
+          <div>
+            <div class="act-name">Ueno Park + Tokyo National Museum</div>
+            <div class="act-note">Japan's finest collection of samurai armour, ceramics, lacquerware, Buddhist sculpture. Visit today (Sunday open) rather than tomorrow when some sections may be busier. Ueno Park also has Zoo and multiple museum buildings.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Yanaka neighbourhood</div>
+            <div class="act-note">Old Edo-era neighbourhood that survived WWII bombing intact. Traditional shotengai (covered shopping street), small temples, ancient cemetery with old cherry trees, artisan shops selling handmade ceramics and textiles. One of the most atmospheric corners of Tokyo. Fez: independent ceramics and craft shops here are exceptional.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Isetan Shinjuku basement food hall</div>
+            <div class="act-note">Return to Shinjuku. Isetan B2: Japan's finest department store food basement — artisan wagashi, premium sushi, bento sets, cheese, wine, pastry. Extraordinary as a dinner solution or just to browse. Or: tonkatsu at Maisen Shinjuku (celebrated pork cutlet restaurant).</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:35%"></div></div>
+        <div class="total-amount">~ZAR 3,000 (museum + transport + dinner)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Mon 29 Apr · Tokyo Day 2 — Shōwa Day Holiday</div>
+        <div class="day-title">Meiji Shrine · Harajuku · Omotesando · Shibuya</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-warn">Public holiday — busy</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="notice notice-warn">Shōwa Day national holiday — parks and shrines open normally; some government museums closed. Retail open. Expect more crowds at popular spots.</div>
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">9:00</div>
+          <div>
+            <div class="act-name">Meiji Jingu Shrine</div>
+            <div class="act-note">Tokyo's most serene Shinto shrine, set in a forested 70-hectare park. Arrive early before Harajuku fills. The forested walk to the shrine is itself remarkable. Always open.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">10:30</div>
+          <div>
+            <div class="act-name">Harajuku / Takeshita Street</div>
+            <div class="act-note">Tokyo's most chaotic teen fashion street — even if not buying, a 30-min walk through is worthwhile for the spectacle. Crepe stalls every few metres.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">11:30</div>
+          <div>
+            <div class="act-name">Omotesando — Fez shopping priority ⭐</div>
+            <div class="act-note">Tokyo's equivalent of Avenue Montaigne. Louis Vuitton (Omotesando flagship, Jun Aoki building) · Prada (Herzog &amp; de Meuron glass tower) · Chanel · Hermès · Dior — all flagship stores. Plus Omotesando Hills (mid-tier in spectacular spiral architecture). Allow 3–4 hours for serious shopping. Lunch at Anniversaire Café or Omotesando Koffee.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">15:00</div>
+          <div>
+            <div class="act-name">Shibuya Scramble Crossing + Shibuya Sky</div>
+            <div class="act-note">Walk down from Omotesando to Shibuya. The world's busiest pedestrian crossing — observe from 2nd floor Starbucks (free) or Shibuya Sky observation deck (¥2,000pp, pre-book online). Shibuya Hikarie for upscale shopping.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Sukiyaki or shabu-shabu dinner</div>
+            <div class="act-note">Imahan Shinjuku: one of Tokyo's great old-school sukiyaki restaurants (thinly sliced wagyu cooked table-side in sweet soy broth, dipped in raw egg). Book ahead. Or: Nabezo Shinjuku for a more casual shabu-shabu experience.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill over" style="width:80%"></div></div>
+        <div class="total-amount">~ZAR 15,000+ (Omotesando flagship shopping day)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Tue 30 Apr · Tokyo Day 3 — Last Full Day</div>
+        <div class="day-title">Tsukiji · Ginza · Teamlab Planets</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-ok">Final day</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">7:00–9:00</div>
+          <div>
+            <div class="act-name">Tsukiji Outer Market — breakfast</div>
+            <div class="act-note">Fresh tamagoyaki (grilled egg omelette, sweet and savoury) · thick slabs of sashimi on rice · fresh sea urchin · oysters. The outer market opens from 5am. Arrive by 8am before it fills. This is not the wholesale inner market (that relocated to Toyosu) but the outer market remains excellent for food.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">10:00</div>
+          <div>
+            <div class="act-name">Ginza — last shopping priority</div>
+            <div class="act-note">Ginza Six (luxury mall — Dior, Celine, Bottega, excellent basement food hall) · Matsuya Ginza · Itoya (8-storey stationery and pen megastore — Ramo) · Uniqlo 12-storey Ginza flagship (premium lines) · Wako (iconic clock tower, luxury goods). Japanese designers: Issey Miyake, Comme des Garçons, Yohji Yamamoto all have stores in this area.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Afternoon</div>
+          <div>
+            <div class="act-name">Teamlab Planets, Toyosu ⭐</div>
+            <div class="act-note">~30 min from Ginza by train. Immersive digital art in water and mirrors — walk through rooms of koi, floating flowers, and infinite reflections. One of Japan's most extraordinary contemporary experiences. Pre-book tickets well in advance — typically sells out weeks ahead. ~¥3,200pp. Allow 2–3hrs including travel.</div>
+            <div class="act-cost">¥3,200pp (~ZAR 600pp). Book online immediately.</div>
+            <div class="excursion-tag warn">⚠️ Pre-book online — sells out months ahead</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div>
+            <div class="act-name">Final dinner — Shinjuku area</div>
+            <div class="act-note">Options: Fuunji ramen (Shinjuku, tsukemen thick dipping noodles — a Tokyo institution) · Ramen Ichiran (solo booths, excellent tonkotsu) · Or splurge: Sushi no Midori Shibuya for excellent-value omakase sushi. Pack for 1 May departure.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill warn" style="width:60%"></div></div>
+        <div class="total-amount">~ZAR 8,000 (Ginza shopping + Teamlab + dinner)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Wed 1 May · Departure Day</div>
+        <div class="day-title">Tokyo → Dubai → Johannesburg</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-transit">Homeward bound</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div>
+            <div class="act-name">Transfer to Narita or Haneda airport</div>
+            <div class="act-note">Narita: ~1.5hrs from Shinjuku (Narita Express or Limousine Bus). Haneda: ~35 min from Shinjuku. Confirm which terminal when tickets are booked. Recommend Limousine Bus or private car with luggage on departure day.</div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Flight</div>
+          <div>
+            <div class="act-name">Tokyo → Dubai → Johannesburg</div>
+            <div class="act-note">Note: changing return date beyond 1 May is significantly more expensive (+ZAR 29K) — confirmed during flight research. Stick to 1 May.</div>
+          </div>
+        </div>
+      </div>
+      <div class="day-total-bar">
+        <div class="budget-track"><div class="budget-fill ok" style="width:5%"></div></div>
+        <div class="total-amount">In transit</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- BUDGET TAB -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="leg-panel" id="panel-budget">
+
+  <div class="summary-section">
+    <div class="summary-header">
+      <div class="summary-title">Confirmed Bookings</div>
+      <div class="summary-sub">Paid or contracted as at March 2026</div>
+    </div>
+    <table class="summary-table">
+      <tr><td>🚢 Cruise — Seven Seas Splendor, Concierge Suite D (21 nights)</td><td>ZAR 556,631</td></tr>
+      <tr><td>🏨 Pre-cruise: The Langham Hong Kong (1 night, King)</td><td>ZAR 5,523</td></tr>
+      <tr><td>🏨 Post-cruise: Granbell Hotel Shinjuku (3 nights, Economy Double B&B)</td><td>ZAR 7,889</td></tr>
+      <tr class="total"><td>Confirmed accommodation total</td><td>ZAR 570,043</td></tr>
+    </table>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-header">
+      <div class="summary-title">Flights (TBD — check Nov 2026)</div>
+      <div class="summary-sub">2 pax · Outbound 4 Apr JNB→HKG · Return 1 May TYO→JNB</div>
+    </div>
+    <table class="summary-table">
+      <tr><td>✈️ Option A: Cathay Pacific Premium Economy (recommended)</td><td>~ZAR 45,820</td></tr>
+      <tr><td>✈️ Option B: Cathay Pacific Business Class</td><td>~ZAR 57,656</td></tr>
+      <tr><td>✈️ Option C: Emirates Business via Dubai</td><td>~ZAR 62,574</td></tr>
+      <tr class="total"><td>Budget target (2 pax)</td><td>~ZAR 52,000</td></tr>
+    </table>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-header">
+      <div class="summary-title">Paid Experiences — Estimated</div>
+      <div class="summary-sub">All RSSC tours unless noted. ZAR at ~ZAR 18.50 = $1</div>
+    </div>
+    <table class="summary-table">
+      <tr><td>🤿 Ishigaki snorkelling charter (independent, pre-book)</td><td>~ZAR 2,200</td></tr>
+      <tr><td>🚗 Miyakojima private taxi charter (full day)</td><td>~ZAR 2,500</td></tr>
+      <tr><td>🌃 Seoul Night &amp; Temple Cuisine INC-019 (if booked)</td><td>~ZAR 5,900</td></tr>
+      <tr><td>🌋 Kagoshima Ibusuki Sand Bath KOJ-WT1 (verify price)</td><td>~ZAR TBD</td></tr>
+      <tr><td>🐟 Kochi Chef-Led Tataki KZC-1GT ($179pp × 2)</td><td>~ZAR 6,600</td></tr>
+      <tr><td>🍣 Shimizu Chef-Led Tea &amp; Sushi SMZ-1GT ($169pp × 2)</td><td>~ZAR 6,200</td></tr>
+      <tr><td>🎨 Teamlab Planets Tokyo (¥3,200pp × 2)</td><td>~ZAR 1,200</td></tr>
+      <tr><td>🎟️ Sundry entries (museums, temples, cable cars, hells)</td><td>~ZAR 3,000</td></tr>
+      <tr class="total"><td>Estimated experiences total</td><td>~ZAR 27,600+</td></tr>
+    </table>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-header">
+      <div class="summary-title">Budget Overview</div>
+      <div class="summary-sub">Full trip summary</div>
+    </div>
+    <table class="summary-table">
+      <tr><td>🚢 Accommodation (cruise + hotels)</td><td>ZAR 570,043</td></tr>
+      <tr><td>✈️ Flights (est. Option A)</td><td>~ZAR 45,820</td></tr>
+      <tr><td>🎟️ Experiences (est.)</td><td>~ZAR 27,600</td></tr>
+      <tr><td>🛍️ Shopping budget (Fez + Ramo)</td><td>ZAR 100,000</td></tr>
+      <tr><td>☕ Daily spend / food / transport</td><td>~ZAR 7,500</td></tr>
+      <tr class="total"><td>Estimated total</td><td>~ZAR 750,963</td></tr>
+      <tr><td style="color:var(--text3);font-size:12px;">Original estimate</td><td style="color:var(--text3);font-size:12px;">ZAR 813,851</td></tr>
+    </table>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-header">
+      <div class="summary-title">Savings &amp; Payments</div>
+    </div>
+    <table class="summary-table">
+      <tr><td>💳 Deposit paid (cruise)</td><td>ZAR 42,999</td></tr>
+      <tr><td>📅 Balance due</td><td>~ZAR 530,300 by Oct 2027</td></tr>
+      <tr><td>📈 Monthly savings required</td><td>~ZAR 26,516/month (Mar 2026 → Oct 2027)</td></tr>
+    </table>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-header">
+      <div class="summary-title">⚠️ Open Action Items</div>
+    </div>
+    <table class="summary-table">
+      <tr><td>✈️ Book flights</td><td>Nov 2026</td></tr>
+      <tr><td>🏨 Review Tokyo hotel upgrade (Park Hyatt vs Granbell)</td><td>ASAP</td></tr>
+      <tr><td>🤿 Book Ishigaki snorkelling operator (English-speaking)</td><td>6 months before sailing</td></tr>
+      <tr><td>🚗 Arrange Miyakojima taxi charter or rental car</td><td>Closer to sailing</td></tr>
+      <tr><td>🪪 Confirm China visa-free policy for SA passports</td><td>With travel agent</td></tr>
+      <tr><td>🪖 Submit passports for DMZ tour (INC-003)</td><td>24hrs before Seoul</td></tr>
+      <tr><td>🌋 Verify KOJ-WT1 Ibusuki Sand Bath pricing</td><td>When excursions open</td></tr>
+      <tr><td>🎨 Book Teamlab Planets Tokyo</td><td>ASAP — sells out months ahead</td></tr>
+      <tr><td>🐟 Book KZC-1GT (Kochi, 18 guest limit)</td><td>When excursions open</td></tr>
+      <tr><td>🍵 Book SMZ-1GT (Shimizu, 18 guest limit)</td><td>When excursions open</td></tr>
+    </table>
+  </div>
+
+</div>
+
+</main>
+
+<script>
+function showLeg(id, btn) {
+  document.querySelectorAll('.leg-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function toggleCard(headerEl) {
+  headerEl.closest('.day-card').classList.toggle('open');
+}
+</script>
+</body>
+</html>
