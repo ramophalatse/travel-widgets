@@ -119,6 +119,180 @@ main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
   .restaurant-grid { grid-template-columns: 1fr; }
   main { padding: 1rem 0.75rem 3rem; }
 }
+
+/* ─── DAY DETAIL VIEW ─── */
+.day-title { cursor: pointer; }
+.day-title:hover { color: var(--accent); }
+.detail-view {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  overflow-y: auto;
+}
+.detail-view.open { display: block; }
+.detail-topnav {
+  position: sticky;
+  top: 0;
+  z-index: 210;
+  background: var(--card);
+  border-bottom: 1px solid var(--border2);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  gap: 1rem;
+}
+.detail-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+}
+.detail-back-btn:hover { opacity: 0.75; }
+.detail-back-btn svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.detail-day-counter { font-size: 11px; font-weight: 300; color: var(--text3); text-align: right; white-space: nowrap; }
+.detail-hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.detail-hero-label { font-size: 11px; font-weight: 300; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.detail-hero-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 0.85rem;
+}
+.detail-hero-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.detail-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+.detail-bottomnav {
+  position: sticky;
+  bottom: 0;
+  background: var(--card);
+  border-top: 1px solid var(--border2);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.detail-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text2);
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.detail-nav-btn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+.detail-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.detail-nav-btn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.detail-nav-center { font-size: 11px; font-weight: 300; color: var(--text3); text-align: center; flex: 1; }
+@media (max-width: 600px) {
+  .detail-hero { padding: 1.5rem 1rem 1.25rem; }
+  .detail-body { padding: 1.25rem 1rem 3rem; }
+  .detail-topnav, .detail-bottomnav { padding: 0.75rem 1rem; }
+  .detail-nav-btn { font-size: 12px; padding: 0.45rem 0.7rem; }
+  .detail-nav-center { display: none; }
+}
+
+/* ─── RICH DETAIL CONTENT TYPOGRAPHY ─── */
+.rich-h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text);
+  margin: 1.6rem 0 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border);
+}
+.rich-h3:first-child { margin-top: 0; }
+.rich-h4 {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  margin: 1.1rem 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rich-p {
+  font-size: 13.5px;
+  font-weight: 300;
+  color: var(--text2);
+  line-height: 1.75;
+  margin: 0.55rem 0;
+}
+.rich-p strong { color: var(--text); font-weight: 500; }
+.rich-p em { color: var(--text); font-style: italic; }
+.rich-p code { font-family: monospace; font-size: 12px; background: var(--bg3); padding: 1px 5px; border-radius: 3px; }
+.rich-bold-lead { color: var(--text); }
+.rich-ul {
+  margin: 0.4rem 0 0.6rem 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.rich-ul li {
+  font-size: 13.5px;
+  font-weight: 300;
+  color: var(--text2);
+  line-height: 1.65;
+}
+.rich-ul li strong { color: var(--text); font-weight: 500; }
+.rich-notice {
+  font-size: 12.5px;
+  font-weight: 400;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm);
+  margin: 0.7rem 0;
+  line-height: 1.55;
+}
+.rich-warn { background: var(--warn-bg); color: var(--warn-text); border-left: 3px solid var(--warn); }
+.rich-table-wrap { overflow-x: auto; margin: 0.7rem 0; }
+.rich-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.rich-table td {
+  padding: 5px 8px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.rich-table td strong { font-weight: 500; }
+.rich-table tr:last-child td { border-bottom: none; }
 </style>
 </head>
 <body>
@@ -1510,7 +1684,38 @@ main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
 
 </main>
 
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- DAY DETAIL VIEW OVERLAY -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="detail-view" class="detail-view">
+  <nav class="detail-topnav">
+    <button class="detail-back-btn" onclick="closeDetailView()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to overview
+    </button>
+    <div class="detail-day-counter" id="detail-counter"></div>
+  </nav>
+  <div class="detail-hero">
+    <div class="detail-hero-label" id="detail-label"></div>
+    <div class="detail-hero-title" id="detail-title"></div>
+    <div class="detail-hero-pills" id="detail-pills"></div>
+  </div>
+  <div class="detail-body" id="detail-body"></div>
+  <nav class="detail-bottomnav">
+    <button class="detail-nav-btn" id="detail-prev" onclick="navigateDetail(-1)">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Previous
+    </button>
+    <div class="detail-nav-center" id="detail-nav-center"></div>
+    <button class="detail-nav-btn" id="detail-next" onclick="navigateDetail(1)">
+      Next
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </nav>
+</div>
+
 <script>
+// ─── TAB & CARD NAVIGATION ───
 function showLeg(id, btn) {
   document.querySelectorAll('.leg-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1520,6 +1725,663 @@ function showLeg(id, btn) {
 }
 function toggleCard(headerEl) {
   headerEl.closest('.day-card').classList.toggle('open');
+}
+
+var detailContent = {
+  "Departure \u2014 Johannesburg \u2192 Hong Kong": `<h3 class="rich-h3">4 Apr (Thursday) — Travel Day</h3>
+<p class="rich-p">Depart OR Tambo. Long-haul to Hong Kong (via Dubai on EK or direct on CX depending on final booking). In-flight day — arrive HKG morning of 5 April.</p>`,
+  "Hong Kong \u2014 The Langham": `<h3 class="rich-h3">5 Apr (Friday) — Hong Kong</h3>
+<p class="rich-p">Arrive HKG 06:30. Regent staff meet at arrivals and arrange transfer to The Langham. Check in around 10:30. Day free.</p>
+<p class="rich-p rich-bold-lead"><strong>Getting around:</strong> Airport Express (HKG → Hong Kong Station): HK$115pp, 24 minutes. Then short taxi to The Langham (~10 min, HK$40). Or RSSC transfer if arranged.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon options:</strong></p>
+<ul class="rich-ul">
+  <li>Victoria Harbour waterfront promenade (Tsim Sha Tsui)</li>
+  <li>Avenue of Stars and Kowloon Park</li>
+  <li>Hong Kong Museum of Art (5-min walk from hotel)</li>
+  <li><strong>For Fez:</strong> Canton Road — Chanel, LV, Hermès all within 5 minutes on foot</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Dinner:</strong> Tim Ho Wan (world's most affordable Michelin dim sum, queue early) or book a harbour-view restaurant for a languid first evening. The Langham's own T'ang Court (Chinese fine dining, 3 Michelin stars) is excellent if not wanting to venture out.</p>`,
+  "Hong Kong Embarkation \u2014 Seven Seas Splendor": `<h3 class="rich-h3">6 Apr (Saturday) — Embarkation Day</h3>
+<p class="rich-p">Late checkout. Light morning walk — Jade Market (Kansu Street) for jade jewellery browsing. Transfer to Kai Tak Cruise Terminal (RSSC-arranged). Check in to Seven Seas Splendor. Explore the ship; champagne on the Concierge Suite D balcony. Sail away from Victoria Harbour.</p>`,
+  "Keelung (Taipei) \u2014 National Palace Museum + Taipei City": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Keelung <strong>Duration:</strong> 2 days <strong>Weather:</strong> ~20–25°C. Spring, can shower. <strong>Visa:</strong> Not required — SA passport visa-free for Taiwan <strong>Day check:</strong> Apr 7 = Sunday, Apr 8 = Monday. National Palace Museum OPEN both days.</p>
+<h3 class="rich-h3">Day 1 — Sunday 7 Apr</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: KEE-001 Highlights of Taipei (FREE, ~5hrs)</strong> The National Palace Museum houses one of the world's greatest collections of Chinese imperial artefacts — over 700,000 pieces. Key works: the Jadeite Cabbage (carved from a single piece of jadeite, intricately detailed), the Meat-Shaped Stone (a piece of jasper cut and polished to look exactly like a slice of braised pork belly — astonishing), and the ivory ball carved into 21 concentric rotating spheres. Open Sundays. Chiang Kai-shek Memorial Hall afterwards for the scale of the plaza and the guard-changing ceremony (every hour on the hour). Back by early afternoon.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: Independent — Xinyi District or Zhongshan</strong> Take the MRT into Taipei city from Keelung (~40 min). Xinyi District: Eslite Spectrum (beautiful bookstore/lifestyle concept mall — good for browsing even without buying), Taipei 101 mall for Fez. The observation deck at Taipei 101 (NT$600pp, 89th floor) gives a full city panorama if weather allows. Alternatively, Zhongshan District for boutique shopping, independent designers and concept stores. Allow 3–4 hours; return to ship by early evening.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>KEE-010 Sky Lantern & Shifen Waterfall</strong> — high tourist volume, strenuous, the lanterns are the main draw and feel quite staged</li>
+  <li><strong>KEE-008 Spiritual North Taiwan</strong> — too long, overlaps significantly with KEE-001 and KEE-003</li>
+  <li><strong>KEE-GL1 Through the Eyes of a Local</strong> — meal element removes afternoon flexibility</li>
+  <li><strong>KEE-007 Hot Springs ($169)</strong> — not justified when the free tours are this strong</li>
+</ul>`,
+  "Keelung \u2014 Yehliu Geopark + Night Market Street Food": `<h3 class="rich-h3">Day 2 — Monday 8 Apr</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: KEE-003 Keelung & Yehliu Geopark (FREE, ~4.5hrs)</strong> Yehliu Geopark is one of Taiwan's most otherworldly landscapes — a coastal headland carved by millennia of wind and wave erosion into hundreds of mushroom-shaped rock formations. The Queen's Head is the star: a perfectly balanced rock column topped with a wide, smoothed head, uncannily resembling a woman's profile. The formations change gradually over decades; the Queen's Head's neck is visibly thinning year by year. The wider site includes sea candles, honeycomb rocks, sea turtle formations, and strange encrusted ridges. Done before noon.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: Keelung Miaokou Night Market (or Dadaocheng, Taipei)</strong> <strong>Option A — Stay local:</strong> Keelung Miaokou Night Market sets up in the early afternoon, walkable from port. One of Taiwan's best street-food strips. Key dishes: oyster vermicelli (ô-á-mī-suànn — thick sweet potato noodles in a gloopy, flavoured broth with whole oysters), tian bu la (fish cake skewers, served warm), pork blood sticky rice, scallion pancake with egg. Eat several small things — this is grazing food, not one big dish.</p>
+<p class="rich-p rich-bold-lead"><strong>Option B — Back into Taipei:</strong> Dadaocheng, Taipei's oldest quarter — a preserved late-Qing riverside trading district. Dihua Street is the main artery: two-storey red-brick shophouses selling traditional Chinese medicines, dried goods, teas, textiles, and increasingly, craft shops and design boutiques. Excellent for Fez. Yongle Fabric Market (next to Dihua) for textiles.</p>`,
+  "Ishigaki \u2014 Blue Cave Snorkelling + Kabira Bay": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Ishigaki Port <strong>Duration:</strong> 10 hours in port <strong>Weather:</strong> ~22–26°C. Subtropical, intermittently showery. <strong>Visa:</strong> Not required — Japan visa-free for SA passports <strong>Strategy:</strong> Go fully independent. RSSC tours here are passive (scenic drives, workshops). The water is the headline act.</p>
+<h3 class="rich-h3">Plan: Fully Independent Day</h3>
+<p class="rich-p"><strong>Morning — Pre-booked snorkelling charter (~3.5–4 hrs on water)</strong></p>
+<p class="rich-p">This is non-negotiable. Book an English-speaking operator 3–6 months before sailing via TripAdvisor or Google Maps for Ishigaki marine tours. Half-day, departing from Ishigaki port or a nearby marina (operator will advise).</p>
+<p class="rich-p">What to expect on the water:</p>
+<ul class="rich-ul">
+  <li><strong>Blue Cave (青の洞窟):</strong> A sea cave where light refracts into deep cobalt blue. The cave is accessible by boat and the colour is extraordinary — not a gimmick, genuinely unlike anything above water. The operator will anchor nearby and you swim in.</li>
+  <li><strong>Yonehara/Kabira reef:</strong> Among the most diverse coral in Japan. Sea turtles are extremely common in April — sighting rate is very high; operators will actively look for them. Tropical fish in abundance, high coral cover.</li>
+  <li><strong>Manta ray chance:</strong> The Manta Scramble near Kabira Bay is the world's most reliable manta ray diving site (peak season is June–November), but April sightings are not unusual. Ask the operator about current conditions when booking.</li>
+</ul>
+<p class="rich-p">Cost: ¥8,000–12,000pp (~ZAR 800–1,200pp). Most operators include equipment.</p>
+<p class="rich-p"><strong>Midday — Kabira Bay</strong> Taxi from port (~20 min, ¥1,500–2,000 one-way). No swimming is permitted in Kabira Bay — it's a protected pearl oyster farming area — but the elevated lookout on the headland gives the full picture: an arc of incredibly clear turquoise water dotted with small wooded islands, white sandspit, pearl oyster rafts. One of Japan's most photographed views. Glass-bottom boat tours available independently from operators at the bay (¥1,500pp, no RSSC booking needed) if you want to see the pearl oysters up close.</p>
+<p class="rich-p"><strong>Afternoon — Ishigaki city</strong> Euglena Mall (central Ishigaki, 5 min walk from the ferry terminal area) and Miramare shopping street. For Fez: Okinawan crafts, shisa figurines (the lion-dog guardians seen above every Okinawan doorway — buy a matched pair, one with open mouth to let good luck in, one closed to keep it), Yaeyama textiles (Minsah weaving — cotton fabric with distinctive five-dot and four-dot geometric pattern, traditionally woven by women for their partners). <strong>Ishigaki Salt (石垣の塩)</strong> — Japan's most-awarded sea salt, harvested from pristine Yaeyama waters by solar evaporation. An excellent practical souvenir that won't take up much luggage space.</p>
+<p class="rich-p rich-bold-lead"><strong>Food:</strong> Yaeyama soba — the Ishigaki/Yaeyama variant is thinner and more delicate than Okinawan soba, with a clear, subtle pork broth. Served with braised pork, fish cake, and green onion. Ask at the fish market area near port for recommendations. Pair with Orion beer (Okinawa's local lager) or a shot of awamori (Okinawan distilled spirit made from Thai rice — stronger and earthier than Japanese sake).</p>
+<h3 class="rich-h3">Fallback if snorkelling fails</h3>
+<p class="rich-p">If seas are rough or the operator cancels: <strong>ISH-004 Glass-Bottom Boat & Textile Factory (FREE RSSC, 5.25hrs, meal)</strong> — at least gets you on the water at Kabira Bay and shows the pearl oysters and coral from above. Not a substitute for snorkelling, but a respectable alternative.</p>
+<h3 class="rich-h3">What to skip</h3>
+<p class="rich-p">All RSSC Ishigaki tours (ISH-001 through ISH-006) involve passive sightseeing from buses, small-scale workshops, or experiences easily replicated independently. None are worth trading for water time on a day this good.</p>`,
+  "Hirara (Miyakojima) \u2014 Japan's Finest Beach Day": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Hirara Port <strong>Duration:</strong> 10 hours, 7:00am–5:00pm <strong>Weather:</strong> ~22–26°C. Warm, calm seas. Humidity not yet at peak in April. <strong>RSSC excursions:</strong> None. Entirely independent day. <strong>Strategy:</strong> Day after Ishigaki snorkelling — dial back the physical intensity. Let the island work on you. This is a beach and landscape day, not an activity day.</p>
+<h3 class="rich-h3">The Circuit (pre-arrange private taxi or rental car)</h3>
+<p class="rich-p">Miyakojima is flat and easy to navigate. A private taxi charter costs ¥20,000–30,000 (~ZAR 2,000–3,000) for the vehicle for the day — book closer to sailing via your hotel concierge in Hong Kong or via the ship's Destination Services desk. Alternatively, rental cars are available from Hirara port area; the island has clear road signs.</p>
+<p class="rich-p rich-bold-lead"><strong>8:00–9:30am — Sunayama Beach</strong> A short taxi from Hirara port. The beach is accessed via a short sandy path through coastal scrub, emerging under a natural rock arch carved by the sea. The arch frames the open Pacific beyond. Best in early morning light before it fills. Fine white sand, small waves, uncrowded. Take your time here.</p>
+<p class="rich-p rich-bold-lead"><strong>9:30am–12:00pm — Irabu Bridge + Irabu Island</strong> The Irabu Bridge is 3.5km long, one of Japan's longest — it doesn't look like much from a photograph but the experience of driving across it is striking: the open Pacific on one side, and the shallow turquoise-over-white-sand reef water on the other. At the far end, Irabu Island is almost entirely undeveloped. Drive to <strong>Sawada no Hama</strong>: a calm, shallow bay with clear water and white sand, almost no facilities, effectively no tourists. Ideal for a quiet wade or simply sitting on the sand.</p>
+<p class="rich-p rich-bold-lead"><strong>12:00–1:30pm — Hirara town lunch</strong> Return to Hirara for <strong>Miyako soba</strong>. This variant is lighter and more delicate than Okinawan soba — a clear broth made from pork and bonito, served with thin noodles, braised pork, fish cake. Ask the taxi driver for a local, non-tourist-facing restaurant. The ones near the covered shopping arcade (Nishizato-dori) tend to be straightforward and excellent.</p>
+<p class="rich-p rich-bold-lead"><strong>1:30–4:00pm — Yonaha Maehama Beach</strong> This is the main event of the day, and arguably the finest beach in Japan. 7km of powder-white sand — the sand is silica-fine, almost floury underfoot. The water grades from pale mint green close in to deep turquoise further out, shallow for a long way. Almost no rocks. The <strong>Miyakojima Tokyu Resort</strong> at the northern end of the beach sells day-use beach access including sun loungers and umbrellas — use this, it's worth it. Fez decompresses; Ramo walks the full length of the waterline. Two hours here passes very quickly.</p>
+<p class="rich-p rich-bold-lead"><strong>4:00pm — Return to port</strong> ~30 min drive, comfortable before 5:00pm departure.</p>`,
+  "Day at Sea \u2014 East China Sea": `<h3 class="rich-h3">Day at Sea</h3>
+<p class="rich-p">Enjoyed at leisure aboard Seven Seas Splendor. The ship is crossing the East China Sea toward Shanghai. Enjoy the spa, the restaurants, or simply rest on the balcony of Concierge Suite D as the sea passes.</p>`,
+  "Shanghai \u2014 Best of Shanghai + Acrobatic Show": `<div class="rich-notice rich-warn"><strong>Port:</strong> Shanghai International Cruise Terminal <strong>Duration:</strong> 2 days <strong>Weather:</strong> ~12–20°C. Spring, can feel cool in wind/rain. Bring a layer. <strong>Visa:</strong> ⚠️ Confirm entry policy — China offered visa-free access to SA citizens (up to 15 days) from late 2024. Verify current policy with travel agent before sailing. Do not assume it remains in force. <strong>Day check:</strong> Apr 12 = Wednesday, Apr 13 = Thursday. All attractions open.</div>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>SHA-001</strong> Best of Shanghai (8hrs, includes meal) — Pudong skyscrapers, Yu Yuan Gardens, Jade Buddha Temple, Shanghai Museum</li>
+  <li><strong>SHA-004</strong> Water Town of Zhujiajiao (5hrs) — 1,700-yr-old canal settlement</li>
+  <li><strong>SHA-E01</strong> Chinese Acrobatic Show (complimentary for ALL Splendor guests, Portman Theater)</li>
+  <li><strong>SHA-008</strong> Art of Shanghai (4hrs)</li>
+  <li><strong>SHA-009</strong> Shanghai Old & New (3.5hrs)</li>
+  <li><strong>SHA-GL1</strong> Through the Eyes of a Local (5hrs, dim sum lunch included)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>SHA-012</strong> Suzhou in Depth ($159, 9.5hrs) — ancient gardens and canals; 4hrs coach travel</li>
+  <li>Small group upgrades (SHA-001SG $199, SHA-007SG $149, SHA-009SG $149)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Executive Collection:</strong> SHA-C04 Half Day Car ($599, 4hrs, 2pax) · SHA-V04 Half Day Van ($799) · SHA-V08 Full Day Van ($999)</p>
+<h3 class="rich-h3">Day 1 — Wednesday 12 Apr</h3>
+<p class="rich-p rich-bold-lead"><strong>All day: SHA-001 Best of Shanghai (FREE, 8hrs, meal included)</strong> A strong full-day tour that covers Shanghai's two most important traditional sites alongside the modern skyline. <strong>Yu Yuan Gardens</strong> (Ming dynasty, 16th century) — four hectares of classical Chinese garden design: zigzag bridges over carp ponds, ornamental rockeries, pavilions with upturned eaves, corridors of moon gates. The adjacent Yu Yuan Bazaar has been touristified but remains atmospheric. <strong>Jade Buddha Temple</strong> — an active Buddhist temple housing a 1.9m white jade Buddha seated and a 95cm reclining jade Buddha, both carved from a single block of Burmese jade in 1882. People actively pray here; respect that. <strong>Shanghai Museum</strong> — world-class collection of Chinese bronzes, ceramics, calligraphy, and jade spanning 5,000 years. The bronze hall alone is worth an hour.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening: SHA-E01 Chinese Acrobatic Show (complimentary for all Splendor guests)</strong> Portman Theater, ~3hrs. Included in the cruise for all passengers. World-class acrobatics in the Chinese tradition — contortionists, plate spinners, aerial silk artists, motorcycle globe of death, human tower pyramids. Book your spot early as it fills.</p>`,
+  "Shanghai \u2014 Water Town Zhujiajiao + French Concession": `<h3 class="rich-h3">Day 2 — Thursday 13 Apr</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: SHA-004 Water Town of Zhujiajiao (FREE, ~5hrs)</strong> A 1,700-year-old canal town 50km outside Shanghai, far better preserved than the more famous Zhouzhuang. Stone arch bridges over canals — the Fangsheng Bridge (1571) is the oldest and most photographed. Qing dynasty stone-flagged lanes. Boat rides through the waterways in traditional wooden gondolas. Fewer tour buses than Zhouzhuang. The food market by the main canal sells traditional local snacks: zongzi (sticky rice dumplings wrapped in bamboo leaves), pig trotters braised in soy (the town's signature dish, sold by weight), and various steamed pastries.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: French Concession + Tianzifang (independent)</strong> Return to Shanghai, take a taxi (~30 min) to the French Concession. This is the most walkable and atmospheric district of modern Shanghai: tree-lined streets of 1920s–1930s French and Art Deco architecture, independent boutiques, coffee shops, bookstores.</p>
+<ul class="rich-ul">
+  <li><strong>For Fez:</strong> Xintiandi — luxury boutiques and restaurants in restored shikumen stone-gate houses. Hermès, Bottega Veneta, Lane Crawford all present. Huaihai Road for further upscale shopping.</li>
+  <li><strong>For both:</strong> Tianzifang, just south of Xintiandi — narrow art alleyways, independent designers, ceramic studios, teahouses, xiaolongbao stalls. Shanghai's equivalent of Beijing's 798 art district but more intimate and commercial.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Food notes:</strong> Xiaolongbao (soup dumplings) are Shanghai's signature — the skin should be almost translucent, the broth inside hot, and there should be a small twist at the top (the number of folds matters in the traditional form). Din Tai Fung (Xintiandi branch) is reliable and consistent. For something less polished but arguably better: any of the small stalls in the Tianzifang alleys. Dip in black vinegar with ginger strips, not soy alone.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>SHA-012 Suzhou in Depth</strong> — genuinely beautiful ancient city but 4hrs of coach travel round-trip eats the day; better done as an overnight if ever revisiting Shanghai</li>
+  <li><strong>SHA-WT1 Taiji on the Bund</strong> — too gentle; lose a morning for minimal gain</li>
+  <li>Small group tour upgrades are not worth the premium on an all-inclusive cruise</li>
+</ul>`,
+  "Day at Sea \u2014 Yellow Sea": `<h3 class="rich-h3">Day at Sea</h3>
+<p class="rich-p">The Splendor is crossing the Yellow Sea toward Incheon (Seoul). At sea day aboard ship.</p>`,
+  "Seoul \u2014 DMZ Third Tunnel & North Korea Sightline": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Incheon International Cruise Terminal <strong>Duration:</strong> 2 days <strong>Weather:</strong> ~12–18°C daytime, ~5–9°C at night. Crisp spring — bring a proper jacket. <strong>Visa:</strong> Not required — SA passport, 90 days visa-free <strong>Logistics:</strong> Incheon port is 1hr+ drive from central Seoul. Factor in 2 hours round-trip coach time on any day you go into the city. <strong>Day check:</strong> Apr 15 = Saturday, Apr 16 = Sunday.</p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>INC-003</strong> DMZ 3rd Tunnel and Seoul (8hrs, meal) — Freedom Bridge, Third Tunnel of Aggression, Dora Observatory (North Korea sightline), Insadong</li>
+  <li><strong>INC-011</strong> Best of Seoul (7.5hrs, meal) — Gyeongbokgung Palace, Royal Guard ceremony, National Folk Museum, Cheonggyecheon stream, Insadong</li>
+  <li><strong>INC-001</strong> Grand Tour of Seoul (8hrs, meal)</li>
+  <li><strong>INC-008</strong> Seoul at a Glance (5.25hrs)</li>
+  <li><strong>INC-016</strong> Seoul on Your Own (6hrs — dropped at Shinsegae Department Store)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>INC-019</strong> Seoul Night & Temple Cuisine ($159pp, 5.75hrs, evening — Buddhist temple cuisine dinner, Dongdaemun Design Plaza, Sebit Islets lit at night)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Executive:</strong> INC-C04 Half Day Car ($999, 4hrs, 2pax) · INC-C08 Full Day Car ($1,199, 8hrs, 2pax)</p>
+<h3 class="rich-h3">Day 1 — Saturday 15 Apr</h3>
+<div class="rich-notice rich-warn"><strong>All day: INC-003 DMZ & Third Tunnel (likely FREE, 8hrs, meal)</strong> ⚠️ Submit passport numbers, nationalities, and dates of birth to RSSC Destination Desk 24hrs before arrival at Incheon. The tour requires military clearance and cannot proceed without this information. Tour subject to cancellation on the day if military conditions change — this happens occasionally and is outside RSSC's control. If cancelled, fall back to INC-011.</div>
+<p class="rich-p">The DMZ itinerary:</p>
+<ul class="rich-ul">
+  <li><strong>Freedom Bridge</strong> — the 1953 bridge over the Imjin River where POW exchanges took place. Red flags marking the Northern limit. Barbed wire, guard posts.</li>
+  <li><strong>Third Tunnel of Aggression</strong> — discovered in 1978, one of four infiltration tunnels dug from North Korea towards Seoul. 73 metres underground, 2km long. You walk (or take a small train) down the sloping tunnel access shaft. The tunnel is narrow, roughly blasted granite — North Korea denied digging it, then claimed it was a coal mine (there is no coal), then painted the walls black to support that claim. Walking through it is quietly remarkable.</li>
+  <li><strong>Dora Observatory</strong> — the southernmost point from which you can see into North Korea with binoculars (provided). Kaesong is visible on a clear day, as are the Kaesong Industrial Complex, the propaganda village of Kijŏngdong (North Korea claims it's populated; South Korea says it's unmanned), and the world's 4th-tallest flagpole flying a very large North Korean flag. The entire observation area feels surreal.</li>
+  <li><strong>Insadong</strong> — free time on the return. Traditional craft street: celadon ceramics, hanji paper products, tea shops, folk art. Seoul's most touristy street but genuinely good for browsing.</li>
+</ul>`,
+  "Seoul \u2014 Gyeongbokgung Palace + Gwangjang Market": `<h3 class="rich-h3">Day 2 — Sunday 16 Apr</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: INC-011 Best of Seoul (FREE, 7.5hrs, meal)</strong></p>
+<ul class="rich-ul">
+  <li><strong>Gyeongbokgung Palace</strong> — the main palace of the Joseon dynasty (built 1395, destroyed during Japanese colonial period, now 40% restored). The scale is immense: the outer gate alone is enormous. The <strong>Royal Guard Changing Ceremony</strong> (매시 정각, on the hour) is one of Seoul's great free spectacles — soldiers in full Joseon-era dress armour, drums, flags, choreographed formations. Worth timing your arrival for. The <strong>National Folk Museum</strong> within the palace grounds gives excellent context for what you're seeing: the Joseon social hierarchy, daily life, rituals, and material culture.</li>
+  <li><strong>Cheonggyecheon Stream</strong> — an elevated highway was demolished in 2005 to restore this urban stream, now a 10km linear park through central Seoul. Walking along it is a respite from the city density above.</li>
+  <li><strong>Insadong</strong> — free time again if the guide allows.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: Gwangjang Market (independent)</strong> ~20 min taxi from Gyeongbokgung (or short metro). Seoul's oldest covered market, established 1905. The food hall section is the reason to come:</p>
+<ul class="rich-ul">
+  <li><strong>Bindaetteok</strong> (빈대떡) — thick mung bean pancakes, fried on a griddle, eaten hot. The best thing you'll eat in Seoul. Halemoni (grandmothers) cook them on the spot.</li>
+  <li><strong>Yukhoe</strong> (육회) — Korean beef tartare. Raw minced beef with sesame oil, pine nuts, pear julienne, egg yolk, garlic. Served cold. Extraordinary texture and flavour.</li>
+  <li><strong>Mayak gimbap</strong> (마약 김밥) — tiny rice rolls with sesame and pickled radish, dipped in mustard sauce. Called "narcotic gimbap" because they're addictive. Eat 10.</li>
+  <li><strong>Makgeolli</strong> — unfiltered Korean rice wine, cloudy white, slightly fizzy, very low alcohol, served in a bowl. Proper market drinking.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Evening option: INC-019 Seoul Night & Temple Cuisine ($159pp, 5.75hrs)</strong> Only book this if ship departure time allows — verify at Destination Desk.</p>
+<ul class="rich-ul">
+  <li><strong>Temple cuisine dinner</strong> — Buddhist monastery cooking: no meat, no garlic, no onions, no chives, no leeks (the five pungent vegetables are forbidden in Buddhist practice). What remains: extraordinarily refined vegetable preparations, fermented foods, mushroom broths. One of Korea's most distinctive culinary traditions.</li>
+  <li><strong>Dongdaemun Design Plaza (DDP)</strong> — Zaha Hadid's fluid metal building, lit dramatically at night. The exterior alone is worth seeing.</li>
+  <li><strong>Sebit Islets</strong> — three floating islands in the Han River, illuminated and reflected at night. Very photogenic.</li>
+</ul>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>INC-004/INC-014</strong> Korean Folk Village — packaged heritage with staged performances; Gwangjang market is far more alive</li>
+  <li><strong>INC-016</strong> Seoul on Your Own — dropped at Shinsegae Department Store; not needed given you'll be doing independent afternoons anyway</li>
+</ul>`,
+  "Jeju \u2014 Haenyeo Divers + Lava Cave + Black Pork": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Jeju Port <strong>Duration:</strong> Full day <strong>Weather:</strong> ~13–19°C. Breezier than mainland Korea, maritime. <strong>Visa:</strong> Not required — SA passport <strong>Day check:</strong> Apr 18 = Thursday.</p>
+<h3 class="rich-h3">RSSC Tour Options (all FREE)</h3>
+<ul class="rich-ul">
+  <li><strong>CHJ-001</strong> Jeju City Highlights (3.25hrs)</li>
+  <li><strong>CHJ-002</strong> Hallim Park & O'Sulloc Tea Plantation (4hrs — museum under remodel, visits plantation)</li>
+  <li><strong>CHJ-003</strong> Tea Culture & Market (3.75hrs)</li>
+  <li><strong>CHJ-004</strong> Women Divers & Spirited Garden (3.75hrs)</li>
+  <li><strong>CHJ-005</strong> Sangumburi Crater & Manjanggul Lava Cave (3.75hrs, strenuous)</li>
+  <li><strong>CHJ-006</strong> Sunrise Peak & Seongeup Folk Village (4hrs)</li>
+  <li><strong>CHJ-007</strong> Jeju's Natural Highlights (6.5hrs, strenuous)</li>
+  <li><strong>CHJ-GG1</strong> Windmill Coastal Walkway (3.25hrs)</li>
+</ul>
+<h3 class="rich-h3">Plan</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: CHJ-004 Women Divers & Spirited Garden (FREE, 3.75hrs)</strong></p>
+<p class="rich-p">Two completely different but equally compelling experiences:</p>
+<p class="rich-p"><strong>Haenyeo</strong> (해녀) — Jeju's famous free-diving women. A UNESCO-listed intangible cultural heritage. These women, predominantly in their 70s and 80s, dive to depths of 10–20 metres on a single breath (no oxygen equipment, ever) to collect sea urchin, abalone, conch, and octopus. They have been doing this their entire lives. The haenyeo demonstrations include a performance of their diving work and an explanation of their culture, community structure (haenyeo associations govern the diving grounds), and traditions. The whistle they make upon surfacing — the sumbisori — is a controlled breath technique developed over decades. Watching women in their eighties surface from 15 metres with a catch is genuinely moving.</p>
+<p class="rich-p"><strong>Spirited Garden</strong> — One farmer's 40-year obsession. Bunjae Artpia (the formal name) is a private bonsai garden on a scale that seems impossible for private ownership: hundreds of specimens, many over a century old, arranged across a landscaped hillside. Each tree has been shaped and grown for decades. The oldest specimens have root systems that sprawl across rock faces. The garden has its own internal coherence — a vision of nature in miniature, sustained over a lifetime.</p>
+<p class="rich-p rich-bold-lead"><strong>Early afternoon: Manjanggul Lava Cave (independent taxi, ~30 min)</strong> ¥2,000pp entry. The cave is a 7.4km lava tube formed by a volcanic eruption approximately 300,000 years ago. The publicly accessible section (1km) is illuminated and wide enough to walk comfortably. The main attraction is the <strong>lava column</strong> at the far end of the accessible section: 7.6m tall, the world's largest, formed when lava flowed past a solidified pillar from both directions and built up around it. The cave is 11°C inside regardless of outside temperature — bring a light jacket. Various lava formations are lit along the route: lava stalactites (formed when lava dripped from the ceiling and solidified), shelf marks (horizontal lines showing where the lava level stood at different points), and the lavacicle formations that look like melted wax candles frozen in mid-drip.</p>
+<p class="rich-p rich-bold-lead"><strong>Mid-afternoon: Dongmun Market</strong> Taxi from the cave (~30 min). Covered traditional market in central Jeju.</p>
+<ul class="rich-ul">
+  <li><strong>Hallabong tangerines</strong> — Jeju's most famous agricultural product. A cultivar of mandarin grown only on Jeju, harvested November–March. In late April you may find the last of the season or early season preserved forms. Buy a bag.</li>
+  <li><strong>Black sesame tteok</strong> — steamed rice cakes coated in crushed black sesame. Sold fresh from stalls.</li>
+  <li><strong>Haenyeo seafood stalls</strong> — sea urchin (uni) on rice, raw abalone, conch porridge. If the CHJ-004 morning gave you context, eating here has additional meaning.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Evening: Heukdwaeji Street — Jeju black pork dinner</strong> Heukdwaeji (흑돼지, "black pork") is Jeju's native pig breed, distinct from mainland Korean pork. The meat is darker, richer, and more marbled. The breed nearly disappeared during the 20th century and has been carefully revived. Order <strong>samgyeopsal</strong> (pork belly, thick-cut, grilled over charcoal) and <strong>moksal</strong> (neck cut — fattier, more flavourful). Wrap in sesame leaves with fermented soybean paste (doenjang), sliced garlic, and green chilli. Walk in or book early on the main heukdwaeji restaurant strip near the port.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>CHJ-007</strong> Jeju's Natural Highlights (6.5hrs, strenuous) — kills the afternoon</li>
+  <li><strong>CHJ-006</strong> Sunrise Peak — best at dawn; incompatible with a cruise ship schedule</li>
+  <li><strong>CHJ-002</strong> Tea Plantation — interesting but CHJ-004 edges it for memorability</li>
+</ul>`,
+  "Nagasaki \u2014 Peace Museum + Glover Garden + Cathedral": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Nagasaki Port <strong>Duration:</strong> 10 hours <strong>Weather:</strong> ~11–19°C. Often wetter than the rest of Japan in spring. <strong>Visa:</strong> Not required — Japan visa-free for SA passports</p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>NGS-001</strong> Highlights of Nagasaki (3hrs)</li>
+  <li><strong>NGS-004</strong> Panoramic Nagasaki (4.75hrs, strenuous — many steps)</li>
+  <li><strong>NGS-005</strong> Best of Nagasaki (4hrs, moderate — Atomic Bomb Museum + Peace Park + Dejima)</li>
+  <li><strong>NAG-002</strong> Museum of History & Culture (3hrs)</li>
+  <li><strong>NAG-003</strong> Peace Park only (2hrs)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>NGS-002</strong> Splendor of Arita & Nagasaki ($179, 7hrs) — Arita ceramics town + Peace Park, 2hr drive each way</li>
+  <li><strong>NGS-008</strong> Hidden Christianity & Japanese Culture (2.2hrs) — Sotome region secret church, soba-making, market. Verify pricing.</li>
+  <li><strong>NGS-009</strong> Traditional Japanese Cuisine & Hot Spring ($299, 6.5hrs) — Mt Unzen, Fukagawa Seiji porcelain, kaiseki meal</li>
+  <li><strong>NGS-WT1</strong> Nordic Walk + Buddhist Temple Lunch (6.25hrs)</li>
+</ul>
+<h3 class="rich-h3">Plan</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: NGS-005 Best of Nagasaki (FREE, 4hrs, moderate)</strong></p>
+<p class="rich-p rich-bold-lead"><strong>Atomic Bomb Museum:</strong> Among the world's most candid and carefully curated museums of human tragedy. The clock stopped at 11:02am on 9 August 1945 — the moment the second atomic bomb detonated 500 metres above Nagasaki. The museum does not editorialize. It presents: a shadow burned permanently into stone steps (the negative image of a person who was vaporised), a watch stopped at 11:02, a child's burned lunchbox with the charred remains of lunch inside, a bottle melted in the heat and solidified into a surreal shape. Twisted iron girders. A scale model showing the radius of destruction at each temperature interval. The building that was closest to the hypocentre and survived. Allow 90 minutes minimum inside the museum — this is not a place to rush.</p>
+<p class="rich-p"><strong>Peace Memorial Park</strong> is 500 metres from the museum, built near the hypocentre. The main sculptures are large and somewhat formal; the content of the museum is more affecting.</p>
+<p class="rich-p"><strong>Dejima</strong> — the Dutch trading post. During Japan's 200-year Edo-period sakoku (closed country) policy, all contact with the outside world flowed through this single 1.5-hectare artificial island in Nagasaki harbour, occupied exclusively by Dutch merchants of the VOC. Japan's doctors, scientists, and intellectuals gained their entire knowledge of Western science and medicine through this one channel — a period called rangaku (Dutch learning). Dejima has been partially reconstructed and the small museum explains how extraordinary this period of managed cultural exchange was.</p>
+<p class="rich-p rich-bold-lead"><strong>Early afternoon: Glover Garden (shuttle/taxi, ~10 min)</strong> Thomas Blake Glover was a Scottish merchant who arrived in Nagasaki in 1859, aged 21, and became one of the most consequential foreigners in Japanese history — he introduced the first steam locomotive to Japan, helped found what became Kirin Beer and Mitsubishi Shipbuilding, and sold weapons to the Chōshū and Satsuma domains that enabled the Meiji Restoration. His hillside estate is now preserved as a park with panoramic views of Nagasaki harbour. The garden contains several 19th-century foreign merchant mansions, all beautifully maintained. Glover House is Japan's oldest surviving Western-style wooden building. The Madame Butterfly connection: Puccini based his opera on a story set in Nagasaki, and the fictional character is said to have been inspired by a real Japanese woman who had a relationship with a foreign trader. Allow 90 minutes.</p>
+<p class="rich-p rich-bold-lead"><strong>Mid-afternoon: Oura Cathedral</strong> 5-minute walk from Glover Garden. Japan's only Gothic church built before the Meiji period (1868), constructed in 1864 by French missionaries. UNESCO World Heritage listed. In 1865, a group of villagers from the Urakami district visited the cathedral and revealed themselves to the priest as kakure kirishitan — hidden Christians who had secretly maintained their faith for 250 years during the Edo period's brutal persecution of Christianity. They had preserved their faith without any priest, keeping it alive through coded prayers, hidden icons, and secret ceremonies passed from generation to generation. The priest described the encounter as "the miracle of the Orient." The cathedral is small and beautiful.</p>
+<p class="rich-p rich-bold-lead"><strong>Late afternoon: Shopping + dinner</strong></p>
+<ul class="rich-ul">
+  <li><strong>Hamanomachi shopping arcade</strong> — covered arcade near central Nagasaki. For Fez: <strong>Arita and Hasami ceramics</strong> (both produced in nearby towns, sold throughout Nagasaki — Arita is more formal and delicate, Hasami is earthier and more casual). <strong>Fukusaya Castella cake</strong> (est. 1624) — Nagasaki's most famous food product, a Portuguese-origin sponge cake adapted by the Japanese into something denser, more honeyed, with a distinctive paper bottom (the cake is baked into a wooden mould and the paper holds it together). Buy a full loaf.</li>
+  <li><strong>Dinner at Shikairo:</strong> The restaurant that invented champon (1899) — a rich, milky pork-bone broth loaded with seafood (shrimp, squid, clams), pork slices, cabbage, and vegetables. Order champon and sara udon (the same toppings over crispy thin noodles). The restaurant itself is large and tourist-facing but the food is its own justification.</li>
+</ul>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>NGS-004</strong> Panoramic Nagasaki — strenuous and overlaps with NGS-005</li>
+  <li><strong>NGS-002</strong> Splendor of Arita — genuinely interesting but the 4hr round-trip coach commitment consumes the day; better as a separate trip if ever revisiting Kyushu</li>
+  <li><strong>NGS-009</strong> Hot Spring + kaiseki meal — saves that register (geothermal + food) for Beppu, where it's even better</li>
+</ul>`,
+  "Kagoshima \u2014 Volcanic Sand Bath + Sengan-en Garden": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Kagoshima Port <strong>Duration:</strong> 9 hours <strong>Weather:</strong> ~11–21°C. Mild, rain possible. <strong>Context:</strong> Day after Nagasaki's heavy WWII content. Deliberately shift register — lean into wonder and pleasure. Skip Chiran (WWII kamikaze memorial) to avoid consecutive days of memorial content.</p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>KOJ-001</strong> Highlights of Kagoshima (5.5hrs) — Sakurajima ferry + Arimura Lava Observatory + Sengan-en Garden + Shoko Shuseikan Museum</li>
+  <li><strong>KOJ-003</strong> Chiran Discovery (4hrs) — Samurai Lane + Kamikaze Peace Museum <em>(skip — see above)</em></li>
+  <li><strong>KOJ-005</strong> Volcanic Sakurajima (3.5hrs) — ferry + Arimura Observatory, 60 steps</li>
+  <li><strong>KOJ-006</strong> Senganen Garden & Museum (3.25hrs) — UNESCO garden + Shoko Shuseikan Museum</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>KOJ-007</strong> Kagoshima's Cuisine & Volcanic Landscape ($309, 7hrs) — Sakurajima + Sengan-en + Terukuni shrine + Kurobuta pork tonkatsu lunch + sake + Tenmonkan</li>
+  <li><strong>KOJ-WT1</strong> Ibusuki Sand Bath (3.75hrs, wellness — price not shown, verify when excursion bookings open)</li>
+</ul>
+<h3 class="rich-h3">Recommended Plan</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: KOJ-WT1 Ibusuki Sand Bath (~3.75hrs, verify pricing)</strong> Ibusuki, 50km south of Kagoshima, is the only place in Japan where naturally heated volcanic sand emerges from the beach at the right temperature for therapeutic bathing. You are buried to the neck in this dark sand by attendants, left for 10–15 minutes as the geothermal heat penetrates deeply, then led to a natural hot spring to wash off. The sensation is unlike anything else on this trip — deep, radiating warmth from below, total stillness, the smell of salt and mineral. Genuinely restorative. Nothing like it anywhere else on the itinerary.</p>
+<div class="rich-notice rich-warn">⚠️ Verify pricing when RSSC excursion bookings open. If the RSSC price is too high, the Ibusuki Iwasaki Hotel accepts walk-ins for their sand bath (the most famous facility) — arrive early as it fills.</div>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: KOJ-006 Senganen Garden & Museum (FREE, 3.25hrs)</strong> The Shimazu clan's 17th-century estate, designed with Sakurajima volcano as its deliberate borrowed landscape backdrop (a central concept in Japanese garden design — shakkei, or "borrowed scenery"). The garden uses the volcanic cone framed by the garden's gates and framing walls as the focal point of the composition. It works. The <strong>Shoko Shuseikan Museum</strong> on the same grounds was Japan's first Western-style factory, built during the Meiji-era modernisation drive. Now a UNESCO World Heritage site.</p>
+<p class="rich-p rich-bold-lead"><strong>Late afternoon: Sakurajima ferry (independent, optional)</strong> ¥160pp each way. The ferry runs every 15 minutes and takes 15 minutes — one of Japan's cheapest and most dramatic short ferry rides, crossing directly to an active volcano. On Sakurajima: <strong>Arimura Lava Observatory</strong> is a free viewpoint over the 1914 lava field (the eruption that deposited enough lava to connect Sakurajima island to the Osumi Peninsula). Walk the short lava trail. The mountain vents white smoke continuously — you are standing on active geological time.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening: Tenmonkan arcade + dinner</strong> Kagoshima's central covered shopping arcade. For Fez: <strong>Satsuma-yaki ceramics</strong> — Kagoshima's distinctive pottery tradition, brought to Japan by Korean potters abducted during the 1590s invasions. The glaze is characteristically cream, sometimes with gold or floral patterns. Excellent quality is available throughout the arcade.</p>
+<p class="rich-p rich-bold-lead"><strong>Dinner: Kurobuta black pork tonkatsu.</strong> The Kagoshima Black pork (ibérico pork's Japanese counterpart) is a Berkshire-breed pig raised on sweet potatoes, giving the meat a distinctive sweetness and fine marbling. Order <strong>tonkatsu</strong> specifically (breaded, deep-fried cutlet) — it's the best preparation for this cut. The Tenmonkan area has specialist kurobuta restaurants. Pair with Satsuma shochu — sweet potato distilled spirit, Kagoshima's indigenous drink, served on the rocks or with hot water.</p>
+<h3 class="rich-h3">Alternative single-tour day</h3>
+<p class="rich-p"><strong>KOJ-007 ($309, 7hrs)</strong> — covers Sakurajima + Sengan-en garden + Terukuni shrine + Kurobuta pork tonkatsu lunch + sake tasting + Tenmonkan. Best value paid tour on this port. Loses the sand bath but gives a complete guided day with the food highlights built in.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>KOJ-003</strong> Chiran Samurai/Kamikaze (WWII memorial — consecutive after Nagasaki)</li>
+  <li><strong>KOJ-002</strong> Day in Chiran & Satsuma Peninsula (strenuous + same issue)</li>
+  <li><strong>KOJ-008</strong> Volcano Ash Painting — minor experience next to the volcano itself</li>
+</ul>`,
+  "Beppu \u2014 Seven Hells + Steam Kitchen + Onsen": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Beppu Port <strong>Duration:</strong> 8 hours <strong>Weather:</strong> ~10–18°C. Mild, can be damp. <strong>Context:</strong> Beppu is Japan's geothermal capital — more hot spring output than almost anywhere on earth. The city literally steams from street-level vents. One day here should go deep into that identity: the jigoku (boiling hells), Kannawa village's steam-cooking, and the onsen. This follows Kagoshima's volcanic sand bath — the thermal thread continues, but Beppu is distinct. It's about spectacle and food, not bathing (though bathing is available for those who want it).</p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>BE9-001</strong> Amazing Hell Springs & Village Stop (3hrs) — Sea Hell + Blood Pond Hell + Myoban Yunosato village shop</li>
+  <li><strong>BE9-002</strong> Jigokumeguri & Bamboo Craft (4hrs) — Sea Hell + Blood Pond foot bath + bamboo workshop</li>
+  <li><strong>BE9-004</strong> Beppu Hot Spring Experience (3hrs) — communal onsen soak + Kannawa village. <strong>⚠️ Full nudity required. Visible tattoos prohibited.</strong></li>
+  <li><strong>BE9-007</strong> Yufuin Village & Beppu Ropeway (5hrs) — Yufuin free time + Lake Kinrin + Yunotsubo Street + Mt Tsurumi cable car</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>BE9-006</strong> Yufuin with Hot Spring Experience (6.5hrs, meal included) — Yufuin + Lake Kinrin + onsen soak. <strong>⚠️ Full nudity required. Visible tattoos prohibited.</strong></li>
+  <li><strong>BE9-008</strong> Hita Village & Hara Jirozaemon Factory (4.5hrs) — 23-generation soy sauce/miso factory + Mamedamachi retro street</li>
+  <li><strong>BE9-GG1</strong> Beppu Hot Springs & Geothermal Energy (6hrs) — geothermal power plant + Sea Hell + Kannawa + jigoku-mushi snack included</li>
+</ul>
+<h3 class="rich-h3">Recommended Plan: Independent morning + FREE afternoon</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: Full Jigokumeguri circuit (independent, ~3hrs)</strong> All 7 major boiling hells, self-guided. Combined ticket ~¥2,200pp. The RSSC tours only cover 2 of the 7 — the full circuit is significantly better. The hells fall into two clusters about 2km apart (taxi between them: ¥700).</p>
+<p class="rich-p">The seven hells: 1. <strong>Umi Jigoku (Sea Hell)</strong> — cobalt blue boiling pool, the colour of deep ocean water. Steam rises constantly. Lotus flowers float in adjacent cooler pools nearby (a deliberate incongruity). 2. <strong>Oniishibozu Jigoku (Monk's Head Hell)</strong> — grey mud bubbles in large mounds that look like shaved monk's heads emerging from the surface. 3. <strong>Kamado Jigoku (Cooking Pot Hell)</strong> — multiple pools at different temperatures with theatrical demon-chef props; foot bath area. 4. <strong>Oniyama Jigoku (Crocodile Hell)</strong> — the spring's heat feeds a crocodile farm; over 100 crocodiles. Slightly absurd, genuinely interesting. 5. <strong>Shiraike Jigoku (White Pond Hell)</strong> — milky white water, quieter and more serene. 6. <strong>Tatsumaki Jigoku (Tornado/Geyser Hell)</strong> — a geyser that erupts every 30–40 minutes. The gap between visits can be found posted at the entrance; plan around it. Eruptions last several minutes. 7. <strong>Chinoike Jigoku (Blood Pond Hell)</strong> — the most famous and most photographed. A deep crimson-red pool, the colour of oxidised iron, steaming heavily. The pigment comes from iron chloride and magnesium oxide dissolving from the volcanic rock. Leave this for last — it's the most dramatic.</p>
+<p class="rich-p">Allow 15–20 min per hell. Do the two clusters in order; the Blood Pond cluster contains the most dramatic hells and should finish the circuit.</p>
+<p class="rich-p rich-bold-lead"><strong>Midday: Kannawa jigoku-mushi steam kitchen (independent, ~1hr)</strong> Walk to Kannawa district, a few minutes from the Blood Pond cluster. The entire district steams from street-level vents — white vapour rising from drains, cracks in pavements, dedicated steam chimney structures in front of houses and restaurants. The smell of sulphur is constant. The jigoku-mushi steam kitchen is a communal cooking facility where geothermal steam is piped directly to cooking stations. You place your food in wicker baskets over the steam vents and wait:</p>
+<ul class="rich-ul">
+  <li><strong>Jigoku tamago</strong> (hell eggs) — 15 minutes in geothermal steam. The white is firmer than boiled, the yolk is creamier, there is a faint mineral note. Sell for ¥100 each.</li>
+  <li><strong>Sweet potato (imo)</strong> — the steam brings out the natural sweetness. 30 minutes.</li>
+  <li><strong>Corn</strong> — 20 minutes.</li>
+  <li><strong>Dumplings (gyoza)</strong> — 10 minutes.</li>
+  <li>Some stations allow you to steam purchased seafood — ask.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: BE9-004 Beppu Hot Spring Experience (FREE, 3hrs)</strong> <em>(or Yufuin independently)</em> This tour involves a communal onsen soak in one of Kannawa's traditional baths. <strong>Japanese onsen etiquette requires full nudity — swimwear is not permitted.</strong> The bath is communal and sex-segregated. This is completely standard practice in Japan and utterly unexamined by Japanese visitors, but it is worth considering beforehand. Additionally: <strong>visible tattoos are prohibited</strong> at virtually all public onsen in Japan (this is a cultural norm, not a law, but it is enforced). If this applies to either of you, skip the onsen tour.</p>
+<p class="rich-p rich-bold-lead"><strong>Alternative if skipping onsen:</strong> Head independently to <strong>Yufuin</strong> — 30–40 min by bus or taxi (¥1,500–2,500 one way). A small spa town in a mountain valley with Lake Kinrin at its centre (the lake's surface steams in the morning; the steam comes from thermal vents in the lake bed). <strong>Yunotsubo Street</strong> is Yufuin's main artisan shopping strip — a 15-minute walk lined with independent ceramics shops, craft glass, handmade accessories, local confectionery, gallery cafés. One of the best shopping afternoons on the entire Japan leg. Fez will find things here unavailable anywhere else.</p>
+<h3 class="rich-h3">Alternatives</h3>
+<p class="rich-p rich-bold-lead"><strong>Alternative A (RSSC only, relaxed):</strong> BE9-007 Yufuin Village & Beppu Ropeway (FREE, 5hrs) — no nudity required, excellent for Fez (Yunotsubo artisan strip + Lake Kinrin + Mt Tsurumi cable car views). Add independent jigoku-mushi for lunch on the way back.</p>
+<p class="rich-p rich-bold-lead"><strong>Alternative B (single paid tour):</strong> BE9-GG1 Geothermal & Hells (6hrs) — covers geothermal power plant (rare access) + Sea Hell + Kannawa steam eating (included). Loses the full 7-hell circuit and the Blood Pond drama, but gives excellent guided context for the geothermal science. Worth considering if you'd rather not self-navigate the two hell clusters.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>BE9-003</strong> Usuki Stone Buddhas — strenuous, long drive, the stone Buddhas are significant but pale against everything else this day offers</li>
+  <li><strong>BE9-005</strong> Usa Jingu Shrine — remote, strenuous, 4.5hrs consumed mostly in travel</li>
+  <li><strong>BE9-008</strong> Hita Village (soy sauce factory) — interesting but the Beppu volcanic identity should dominate this day</li>
+  <li><strong>BE9-002</strong> Jigokumeguri & Bamboo (4hrs) — covers only 2 hells; entirely inferior to the full independent circuit</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Food:</strong> Jigoku-mushi in Kannawa is the non-negotiable Beppu food experience. For dinner (if back early enough): <strong>Toriten</strong> — Oita Prefecture's local fried chicken tempura, lighter and crispier than standard karaage, typically served with ponzu. Several small restaurants in Beppu city proper.</p>
+<p class="rich-p rich-bold-lead"><strong>Fez shopping:</strong> Kannawa village shops near the hell clusters sell <strong>Myoban-yu bath salts</strong> and sulphur-mineral bath products — genuine geothermal-source products made locally. Excellent gifts; compact and lightweight. Yufuin Yunotsubo Street has ceramics, handmade accessories, confectionery, craft glass.</p>`,
+  "Hiroshima \u2014 Peace Museum + Miyajima Island \u2b50": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Hiroshima Port <strong>Duration:</strong> 9 hours <strong>Weather:</strong> ~9–18°C. Mild. Cherry blossom (late sakura) may still be present in the Peace Park. <strong>Context:</strong> The most emotionally significant port on the entire itinerary. Two world-class experiences in one day with completely different emotional register — weight and beauty. <strong>Apr 22 is a Tuesday: everything is open.</strong></p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>HIR-001</strong> Highlights of Hiroshima (4hrs) — Peace Memorial Park + Dome + Cenotaph + Flame of Peace + Shukkei-en Garden</li>
+  <li><strong>HIR-003</strong> Miyajima Island (4.25hrs) — JR ferry to Miyajima + Itsukushima Shrine + floating torii gate (UNESCO)</li>
+  <li><strong>HIR-004</strong> Panoramic Hiroshima (2hrs) — drive-by only; no museum access</li>
+  <li><strong>HIR-006</strong> Hiroshima Highlights (3.5hrs) — Peace Park + Dome + Cenotaph + Flame of Peace + Garden</li>
+  <li><strong>HIR-007</strong> Peace Memorial Park & Museum (3hrs) — full museum interior + Dome + Cenotaph + Sadako story</li>
+  <li><strong>HIR-008</strong> Shukkei-en Japanese Garden (2.5hrs)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>HIR-002</strong> Hiroshima & Miyajima Exploration ($189, 7.25hrs) — Peace Park + Dome + Miyajima ferry + Itsukushima Shrine (both sites in one tour)</li>
+</ul>
+<h3 class="rich-h3">Recommended Plan: Self-guided morning + FREE RSSC afternoon</h3>
+<div class="rich-notice rich-warn"><strong>⚠️ Key logistics note:</strong> HIR-003 (Miyajima) and HIR-007 (Peace Museum) are both FREE but are separate RSSC tours with fixed departure times — you cannot book two RSSC tours in the same time slot. The solution is to visit the Peace Memorial complex independently in the morning (straightforward to self-navigate), then join HIR-003 in the afternoon for the Miyajima leg, where RSSC's JR train and ferry logistics are genuinely useful. Confirm tour departure times at the Destination Desk before leaving the ship.</div>
+<p class="rich-p rich-bold-lead"><strong>Morning: Peace Memorial Museum (self-guided, ~3hrs)</strong> Take the FREE shuttle to central Hiroshima, then tram ¥180pp to Peace Memorial Park.</p>
+<p class="rich-p">Do this without a guided tour. The museum deserves your own pace — not a group schedule, not a commentary in your ear telling you how to feel.</p>
+<p class="rich-p">Sequence through the park: 1. <strong>Children's Peace Monument</strong> — the statue of Sadako Sasaki, who folded 1,000 paper cranes before dying of leukaemia at age 12, ten years after the bombing. Strings of paper cranes continue to arrive from across Japan and the world; the monument is surrounded by glass cases filled with them. 2. <strong>Cenotaph</strong> — a curved stone arch framing the Flame of Peace and the Atomic Bomb Dome in a precise compositional alignment. The Flame has burned continuously since 1964 and will be extinguished only when all nuclear weapons are destroyed. 3. <strong>Atomic Bomb Dome exterior</strong> — the former Hiroshima Prefectural Industrial Promotion Hall, directly beneath the hypocentre. Left standing exactly as it was after the bomb, by deliberate civic decision. Do not rush past it. 4. <strong>Peace Memorial Museum interior</strong> — Allow 90 minutes minimum. The collection includes: a watch stopped at 8:15am, a shadow burned permanently into granite steps (the negative image of a person sitting, vaporised), a child's melted lunchbox with charred food inside, a bottle melted and refrozen into a surreal shape, twisted iron girders, shadow photographs. The museum does not advocate. It presents. Flash photography is prohibited inside. Entry ¥200pp. Come out before noon.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: HIR-003 Miyajima Island (FREE RSSC, 4.25hrs)</strong> RSSC handles the JR train + ferry logistics. On the island:</p>
+<p class="rich-p"><strong>Itsukushima Shrine</strong> — built over the water in the 12th century, the shrine's orange-lacquered halls and corridors appear to float at high tide. The architectural effect is intentional: the island is considered sacred, and the shrine was designed so that commoners (who could not set foot on the holy ground) could approach by boat and worship from the water. The great torii gate stands in the sea 200m from the shrine — at high tide, both shrine and gate reflect in the water below. At low tide, you can walk out to the base of the gate.</p>
+<p class="rich-p"><strong>Shika deer</strong> — the island's deer are entirely tame, having lived alongside the shrine for centuries. They roam freely through the shrine complex, the shopping arcade, the ferry dock, everywhere. They will eat anything, including maps, bags, and food held at any height. They are charming; keep a firm grip on your belongings.</p>
+<p class="rich-p"><strong>Omotesando shopping arcade</strong> — the covered street between the ferry dock and the shrine. For Fez: <strong>Miyajima lacquerware</strong> (the island has a 400-year lacquerware tradition; the shamoji (rice paddle) is the island symbol — beautifully crafted ones are available as souvenirs), momiji manju (see food note below), ceramics, matcha sweets.</p>
+<p class="rich-p">If time allows: <strong>Daishoin Temple</strong>, 15 minutes' walk up the hillside above the shrine. A Buddhist mountain temple that predates the shrine. Far fewer visitors. The approach via stone steps is lined with hundreds of small lanterns and Jizo statues in knitted caps. Hauntingly atmospheric and completely different from the busy shrine precinct below.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening: Hiroshima-style okonomiyaki dinner</strong> <strong>Okonomiyaki-mura</strong> ("Okonomiyaki Village") in central Hiroshima: a 6-storey building housing 25+ individual okonomiyaki stalls, each with its own recipe. Hiroshima-style okonomiyaki is fundamentally different from the Osaka style you'll eat two days later — it is layered, not mixed:</p>
+<ul class="rich-ul">
+  <li><strong>Base layer:</strong> thin crepe batter, spread thin on a teppan (iron griddle)</li>
+  <li><strong>Piled on top:</strong> a mountain of shredded cabbage (it compresses as it cooks)</li>
+  <li><strong>Then:</strong> bean sprouts, chopped green onion, thinly sliced pork belly</li>
+  <li><strong>Then:</strong> a nest of soba or udon noodles, separately fried and placed on top</li>
+  <li><strong>Flipped:</strong> the whole construction is inverted with one motion</li>
+  <li><strong>Finished:</strong> an egg cracked on the griddle, the okonomiyaki placed on top and flipped once more</li>
+  <li><strong>Sauced:</strong> with Otafuku okonomiyaki sauce (a sweet, thick Worcester-style sauce), Japanese mayo, bonito flakes, green nori</li>
+</ul>
+<p class="rich-p">Order the <strong>soba-iri</strong> version (with soba noodles). Any stall in the building is excellent — the quality is consistent and competition between stalls keeps standards high.</p>
+<p class="rich-p rich-bold-lead"><strong>Food note — Miyajima:</strong> Momiji manju (maple leaf-shaped cakes) are the island's most famous food souvenir: small cakes in the shape of a maple leaf (the island's emblem), filled with sweet red bean paste, custard, matcha paste, or chocolate. Buy from a bakery with a visible oven on the premises — the warm, fresh ones are in a different category from the packaged version sold everywhere.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>HIR-004</strong> Panoramic Hiroshima (2hrs) — drive-by with photo stops only; no museum access, not worth it</li>
+  <li><strong>HIR-008</strong> Shukkei-en Garden alone — lovely garden, worth 30 min if you pass it, not worth a 2.5hr tour slot</li>
+  <li><strong>HIR-002</strong> Hiroshima & Miyajima combined tour ($189) — does both sites in one guided day. If you'd rather not self-navigate, this is a reasonable alternative. The tradeoff: less time at the museum (group schedules compress the experience) and no flexibility to linger. The split plan is better.</li>
+</ul>`,
+  "Kochi \u2014 Chef-Led Bonito Tataki + Kochi Castle": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Kochi Port (Urado Bay) <strong>Duration:</strong> 8 hours <strong>Weather:</strong> ~11–19°C. Wetter than other Japan ports — Kochi faces the Pacific and has a reputation for heavy rain. Pack a waterproof layer. <strong>Context:</strong> The day before Osaka (17 hours, the biggest port day of the entire cruise). Kochi should be excellent but not physically punishing — arrive back on board with energy intact. <strong>Apr 23 = Wednesday: all attractions open.</strong> <strong>Kochi's identity:</strong> Bonito tataki (the city's singular food; nothing else like it in Japan), one of Japan's 12 remaining original castles, and world-class limestone caves.</p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>KZC-001</strong> Beautiful Temple & Gardens (3hrs) — Chikurinji Temple (8th-century Buddhist, 5-storey pagoda) + Makino Botanical Garden. Strenuous, 150 steps.</li>
+  <li><strong>KZC-002</strong> Japanese Paper Making Experience (3.45hrs) — Washi paper craft village + Niyodo River</li>
+  <li><strong>KZC-005</strong> Kochi Castle & Katsurahama Beach (3.5hrs) — original 17th-century castle + Katsurahama beach + Sakamoto Ryoma statue. 200 steps at castle.</li>
+  <li><strong>KZC-006</strong> Ryugado Caves (3hrs) — 175-million-year-old stalactite cave. <strong>⚠️ 800 steps and some narrow passages. Claustrophobia risk. Not for those with knee issues or the day before Osaka.</strong></li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>KZC-003</strong> Ekingura Museum & Kochi Castle ($139, 4hrs) — 19th-century artist Ekin's erotic and supernatural peephole folding screens + castle</li>
+  <li><strong>KZC-004</strong> Ryugado Caves & Kochi Castle ($159, 5hrs) — caves + castle. 800+200 steps total. Very strenuous.</li>
+  <li><strong>KZC-007</strong> Historic Kochi & Culinary ($289, 5.5hrs, meal) — castle + Makino Garden + Hirome Market + bonito lunch</li>
+  <li><strong>KZC-010</strong> Kochi Gourmet (4hrs) — Hirome Market + sear own bonito at Tosa Tataki Dojo</li>
+  <li><strong>KZC-1GT</strong> Chef-Led Tataki Culinary Tradition ($179, 4hrs, max 18 guests) — chef-led, Hirome Market + Kochi Castle stroll + sear own bonito at Tosa Tataki Dojo</li>
+  <li><strong>KZC-011</strong> Kochi Nature & Oboke Gorge Cruise (7hrs, meal, price unlisted) — Iya Valley + last vine suspension bridge + Oboke gorge boat cruise</li>
+</ul>
+<h3 class="rich-h3">Recommended Plan: Chef-led culinary morning + light afternoon</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: KZC-1GT Chef-Led Tataki Culinary Tradition ($179pp, 4hrs, max 18 guests)</strong></p>
+<p class="rich-p">Book this early — it fills. The ship's own chef leads this small-group experience.</p>
+<p class="rich-p"><strong>Hirome Market</strong> — Kochi's beloved covered food hall, open since 1998. A dense grid of market stalls and restaurant counters selling everything the prefecture produces: mackerel sushi, gyoza, takoyaki, fresh oysters, yuzu-flavoured everything, local sake. Browse and taste before the main event.</p>
+<p class="rich-p"><strong>Kochi Castle</strong> — brief exterior walk past the outer walls. One of Japan's 12 original castles — not a Meiji-era reconstruction. The interior is entirely original Edo-period wooden architecture, remarkably unchanged.</p>
+<p class="rich-p"><strong>Tosa Tataki Dojo</strong> — the centrepiece. You sear your own bonito over an open flame fuelled by burning straw (warazako). The technique creates a dramatic, flickering high heat that chars the very outside of the fish while leaving the interior completely raw. The chef demonstrates; you replicate. The bonito (katsuo) is brought in from Kochi's fishing fleet — this fish was pulled from the Pacific within the last day or two.</p>
+<p class="rich-p rich-bold-lead"><strong>Katsuo no tataki</strong> served with: thinly sliced garlic, grated ginger, chopped green onion, myoga (Japanese ginger shoots). Dipping sauce: yuzu ponzu (yuzu citrus + soy + dashi). The combination is incomparably fresh. You cannot eat bonito like this outside Kochi — the proximity to the fishing grounds and the straw-fire method are both specific to this place. This is the food experience of the entire Japan leg.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: KZC-005 Kochi Castle & Katsurahama Beach (FREE, 3.5hrs)</strong> One of Japan's 12 remaining original castles — the exterior is striking, the interior wooden stairways steep and original. The views from the donjon (main tower) across Kochi city are worth the 200 steps. Katsurahama Beach is a Pacific-facing stretch of dark sand and dramatic ocean (no swimming — strong currents) dominated by the bronze statue of <strong>Sakamoto Ryoma</strong>, perhaps the most beloved figure in modern Japanese history. Ryoma was a Tosa (Kochi) samurai who in the 1860s masterminded the alliance between the Chōshū and Satsuma domains that overthrew the Tokugawa shogunate and enabled the Meiji Restoration — essentially, the man most responsible for modernising Japan. He was assassinated in 1867 at age 31, before the Restoration he engineered was complete. His face is on the ¥100,000 commemorative note.</p>
+<p class="rich-p rich-bold-lead"><strong>Buffer:</strong> Return to ship early via shuttle. Rest before tomorrow.</p>
+<h3 class="rich-h3">Nature alternative (if energy allows and knees are good)</h3>
+<p class="rich-p">Swap the afternoon for <strong>KZC-006 Ryugado Caves (FREE, 3hrs)</strong> — 175-million-year-old stalactite caves, 100+ animal species including blind cave shrimp and fish, coloured illuminated stalactite formations, and evidence of human habitation 2,000 years ago including a pottery vessel that became encased in a growing stalactite (now called the "God's Vessel" — the calcite has grown around the outside of the pot over two millennia, absorbing it into the cave). Extraordinary, but 800 steps and narrow passages. Assess honestly the day before Osaka.</p>
+<h3 class="rich-h3">Full-day nature alternative</h3>
+<p class="rich-p"><strong>KZC-011 Oboke Gorge Cruise (7hrs, meal, price TBC)</strong> — if skipping the bonito searing is acceptable. Iya Valley (one of Japan's most remote and atmospheric valleys), the last surviving vine suspension bridge (Kazurabashi — traditionally woven from mountain vines, must be replaced every 3 years), Biwa Waterfall, and a boat cruise along the emerald Oboke Gorge. Genuinely spectacular and unusual. Verify pricing with RSSC Destination Desk.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>KZC-004</strong> Ryugado + Castle together (800+200 steps in one day; too much the day before Osaka)</li>
+  <li><strong>KZC-003</strong> Ekingura Museum (interesting folk art but not the priority versus food and nature)</li>
+  <li><strong>KZC-009</strong> Meditation at Chikurinji (appealing in concept; 4.75hrs and strenuous — save the legs)</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Food notes:</strong> Katsuo no tataki is non-negotiable. If not booking KZC-1GT, go independently to Tosa Tataki Dojo or Hirome Market and sear it yourself (staff will guide you). The experience of cooking it yourself over a straw flame is what makes Kochi memorable. Secondary condiment: yuzu ponzu dipping sauce.</p>
+<p class="rich-p rich-bold-lead"><strong>Fez shopping:</strong> Hirome Market has stalls selling <strong>yuzu products</strong> — ponzu sauce, yuzu cookies, yuzu liqueur, yuzu-flavoured chocolate. All are uniquely Kochi, all are excellent gifts, and yuzu liqueur travels well. Also look for <strong>katsuobushi (dried bonito flakes)</strong> — the ultra-premium aged variety called <strong>honkarebushi</strong> is a Kochi speciality, aged for over a year, with a depth of flavour unavailable in most Japanese stores. A small bag as a cooking ingredient back home is a worthy purchase.</p>`,
+  "Osaka \u2014 Fushimi Inari Kyoto + Osaka Castle + Dotonbori Night": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Osaka Port (Nanko) <strong>Duration:</strong> 17 hours — the longest port day of the entire cruise <strong>Weather:</strong> ~12–19°C daytime, ~10°C by evening. April is mild and often clear. Pack a light jacket for evening. <strong>Day check: Monday April 24.</strong> All priority sites verified open. Monday is actually excellent for Osaka — fewer Japanese domestic tourists than weekends. <strong>This is the PRIORITY day of the cruise.</strong></p>
+<h3 class="rich-h3">Monday closure check</h3>
+<ul class="rich-ul">
+  <li>Osaka Castle: <strong>OPEN</strong> (¥600 tower entry, elevator available)</li>
+  <li>Fushimi Inari Taisha: <strong>OPEN</strong> (outdoor, 24/7, always)</li>
+  <li>Namba/Dotonbori: <strong>OPEN</strong> (commercial area, never closes)</li>
+  <li>Shinsaibashi covered arcade: <strong>OPEN</strong></li>
+  <li>Kuromon Market: <strong>MOSTLY OPEN</strong> (some Monday stalls close; majority trade normally)</li>
+  <li>Osaka Museum of History: CLOSED Tuesdays, <strong>open Mondays</strong> ✓</li>
+  <li>Nijo Castle (if considering): partial restoration — some sections closed. Not recommended.</li>
+</ul>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>OSA-003</strong> Sumiyoshi Taisha Shrine (2hrs) — Japan's oldest Shinto shrine (3rd century), guardian gods for seafarers</li>
+  <li><strong>OSA-004</strong> Highlights of Osaka (4.5hrs) — Osaka Castle + Shitennoji (6th-century Buddhist temple; Japan's oldest)</li>
+  <li><strong>OSA-008</strong> Osaka Castle & Namba on Your Own (4.5hrs) — castle + dropped at Namba for free time</li>
+  <li><strong>OSA-010</strong> Panoramic Osaka (4hrs) — castle exterior + Umeda Sky Building 360° observation deck. Accessible.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>OSA-005</strong> Highlights of Kyoto ($229, 7hrs, lunch) — Kinkakuji Golden Pavilion + Nijo Castle. 90 min drive each way.</li>
+  <li><strong>OSA-009</strong> Life in Kyoto ($219, 6.5hrs) — machiya townhouse visit + kimono photo + Nishiki Market + Kawaramachi. 90 min drive each way.</li>
+  <li><strong>OSA-011</strong> Sakai Knife Museum & Tenmangu Shrine ($119, 4hrs) — Sakai knife crafts museum + Osaka Tenmangu Shrine + Tenjinbashisuji 1.5-mile covered arcade. Accessible.</li>
+  <li><strong>OSA-012</strong> Nara's Ancient Treasures ($279, 5.5hrs, meal) — Todaiji Temple + Great Buddha + 1,200 deer in Nara Park + persimmon leaf sushi lunch</li>
+  <li><strong>OSA-014</strong> Osaka Like a Local ($189, 6hrs) — Osaka Castle park + Dotonbori + Shinsaibashi. Max age 75.</li>
+  <li><strong>OSA-016</strong> Shinto Shrine & Sake in Kyoto ($549, 6hrs) — Fushimi Inari Taisha + Sake Museum tasting + Fushimi Ward. 90 min drive. Age 20+ for sake tasting.</li>
+</ul>
+<h3 class="rich-h3">Recommended Plan: Kyoto morning + Osaka afternoon/evening</h3>
+<p class="rich-p">This is the only plan that does justice to a 17-hour stop. Osaka is the gateway to both Kyoto and Nara — this is the one day on the trip where a full day in another city is genuinely feasible.</p>
+<p class="rich-p rich-bold-lead"><strong>Morning: Fushimi Inari Taisha, Kyoto (independent, ~5hrs total including travel)</strong></p>
+<p class="rich-p">Take the FREE RSSC shuttle or taxi to Osaka-Namba, then the JR Yamatoji Line to JR Inari station (~35–40 minutes, ¥580pp each way). Arrive by 9:00am.</p>
+<p class="rich-p">Fushimi Inari Taisha is a Shinto shrine dedicated to Inari, the deity of rice, sake, and commerce. The shrine complex covers the entire forested slope of Mount Inari. What makes it extraordinary: approximately 10,000 torii gates donated by businesses and individuals over the centuries, standing in dense rows that form tunnels of overlapping orange — the Senbon Torii. Walking through them is visually unlike anything else in Japan. The trail winds up the mountain; each gate is inscribed on the back with the donor's name and the date of donation (some dating back centuries). The density of the gates changes as you ascend; at the bottom, near the main shrine buildings, they are packed; higher up they thin out.</p>
+<p class="rich-p">You do not need to reach the summit. <strong>Walk to the Yotsutsuji intersection</strong> (approximately halfway up, 40–50 minutes from the main gate) for panoramic views over Kyoto. This is the natural turning point for most visitors. The full summit circuit is 2–3 hours and strenuous — not necessary for the visual impact. Return to the main gate area and explore the lower precincts.</p>
+<p class="rich-p">The shrine grounds are free to enter and open 24/7. There are no Monday closure issues — it is entirely outdoor. Arrive early; by 10am the main gate area is busy with tour groups, but the upper trails thin out.</p>
+<p class="rich-p rich-bold-lead"><strong>Optional Kyoto addition:</strong> After Fushimi Inari, take a 15-minute taxi (~¥1,500) to <strong>Gion, Hanamicoji Street</strong> — Kyoto's preserved machiya townhouse district and geisha quarter. The street is lined with two-storey wooden townhouses, now mostly teahouses (ochaya) and restaurants. Walking the full length takes 15 minutes; it is one of the most photographed streets in Japan. Boutique shops selling Kyoto craft items line the smaller surrounding lanes. More atmospheric than Nishiki Market for a first visit. Allow 45–60 minutes.</p>
+<p class="rich-p">Return to Osaka by early afternoon (1:00–2:00pm) via JR from Kyoto station.</p>
+<p class="rich-p rich-bold-lead"><strong>RSSC alternative for the morning: OSA-016 Shinto Shrine & Sake ($549, 6hrs)</strong> — the same Fushimi Inari content, with transport handled, an English-speaking guide, and a sake tasting at the Fushimi Sake Museum (the Fushimi district is one of Japan's premier sake-producing areas, the water quality being the reason). Note that $549 is per vehicle/booking — excellent value for 2pax. Worth considering if navigating JR independently feels daunting.</p>
+<p class="rich-p rich-bold-lead"><strong>Afternoon: Osaka Castle and Kuromon Market (~3hrs)</strong></p>
+<p class="rich-p">Take the FREE <strong>OSA-008</strong> RSSC tour (Osaka Castle + dropped at Namba) or go independently — the castle is 15 minutes by metro or taxi from Namba.</p>
+<p class="rich-p rich-bold-lead"><strong>Osaka Castle:</strong> Japan's most visited historic monument. The castle tower itself is a 1930s concrete reconstruction (the original was destroyed; the reconstruction is visually faithful but somewhat hollow inside, functioning as a museum). The grounds, however, are extraordinary: massive stone walls assembled from granite blocks transported from across Japan, a wide moat, and cherry blossom park with 1,200 trees (late sakura may still be present in late April). The tower interior contains good exhibits on the castle's history and Toyotomi Hideyoshi, who built it. Elevator available. ¥600pp entry.</p>
+<p class="rich-p"><strong>Kuromon Ichiba Market</strong> (5 minutes from Namba by foot) — Osaka's "kitchen": a 580m covered market that has supplied Osaka's restaurants for 190 years. Stalls selling live seafood, fresh produce, grilled skewers. Excellent for grazing: fresh sea urchin (uni) on rice from several stalls, grilled crab legs, wagyu beef skewers, tamagoyaki made to order. Some Monday stalls close but the majority trade normally. Best mid-morning to early afternoon.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening: Dotonbori + Shinsaibashi (4–5hrs)</strong></p>
+<p class="rich-p">Walk from Namba to Dotonbori. This is the soul of Osaka.</p>
+<p class="rich-p rich-bold-lead"><strong>Dotonbori canal at dusk:</strong> The Glico Running Man neon sign (the most photographed sign in Japan) on the north bank. 3D-style advertising boards — a giant mechanical crab, a dragon, an oversize fugu puffer fish. Restaurants with theatrical facades overhanging the canal. Walk the length of Dotonbori-gawa on the south bank promenade.</p>
+<p class="rich-p rich-bold-lead"><strong>Street food circuit (non-negotiable):</strong></p>
+<ul class="rich-ul">
+  <li><strong>Takoyaki</strong> — octopus balls. Invented in Osaka in 1935. Batter surrounding a piece of octopus, cooked in a special spherical iron mould, finished with Worcestershire sauce, Japanese mayo, bonito flakes, green nori. Best at <strong>Aizuya</strong> (the oldest, est. 1935) or <strong>Kukuru</strong> on Dotonbori. Eat standing at the stall — they cool quickly.</li>
+  <li><strong>Kushikatsu</strong> — everything skewered and deep-fried: pork, shrimp, asparagus, lotus root, quail egg, cheese, chicken. The communal sauce is sacrosanct — <strong>strictly no double-dipping</strong> (there are signs everywhere; this is not a joke). <strong>Daruma</strong> on Dotonbori is the chain origin. For more atmosphere, go to <strong>Shinsekai</strong> district (40 min north of Namba) — the old working-class entertainment district where kushikatsu was born; eating at a standing counter surrounded by the Billiken statues and 1950s signage is the genuine experience.</li>
+  <li><strong>Okonomiyaki Osaka-style</strong> — mixed, not layered (see Hiroshima for contrast). Batter + cabbage + pork + green onion + egg, all mixed and cooked together, finished with sauce and mayo. <strong>Mizuno</strong> on Dotonbori (open since 1945) is legendary. <strong>Fukutaro</strong> in Namba is excellent and more accessible.</li>
+</ul>
+<p class="rich-p"><strong>Hozenji Yokocho</strong> — turn off Dotonbori and walk 5 minutes south. A tiny moss-covered stone alley with a 300-year-old Fudo Myo statue (a Buddhist deity) perpetually drenched in water thrown by worshippers — the statue is entirely covered in a thick green-black moss carpet from centuries of water. The alley is lined with very small izakayas and kappo restaurants. The most atmospheric 10 minutes in Osaka. Do this at night.</p>
+<p class="rich-p"><strong>Shinsaibashi shopping arcade</strong> — Fez's main shopping stretch. Japan's longest covered arcade: 600 metres, connecting Dotonbori north to the Shinsaibashi main crossing. Uniqlo Osaka flagship, Louis Vuitton Osaka, local accessory boutiques, cosmetics, Japanese stationery and craft stores. <strong>Shinsaibashi OPA</strong> and <strong>SOGO</strong> department stores are adjacent. <strong>Takashimaya Osaka</strong> (nearby, high-end) has an extraordinary basement food hall and full designer floor coverage. <strong>Don Quijote Shinsaibashi</strong> (5-storey discount/cosmetics/novelty megastore, open until midnight) — Japanese skincare, flavoured Kit-Kats (matcha, sake, wasabi, sakura), capsule toys, ceramics, novelties.</p>
+<p class="rich-p rich-bold-lead"><strong>Return:</strong> Shuttle or taxi from Namba to the ship. Confirm the last return shuttle time at the Destination Desk before leaving — RSSC typically runs late shuttles for extended port days, but verify the exact cutoff.</p>
+<h3 class="rich-h3">Alternative A: Nara instead of Kyoto</h3>
+<p class="rich-p">Book <strong>OSA-012 Nara's Ancient Treasures ($279, 5.5hrs, meal)</strong> for the morning instead. The RSSC tour is worth the price.</p>
+<p class="rich-p">Alternatively, go independently: Kintetsu Limited Express from Osaka-Namba to Kintetsu-Nara (37 minutes, ¥760pp). Nara Park is free to walk. Deer crackers for the deer: ¥200.</p>
+<p class="rich-p"><strong>Todaiji Temple</strong> — the Great Buddha Hall is the world's largest wooden building (57m tall, 50m wide — and this is a reconstruction from 1709 smaller than the original). The bronze Buddha seated inside (<strong>Vairocana Buddha</strong>) is 15m tall and weighs 500 tonnes; it has been here since 752 AD. The scale requires a moment to register. Entry ¥600pp.</p>
+<p class="rich-p">The deer in Nara Park are a sub-species of sika deer, considered sacred messengers of the Shinto gods. They have lived in the park for 1,300 years. They will bow to receive crackers if trained individuals approach correctly. They will also headbutt you for crackers if you hesitate. 1,200 of them roam freely. Extraordinary.</p>
+<p class="rich-p">Return afternoon → Osaka evening (Dotonbori + Shinsaibashi) as per the recommended plan.</p>
+<h3 class="rich-h3">Alternative B: Deep Osaka (no Kyoto or Nara)</h3>
+<p class="rich-p">If you'd rather experience Osaka without any long drives:</p>
+<p class="rich-p rich-bold-lead"><strong>Sequence:</strong> Kuromon Market breakfast → <strong>OSA-004</strong> FREE (Osaka Castle + Shitennoji — Japan's oldest Buddhist temple, founded 593 AD by Prince Shotoku, predating the national adoption of Buddhism) → <strong>Shinsekai</strong> for lunch and kushikatsu → <strong>Sumiyoshi Taisha</strong> (FREE OSA-003 or independent; one of Japan's oldest and most important Shinto shrines, founded in the 3rd century — the distinctive taiko-bashi drum bridge and the unusual straight-line architectural layout, unlike most shrine complexes) → afternoon Shinsaibashi shopping → Dotonbori evening.</p>
+<h3 class="rich-h3">Alternative C: Sakai Knife Museum + Extended Shopping</h3>
+<p class="rich-p"><strong>OSA-011 ($119, 4hrs) morning</strong> — Sakai knife crafts museum (90% of Japan's professional chefs use Sakai blades; the museum shows every step of the forging process; the hibana chandelier in the entrance is made from discarded knife-making materials and is genuinely beautiful) + Osaka Tenmangu Shrine (10th-century shrine to the god of learning, large plum orchard, lovely on a clear morning) + <strong>Tenjinbashisuji shopping arcade</strong> — at 2.6km, Japan's longest covered shopping arcade, through which you wander for the full length. Then Dotonbori evening.</p>
+<p class="rich-p rich-bold-lead"><strong>Osaka food non-negotiables:</strong> Takoyaki (street stall, Dotonbori) · Kushikatsu (Daruma or Shinsekai) · Okonomiyaki Osaka-style (Fukutaro or Mizuno) · Wagyu yakiniku — grill your own at a table. Niku Jiro near Shinsaibashi is well-regarded. For lunch: fresh <strong>uni-don</strong> (sea urchin rice bowl) at Kuromon Market if visiting midday.</p>
+<p class="rich-p rich-bold-lead"><strong>Fez shopping priorities:</strong> Shinsaibashi covered arcade → Namba Parks (open-air mall, excellent mid-range international and Japanese brands) → Don Quijote Shinsaibashi (late-night cosmetics, Kit-Kats, novelties) → Takashimaya Osaka (high-end, basement food hall) → Isetan-like department store alternatives. Japanese skincare priority buys here: SK-II, Shiseido Ginza Tokyo line, Decorté, Albion, RMK. Tax-free at department stores on passport.</p>`,
+  "Day at Sea \u2014 Pacific Ocean": `<h3 class="rich-h3">Day at Sea</h3>
+<p class="rich-p">The Splendor is crossing the Pacific Ocean toward Shimizu. This is your rest day before the final port of the cruise. The balcony of Concierge Suite D looks out over open Pacific water.</p>`,
+  "Shimizu \u2014 Chef-Led Tea Picking + Sushi Making": `<p class="rich-p rich-bold-lead"><strong>Port:</strong> Shimizu Port, Shizuoka Prefecture <strong>Duration:</strong> Full day <strong>Weather:</strong> ~10–18°C. Mt Fuji views entirely weather-dependent. <strong>Day check:</strong> Apr 26 = Saturday. No Monday closure concerns. <strong>Context:</strong> Day 23 of the cruise. Final port before Tokyo disembarkation. The day after a Pacific sea day — you'll be well-rested. Shimizu sits in Shizuoka Prefecture, Japan's premier green tea region, and the port area competes with Tsukiji for the freshest tuna in Japan. The emotional register is "beautiful wind-down" — Osaka was the blockbuster; let Shimizu be sensory and quiet. Mt Fuji views: treat any sighting as a bonus, not the plan.</p>
+<h3 class="rich-h3">RSSC Tour Options</h3>
+<p class="rich-p rich-bold-lead"><strong>FREE:</strong></p>
+<ul class="rich-ul">
+  <li><strong>SMZ-001</strong> Mt Fuji Highlights (4hrs) — Fujisan Hongu Sengen Shrine + Miho no Matsubara 50,000-pine coastal grove with Fuji backdrop</li>
+  <li><strong>SMZ-002</strong> Castle Garden & Shizuoka Sengen Shrine (4.25hrs) — Sunpu Castle ruins + Shizuoka Sengen Shrine (Momoyama lacquer and gold leaf) + Miho no Matsubara</li>
+  <li><strong>SMZ-003</strong> Mt Fuji Views, Tea Ceremony & Art Museum (4.5hrs) — Tokaido Hiroshige Art Museum (1,000+ woodblock prints) + tea ceremony (max 15 guests) + Miho no Matsubara. Weather-dependent for Fuji.</li>
+  <li><strong>SMZ-006</strong> Nihondaira & Kunozan Toshogu Shrine (3.5hrs) — Nihondaira Park panoramic lookout over Suruga Bay and Mt Fuji + cable car up to ornate Kunozan Toshogu Shrine (built by 2nd Tokugawa shogun). Numerous steps.</li>
+  <li><strong>SMZ-007</strong> Scenic Drive with Fuji View (2.75hrs) — panoramic drive, Nihondaira lookout + Miho no Matsubara. Accessible.</li>
+  <li><strong>SMZ-009</strong> Tuna Dismantling Show (5hrs) — Fujisan Hongu Sengen Shrine + master chef dismantles a whole tuna piece by piece + fresh sashimi lunch. A record tuna sold at auction for $3.1M.</li>
+  <li><strong>SMZ-011</strong> Sushi Making Experience & Fish Market (3hrs) — Kashi-no-Ichi waterfront market + Shimizu Sushi Museum + make your own sushi + eat it. Accessible.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Paid:</strong></p>
+<ul class="rich-ul">
+  <li><strong>SMZ-008</strong> Japanese Tea Making Experience ($99, 5hrs, meal) — tea plantation pick + process + brew + factory tour + lunch. April fully in season.</li>
+  <li><strong>SMZ-005</strong> Kunozan Toshogu Shrine & Miho no Matsubara ($189, 5hrs) — cable car shrine + pine grove. Strenuous.</li>
+  <li><strong>SMZ-1GT</strong> Chef-Led Green Tea & Fish ($169, 5hrs, max 18 guests) — chef-led, Yamataka Sakurai tea farm: pick + process + brew own sencha; then Shimizu Sushi Museum: make and eat own sushi. April is peak first-flush tea season.</li>
+</ul>
+<h3 class="rich-h3">Recommended Plan</h3>
+<p class="rich-p rich-bold-lead"><strong>Morning: SMZ-1GT Chef-Led Green Tea & Fish ($169pp, 5hrs, max 18 guests)</strong></p>
+<p class="rich-p">Book this early — 18 guest limit, chef-led, and April is precisely the right season. This is the standout experience at this port.</p>
+<p class="rich-p rich-bold-lead"><strong>At Yamataka Sakurai tea farm:</strong> Late April is peak first-flush season (ichibancha) for Shizuoka sencha — the tenderest new growth of the year, highest in L-theanine (the compound responsible for green tea's calm-alertness profile). You pick leaves directly from the bushes (the technique — using only two fingers to snap the top two leaves and bud — is specific and practiced), then process them by hand (rolling and drying, mimicking the factory process at small scale), then brew your own cup from your own leaves. Drinking tea you picked 20 minutes earlier from a plant in front of you is an entirely different experience from any tea you've had before.</p>
+<p class="rich-p rich-bold-lead"><strong>At Shimizu Sushi Museum:</strong> The chef walks you through rice preparation (vinegar balance, temperature, the correct hand movement for shaping nigiri — the finger pressure required to form the rice without compressing it too tight), then guides each guest through rolling and shaping their own nigiri and maki. You eat what you make. The fish comes from Shimizu's port, one of Japan's premier tuna-landing facilities.</p>
+<p class="rich-p">This tour combines the two things that make Shimizu singular — the tea and the fish — in a single well-paced half-day.</p>
+<p class="rich-p"><strong>Afternoon (2–3 hours remaining after SMZ-1GT returns) — choose based on conditions:</strong></p>
+<p class="rich-p rich-bold-lead"><strong>If Fuji is clear:</strong> Take the FREE shuttle (SMZ-STT) or a short taxi (~30 min from port) to <strong>Miho no Matsubara</strong>. This coastal grove of 50,000 black pine trees framing a beach with Mt Fuji directly across Suruga Bay is one of the classical views of Japan — it appears in ukiyo-e prints, poetry, and postcard imagery spanning centuries. Walk the pine grove, photograph from the beach. The water is cold but the scene is extraordinary on a clear day.</p>
+<p class="rich-p rich-bold-lead"><strong>If Fuji is clouded (likely in late April):</strong> Book <strong>SMZ-006 FREE</strong> (cable car up to Kunozan Toshogu Shrine). <strong>Kunozan Toshogu</strong> was built in 1617 as the first mausoleum of Tokugawa Ieyasu — the shogun who unified Japan. His body rested here for a year before being moved to Nikko. The shrine is accessed by a steep 1,159-step staircase or by a modern cable car (take the cable car). The building is extraordinary: vermillion red lacquer, intricate gold-leaf carvings, Momoyama-era architecture at its peak. It's a dress rehearsal for Nikko's famous Toshogu, with fewer crowds. Stunning regardless of whether Fuji is visible.</p>
+<p class="rich-p rich-bold-lead"><strong>If you'd rather rest:</strong> Stay near the port. <strong>Kashi-no-Ichi market</strong> (Shimizu's waterfront fish market) is walkable from the ship — browse the fresh tuna, pick up snacks, sit in one of the café spots along the water. This is the last port of the cruise — a slower afternoon is completely appropriate.</p>
+<h3 class="rich-h3">What to skip</h3>
+<ul class="rich-ul">
+  <li><strong>SMZ-003</strong> (Hiroshige Museum + tea ceremony) — tea ceremony is appealing but redundant after SMZ-1GT covers tea comprehensively</li>
+  <li><strong>SMZ-009</strong> (FREE tuna dismantling show + sashimi lunch, 5hrs) — would conflict with SMZ-1GT. Consider this as an alternative if Fez prefers the drama of fresh tuna theatre over hands-on tea picking — it's a genuinely extraordinary experience in its own right</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Food notes:</strong> Sushi and sashimi are covered by SMZ-1GT. If in the port area for the afternoon: Kashi-no-Ichi market has fresh tuna cuts for grazing. The ship handles dinner.</p>
+<p class="rich-p rich-bold-lead"><strong>Estimated cost:</strong> SMZ-1GT at $169pp × 2 = $338 (~ZAR 6,200 at current rates)</p>`,
+  "Disembark Splendor \u2192 Transfer \u2192 Shinjuku Check-in": `<h3 class="rich-h3">Hotel Upgrade Flag</h3>
+<p class="rich-p">The Granbell Hotel Shinjuku is a ★★★ design hotel at ZAR 7,889 total (3 nights = ~ZAR 2,630/night, ~$145). For the tier of this trip — RSSC Concierge Suite, Langham Hong Kong — this is a significant mismatch. The Granbell is stylish for its category, but "Economy Double" rooms are compact.</p>
+<p class="rich-p rich-bold-lead"><strong>Upgrade options (all Shinjuku or nearby):</strong></p>
+<div class="rich-table-wrap"><table class="rich-table"><tbody>
+<tr><td>Hotel</td><td>Location</td><td>Est. Rate</td><td>Notes</td></tr>
+<tr><td>Park Hyatt Tokyo</td><td>Shinjuku, floors 39–52</td><td>$600–900/night</td><td>Iconic (Lost in Translation), exceptional views, benchmark luxury Shinjuku option</td></tr>
+<tr><td>Hyatt Regency Tokyo</td><td>Shinjuku</td><td>$300–450/night</td><td>Full-service luxury, more restrained than Park Hyatt</td></tr>
+<tr><td>Andaz Tokyo Toranomon Hills</td><td>Toranomon (not Shinjuku)</td><td>$500–700/night</td><td>Extraordinary rooftop, exceptional design</td></tr>
+<tr><td>Aman Tokyo</td><td>Otemachi</td><td>$1,500+/night</td><td>The finest hotel in Tokyo; worth it if the budget allows</td></tr>
+<tr><td>Bvlgari Hotel Tokyo</td><td>Yaesu (opened 2023)</td><td>$1,500+/night</td><td>Ultra-luxury, exceptional food and beverage</td></tr>
+</tbody></table>
+<p class="rich-p rich-bold-lead"><strong>Recommendation:</strong> At minimum, upgrade to the Park Hyatt Tokyo Superior Room or Hyatt Regency Tokyo Deluxe. The Park Hyatt keeps you in Shinjuku (same location). The additional cost versus Granbell: ~$1,200–2,000 for 3 nights (~ZAR 22,000–37,000). Given the total trip spend, this is the right call.</p>
+<p class="rich-p rich-bold-lead"><strong>Action:</strong> Check Park Hyatt Tokyo availability for 27–30 April 2028 and price before cancelling the Granbell booking.</p>
+<h3 class="rich-h3">Disembarkation logistics</h3>
+<p class="rich-p">Seven Seas Splendor docks at Yokohama — either Osanbashi Pier or Daikoku Futo terminal. Both are in Yokohama, approximately 30km from Shinjuku.</p>
+<p class="rich-p">Transfer options:</p>
+<ul class="rich-ul">
+  <li><strong>Private car (recommended):</strong> ¥15,000–20,000 (~ZAR 1,400–1,800), ~1.5hrs. Book through hotel concierge in advance. You'll have substantial luggage and 27 days of travel behind you — this is not the day for public transport.</li>
+  <li><strong>Limousine Bus:</strong> Yokohama Station to Shinjuku, ~¥700pp, ~1.5hrs.</li>
+  <li><strong>Train:</strong> Yokohama → Shinjuku, ~1hr, ¥500pp. Manageable with light luggage.</li>
+</ul>
+<p class="rich-p">Get a <strong>Suica IC card</strong> at Yokohama or Shinjuku station — used for all trains, metro, buses, and convenience stores in Tokyo and across Japan. The most efficient way to move around the city.</p>
+<h3 class="rich-h3">27 Apr (Saturday) — Disembark + Arrival</h3>
+<p class="rich-p">Arrive Shinjuku mid-afternoon. Check in. Light afternoon:</p>
+<ul class="rich-ul">
+  <li><strong>Shinjuku Gyoen</strong> (national garden, ¥500pp, closes 18:30) — an extraordinary formal garden with English, French, and Japanese sections, best in late afternoon light. If cherry blossom has not completely fallen, the late sakura (kanzan variety) may still be present.</li>
+  <li><strong>Golden Gai</strong> — six narrow alleys behind Kabukichō, ~200 micro-bars each seating 5–8 people. Some are regulars-only; others welcome visitors. Walk the alleys before deciding which to enter.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Dinner:</strong> Omoide Yokocho ("Memory Lane") — directly behind Shinjuku West Exit, under the elevated railway tracks. A warren of 20+ tiny yakitori stalls, each the width of a doorway, smoking and steaming. Skewered chicken (thigh, liver, heart, cartilage, skin), pork belly, leek over charcoal. Asahi draught in frosted mugs. The most atmospheric first-evening dinner in Tokyo.</p>`,
+  "Asakusa \u00b7 Senso-ji \u00b7 Ueno \u00b7 Yanaka": `<h3 class="rich-h3">28 Apr (Sunday) — East Tokyo: Asakusa, Ueno, Yanaka</h3>
+<p class="rich-p">Start early.</p>
+<p class="rich-p rich-bold-lead"><strong>Senso-ji Temple, Asakusa</strong> (grounds always open; gate 6am–5pm): Tokyo's oldest Buddhist temple (7th century, though extensively rebuilt). The Kaminarimon (Thunder Gate) is the most photographed gate in Tokyo — large red lantern, two fierce guardian statues. Beyond it, the 250-metre Nakamise-dori shopping street leads to the main hall, lined with small shops selling omiyage (souvenir food), fans, ceramics, and traditional craft items. Go early (before 9am) to see the temple before the crowds arrive. The main hall is active with worshippers — incense smoke is believed to have healing properties; people bathe in it.</p>
+<p class="rich-p rich-bold-lead"><strong>Ueno Park and Tokyo National Museum</strong>: Japan's most famous park; Japan's finest museum. The <strong>Tokyo National Museum</strong> (the Hon-kan main building, Western neo-classical exterior, Japanese interior) has the world's most significant collection of Japanese art: samurai armour, Buddhist sculpture, Noh theatre costumes, lacquerware, ceramics, calligraphy, ukiyo-e woodblock prints. Visit today (Sunday) rather than tomorrow — some sections may be affected by the Shōwa Day holiday on the 29th.</p>
+<p class="rich-p rich-bold-lead"><strong>Yanaka</strong> (afternoon): The only Tokyo neighbourhood that survived both the 1923 earthquake and the WWII firebombing largely intact. Yanaka-ginza (shotengai) is a 170-metre covered shopping street of small local businesses — a fishmonger, a tofu shop, a sweet shop, a ceramics seller, a gallery. Behind the shotengai, a network of traditional narrow lanes with wooden townhouses, small temples (several dozen in this neighbourhood alone), and an ancient cemetery (Yanaka Cemetery, where many prominent Meiji-era figures are buried under moss-covered stone markers). For Fez: genuinely independent ceramics and textile artisans with small studios open to the public. Nothing here is mass-produced.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening:</strong> Return to Shinjuku. Dinner at a proper <strong>tonkatsu</strong> restaurant — <strong>Maisen</strong> (Omotesando branch, technically the next day's neighbourhood, but accessible by metro) or <strong>Katsuzen</strong> in Shinjuku. Or browse the Isetan Shinjuku basement food hall (B2) — Japan's finest department store basement: fresh sashimi counters, artisan wagashi, premium bento, cheese, wine, pastry. Dinner from multiple small counters is perfectly acceptable.</p>`,
+  "Meiji Shrine \u00b7 Harajuku \u00b7 Omotesando \u00b7 Shibuya": `<h3 class="rich-h3">29 Apr (Monday, Shōwa Day — National Holiday) — West Tokyo: Meiji Shrine, Harajuku, Omotesando, Shibuya</h3>
+<p class="rich-p rich-bold-lead"><strong>Shōwa Day:</strong> Expect more visitors at popular sites. Parks, shrines, and all shopping remain open. Some government museums may close.</p>
+<p class="rich-p rich-bold-lead"><strong>Meiji Jingu Shrine</strong> (always open, grounds free): Tokyo's most serene Shinto shrine, set in a deliberately planted 70-hectare forest. The forest was created specifically for the shrine in 1920 using 100,000 trees donated from across Japan and every Japanese territory — today it is a dense, mature woodland entirely incongruous with its location in central Tokyo. The walk from the torii gate to the main shrine takes 10 minutes through forest; the noise of the city disappears. Arrive by 9:00am before the Harajuku crowds build.</p>
+<p class="rich-p rich-bold-lead"><strong>Takeshita Street, Harajuku:</strong> Tokyo's teen fashion incubator. 350 metres of impossibly narrow shopping street, technicolour fashion boutiques, crepe stalls on every corner. Even if not buying, a 30-minute walk through is worthwhile for the spectacle. Exit onto Meiji-dori.</p>
+<p class="rich-p rich-bold-lead"><strong>Omotesando:</strong> Fez's primary shopping street. A wide, zelkova tree-lined boulevard described as Tokyo's equivalent of Avenue Montaigne.</p>
+<p class="rich-p">The flagship buildings alone are architectural significant:</p>
+<ul class="rich-ul">
+  <li><strong>Louis Vuitton Omotesando</strong> (Jun Aoki, 2002) — a building conceived as a stack of LV trunks</li>
+  <li><strong>Prada Omotesando</strong> (Herzog & de Meuron, 2003) — faceted glass diamond building; one of the great contemporary commercial buildings in Japan</li>
+  <li><strong>Tod's Omotesando</strong> (Toyo Ito, 2004) — concrete tree structure</li>
+  <li><strong>Comme des Garçons</strong> (Kawakubo/Future Systems, 2006) — aluminium bubbles emerging from a historic building facade</li>
+</ul>
+<p class="rich-p">Major brands present: Chanel, Hermès, Dior, Bottega Veneta, Cartier, Tiffany, Gucci. <strong>Omotesando Hills</strong> (Tadao Ando, 2006) — a mall built around a central spiral ramp; mid-tier international brands + excellent basement food options.</p>
+<p class="rich-p">Allow 3–4 hours for Fez to shop seriously. Lunch at <strong>Anniversaire Café</strong> (French garden café in a beautiful location) or <strong>Omotesando Koffee</strong> (a minimalist coffee bar in a restored traditional house, celebrated internationally).</p>
+<p class="rich-p rich-bold-lead"><strong>Shibuya:</strong> Walk south from Omotesando along Cat Street (a pedestrian lane parallel to the boulevard, more independent boutiques and vintage) to Shibuya. The <strong>Shibuya Scramble Crossing</strong> is best experienced from the 2nd floor of the Starbucks on the corner (no queue, just buy a coffee) or from the <strong>Shibuya Sky observation deck</strong> (¥2,000pp, rooftop, 360° views — pre-book online). The crossing itself: 3,000 pedestrians cross simultaneously from all directions at each light change. The sound is remarkable.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening:</strong> Dinner in Shibuya or taxi back to Shinjuku. For a ceremonial penultimate-night dinner: <strong>shabu-shabu</strong> (thin-sliced wagyu swirled through a hot dashi broth at the table) or <strong>sukiyaki</strong> (wagyu in a sweet soy-and-sake broth, dipped in raw egg). <strong>Imahan in Shinjuku</strong> is a famous old-school sukiyaki institution — reservations recommended.</p>`,
+  "Tsukiji \u00b7 Ginza \u00b7 Teamlab Planets": `<h3 class="rich-h3">30 Apr (Tuesday) — Ginza, Tsukiji, Teamlab Planets</h3>
+<p class="rich-p rich-bold-lead"><strong>Tsukiji Outer Market (early morning, 7:00–9:00am):</strong> The outer market (the wholesale inner market relocated to Toyosu in 2018, but the outer market remains) opens from 5am. The food-to-eat-walking stalls are the reason to come:</p>
+<ul class="rich-ul">
+  <li><strong>Tamagoyaki</strong> (rectangular Japanese egg omelette, sweet and savoury, hot off the iron) — buy from one of the specialist shops, eat on the spot</li>
+  <li><strong>Sashimi for breakfast</strong> — thick cuts of tuna, salmon, sea urchin on rice, from stalls with short queues</li>
+  <li><strong>Fresh oysters</strong> — shucked to order</li>
+  <li><strong>Dashimaki tamago</strong> — dashi-flavoured rolled omelette, different from tamagoyaki; more savoury and delicate</li>
+</ul>
+<p class="rich-p">Arrive by 8:00am before it fills. Wear comfortable shoes; the lanes are narrow and wet.</p>
+<p class="rich-p rich-bold-lead"><strong>Ginza (10:00am onwards):</strong> Tokyo's most prestigious commercial district. The streets here:</p>
+<ul class="rich-ul">
+  <li><strong>Ginza Six</strong> — the area's major luxury mall (opened 2017); Dior, Celine, Bottega Veneta, Berluti, Moynat in the upper floors; one of Japan's best basement food halls</li>
+  <li><strong>Wako</strong> — the iconic Seiko clock tower building (1932); high-end watches, silverware, luxury goods</li>
+  <li><strong>Itoya Ginza</strong> — 8-storey stationery and pen megastore. Fountain pens from every major manufacturer, Japanese washi stationery, ink in every conceivable colour, letterpress equipment, notebooks. For Ramo.</li>
+  <li><strong>Uniqlo Ginza</strong> — the 12-storey flagship, including premium lines (Uniqlo U, +J) not widely available elsewhere</li>
+  <li><strong>Japanese designer flagships:</strong> Issey Miyake Ginza (geometric pleats), Comme des Garçons Ginza (avant-garde; ground floor only), Yohji Yamamoto Ginza (architectural black). For Fez, these are the most distinctively Japanese fashion experiences available anywhere.</li>
+</ul>
+<p class="rich-p rich-bold-lead"><strong>Teamlab Planets, Toyosu (~30 min from Ginza by Yurikamome line):</strong> Pre-book tickets immediately — they sell out weeks, often months, in advance. ~¥3,200pp. Allow 90 minutes inside + travel time.</p>
+<p class="rich-p">Teamlab Planets is an immersive digital art installation in which you physically walk through a series of large rooms, several of which involve wading through shallow water. The experience:</p>
+<ul class="rich-ul">
+  <li>A room where the floor is a shallow pool and giant koi swim around your legs (the koi are digital, the water is real)</li>
+  <li>An infinite mirrored room filled with floating lights that respond to your presence and movement</li>
+  <li>A room entirely carpeted with flowers that bloom and wilt in real time around you</li>
+  <li>A dark room where enormous abstract paintings swirl and transform continuously on all surfaces</li>
+</ul>
+<p class="rich-p">This is one of Japan's most distinctive contemporary cultural experiences and has no equivalent elsewhere. Go.</p>
+<p class="rich-p rich-bold-lead"><strong>Evening:</strong> Return to Shinjuku for final packing. Dinner options:</p>
+<ul class="rich-ul">
+  <li><strong>Fuunji ramen</strong> (near Shinjuku, tsukemen style — thick dipping noodles served separately from a rich concentrated broth; you dip each mouthful)</li>
+  <li><strong>Ichiran ramen</strong> (solo booths with a partition between each seat; you fill in a preference form; Hakata tonkotsu broth that arrives perfectly calibrated to your instructions)</li>
+  <li><strong>Sushi no Midori</strong> (Shibuya; no-reservation counter omakase sushi; wait in line; exceptional value; the fish quality is the equal of far more expensive places)</li>
+</ul>
+<h3 class="rich-h3">Tokyo Food Shortlist (for advance reservations)</h3>
+<div class="rich-table-wrap"><table class="rich-table"><tbody>
+<tr><td>Category</td><td>Restaurant</td><td>Notes</td></tr>
+<tr><td>Sushi omakase</td><td>Sushi Yoshitake</td><td>3 Michelin stars, Ginza. Book 2+ months ahead via website or hotel concierge.</td></tr>
+<tr><td>Sushi omakase</td><td>Sushi no Midori</td><td>Shibuya. No reservations; queue. Excellent value.</td></tr>
+<tr><td>Wagyu</td><td>Aragawa</td><td>Shinjuku; legendary Kobe beef, very expensive.</td></tr>
+<tr><td>Ramen</td><td>Fuunji</td><td>Shinjuku; tsukemen. Small queue.</td></tr>
+<tr><td>Ramen</td><td>Ichiran</td><td>Multiple Shinjuku locations; solo booths, tonkotsu.</td></tr>
+<tr><td>Tempura</td><td>Tempura Kondo</td><td>Ginza; Michelin, reservation needed.</td></tr>
+<tr><td>Tempura casual</td><td>Tendon Tenya</td><td>All over Tokyo; cheap, reliable.</td></tr>
+<tr><td>Convenience store</td><td>Lawson / 7-Eleven</td><td>Onigiri, karaage, hot canned coffee. Do this at least once.</td></tr>
+</tbody></table>
+<h3 class="rich-h3">Fez Shopping Priorities — Tokyo</h3>
+<p class="rich-p">Omotesando luxury flagship row → Ginza Six → Isetan Shinjuku (Japan's finest department store; B2 food hall, all designer floors) → Loft Shinjuku (lifestyle/stationery/cosmetics) → Don Quijote Kabukichō (late-night, quirky, cosmetics, flavoured Kit-Kats) → Tokyu Hands Shinjuku (design, craft, gadgets).</p>
+<p class="rich-p">Japanese skincare priority brands: SK-II · Shiseido (Ginza Tokyo line) · Decorté · Albion · HERA (Korean) · Sulwhasoo (Korean) · RMK.</p>
+<p class="rich-p">Tax-free refund available at department stores with a passport: minimum purchase threshold applies (¥5,000 typically); keep passport accessible.</p>`,
+  "Tokyo \u2192 Dubai \u2192 Johannesburg": `<h3 class="rich-h3">1 May (Wednesday) — Departure</h3>
+<p class="rich-p">Transfer to airport. <strong>Narita</strong> (~1.5hrs from Shinjuku via Narita Express or Limousine Bus). <strong>Haneda</strong> (~35 min from Shinjuku, far more convenient if the flight routes through Haneda). Confirm which airport when tickets are booked.</p>
+<p class="rich-p">Take a private car from the hotel to the airport on departure day — luggage, end of trip, no need for the inconvenience.</p>`,
+};
+
+// ─── DAY DETAIL VIEW ───
+var allDays = [];
+var currentDetailIdx = 0;
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Build allDays array from every day-card in document order
+  allDays = Array.from(document.querySelectorAll('.day-card')).map(function (card) {
+    var headerRight = card.querySelector('.day-card-header-right');
+    // Extract only .pill elements (strip the chevron SVG)
+    var pillsHTML = '';
+    if (headerRight) {
+      Array.from(headerRight.querySelectorAll('.pill')).forEach(function (p) {
+        pillsHTML += p.outerHTML;
+      });
+    }
+    return {
+      label:    card.querySelector('.day-label')    ? card.querySelector('.day-label').textContent    : '',
+      title:    card.querySelector('.day-title')    ? card.querySelector('.day-title').textContent    : '',
+      pillsHTML: pillsHTML,
+      bodyHTML: card.querySelector('.day-card-body') ? card.querySelector('.day-card-body').innerHTML : ''
+    };
+  });
+
+  // Attach click listeners to all .day-title elements
+  document.querySelectorAll('.day-card').forEach(function (card, idx) {
+    var titleEl = card.querySelector('.day-title');
+    if (titleEl) {
+      titleEl.addEventListener('click', function (e) {
+        e.stopPropagation(); // prevent triggering toggleCard on the parent header
+        openDetail(idx);
+      });
+    }
+  });
+});
+
+function openDetail(idx) {
+  currentDetailIdx = idx;
+  renderDetail();
+  var view = document.getElementById('detail-view');
+  view.classList.add('open');
+  view.scrollTop = 0;
+}
+
+function closeDetailView() {
+  document.getElementById('detail-view').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function navigateDetail(delta) {
+  var newIdx = currentDetailIdx + delta;
+  if (newIdx < 0 || newIdx >= allDays.length) return;
+  currentDetailIdx = newIdx;
+  renderDetail();
+  document.getElementById('detail-view').scrollTop = 0;
+}
+
+function renderDetail() {
+  var day = allDays[currentDetailIdx];
+  var total = allDays.length;
+
+  document.getElementById('detail-label').textContent = day.label;
+  document.getElementById('detail-title').textContent = day.title;
+  document.getElementById('detail-pills').innerHTML   = day.pillsHTML;
+  // Use rich markdown-sourced content if available, otherwise fall back to card body
+  var richHTML = (typeof detailContent !== 'undefined' && detailContent[day.title])
+    ? detailContent[day.title]
+    : day.bodyHTML;
+  document.getElementById('detail-body').innerHTML = richHTML;
+  document.getElementById('detail-counter').textContent = 'Day ' + (currentDetailIdx + 1) + ' of ' + total;
+
+  // Bottom nav: day names as context
+  var prevBtn = document.getElementById('detail-prev');
+  var nextBtn = document.getElementById('detail-next');
+  var centerEl = document.getElementById('detail-nav-center');
+
+  prevBtn.disabled = (currentDetailIdx === 0);
+  nextBtn.disabled = (currentDetailIdx === total - 1);
+
+  var prevLabel = currentDetailIdx > 0             ? allDays[currentDetailIdx - 1].title : '';
+  var nextLabel = currentDetailIdx < total - 1     ? allDays[currentDetailIdx + 1].title : '';
+
+  centerEl.innerHTML =
+    (prevLabel ? '<span style="color:var(--text3)">← ' + prevLabel + '</span>' : '') +
+    (prevLabel && nextLabel ? '<br>' : '') +
+    (nextLabel ? '<span style="color:var(--text3)">' + nextLabel + ' →</span>' : '');
 }
 </script>
 </body>
