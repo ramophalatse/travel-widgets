@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norway Trip 2026–27 · Family Itinerary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --bg2: #f2f0eb;
+    --bg3: #e8e5de;
+    --card: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1a1916;
+    --text2: #5a5750;
+    --text3: #9a9590;
+    --accent: #c17f3a;
+    --accent-bg: rgba(193,127,58,0.1);
+    --accent-text: #8a5a20;
+    --teal: #2a7a6a;
+    --teal-bg: rgba(42,122,106,0.1);
+    --teal-text: #1a5a4a;
+    --red: #b04040;
+    --red-bg: rgba(176,64,64,0.1);
+    --red-text: #803030;
+    --blue: #3060a0;
+    --blue-bg: rgba(48,96,160,0.1);
+    --blue-text: #204080;
+    --warn: #9a7020;
+    --warn-bg: rgba(154,112,32,0.1);
+    --warn-text: #7a5810;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141412;
+      --bg2: #1c1b18;
+      --bg3: #252420;
+      --card: #1e1d1a;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --text: #f0ede8;
+      --text2: #a09a90;
+      --text3: #6a6560;
+      --accent: #d4955a;
+      --accent-bg: rgba(212,149,90,0.12);
+      --accent-text: #e4a870;
+      --teal: #4aaa96;
+      --teal-bg: rgba(74,170,150,0.12);
+      --teal-text: #6abcaa;
+      --red: #d06060;
+      --red-bg: rgba(208,96,96,0.12);
+      --red-text: #e08080;
+      --blue: #6090d0;
+      --blue-bg: rgba(96,144,208,0.12);
+      --blue-text: #80aae0;
+      --warn: #c09040;
+      --warn-bg: rgba(192,144,64,0.12);
+      --warn-text: #d0a858;
+      --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+      --shadow-hover: 0 2px 8px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.25);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #141412;
+    --bg2: #1c1b18;
+    --bg3: #252420;
+    --card: #1e1d1a;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --text2: #a09a90;
+    --text3: #6a6560;
+    --accent: #d4955a;
+    --accent-bg: rgba(212,149,90,0.12);
+    --accent-text: #e4a870;
+    --teal: #4aaa96;
+    --teal-bg: rgba(74,170,150,0.12);
+    --teal-text: #6abcaa;
+    --red: #d06060;
+    --red-bg: rgba(208,96,96,0.12);
+    --red-text: #e08080;
+    --blue: #6090d0;
+    --blue-bg: rgba(96,144,208,0.12);
+    --blue-text: #80aae0;
+    --warn: #c09040;
+    --warn-bg: rgba(192,144,64,0.12);
+    --warn-text: #d0a858;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .toggle-track {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background: var(--bg3);
+    border: none;
+    border-radius: 999px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-track.on { background: var(--accent); }
+  .toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bg2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    pointer-events: none;
+  }
+  .toggle-track.on .toggle-thumb { transform: translateX(18px); }
+  .toggle-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .toggle-icon svg { width: 18px; height: 18px; display: block; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .header-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .header-sub {
+    font-size: 14px;
+    color: var(--text2);
+    font-weight: 300;
+  }
+  .header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text2);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 14px;
+  }
+  .meta-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1rem;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sans);
+    color: var(--text3);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .nav-tab .tab-emoji { margin-right: 6px; font-size: 14px; }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+  .leg-panel { display: none; }
+  .leg-panel.active { display: block; }
+
+  /* ── LEG INTRO ── */
+  .leg-intro {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .birthday-banner {
+    background: var(--blue-bg);
+    border: 1px solid var(--blue);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    color: var(--blue-text);
+    font-weight: 500;
+  }
+
+  /* ── DAY CARD ── */
+  .day-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .day-card:hover { box-shadow: var(--shadow-hover); }
+
+  .day-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 1rem 1.25rem 0.75rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .day-card-header-left { flex: 1; min-width: 0; }
+  .day-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 3px;
+  }
+  .day-title {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .day-card-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .chevron {
+    width: 18px; height: 18px;
+    color: var(--text3);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .day-card.open .chevron { transform: rotate(180deg); }
+
+  /* ── PILL BADGES ── */
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .pill-ok { background: var(--teal-bg); color: var(--teal-text); }
+  .pill-warn { background: var(--warn-bg); color: var(--warn-text); }
+  .pill-info { background: var(--blue-bg); color: var(--blue-text); }
+  .pill-special { background: var(--accent-bg); color: var(--accent-text); }
+  .pill-transit { background: var(--bg3); color: var(--text2); }
+
+  /* ── ACTIVITIES ── */
+  .day-card-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease;
+  }
+  .day-card.open .day-card-body { max-height: 2000px; }
+
+  .activities {
+    padding: 0 1.25rem 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .activity-row {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .activity-row:last-of-type { border-bottom: none; }
+  .time-col {
+    font-size: 11px;
+    color: var(--text3);
+    padding-top: 3px;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .act-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .act-note {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.55;
+    margin-bottom: 3px;
+  }
+  .act-cost {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 400;
+  }
+  .excursion-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--teal-bg);
+    color: var(--teal-text);
+    margin-top: 3px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── DAILY TOTAL ── */
+  .day-total-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 1.25rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .budget-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .budget-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .budget-fill.ok { background: var(--teal); }
+  .budget-fill.warn { background: var(--accent); }
+  .budget-fill.over { background: var(--red); }
+  .total-amount {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+
+  /* ── NOTICE BLOCKS ── */
+  .notice {
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin: 8px 1.25rem 4px;
+  }
+  .notice-warn { background: var(--warn-bg); color: var(--warn-text); }
+  .notice-info { background: var(--blue-bg); color: var(--blue-text); }
+  .notice-accent { background: var(--accent-bg); color: var(--accent-text); }
+
+  /* ── RESTAURANT COMPARE ── */
+  .restaurant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 8px 1.25rem 4px;
+  }
+  @media (max-width: 480px) {
+    .restaurant-grid { grid-template-columns: 1fr; }
+  }
+  .restaurant-card {
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    background: var(--bg2);
+  }
+  .restaurant-card.featured { border-color: var(--accent); }
+  .rest-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    display: inline-block;
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+  }
+  .rest-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .rest-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 5px; }
+  .rest-cost { font-size: 11px; color: var(--text3); }
+
+  /* ── CRUISE PORT HEADER ── */
+  .port-flag { font-size: 20px; margin-right: 8px; }
+
+  /* ── COST SUMMARY TABLE ── */
+  .summary-section {
+    margin-top: 2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .summary-header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .summary-table td {
+    padding: 10px 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+  }
+  .summary-table td:last-child {
+    text-align: right;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .summary-table tr.total td {
+    border-bottom: none;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 14px;
+    border-top: 2px solid var(--border2);
+  }
+  .summary-table tr.deduction td { color: var(--teal-text); }
+  .summary-table tr.deduction td:last-child { color: var(--teal-text); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .site-header { padding: 2rem 1rem 1.5rem; }
+    .header-meta { gap: 0.75rem; }
+    .nav-tab { padding: 12px 14px; font-size: 12px; }
+    .main { padding: 1.5rem 0.75rem 3rem; }
+    .day-card-header { padding: 0.875rem 1rem 0.75rem; }
+    .activities { padding: 0 1rem 1rem; }
+    .activity-row { grid-template-columns: 48px 1fr; }
+    .day-total-bar { padding: 8px 1rem; }
+    .notice { margin: 8px 1rem 4px; }
+    .restaurant-grid { margin: 8px 1rem 4px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <span class="toggle-icon" id="toggle-icon">
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M565-395q35-35 35-85t-35-85q-35-35-85-35t-85 35q-35 35-35 85t35 85q35 35 85 35t85-35Zm-226.5 56.5Q280-397 280-480t58.5-141.5Q397-680 480-680t141.5 58.5Q680-563 680-480t-58.5 141.5Q563-280 480-280t-141.5-58.5ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF" style="display:none"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
+    </span>
+    <div class="toggle-track" id="toggle-track">
+      <div class="toggle-thumb"></div>
+    </div>
+  </button>
+  <div class="header-eyebrow">Family Travel · Dec 2026 – Jan 2027</div>
+  <h1 class="header-title">New York · Miami · <em>Caribbean</em></h1>
+  <p class="header-sub">25 days · Party of 4 · A bucket list trip</p>
+  <div class="header-meta">
+    <div class="meta-pill"><span class="dot"></span>Dec 21, 2026 – Jan 15, 2027</div>
+    <div class="meta-pill"><span class="dot"></span>Etihad via Abu Dhabi</div>
+    <div class="meta-pill"><span class="dot"></span>Norwegian Aqua · 7 nights</div>
+    <div class="meta-pill"><span class="dot"></span>R484,247 total</div>
+  </div>
+</header>
+
+<nav class="nav-wrapper">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showLeg('nyc1', this)"><span class="tab-emoji">🗽</span>New York 1</button>
+    <button class="nav-tab" onclick="showLeg('miami', this)"><span class="tab-emoji">🌴</span>Miami</button>
+    <button class="nav-tab" onclick="showLeg('cruise', this)"><span class="tab-emoji">🚢</span>Cruise</button>
+    <button class="nav-tab" onclick="showLeg('nyc2', this)"><span class="tab-emoji">🗽</span>New York 2</button>
+    <button class="nav-tab" onclick="showLeg('budget', this)"><span class="tab-emoji">💰</span>Budget</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ══════════════ NYC LEG 1 ══════════════ -->
+  <div class="leg-panel active" id="panel-nyc1">
+    <div class="leg-intro">Dec 22–24 · Midtown Manhattan · Row NYC Hotel (4-star, B&B) · Party of 4 · Daily budget R3,000</div>
+    <div class="birthday-banner">🎂 Dec 22 is your daughter's 18th birthday — the evening is reserved for a special celebration dinner.</div>
+
+    <!-- DAY 1 -->
+    <div class="day-card open">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left">
+          <div class="day-label">Dec 22 · Day 1 — Birthday</div>
+          <div class="day-title">Arrival & 18th Birthday Celebration</div>
+        </div>
+        <div class="day-card-header-right">
+          <span class="pill pill-warn">Special occasion</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row">
+            <div class="time-col">Afternoon</div>
+            <div><div class="act-name">Arrive JFK · check in · Row NYC Hotel</div><div class="act-note">Rest and freshen up after the long Etihad flight via Abu Dhabi. You've been travelling since Dec 21.</div><div class="act-cost">Accommodation pre-paid (B&B)</div></div>
+          </div>
+          <div class="activity-row">
+            <div class="time-col">3pm</div>
+            <div><div class="act-name">Times Square first look</div><div class="act-note">Short walk from the hotel. Let it sink in that you're actually here. Birthday girl gets the first photo.</div><div class="act-cost">Free</div></div>
+          </div>
+          <div class="activity-row">
+            <div class="time-col">4:30pm</div>
+            <div><div class="act-name">Bryant Park stroll</div><div class="act-note">Beautiful walk to decompress. Winter village pop-up may still be running in late December.</div><div class="act-cost">Free</div></div>
+          </div>
+          <div class="activity-row">
+            <div class="time-col">7pm</div>
+            <div><div class="act-name">Birthday dinner · Tao New York or The View</div><div class="act-note">Book 6–8 weeks ahead — both fill up fast in December.</div></div>
+          </div>
+        </div>
+        <div class="restaurant-grid">
+          <div class="restaurant-card featured">
+            <div class="rest-badge">Our top pick</div>
+            <div class="rest-name">Tao New York</div>
+            <div class="rest-desc">Dramatic multi-floor Asian-fusion with a towering Buddha centrepiece. Loud in the best way, and genuinely great food.</div>
+            <div class="rest-cost">~R1,200–R1,500pp · ~R5,000–R6,000 for 4</div>
+          </div>
+          <div class="restaurant-card">
+            <div class="rest-name">The View Restaurant</div>
+            <div class="rest-desc">NYC's only revolving rooftop restaurant. The Manhattan skyline slowly rotates past your table as you dine.</div>
+            <div class="rest-cost">~R900–R1,200pp · ~R3,600–R4,800 for 4</div>
+          </div>
+        </div>
+        <div class="notice notice-accent">Intentionally over the R3,000 daily budget — a once-in-a-lifetime 18th birthday in New York warrants it.</div>
+        <div class="day-total-bar">
+          <div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div>
+          <div class="total-amount">~R4,500–R6,000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left">
+          <div class="day-label">Dec 23 · Day 2</div>
+          <div class="day-title">Downtown, Culture & Top of the Rock</div>
+        </div>
+        <div class="day-card-header-right">
+          <span class="pill pill-warn">Slightly over</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">8am</div><div><div class="act-name">Hotel breakfast (B&B included)</div><div class="act-cost">Included</div></div></div>
+          <div class="activity-row"><div class="time-col">9:30am</div><div><div class="act-name">9/11 Memorial & Museum</div><div class="act-note">Arrive early to avoid queues. Allow 2 hours. A genuinely moving experience.</div><div class="act-cost">~R1,500 for 4 (~$80)</div></div></div>
+          <div class="activity-row"><div class="time-col">12pm</div><div><div class="act-name">Walk the High Line</div><div class="act-note">Elevated park on a disused railway. Unique to NYC — great city views, completely free.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">1:30pm</div><div><div class="act-name">Lunch · Chelsea Market</div><div class="act-note">Food hall with something for everyone — lobster rolls, tacos, gelato.</div><div class="act-cost">~R800–R1,000 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">3pm</div><div><div class="act-name">Central Park</div><div class="act-note">Bethesda Fountain, Bow Bridge, the Reservoir. A classic NYC afternoon.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">6:30pm</div><div><div class="act-name">Dinner · casual</div><div class="act-note">Carmine's (Italian family-style) or Koreatown on 32nd St.</div><div class="act-cost">~R800–R1,200 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">8:30pm</div><div><div class="act-name">Top of the Rock · Rockefeller Center</div><div class="act-note">NYC at night from 70 floors up. Pre-book timed tickets online before the trip.</div><div class="act-cost">~R1,800 for 4 (~$96)</div></div></div>
+        </div>
+        <div class="notice notice-warn">Runs over R3,000 due to two ticketed attractions (~R3,300 in tickets alone). Both are unmissable.</div>
+        <div class="day-total-bar">
+          <div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div>
+          <div class="total-amount">~R4,900</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left">
+          <div class="day-label">Dec 24 · Day 3 — Christmas Eve</div>
+          <div class="day-title">Travel Day · JFK to Miami</div>
+        </div>
+        <div class="day-card-header-right">
+          <span class="pill pill-transit">Transit</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Early AM</div><div><div class="act-name">Check out · head to JFK</div><div class="act-note">AA 4357 departs 8:10am — leave the hotel by 5:30–6am. Confirm luggage storage the night before.</div><div class="act-cost">Flights pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">9:36am</div><div><div class="act-name">Arrive Boston Logan · connect to Miami</div><div class="act-note">AA 2499 departs 10:46am, arrives Miami 2:28pm. 1hr 10min connection — move quickly.</div><div class="act-cost">Flights pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">2:30pm</div><div><div class="act-name">Arrive Miami · collect Avis SUV · head to Airbnb</div><div class="act-note">1601 NE 160th St, North Miami Beach. ~25 min from MIA. Grocery run on the way.</div><div class="act-cost">Car pre-paid</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MIAMI ══════════════ -->
+  <div class="leg-panel" id="panel-miami">
+    <div class="leg-intro">Dec 24 – Jan 3 · North Miami Beach · Confirmed Airbnb · Avis Standard Elite SUV · Party of 4 · Budget R3,000/day</div>
+
+    <!-- ARRIVAL -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Dec 24 · Arrival</div><div class="day-title">Christmas Eve · Settle In</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Within budget</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">2:30pm</div><div><div class="act-name">Collect Avis SUV · drive to Airbnb</div><div class="act-cost">Car pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">4pm</div><div><div class="act-name">Grocery run · Publix or Winn-Dixie</div><div class="act-note">Stock up for the stay — eating in for some meals saves significantly against the daily budget.</div><div class="act-cost">~R1,000</div></div></div>
+          <div class="activity-row"><div class="time-col">6pm</div><div><div class="act-name">Sunset at Haulover Beach Park</div><div class="act-note">5 minutes from the Airbnb. Free parking, beautiful beach.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">8pm</div><div><div class="act-name">Christmas Eve dinner at the Airbnb</div><div class="act-note">Cook together. Set the tone for a great holiday.</div><div class="act-cost">~R500 (from groceries)</div></div></div>
+        </div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill ok" style="width:50%"></div></div><div class="total-amount">~R1,500</div></div>
+      </div>
+    </div>
+
+    <!-- CHRISTMAS DAY -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Dec 25 · Day 4</div><div class="day-title">Christmas Day · South Beach</div></div>
+        <div class="day-card-header-right"><span class="pill pill-warn">Plan carefully</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">10am</div><div><div class="act-name">Drive to South Beach · Ocean Drive</div><div class="act-note">Christmas Day is surprisingly quiet. Iconic Art Deco architecture along Ocean Drive.</div><div class="act-cost">Free (parking ~R200)</div></div></div>
+          <div class="activity-row"><div class="time-col">12pm</div><div><div class="act-name">Beach time · South Beach</div><div class="act-note">Swim, walk, soak it in. Christmas Day on South Beach is a bucket list moment in itself.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">2pm</div><div><div class="act-name">Lunch · Ocean Drive sidewalk café</div><div class="act-cost">~R1,200–R1,500 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">4pm</div><div><div class="act-name">Lincoln Road Mall stroll</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">7pm</div><div><div class="act-name">Christmas dinner · pre-booked restaurant</div><div class="act-note">Seasons 52 or Cibo Wine Bar in Coconut Grove or Brickell. Book ahead.</div><div class="act-cost">~R2,000–R2,800 for 4</div></div></div>
+        </div>
+        <div class="notice notice-warn">Christmas dinner pushes over R3,000 — expected and worth it.</div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div><div class="total-amount">~R3,500–R4,500</div></div>
+      </div>
+    </div>
+
+    <!-- EVERGLADES -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Dec 26 · Day 5</div><div class="day-title">Everglades Day Trip</div></div>
+        <div class="day-card-header-right"><span class="pill pill-warn">Slight stretch</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">8am</div><div><div class="act-name">Drive to Everglades National Park</div><div class="act-note">~1.5hrs in the SUV. Pack water, sunscreen, and snacks.</div><div class="act-cost">Car pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">10am</div><div><div class="act-name">Anhinga Trail + Gumbo Limbo Trail</div><div class="act-note">Walk among alligators, herons, and anhingas. Allow 1.5–2 hours.</div><div class="act-cost">~R760 per car (~$40)</div></div></div>
+          <div class="activity-row"><div class="time-col">12pm</div><div><div class="act-name">Airboat ride</div><div class="act-note">Everglades Adventure Tours or similar. Book in advance — peak season availability is limited.</div><div class="act-cost">~R2,800 for 4 (~$150)</div></div></div>
+          <div class="activity-row"><div class="time-col">3pm</div><div><div class="act-name">Robert Is Here fruit stand · drive back</div><div class="act-note">Legendary roadside stop near Homestead. Fresh tropical milkshakes — don't skip it.</div><div class="act-cost">~R400 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">7pm</div><div><div class="act-name">Dinner at the Airbnb</div><div class="act-cost">~R300</div></div></div>
+        </div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div><div class="total-amount">~R4,260</div></div>
+      </div>
+    </div>
+
+    <!-- WYNWOOD -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Dec 27 · Day 6</div><div class="day-title">Wynwood & Design District</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Within budget</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">10am</div><div><div class="act-name">Wynwood Walls</div><div class="act-note">World-famous outdoor street art. Ticketed main courtyard worth it.</div><div class="act-cost">~R760 for 4 (~$40)</div></div></div>
+          <div class="activity-row"><div class="time-col">12:30pm</div><div><div class="act-name">Lunch · Wynwood Kitchen or Zak the Baker</div><div class="act-cost">~R800–R1,000 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">2:30pm</div><div><div class="act-name">Design District stroll</div><div class="act-note">High-end boutiques, public art, interesting architecture.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">6pm</div><div><div class="act-name">Sunset at Bayfront Park</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">7:30pm</div><div><div class="act-name">Dinner · Brickell City Centre</div><div class="act-note">Chotto Matte, La Mar, or the Brickell City Centre food hall.</div><div class="act-cost">~R1,200–R1,600 for 4</div></div></div>
+        </div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill ok" style="width:90%"></div></div><div class="total-amount">~R2,800–R3,400</div></div>
+      </div>
+    </div>
+
+    <!-- FLORIDA KEYS -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Dec 28 · Day 7</div><div class="day-title">Florida Keys Day Trip</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Within budget</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">8am</div><div><div class="act-name">Drive the Overseas Highway</div><div class="act-note">One of the world's great road trips — 42 bridges over open ocean. Key Largo and Islamorada achievable without pushing to Key West.</div><div class="act-cost">Car pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">10:30am</div><div><div class="act-name">John Pennekamp Coral Reef State Park · snorkel tour</div><div class="act-note">First undersea park in the US. Spectacular reef life — book ahead.</div><div class="act-cost">~R1,500 for 4 (~$80)</div></div></div>
+          <div class="activity-row"><div class="time-col">1pm</div><div><div class="act-name">Lunch · Robbie's Marina, Islamorada</div><div class="act-note">Fresh seafood on the water. Tarpon feeding at the dock (~R40pp) is unforgettable.</div><div class="act-cost">~R1,000–R1,400 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">4pm</div><div><div class="act-name">Drive back to Miami</div><div class="act-note">Aim to be back before dark.</div></div></div>
+          <div class="activity-row"><div class="time-col">7:30pm</div><div><div class="act-name">Easy dinner · Airbnb or local takeout</div><div class="act-cost">~R400</div></div></div>
+        </div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill ok" style="width:95%"></div></div><div class="total-amount">~R3,000–R3,300</div></div>
+      </div>
+    </div>
+
+    <!-- FLEX DAYS -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Dec 29–31 · Days 8–10</div><div class="day-title">Flex Days · New Year's Eve in Miami</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Budget your way</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Dec 29</div><div><div class="act-name">Beach day · Haulover or Bal Harbour</div><div class="act-note">True rest day — pool, beach, nothing planned. Bal Harbour Shops if anyone wants upscale retail.</div><div class="act-cost">~R500–R800</div></div></div>
+          <div class="activity-row"><div class="time-col">Dec 30</div><div><div class="act-name">Little Havana · Calle Ocho</div><div class="act-note">Cuban coffee at Versailles, cigar rolling, domino players at Maximo Gomez Park.</div><div class="act-cost">~R600–R900 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">Dec 31</div><div><div class="act-name">New Year's Eve</div><div class="act-note">Bayfront Park countdown is free and massive, or book a restaurant NYE menu. Book early — this night gets expensive fast.</div><div class="act-cost">~R2,000–R4,000+ for 4</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW YEAR'S DAY -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 1 · Day 11</div><div class="day-title">New Year's Day · Rest & Recover</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Within budget</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Late start</div><div><div class="act-name">Slow brunch · beach or pool</div><div class="act-note">You've earned a late start. Brunch at the Airbnb or a nearby spot, then the rest of the day at your own pace.</div><div class="act-cost">~R600–R1,000</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAST FULL DAY MIAMI -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 2 · Day 12</div><div class="day-title">Last Full Day in Miami · Farewell Dinner</div></div>
+        <div class="day-card-header-right"><span class="pill pill-warn">Plan carefully</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Final coastal drive · wherever the mood takes you</div><div class="act-note">Last day with wheels. A slow cruise down A1A, a return visit to a favourite spot, or a morning coffee run.</div><div class="act-cost">Car pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">11am</div><div><div class="act-name">Last Miami beach morning</div><div class="act-note">Haulover, Bal Harbour, or South Beach one more time. Final swim before 7 nights at sea.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">1:30pm</div><div><div class="act-name">Light lunch · Airbnb or casual nearby</div><div class="act-cost">~R400–R600 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">3pm</div><div><div class="act-name">Pack cruise luggage · Airbnb check-out admin</div><div class="act-note">Get bags sorted so tomorrow morning is stress-free. Confirm check-out time with the host.</div></div></div>
+          <div class="activity-row"><div class="time-col">7pm</div><div><div class="act-name">Farewell Miami dinner · Joe's Stone Crab or similar</div><div class="act-note">Joe's Stone Crab is a Miami institution. Pre-book well in advance — they don't take same-day reservations. Alternatives: Stubborn Seed or Komodo in Brickell.</div><div class="act-cost">~R2,000–R3,000 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">9:30pm</div><div><div class="act-name">Early night · embarkation day tomorrow</div></div></div>
+        </div>
+        <div class="notice notice-warn">Joe's Stone Crab requires advance booking — check availability as soon as cruise dates are confirmed.</div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill warn" style="width:95%"></div></div><div class="total-amount">~R2,500–R3,600</div></div>
+      </div>
+    </div>
+
+    <!-- EMBARKATION -->
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 3 · Day 13 — Embarkation</div><div class="day-title">Avis Drop · Port Miami · All Aboard Norwegian Aqua</div></div>
+        <div class="day-card-header-right"><span class="pill pill-info">Cruise begins</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">7am</div><div><div class="act-name">Wake up · final Airbnb breakfast</div><div class="act-note">Quick and easy — bags are already packed from yesterday.</div><div class="act-cost">From groceries</div></div></div>
+          <div class="activity-row"><div class="time-col">8am</div><div><div class="act-name">Airbnb check-out · load the SUV</div></div></div>
+          <div class="activity-row"><div class="time-col">8:30am</div><div><div class="act-name">Drive to Avis drop-off · near Port Miami</div><div class="act-note">Convenient location close to the terminal. Return the SUV and walk or take a short transfer to the port.</div><div class="act-cost">Car pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">9:15am</div><div><div class="act-name">Arrive Port Miami · Norwegian Aqua check-in</div><div class="act-note">Porters will take large bags to cabins. Three separate cabin check-ins — complete NCL online check-in beforehand to skip the queue.</div></div></div>
+          <div class="activity-row"><div class="time-col">12pm</div><div><div class="act-name">Board Norwegian Aqua · lunch on board</div><div class="act-note">Cabins typically ready by 1–2pm. Head to the buffet while exploring the ship.</div><div class="act-cost">Cruise pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">Afternoon</div><div><div class="act-name">Muster drill · sail away from Miami</div><div class="act-note">Mandatory safety muster before departure. Then find a deck spot and watch Miami disappear. The adventure begins.</div></div></div>
+        </div>
+        <div class="notice notice-info">NCL opens online check-in ~21 days before sailing. Complete all three cabins at once to significantly speed up the terminal process.</div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill ok" style="width:7%"></div></div><div class="total-amount">~R200 (transfer only)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CRUISE ══════════════ -->
+  <div class="leg-panel" id="panel-cruise">
+    <div class="leg-intro">Jan 3–10 · Norwegian Aqua · Caribbean · Free at Sea Plus package · Drinks, specialty dining, Wi-Fi & shore excursions included</div>
+
+    <div class="day-card open">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 3 · Day 13</div><div class="day-title"><span class="port-flag">🚢</span>Embarkation · Port Miami</div></div>
+        <div class="day-card-header-right"><span class="pill pill-info">At sea</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">12pm</div><div><div class="act-name">Board Norwegian Aqua · explore the ship</div><div class="act-note">Settle into cabins, lunch on board, find your sea legs. Sail away from Miami in the afternoon.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 4 · Day 14</div><div class="day-title"><span class="port-flag">🌊</span>Day at Sea</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Relaxed</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">All day</div><div><div class="act-name">Full day at sea · enjoy the Norwegian Aqua</div><div class="act-note">Pool decks, spa, specialty restaurants, entertainment, casino. First full day to explore everything the ship has to offer. Drinks included with Free at Sea Plus.</div><div class="act-cost">All included</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 5 · Day 15</div><div class="day-title"><span class="port-flag">🇩🇴</span>Puerto Plata, Dominican Republic</div></div>
+        <div class="day-card-header-right"><span class="pill pill-special">Excursion day</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Damajagua Waterfalls & Buggies</div><div class="act-note">Race through the Dominican countryside in all-terrain buggies, then cool off in the mountain cascades of Damajagua with a local guide. One of the most exhilarating excursions on the itinerary.</div><div class="act-cost">$190pp · ~R3,570 for 4 (pre-paid via NCL)</div><div class="excursion-tag">NCL excursion booked</div></div></div>
+          <div class="activity-row"><div class="time-col">Afternoon</div><div><div class="act-name">Return to ship · explore Puerto Plata town</div><div class="act-note">If time allows before all-aboard, the town centre and Fortaleza San Felipe fort are worth a look.</div><div class="act-cost">Free</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 6 · Day 16</div><div class="day-title"><span class="port-flag">🇻🇮</span>St. Thomas, US Virgin Islands</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Explore at leisure</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Charlotte Amalie town · duty-free shopping</div><div class="act-note">St. Thomas is renowned for duty-free shopping — jewellery, electronics, and spirits at excellent prices. A great opportunity to use part of the shopping budget.</div><div class="act-cost">Free (shopping optional)</div></div></div>
+          <div class="activity-row"><div class="time-col">Midday</div><div><div class="act-name">Magens Bay Beach</div><div class="act-note">Consistently rated one of the world's most beautiful beaches. A short taxi ride from the cruise terminal.</div><div class="act-cost">~R200 entry for 4 + taxi</div></div></div>
+          <div class="activity-row"><div class="time-col">Afternoon</div><div><div class="act-name">Sky Ride to Paradise Point (optional)</div><div class="act-note">Gondola ride up the hillside for panoramic views of the harbour and islands.</div><div class="act-cost">~R800 for 4</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 7 · Day 17</div><div class="day-title"><span class="port-flag">🇻🇬</span>Tortola, British Virgin Islands</div></div>
+        <div class="day-card-header-right"><span class="pill pill-special">Excursion day</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Best of Tortola & Beach · NCL excursion</div><div class="act-note">Travel the coastlines along Sir Francis Drake's Highway through the villages of Capoons Bay, Apple Bay, and Carrot Bay, before ending at one of Tortola's beautiful beaches.</div><div class="act-cost">~$90pp · ~R1,690 for 4 (confirm pricing with NCL)</div><div class="excursion-tag">NCL excursion booked</div></div></div>
+          <div class="activity-row"><div class="time-col">Afternoon</div><div><div class="act-name">Road Town · explore independently</div><div class="act-note">Browse the waterfront, pick up local crafts, or find a beach bar before returning to the ship.</div><div class="act-cost">Free</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 8 · Day 18</div><div class="day-title"><span class="port-flag">🌊</span>Day at Sea</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Relaxed</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">All day</div><div><div class="act-name">Full day at sea</div><div class="act-note">Mid-cruise rest day. Pool, spa, entertainment, specialty dining. Halfway point — a good moment to review photos, write postcards, and savour the trip so far.</div><div class="act-cost">All included</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 9 · Day 19</div><div class="day-title"><span class="port-flag">🇧🇸</span>Great Stirrup Cay, Bahamas</div></div>
+        <div class="day-card-header-right"><span class="pill pill-special">Excursion day</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Wave Runner Tour · 2 guests (1 driver, 1 rider)</div><div class="act-note">A 45-minute guided Wave Runner adventure through the Berry Islands. Two of the party ride; two enjoy the beach and NCL's private island facilities.</div><div class="act-cost">$219 · ~R4,110 for 2 (pre-paid via NCL)</div><div class="excursion-tag">NCL excursion booked</div></div></div>
+          <div class="activity-row"><div class="time-col">All day</div><div><div class="act-name">Great Stirrup Cay · NCL private island</div><div class="act-note">White sand, turquoise water, beach barbecue lunch included. One of the highlights of the entire cruise — the Bahamas at its most pristine.</div><div class="act-cost">All included (lunch on island)</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 10 · Day 20</div><div class="day-title"><span class="port-flag">🚢</span>Disembarkation · Port Miami</div></div>
+        <div class="day-card-header-right"><span class="pill pill-info">Cruise ends</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Disembark Norwegian Aqua</div><div class="act-note">Pack the night before. Follow NCL's disembarkation process — luggage tags colour-coded by departure time. AA 1717 departs Miami 12:20pm.</div></div></div>
+          <div class="activity-row"><div class="time-col">12:20pm</div><div><div class="act-name">Fly Miami to JFK · American AA 1717</div><div class="act-note">Arrives JFK 3:21pm. Transfer to Row NYC Hotel — Uber or taxi, ~45 min from JFK.</div><div class="act-cost">Flights pre-paid</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ NYC LEG 2 ══════════════ -->
+  <div class="leg-panel" id="panel-nyc2">
+    <div class="leg-intro">Jan 10–13 · Midtown Manhattan · Row NYC Hotel · B&B included · Post-cruise · Party of 4 · Budget R3,000/day</div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 10 · Day 20 — Arrival</div><div class="day-title">Disembark & Decompress</div></div>
+        <div class="day-card-header-right"><span class="pill pill-ok">Within budget</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">3:21pm</div><div><div class="act-name">Arrive JFK · transfer to Row NYC Hotel</div><div class="act-note">Uber or taxi from JFK to Midtown, ~45 min. Two vehicles likely needed for 4 people with cruise luggage.</div><div class="act-cost">~R800–R1,000</div></div></div>
+          <div class="activity-row"><div class="time-col">5pm</div><div><div class="act-name">Check in · rest</div><div class="act-note">7 nights at sea deserves a slow evening. No agenda.</div><div class="act-cost">Accommodation pre-paid</div></div></div>
+          <div class="activity-row"><div class="time-col">7pm</div><div><div class="act-name">Dinner · nearby comfort food</div><div class="act-note">Marseille (French brasserie, 44th St) or John's Times Square Pizza — close, no fuss.</div><div class="act-cost">~R1,000–R1,400 for 4</div></div></div>
+        </div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill ok" style="width:67%"></div></div><div class="total-amount">~R2,000</div></div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 11 · Day 21</div><div class="day-title">The Met & January Sales</div></div>
+        <div class="day-card-header-right"><span class="pill pill-warn">Plan carefully</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">8am</div><div><div class="act-name">Hotel breakfast (B&B included)</div><div class="act-cost">Included</div></div></div>
+          <div class="activity-row"><div class="time-col">9:30am</div><div><div class="act-name">The Metropolitan Museum of Art</div><div class="act-note">Egyptian Temple of Dendur, European masters, the American wing. Budget 3 hours minimum. Pay-what-you-wish for non-US residents.</div><div class="act-cost">~R600–R1,200 for 4 (suggested admission)</div></div></div>
+          <div class="activity-row"><div class="time-col">1pm</div><div><div class="act-name">Lunch · Upper East Side</div><div class="act-note">E.A.T. deli near the Met, or Shake Shack at Madison Square.</div><div class="act-cost">~R800–R1,000 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">3pm</div><div><div class="act-name">January sales · 5th Ave, Bloomingdale's, Macy's</div><div class="act-note">Post-Christmas sales in the US are serious. Best time in the entire trip to use the R50,000 shopping budget.</div><div class="act-cost">Shopping budget allocated</div></div></div>
+          <div class="activity-row"><div class="time-col">7:30pm</div><div><div class="act-name">Dinner · Koreatown (32nd St)</div><div class="act-note">Steps from the hotel. Korean BBQ at the table — Kang Ho Dong Baekjeong or Jongro BBQ. Fun for 4.</div><div class="act-cost">~R1,200–R1,600 for 4</div></div></div>
+        </div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill ok" style="width:85%"></div></div><div class="total-amount">~R2,800–R3,800 (excl. shopping)</div></div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 12 · Day 22</div><div class="day-title">Brooklyn, DUMBO & Farewell Dinner</div></div>
+        <div class="day-card-header-right"><span class="pill pill-warn">Splurge day</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">8am</div><div><div class="act-name">Hotel breakfast</div><div class="act-cost">Included</div></div></div>
+          <div class="activity-row"><div class="time-col">9:30am</div><div><div class="act-name">Walk the Brooklyn Bridge</div><div class="act-note">From the Manhattan side. January morning light on the skyline is stunning. Wrap up warm.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">11am</div><div><div class="act-name">DUMBO · Brooklyn Heights Promenade</div><div class="act-note">The postcard shot — Manhattan framed perfectly under the bridge. Best skyline view in the city.</div><div class="act-cost">Free</div></div></div>
+          <div class="activity-row"><div class="time-col">1pm</div><div><div class="act-name">Lunch · Grimaldi's or Juliana's Pizza</div><div class="act-note">Two legendary coal-fired pizza spots in DUMBO, virtually side by side. Worth any queue.</div><div class="act-cost">~R800–R1,000 for 4</div></div></div>
+          <div class="activity-row"><div class="time-col">3pm</div><div><div class="act-name">Afternoon free · last wanders or rest</div></div></div>
+          <div class="activity-row"><div class="time-col">7pm</div><div><div class="act-name">Farewell dinner · somewhere special</div><div class="act-note">Last night of a bucket list trip. Nobu 57 (~R1,500pp), Smith & Wollensky (~R1,200pp), or Le Bernardin (~R3,000pp). Book well in advance.</div><div class="act-cost">~R4,800–R12,000 for 4</div></div></div>
+        </div>
+        <div class="notice notice-warn">Farewell dinner range depends on restaurant. All three are worth it — book as soon as possible.</div>
+        <div class="day-total-bar"><div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div><div class="total-amount">~R6,000–R14,000</div></div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-card-header" onclick="toggleCard(this)">
+        <div class="day-card-header-left"><div class="day-label">Jan 13 · Day 23 — Departure</div><div class="day-title">JFK → Abu Dhabi → Johannesburg</div></div>
+        <div class="day-card-header-right"><span class="pill pill-info">Homeward bound</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="day-card-body">
+        <div class="activities">
+          <div class="activity-row"><div class="time-col">Morning</div><div><div class="act-name">Hotel breakfast · final pack · check out</div><div class="act-note">EY 2 departs 3:00pm — aim to be at JFK by 12pm. Allow time for international check-in and security.</div><div class="act-cost">Included</div></div></div>
+          <div class="activity-row"><div class="time-col">3pm</div><div><div class="act-name">Depart JFK · Etihad EY 2</div><div class="act-note">Arrives Abu Dhabi Jan 14 at 12:30pm. 13hr 30min layover — check Etihad's stopover hotel programme. EY 747 departs Jan 15 at 2:00am. Home Jan 15 at 8:20am.</div><div class="act-cost">Flights pre-paid</div></div></div>
+        </div>
+        <div class="notice notice-info">The 13hr 30min Abu Dhabi layover is worth investigating with Etihad — their stopover programme sometimes includes a complimentary city hotel.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ BUDGET ══════════════ -->
+  <div class="leg-panel" id="panel-budget">
+    <div class="leg-intro">Full trip cost breakdown · Party of 4 · Dec 21, 2026 – Jan 15, 2027</div>
+
+    <div class="summary-section">
+      <div class="summary-header"><div class="summary-title">Trip Cost Summary</div></div>
+      <table class="summary-table">
+        <tr><td>✈️ Flights (4 passengers, all legs)</td><td>R104,333</td></tr>
+        <tr><td>🏨 Accommodation (all stays)</td><td>R244,142</td></tr>
+        <tr><td>🚢 NCL Free at Sea Plus package</td><td>R24,051</td></tr>
+        <tr><td>💵 Daily spending (17 days × R3,000)</td><td>R51,000</td></tr>
+        <tr><td>🚗 Transport (Avis SUV + transfers)</td><td>R20,182</td></tr>
+        <tr><td>🛍️ Shopping budget</td><td>R50,000</td></tr>
+        <tr><td>📶 Prepaid data eSIM (Holafly, 8 days)</td><td>R540</td></tr>
+        <tr><td>🎓 Unam's allowance</td><td>R5,000</td></tr>
+        <tr class="deduction"><td>↩️ Tshiamo's contribution (flight)</td><td>−R15,000</td></tr>
+        <tr class="total"><td>Total</td><td>R484,247</td></tr>
+      </table>
+    </div>
+
+    <div class="summary-section" style="margin-top:1.25rem;">
+      <div class="summary-header"><div class="summary-title">Accommodation Breakdown</div></div>
+      <table class="summary-table">
+        <tr><td>Row NYC Hotel · Dec 22–24 (3 rooms, 2 nights)</td><td>R36,553</td></tr>
+        <tr><td>Airbnb North Miami Beach · Dec 24 – Jan 3 (10 nights)</td><td>R55,817</td></tr>
+        <tr><td>Norwegian Aqua · Jan 3–10 (3 cabins, 7 nights)</td><td>R113,752</td></tr>
+        <tr><td>Row NYC Hotel · Jan 10–13 (3 rooms, 3 nights)</td><td>R38,019</td></tr>
+        <tr class="total"><td>Total accommodation</td><td>R244,142</td></tr>
+      </table>
+    </div>
+
+    <div class="summary-section" style="margin-top:1.25rem;">
+      <div class="summary-header"><div class="summary-title">Cruise Excursions (to book via NCL)</div></div>
+      <table class="summary-table">
+        <tr><td>🇩🇴 Puerto Plata · Damajagua Waterfalls & Buggies ($190pp × 4)</td><td>~R3,570</td></tr>
+        <tr><td>🇻🇬 Tortola · Best of Tortola & Beach ($90pp × 4)</td><td>~R1,690</td></tr>
+        <tr><td>🇧🇸 Great Stirrup Cay · Wave Runner Tour – 2 guests ($219)</td><td>~R4,110</td></tr>
+        <tr class="total"><td>Total excursions</td><td>~R9,370</td></tr>
+      </table>
+    </div>
+
+    <div class="summary-section" style="margin-top:1.25rem;">
+      <div class="summary-header"><div class="summary-title">Things to Book in Advance</div></div>
+      <table class="summary-table">
+        <tr><td>🎂 Birthday dinner (Tao or The View) · Dec 22</td><td>Book now · 6–8 weeks ahead</td></tr>
+        <tr><td>🗽 Top of the Rock timed tickets · Dec 23</td><td>Book online before trip</td></tr>
+        <tr><td>🎄 Christmas dinner restaurant · Dec 25</td><td>Book now</td></tr>
+        <tr><td>🐊 Everglades airboat ride · Dec 26</td><td>Book online, peak season</td></tr>
+        <tr><td>🐠 John Pennekamp snorkel tour · Dec 28</td><td>Book online</td></tr>
+        <tr><td>🦞 Joe's Stone Crab · Jan 2</td><td>Book now, no same-day reservations</td></tr>
+        <tr><td>🚢 NCL online check-in (all 3 cabins)</td><td>Opens ~21 days before sailing</td></tr>
+        <tr><td>🍽️ Farewell dinner NYC · Jan 12</td><td>Book well in advance</td></tr>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function showLeg(id, btn) {
+    document.querySelectorAll('.leg-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleCard(headerEl) {
+    const card = headerEl.closest('.day-card');
+    card.classList.toggle('open');
+  }
+
+  (function initTheme() {
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const stored = localStorage.getItem('theme');
+    const isDark = stored ? stored === 'dark' : systemDark;
+    applyTheme(isDark, false);
+  })();
+
+  function applyTheme(dark, save) {
+    const root = document.documentElement;
+    const track = document.getElementById('toggle-track');
+    const sun = document.getElementById('icon-sun');
+    const moon = document.getElementById('icon-moon');
+    root.dataset.theme = dark ? 'dark' : 'light';
+    if (track) track.classList.toggle('on', dark);
+    if (sun && moon) {
+      sun.style.display = dark ? 'none' : 'block';
+      moon.style.display = dark ? 'block' : 'none';
+    }
+    if (save) localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    applyTheme(!isDark, true);
+  }
+</script>
+</body>
+</html>
