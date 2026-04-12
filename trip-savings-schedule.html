@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,8 +35,36 @@
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
   }
 
+  [data-theme="dark"] {
+    --bg: #111210;
+    --surface: #1C1C1A;
+    --surface-alt: #242422;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.16);
+    --text: #EAE7E0;
+    --text-muted: #8A8680;
+    --text-faint: #5A5650;
+    --accent: #5DCAA5;
+    --accent-bg: #0D2A20;
+    --accent-text: #5DCAA5;
+    --payment-bg: #141E2A;
+    --payment-border: rgba(85,140,200,0.15);
+    --pill-bg: #1A4A78;
+    --pill-text: #B5D4F4;
+    --bar-bg: #2A2A28;
+    --bar-fill: #3DAA80;
+    --bar-warn: #D4882A;
+    --bar-danger: #D04040;
+    --danger: #E06060;
+    --warn: #D4882A;
+    --ok: #4DBB8A;
+    --metric-bg: #242422;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
   @media (prefers-color-scheme: dark) {
-    :root {
+    [data-theme="auto"] {
       --bg: #111210;
       --surface: #1C1C1A;
       --surface-alt: #242422;
@@ -63,6 +91,60 @@
       --shadow: 0 1px 3px rgba(0,0,0,0.3);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
     }
+  }
+
+  .mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 100;
+  }
+
+  .toggle-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+
+  .toggle-icon svg { display: block; }
+
+  .toggle-track {
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: #E8E5DE;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .is-dark .toggle-track {
+    background: #3DAA80;
+  }
+
+  .toggle-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #F2F0EB;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s;
+  }
+
+  .is-dark .toggle-thumb {
+    transform: translateX(18px);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -400,10 +482,23 @@
 </style>
 </head>
 <body>
+<button class="mode-toggle" id="mode-toggle" title="Toggle light/dark mode">
+  <span class="toggle-icon" id="toggle-icon">
+    <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="18" height="18" fill="currentColor">
+      <path d="M565-395q35-35 35-85t-35-85q-35-35-85-35t-85 35q-35 35-35 85t35 85q35 35 85 35t85-35Zm-226.5 56.5Q280-397 280-480t58.5-141.5Q397-680 480-680t141.5 58.5Q680-563 680-480t-58.5 141.5Q563-280 480-280t-141.5-58.5ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/>
+    </svg>
+    <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" style="display:none">
+      <path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/>
+    </svg>
+  </span>
+  <div class="toggle-track" id="toggle-track">
+    <div class="toggle-thumb"></div>
+  </div>
+</button>
 <div class="page">
 
   <header>
-    <div class="header-label">Family trip · Dec 2026 – Jan 2027</div>
+    <div class="header-label">Family trip · Dec 2026 → Jan 2027</div>
     <h1>NYC &amp; Miami <em>savings schedule</em></h1>
     <div class="header-meta">R77,983.20 flights paid · R8,500 NCL deposit paid · Starting April 2026</div>
   </header>
@@ -471,6 +566,7 @@
 <script>
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
 const START = new Date(2026, 3, 1);
+const LS = 'nyc-miami-savings-v1';
 
 const PAYMENTS = [
   { label: 'NCL cruise balance', amount: 129300, due: new Date(2026, 9, 5) },
@@ -481,6 +577,47 @@ const PAYMENTS = [
 ];
 
 const PAYMENTS_DEFAULT_TOTAL = PAYMENTS.reduce((s, p) => s + p.amount, 0);
+
+function saveState() {
+  try {
+    localStorage.setItem(LS, JSON.stringify({
+      total: document.getElementById('total-input').value,
+      paid: document.getElementById('paid-input').value,
+      monthly: document.getElementById('monthly').value,
+      theme: document.documentElement.getAttribute('data-theme'),
+    }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS) || '{}');
+    if (s.total) document.getElementById('total-input').value = s.total;
+    if (s.paid)  document.getElementById('paid-input').value  = s.paid;
+    if (s.monthly) document.getElementById('monthly').value = s.monthly;
+    if (s.theme) applyTheme(s.theme, false);
+  } catch(e) {}
+}
+
+function applyTheme(theme, save = true) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const osIsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = theme === 'dark' || (theme === 'auto' && osIsDark);
+  document.getElementById('icon-sun').style.display = isDark ? 'none' : 'block';
+  document.getElementById('icon-moon').style.display = isDark ? 'block' : 'none';
+  document.documentElement.classList.toggle('is-dark', isDark);
+  if (save) saveState();
+}
+
+function cycleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const osIsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let next;
+  if (cur === 'auto') next = osIsDark ? 'light' : 'dark';
+  else if (cur === 'dark') next = 'light';
+  else next = 'dark';
+  applyTheme(next);
+}
 
 function getTotalNeeded() {
   return Math.max(0, +document.getElementById('total-input').value || 0);
@@ -523,7 +660,6 @@ function render() {
 
   months.forEach(m => {
     balance += monthly;
-
     const due = PAYMENTS.filter(p =>
       p.due.getFullYear() === m.getFullYear() && p.due.getMonth() === m.getMonth()
     );
@@ -587,6 +723,8 @@ function render() {
     verdict.className = 'verdict ok';
     verdict.textContent = `✓ At ${FMT(monthly)}/month all payments are fully covered. Tightest point leaves a buffer of ${FMT(minBalance)}.`;
   }
+
+  saveState();
 }
 
 function commitPaid() {
@@ -627,10 +765,11 @@ function openTotalEdit() {
   inp.select();
 }
 
+document.getElementById('mode-toggle').addEventListener('click', cycleTheme);
+
 document.getElementById('total-metric').addEventListener('click', function() {
   if (document.getElementById('total-input').style.display === 'none') openTotalEdit();
 });
-
 document.getElementById('total-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') commitTotal();
   if (e.key === 'Escape') {
@@ -639,14 +778,12 @@ document.getElementById('total-input').addEventListener('keydown', function(e) {
     document.getElementById('total-hint').style.display = 'none';
   }
 });
-
 document.getElementById('total-input').addEventListener('blur', commitTotal);
 document.getElementById('total-input').addEventListener('input', render);
 
 document.getElementById('paid-metric').addEventListener('click', function(e) {
   if (document.getElementById('paid-input').style.display === 'none') openPaidEdit();
 });
-
 document.getElementById('paid-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') commitPaid();
   if (e.key === 'Escape') {
@@ -655,10 +792,12 @@ document.getElementById('paid-input').addEventListener('keydown', function(e) {
     document.getElementById('paid-hint').style.display = 'none';
   }
 });
-
 document.getElementById('paid-input').addEventListener('blur', commitPaid);
 document.getElementById('paid-input').addEventListener('input', render);
 document.getElementById('monthly').addEventListener('input', render);
+
+loadState();
+applyTheme(document.documentElement.getAttribute('data-theme'), false);
 render();
 </script>
 </body>
