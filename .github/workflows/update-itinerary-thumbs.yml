@@ -26,8 +26,8 @@ jobs:
           fi
           FILES=$(git diff --name-only --diff-filter=A "$BEFORE" "${{ github.sha }}" \
             -- 'assets/nyc-miami-2026/' \
-            | grep -Ei '\.(jpg|jpeg|png|webp)$' \
-            | xargs -I{} basename {} \
+            | { grep -Ei '\.(jpg|jpeg|png|webp)$' || true; } \
+            | xargs -r -I{} basename {} \
             | paste -sd ',' -)
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
 
