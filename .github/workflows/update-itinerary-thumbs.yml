@@ -20,13 +20,8 @@ jobs:
       - name: Detect new images
         id: detect
         run: |
-          BEFORE="${{ github.event.before }}"
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            BEFORE="$(git rev-list --max-parents=0 HEAD)"
-          fi
-          FILES=$(git diff --name-only --diff-filter=A "$BEFORE" "${{ github.sha }}" \
-            -- 'assets/nyc-miami-2026/' \
-            | { grep -Ei '\.(jpg|jpeg|png|webp)$' || true; } \
+          FILES=$(git show --name-only --diff-filter=A --pretty="" HEAD \
+            | { grep -Ei '^assets/nyc-miami-2026/.*\.(jpg|jpeg|png|webp)$' || true; } \
             | xargs -r -I{} basename {} \
             | paste -sd ',' -)
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
