@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cape Town · Stellenbosch · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#faf9f7;--bg2:#f2f0eb;--bg3:#e8e5de;--card:#ffffff;
+    --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+    --text:#1a1916;--text2:#5a5750;--text3:#9a9590;
+    --accent:#c17f3a;--accent-bg:rgba(193,127,58,0.10);--accent-text:#8a5a20;
+    --teal:#2a7a6a;--teal-bg:rgba(42,122,106,0.10);--teal-text:#1a5a4a;
+    --warn:#9a7020;--warn-bg:rgba(154,112,32,0.10);--warn-text:#7a5810;
+    --blue:#3060a0;--blue-bg:rgba(48,96,160,0.10);--blue-text:#204080;
+    --red:#b04040;--red-bg:rgba(176,64,64,0.10);--red-text:#803030;
+    --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+    --shadow-hover:0 2px 8px rgba(0,0,0,0.10),0 8px 24px rgba(0,0,0,0.06);
+    --radius:12px;--radius-sm:8px;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'DM Sans',system-ui,sans-serif;
+  }
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#141412;--bg2:#1c1b18;--bg3:#252420;--card:#1e1d1a;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#f0ede8;--text2:#a09a90;--text3:#6a6560;
+    --accent:#d4955a;--accent-bg:rgba(212,149,90,0.12);--accent-text:#e4a870;
+    --teal:#4aaa96;--teal-bg:rgba(74,170,150,0.12);--teal-text:#6abcaa;
+    --warn:#c09040;--warn-bg:rgba(192,144,64,0.12);--warn-text:#d0a858;
+    --blue:#6090d0;--blue-bg:rgba(96,144,208,0.12);--blue-text:#80aae0;
+    --red:#d06060;--red-bg:rgba(208,96,96,0.12);--red-text:#e08080;
+    --shadow:0 1px 3px rgba(0,0,0,0.30),0 4px 12px rgba(0,0,0,0.20);
+    --shadow-hover:0 2px 8px rgba(0,0,0,0.40),0 8px 24px rgba(0,0,0,0.25);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#141412;--bg2:#1c1b18;--bg3:#252420;--card:#1e1d1a;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#f0ede8;--text2:#a09a90;--text3:#6a6560;
+    --accent:#d4955a;--accent-bg:rgba(212,149,90,0.12);--accent-text:#e4a870;
+    --teal:#4aaa96;--teal-bg:rgba(74,170,150,0.12);--teal-text:#6abcaa;
+    --warn:#c09040;--warn-bg:rgba(192,144,64,0.12);--warn-text:#d0a858;
+    --blue:#6090d0;--blue-bg:rgba(96,144,208,0.12);--blue-text:#80aae0;
+    --red:#d06060;--red-bg:rgba(208,96,96,0.12);--red-text:#e08080;
+    --shadow:0 1px 3px rgba(0,0,0,0.30),0 4px 12px rgba(0,0,0,0.20);
+    --shadow-hover:0 2px 8px rgba(0,0,0,0.40),0 8px 24px rgba(0,0,0,0.25);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;}
+
+  .site-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:2.5rem 1.5rem 2rem;text-align:center;position:relative;}
+  .header-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;}
+  .header-title{font-family:var(--serif);font-size:clamp(2rem,5vw,3.2rem);font-weight:600;color:var(--text);line-height:1.2;margin-bottom:0.5rem;}
+  .header-title em{font-style:italic;color:var(--accent);}
+  .header-sub{font-size:14px;color:var(--text2);font-weight:300;}
+  .header-meta{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;}
+  .meta-pill{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 14px;}
+  .meta-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+  .theme-toggle{position:absolute;top:1.25rem;right:1.25rem;display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;z-index:10;}
+  .toggle-track{position:relative;width:40px;height:22px;background:var(--bg3);border:none;border-radius:999px;transition:background 0.2s;flex-shrink:0;}
+  .toggle-track.on{background:var(--accent);}
+  .toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.2s;pointer-events:none;}
+  .toggle-track.on .toggle-thumb{transform:translateX(18px);}
+  .toggle-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;}
+  .toggle-icon svg{width:18px;height:18px;display:block;}
+
+  .nav-wrapper{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 1rem;}
+  .nav-tabs{display:flex;max-width:900px;margin:0 auto;overflow-x:auto;scrollbar-width:none;}
+  .nav-tabs::-webkit-scrollbar{display:none;}
+  .nav-tab{flex-shrink:0;padding:14px 18px;font-size:13px;font-weight:500;font-family:var(--sans);color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color 0.2s,border-color 0.2s;white-space:nowrap;}
+  .nav-tab:hover{color:var(--text);}
+  .nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-emoji{margin-right:5px;}
+
+  .main{max-width:900px;margin:0 auto;padding:2rem 1rem 4rem;}
+  .leg-panel{display:none;}
+  .leg-panel.active{display:block;}
+
+  .leg-hero{width:100%;height:320px;background-size:cover;background-position:center;border-radius:var(--radius);margin-bottom:1.5rem;position:relative;overflow:hidden;cursor:zoom-in;}
+  .leg-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.55) 100%);}
+  .leg-hero-text{position:absolute;bottom:1.5rem;left:1.5rem;z-index:2;color:#fff;}
+  .leg-hero-title{font-family:var(--serif);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:600;font-style:italic;text-shadow:0 2px 8px rgba(0,0,0,0.4);}
+  .leg-hero-sub{font-size:13px;opacity:0.85;margin-top:4px;text-shadow:0 1px 4px rgba(0,0,0,0.4);font-weight:300;}
+
+  .leg-intro{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:var(--text2);line-height:1.7;}
+
+  .day-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:1rem;overflow:hidden;transition:box-shadow 0.2s;}
+  .day-card:hover{box-shadow:var(--shadow-hover);}
+  .day-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:1rem 1.25rem 0.75rem;cursor:pointer;user-select:none;}
+  .day-card-header-left{flex:1;min-width:0;}
+  .day-label{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;}
+  .day-title{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--text);line-height:1.3;}
+  .day-card-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;padding-top:2px;}
+  .chevron{width:18px;height:18px;color:var(--text3);transition:transform 0.25s;flex-shrink:0;}
+  .day-card.open .chevron{transform:rotate(180deg);}
+
+  .pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap;}
+  .pill-ok{background:var(--teal-bg);color:var(--teal-text);}
+  .pill-warn{background:var(--warn-bg);color:var(--warn-text);}
+  .pill-info{background:var(--blue-bg);color:var(--blue-text);}
+  .pill-special{background:var(--accent-bg);color:var(--accent-text);}
+  .pill-transit{background:var(--bg3);color:var(--text2);}
+
+  .day-card-body{overflow:hidden;max-height:0;transition:max-height 0.35s ease;}
+  .day-card.open .day-card-body{max-height:6000px;}
+  .activities{padding:0 1.25rem 1rem;border-top:1px solid var(--border);}
+
+  .activity-row{display:grid;grid-template-columns:56px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+  .activity-row:last-of-type{border-bottom:none;}
+  .activity-row.has-thumb{grid-template-columns:56px 1fr 190px;}
+  .time-col{font-size:11px;color:var(--text3);padding-top:3px;line-height:1.4;}
+  .act-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;}
+  .act-note{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:3px;}
+  .act-cost{font-size:11px;color:var(--text3);}
+  .act-thumb{width:190px;height:132px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;}
+  .act-thumb:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(0,0,0,0.18);}
+
+  .option-card{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);margin:6px 0 4px;overflow:hidden;}
+  .option-tabs{display:flex;border-bottom:1px solid var(--border);}
+  .option-tab{flex:1;padding:9px 10px;font-size:11px;font-weight:500;color:var(--text3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:color 0.2s,border-color 0.2s;}
+  .option-tab:hover{color:var(--text);}
+  .option-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--card);}
+  .option-tab.unavailable{color:var(--red-text);opacity:0.7;}
+  .option-tab.unavailable.active{border-bottom-color:var(--red);}
+  .option-panel{display:none;padding:12px 14px;gap:12px;}
+  .option-panel.active{display:grid;grid-template-columns:1fr 150px;}
+  .option-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+  .option-note{font-size:12px;color:var(--text2);line-height:1.55;}
+  .option-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .option-meta .pill{display:inline-flex;align-items:center;gap:4px;}
+  .option-img{width:150px;height:110px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease;}
+  .option-img:hover{transform:scale(1.04);}
+  @media(max-width:640px){.option-panel.active{grid-template-columns:1fr;}.option-img{display:none;}}
+
+  .notice{font-size:12px;line-height:1.6;padding:10px 14px;border-radius:var(--radius-sm);margin:8px 1.25rem 4px;}
+  .notice-warn{background:var(--warn-bg);color:var(--warn-text);}
+  .notice-info{background:var(--blue-bg);color:var(--blue-text);}
+  .notice-accent{background:var(--accent-bg);color:var(--accent-text);}
+
+  .summary-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.25rem;}
+  .summary-header{padding:1rem 1.25rem 0.75rem;border-bottom:1px solid var(--border);}
+  .summary-title{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--text);}
+  .booking-list{padding:0;list-style:none;}
+  .booking-item{display:flex;align-items:flex-start;gap:10px;padding:10px 1.25rem;border-bottom:1px solid var(--border);font-size:13px;}
+  .booking-item:last-child{border-bottom:none;}
+  .booking-urgency{font-size:11px;font-weight:500;padding:2px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0;}
+  .urgency-now{background:var(--red-bg);color:var(--red-text);}
+  .urgency-soon{background:var(--warn-bg);color:var(--warn-text);}
+  .urgency-later{background:var(--teal-bg);color:var(--teal-text);}
+
+  .lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1000;align-items:center;justify-content:center;cursor:zoom-out;animation:lb-fade 0.2s ease;}
+  .lightbox-overlay.open{display:flex;}
+  @keyframes lb-fade{from{opacity:0}to{opacity:1}}
+  .lightbox-img{max-width:92vw;max-height:88vh;border-radius:10px;box-shadow:0 8px 60px rgba(0,0,0,0.6);animation:lb-scale 0.22s cubic-bezier(0.34,1.26,0.64,1);cursor:default;}
+  @keyframes lb-scale{from{transform:scale(0.88);opacity:0}to{transform:scale(1);opacity:1}}
+  .lightbox-close{position:fixed;top:1.25rem;right:1.5rem;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:20px;line-height:36px;text-align:center;cursor:pointer;transition:background 0.15s;z-index:1001;}
+  .lightbox-close:hover{background:rgba(255,255,255,0.25);}
+  .lightbox-caption{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.7);font-size:13px;font-family:var(--sans);white-space:nowrap;z-index:1001;}
+
+  @media(max-width:640px){
+    .activity-row.has-thumb{grid-template-columns:48px 1fr;}
+    .act-thumb{display:none;}
+    .leg-hero{height:220px;}
+    .nav-tab{padding:12px 12px;font-size:12px;}
+    .main{padding:1.5rem 0.75rem 3rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <span class="toggle-icon">
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M565-395q35-35 35-85t-35-85q-35-35-85-35t-85 35q-35 35-35 85t35 85q35 35 85 35t85-35Zm-226.5 56.5Q280-397 280-480t58.5-141.5Q397-680 480-680t141.5 58.5Q680-563 680-480t-58.5 141.5Q563-280 480-280t-141.5-58.5ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF" style="display:none"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
+    </span>
+    <div class="toggle-track" id="toggle-track"><div class="toggle-thumb"></div></div>
+  </button>
+  <div class="header-eyebrow">A Few Days Away · 31 July – 2 August 2026</div>
+  <h1 class="header-title">Cape Town · <em>Stellenbosch</em></h1>
+  <p class="header-sub">3 days · Just the two of you · Movies, markets, wine and family</p>
+  <div class="header-meta">
+    <div class="meta-pill"><span class="dot"></span>Fri 31 Jul – Sun 2 Aug 2026</div>
+    <div class="meta-pill"><span class="dot"></span>Hired car · 200km/day included</div>
+    <div class="meta-pill"><span class="dot"></span>De Zalze Lodge, Stellenbosch</div>
+    <div class="meta-pill"><span class="dot"></span>Flight departs 15:40 Sun</div>
+  </div>
+</header>
+
+<nav class="nav-wrapper">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showLeg('day1',this)"><span class="tab-emoji">🎬</span>Fri 31 Jul</button>
+    <button class="nav-tab" onclick="showLeg('day2',this)"><span class="tab-emoji">🍇</span>Sat 1 Aug</button>
+    <button class="nav-tab" onclick="showLeg('day3',this)"><span class="tab-emoji">✈️</span>Sun 2 Aug</button>
+    <button class="nav-tab" onclick="showLeg('info',this)"><span class="tab-emoji">📋</span>To Confirm</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<div class="leg-panel active" id="panel-day1">
+  <div class="leg-hero" style="background-image:url('assets/cape-town-2026/hero-newlands.jpg')" onclick="openLightboxFromBg(this,'Newlands Peak Apartments')">
+    <div class="leg-hero-text">
+      <div class="leg-hero-title">Cape Town</div>
+      <div class="leg-hero-sub">Newlands Peak Apartments · Day 1 of 3</div>
+    </div>
+  </div>
+  <div class="leg-intro">Fri 31 Jul · Newlands Peak Apartments (last night) · Movie, shopping, family dinner</div>
+
+  <div class="day-card open">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Fri 31 Jul · Day 1</div>
+        <div class="day-title">The Odyssey at Canal Walk · Shopping · Dinner with Omphile</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-special">Family evening</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row has-thumb">
+          <div class="time-col">09:00</div>
+          <div><div class="act-name">Slow morning · coffee at Newlands Peak</div><div class="act-note">No rush — checkout isn't until tomorrow, so there's no reason to pack yet.</div></div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-newlands-courtyard.jpg" alt="Newlands Peak Apartments courtyard" onclick="openLightbox(this.src,'Newlands Peak Apartments')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row">
+          <div class="time-col">09:45–12:30</div>
+          <div style="width:100%">
+            <div class="act-name">Morning option · pick one on the day</div>
+            <div class="act-note">Three ways to fill the window before heading back to freshen up for the movie — each includes lunch.</div>
+            <div class="option-card">
+              <div class="option-tabs">
+                <button class="option-tab active" onclick="showOption('kirstenbosch',this)">Kirstenbosch</button>
+                <button class="option-tab" onclick="showOption('zeitz',this)">Zeitz MOCAA</button>
+                <button class="option-tab" onclick="showOption('kloofst',this)">Kloof St</button>
+                <button class="option-tab unavailable" onclick="showOption('cableway',this)">Table Mountain 🚫</button>
+                <button class="option-tab" onclick="showOption('seapoint',this)">Sea Point</button>
+              </div>
+              <div class="option-panel active" id="option-kirstenbosch">
+                <div>
+                  <div class="option-name">Kirstenbosch National Botanical Garden</div>
+                  <div class="option-note">Five minutes from Newlands Peak — never done before, so the natural pick. Tree Canopy (Boomslang) Walkway, the sculpture trail, and the on-site shop for locally made design and decor. Lunch at the Kirstenbosch Tea Room or Vinyl Café, garden-view.</div>
+                  <div class="option-meta"><span class="pill pill-ok">🕒 08:00–18:00 (winter)</span><span class="pill pill-transit">💵 R110pp SA resident · R270 int'l</span></div>
+                </div>
+                <img class="option-img" src="assets/cape-town-2026/thumb-kirstenbosch.jpg" alt="Kirstenbosch Gardens" onclick="openLightbox(this.src,'Kirstenbosch Gardens')" loading="lazy" decoding="async">
+              </div>
+              <div class="option-panel" id="option-zeitz">
+                <div>
+                  <div class="option-name">Zeitz MOCAA · Silo District</div>
+                  <div class="option-note">Contemporary African art in a striking converted grain silo at the Waterfront — architecture and art in one stop. A free guided tour runs at 12:30pm on Fridays — book on arrival at the Front of House desk, capacity is limited. Parking at the Silo District Garage (P3) has direct museum access. Worth noting: you're back at the Waterfront tomorrow for lunch and the Watershed, so this doubles up on the area, just a different building and a different kind of browsing.</div>
+                  <div class="option-meta"><span class="pill pill-ok">🕒 10:00–18:00 · last entry 17:30</span><span class="pill pill-transit">💵 R265pp · under-18s free</span></div>
+                </div>
+                <img class="option-img" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:Zeitz_Museum_of_Contemporary_Art_Africa.jpg?width=400" alt="Zeitz MOCAA" onclick="openLightbox(this.src,'Zeitz MOCAA')" loading="lazy" decoding="async">
+              </div>
+              <div class="option-panel" id="option-kloofst">
+                <div>
+                  <div class="option-name">Kloof Street design crawl &amp; brunch</div>
+                  <div class="option-note">Ten minutes from Newlands into the City Bowl. Independent design and decor stores, concept shops and galleries the length of Kloof St, with a proper sit-down brunch built in — The Power &amp; the Glory, Clarke's, or Skinny Legs &amp; All are all on the strip.</div>
+                  <div class="option-meta"><span class="pill pill-ok">🕒 Shops ~09:00–17:00 · free to browse</span><span class="pill pill-transit">💵 Brunch ~R150–250pp</span></div>
+                </div>
+                <img class="option-img" src="assets/cape-town-2026/thumb-kloof-street.jpg" alt="Kloof Street" onclick="openLightbox(this.src,'Kloof Street')" loading="lazy" decoding="async">
+              </div>
+              <div class="option-panel" id="option-cableway">
+                <div>
+                  <div class="option-name">Table Mountain Cableway — closed today</div>
+                  <div class="option-note">Checked tablemountain.net: closed today, most likely wind. Never done before and worth keeping in mind for a future trip, but not bookable this time — Sunday's morning is in Stellenbosch ahead of the flight, so there's no other window left to fit it in. Pick one of the other four for this slot instead.</div>
+                  <div class="option-meta"><span class="pill pill-warn">🕒 Normally 08:30–18:00 (winter) · closed today</span><span class="pill pill-transit">💵 ~R380–490pp return</span></div>
+                </div>
+                <img class="option-img" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:Table_Mountain_Cable_car.jpg?width=400" alt="Table Mountain Cableway" onclick="openLightbox(this.src,'Table Mountain Cableway')" loading="lazy" decoding="async">
+              </div>
+              <div class="option-panel" id="option-seapoint">
+                <div>
+                  <div class="option-name">Sea Point promenade &amp; Mojo Market</div>
+                  <div class="option-note">A flat, easy coastal walk along the promenade with Lion's Head as a backdrop, ending at Mojo Market — an indoor food and design market with local stalls, coffee roasters and craft goods. Relaxed and very walkable together.</div>
+                  <div class="option-meta"><span class="pill pill-ok">🕒 Promenade always open · Mojo from 08:00</span><span class="pill pill-transit">💵 Free entry · pay per stall</span></div>
+                </div>
+                <img class="option-img" src="assets/cape-town-2026/thumb-mojo-market.jpg" alt="Mojo Market, Sea Point" onclick="openLightbox(this.src,'Mojo Market, Sea Point')" loading="lazy" decoding="async">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">12:30</div>
+          <div><div class="act-name">Back to Newlands Peak · freshen up</div><div class="act-note">A couple of hours of downtime before the movie.</div></div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">14:40</div>
+          <div><div class="act-name">Leave Newlands for Canal Walk</div><div class="act-note">~25 min via the M3/N1 to Century City.</div></div>
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">15:15</div>
+          <div><div class="act-name">The Odyssey · Nu Metro Canal Walk</div><div class="act-note">Confirmed showing today at 15:15 (also 11:30 and 19:00). Canal Walk runs Scene VIP — call 021 555 2510 or check numetro.co.za to confirm which hall this session is in and lock in your 50% Nedbank Private Wealth benefit before booking.</div></div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-odyssey.jpg" alt="The Odyssey" onclick="openLightbox(this.src,'The Odyssey')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">17:30</div>
+          <div><div class="act-name">Shopping · Canal Walk</div><div class="act-note">Fez's shopping stop — Cavendish is done and dusted, so this is the one. Cape Town's largest mall, plenty of time to browse properly.</div></div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-canal-walk.jpg" alt="Canal Walk" onclick="openLightbox(this.src,'Canal Walk')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row">
+          <div class="time-col">Evening</div>
+          <div><div class="act-name">Dinner with Omphile</div><div class="act-note">Canal Walk sits out in Century City, a fair way from the southern suburbs — worth picking a spot that's a reasonable midpoint rather than doubling back across town. Time and venue TBD with Omphile.</div></div>
+        </div>
+      </div>
+      <div class="notice notice-accent">Confirm the Scene VIP hall for the 15:15 Odyssey screening before you leave Newlands — Canal Walk's VIP tickets can sell out.</div>
+    </div>
+  </div>
+</div>
+
+<div class="leg-panel" id="panel-day2">
+  <div class="leg-hero" style="background-image:url('assets/cape-town-2026/hero-de-zalze.jpg')" onclick="openLightboxFromBg(this,'De Zalze Lodge')">
+    <div class="leg-hero-text">
+      <div class="leg-hero-title">Cape Town → Stellenbosch</div>
+      <div class="leg-hero-sub">Check out Newlands · check in De Zalze Lodge · Day 2 of 3</div>
+    </div>
+  </div>
+  <div class="leg-intro">Sat 1 Aug · Full sightseeing day en route to Stellenbosch, via the Atlantic Seaboard · De Zalze Lodge (check-in) · Niece's 21st at Klein Alto, 18:00 for 18:30</div>
+
+  <div class="day-card open">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sat 1 Aug · Day 2</div>
+        <div class="day-title">Markets, Neighbourhoods &amp; the Winelands Drive to Stellenbosch</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-warn">Big day</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">Morning</div>
+          <div><div class="act-name">Check out of Newlands Peak Apartments</div><div class="act-note">Bags in the car — no need to return, this is a sightseeing loop that ends in Stellenbosch.</div></div>
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">09:00</div>
+          <div>
+            <div class="act-name">Neighbourgoods Market · 375 Albert Road, Woodstock</div>
+            <div class="act-note">Exactly your lane — local food stalls, design, craft. Street parking along Albert Rd, or the College of Cape Town lot across the road for R20/day. Cards and contactless accepted throughout, ATMs on-site.</div>
+            <div class="option-meta"><span class="pill pill-ok">🕒 Sat 09:00–18:00</span><span class="pill pill-transit">💵 Free entry</span></div>
+          </div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-neighbourgoods.jpg" alt="Neighbourgoods Market" onclick="openLightbox(this.src,'Neighbourgoods Market')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">10:45</div>
+          <div><div class="act-name">Bo-Kaap</div><div class="act-note">A quick walk through the cobbled, colourful streets — coffee, photos, ten minutes from the City Bowl.</div></div>
+          <img class="act-thumb" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:Bo_Kaaps_colorful_houses.JPG?width=600" alt="Bo-Kaap" onclick="openLightbox(this.src,'Bo-Kaap')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">11:30</div>
+          <div><div class="act-name">V&amp;A Waterfront · lunch &amp; the Watershed</div><div class="act-note">Lunch on the harbour, then a shorter browse of the Watershed for design, decor and local craft — trimmed a little to make room for the coast road this afternoon.</div></div>
+          <img class="act-thumb" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:Cape_Town_waterfront_and_Table_Mountain_from_Victoria_Wharf_mall.jpg?width=600" alt="V&amp;A Waterfront" onclick="openLightbox(this.src,'V&amp;A Waterfront')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">12:45</div>
+          <div><div class="act-name">Atlantic Seaboard drive · Sea Point → Camps Bay → Llandudno</div><div class="act-note">The must-do drive — Victoria Road hugging the coast beneath the Twelve Apostles. Stop for a coffee or photo at Camps Bay, then on to the Llandudno viewpoint before looping back inland via Constantia Nek.</div></div>
+          <img class="act-thumb" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:Some_of_the_12_Apostles_from_Camps_Bays_beach.jpg?width=600" alt="Camps Bay &amp; the Twelve Apostles" onclick="openLightbox(this.src,'Camps Bay &amp; the Twelve Apostles')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">14:00</div>
+          <div><div class="act-name">Drive continues to Stellenbosch · via Constantia Nek &amp; Helshoogte</div><div class="act-note">No fixed stops — just the road. One of the prettiest drives in the country, mountain passes and vineyards all the way in. No wine farm detour today; there'll be plenty of wine tonight.</div></div>
+          <img class="act-thumb" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:View_from_Helshoogte_near_Kylemore,_2007.jpg?width=600" alt="Helshoogte Pass" onclick="openLightbox(this.src,'Helshoogte Pass')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row">
+          <div class="time-col">15:00</div>
+          <div><div class="act-name">Check in · De Zalze Lodge · freshen up</div></div>
+        </div>
+        <div class="activity-row">
+          <div class="time-col">15:00–18:00</div>
+          <div><div class="act-name">Flexible window ahead of the evening</div><div class="act-note">Rest, get ready properly, and — if it works out — this is the slot to meet Xolisa &amp; Vuyo before the party. Three unhurried hours after a full day on the road.</div></div>
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">18:00 for 18:30</div>
+          <div><div class="act-name">Niece's 21st Birthday · Klein Alto, Stellenbosch</div><div class="act-note">The evening's main event.</div></div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-klein-alto.jpg" alt="Klein Alto, Stellenbosch" onclick="openLightbox(this.src,'Klein Alto, Stellenbosch')" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <div class="notice notice-info">A full day, but an unhurried one — market, Bo-Kaap, Waterfront, then the Atlantic Seaboard drive flows straight into the scenic route to Stellenbosch with no fixed stops in between, leaving a proper flexible window before the party.</div>
+    </div>
+  </div>
+</div>
+
+<div class="leg-panel" id="panel-day3">
+  <div class="leg-hero" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/File:Stellenbosch-region.JPG?width=1200')" onclick="openLightboxFromBg(this,'Stellenbosch')">
+    <div class="leg-hero-text">
+      <div class="leg-hero-title">Stellenbosch → Home</div>
+      <div class="leg-hero-sub">Check out De Zalze early · leisurely Stellenbosch morning · flight departs 15:40 · Day 3 of 3</div>
+    </div>
+  </div>
+  <div class="leg-intro">Sun 2 Aug · Check out first, then a wine farm breakfast and a final wander through Stellenbosch before Cape Town International Airport</div>
+
+  <div class="day-card open">
+    <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header-left">
+        <div class="day-label">Sun 2 Aug · Day 3</div>
+        <div class="day-title">Stellenbosch Morning · Departure</div>
+      </div>
+      <div class="day-card-header-right">
+        <span class="pill pill-info">Departure</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="day-card-body">
+      <div class="activities">
+        <div class="activity-row">
+          <div class="time-col">08:30</div>
+          <div><div class="act-name">Check out of De Zalze Lodge</div><div class="act-note">Bags in the car early — frees up the rest of the morning to explore Stellenbosch properly rather than rushing back for a checkout deadline.</div></div>
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">08:45</div>
+          <div>
+            <div class="act-name">Wine farm breakfast</div>
+            <div class="act-note">Three strong options near Stellenbosch, all open Sunday morning:</div>
+            <div class="act-note">• <strong>The Cellar Door, Jordan Wine Estate</strong> — dam and valley views, locally sourced harvest breakfast (apple-sage pork sausage). Opens earliest, so the easiest fit straight after checkout.</div>
+            <div class="option-meta"><span class="pill pill-ok">🕒 Sun 08:00–15:00</span></div>
+            <div class="act-note" style="margin-top:6px">• <strong>Tokara Delicatessen</strong> — glass-enclosed dining room right on the mountainside overlooking the vines.</div>
+            <div class="option-meta"><span class="pill pill-ok">🕒 Sun 09:00–17:00 · breakfast till 11:30</span></div>
+            <div class="act-note" style="margin-top:6px">• <strong>Postcard Café, Stark-Condé</strong> — Jonkershoek Valley setting, Turkish eggs, shaded verandah.</div>
+            <div class="option-meta"><span class="pill pill-ok">🕒 Sun 09:00–16:00 · breakfast till 11:30</span></div>
+          </div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-cellar-door.jpg" alt="The Cellar Door, Jordan Wine Estate" onclick="openLightbox(this.src,'The Cellar Door, Jordan Wine Estate')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">10:15</div>
+          <div><div class="act-name">Stellenbosch village stroll</div><div class="act-note">Dorp Street galleries, Oom Samie se Winkel, or the Rupert Museum if art's calling — an easy, unhurried last morning, bags already sorted.</div></div>
+          <img class="act-thumb" src="assets/cape-town-2026/thumb-stellenbosch-dorp.jpg" alt="Stellenbosch village" onclick="openLightbox(this.src,'Stellenbosch village')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row has-thumb">
+          <div class="time-col">12:15</div>
+          <div><div class="act-name">Depart for the airport</div><div class="act-note">~45 min from Stellenbosch, plus buffer for the rental car return — aim to be at the airport by 13:00–13:15 for a 15:40 flight.</div></div>
+          <img class="act-thumb" src="https://commons.wikimedia.org/wiki/Special:FilePath/File:Cape_Town_International_Airport_Departures_Area.jpg?width=600" alt="Cape Town International Airport" onclick="openLightbox(this.src,'Cape Town International Airport')" loading="lazy" decoding="async">
+        </div>
+        <div class="activity-row">
+          <div class="time-col">15:40</div>
+          <div><div class="act-name">Flight departs</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="leg-panel" id="panel-info">
+  <div class="summary-section">
+    <div class="summary-header"><div class="summary-title">Things to Confirm</div></div>
+    <ul class="booking-list">
+      <li class="booking-item"><span class="booking-urgency urgency-now">Confirm now</span><span>Scene VIP hall for The Odyssey, 15:15 today, and lock in the Nedbank Private Wealth 50% benefit — 021 555 2510 or numetro.co.za</span></li>
+      <li class="booking-item"><span class="booking-urgency urgency-now">Confirm now</span><span>Dinner time and venue with Omphile tonight — pick a spot that isn't a long backtrack from Century City</span></li>
+      <li class="booking-item"><span class="booking-urgency urgency-soon">Play by ear</span><span>Whether to meet Xolisa &amp; Vuyo before the party on Saturday — flex window is 15:00–18:00</span></li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<script>
+  function openLightboxFromBg(el,cap){var m=el.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);if(m)openLightbox(m[1],cap);}
+  function showLeg(id, btn) {
+    document.querySelectorAll('.leg-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+  function toggleCard(headerEl) {
+    headerEl.closest('.day-card').classList.toggle('open');
+  }
+  function showOption(id, btn) {
+    const card = btn.closest('.option-card');
+    card.querySelectorAll('.option-tab').forEach(t => t.classList.remove('active'));
+    card.querySelectorAll('.option-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    card.querySelector('#option-' + id).classList.add('active');
+  }
+  function openLightbox(src, caption) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-caption').textContent = caption || '';
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(e) {
+    if (e && e.target === document.getElementById('lightbox-img')) return;
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+  (function initTheme() {
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const stored = localStorage.getItem('theme');
+    applyTheme(stored ? stored === 'dark' : systemDark, false);
+  })();
+  function applyTheme(dark, save) {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    const track = document.getElementById('toggle-track');
+    const sun = document.getElementById('icon-sun');
+    const moon = document.getElementById('icon-moon');
+    if (track) track.classList.toggle('on', dark);
+    if (sun && moon) { sun.style.display = dark ? 'none' : 'block'; moon.style.display = dark ? 'block' : 'none'; }
+    if (save) localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }
+  function toggleTheme() {
+    applyTheme(document.documentElement.dataset.theme !== 'dark', true);
+  }
+</script>
+</body>
+</html>
