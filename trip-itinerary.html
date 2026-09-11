@@ -1025,18 +1025,46 @@
   }
 
   /* EDIT MODE */
-  const EDIT_STORE_KEY = 'trip-itinerary-edits-v1';
   const EDIT_MODE_KEY = 'trip-itinerary-edit-mode';
   const TEXT_SELECTOR = '.header-eyebrow,.header-title,.header-sub,.leg-hero-title,.leg-hero-sub,.leg-intro,.birthday-banner,.day-title,.day-label,.time-col,.act-name,.act-note,.act-cost,.notice,.notice-warn,.notice-info,.notice-accent,.summary-title,.modal-title,.modal-subtitle,.modal-note,.rest-name,.rest-desc,.rest-cost,.excursion-tag';
   const IMAGE_SELECTOR = 'img.act-thumb,.restaurant-card img,.leg-hero';
 
-  function loadEditStore() {
-    try { return JSON.parse(localStorage.getItem(EDIT_STORE_KEY) || '{}'); }
-    catch (e) { return {}; }
+  const SUPABASE_URL = 'https://cwnlofcrstwxoemzyazm.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_YR2yvumMz2KJdYWv8-YmWw_twduUCXn';
+  const EDIT_PAGE_ID = 'trip-itinerary';
+  const EDITS_TABLE = SUPABASE_URL + '/rest/v1/travel_itinerary_edits';
+
+  async function fetchEditStore() {
+    try {
+      const res = await fetch(EDITS_TABLE + '?page=eq.' + EDIT_PAGE_ID + '&select=eid,type,value', {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const rows = await res.json();
+      const store = {};
+      rows.forEach(r => { store[r.eid] = { type: r.type, value: r.value }; });
+      return store;
+    } catch (e) {
+      console.error('Could not load saved edits from Supabase', e);
+      return {};
+    }
   }
-  function saveEditStore(store) {
-    try { localStorage.setItem(EDIT_STORE_KEY, JSON.stringify(store)); }
-    catch (e) { alert('Could not save this edit locally (storage full). Export the file now to keep your changes.'); }
+  async function saveEdit(eid, type, value) {
+    try {
+      const res = await fetch(EDITS_TABLE + '?on_conflict=page,eid', {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({ page: EDIT_PAGE_ID, eid, type, value })
+      });
+      if (!res.ok) throw new Error(await res.text());
+    } catch (e) {
+      alert('Could not save this edit to the server. Check your connection and try again, or export the file now to keep your changes.');
+    }
   }
   function tagEditableElements() {
     let i = 0;
@@ -1049,8 +1077,8 @@
       el.dataset.eid = 'e' + (i++);
     });
   }
-  function applySavedEdits() {
-    const store = loadEditStore();
+  async function applySavedEdits() {
+    const store = await fetchEditStore();
     Object.keys(store).forEach(eid => {
       const el = document.querySelector('[data-eid="' + eid + '"]');
       if (!el) return;
@@ -1073,9 +1101,7 @@
   function handleEditableBlur(e) {
     const el = e.target;
     if (!el.matches || !el.matches('[data-editable]')) return;
-    const store = loadEditStore();
-    store[el.dataset.eid] = { type: 'text', value: el.innerHTML };
-    saveEditStore(store);
+    saveEdit(el.dataset.eid, 'text', el.innerHTML);
   }
   function readImageFile(file, cb) {
     if (!file || !file.type.startsWith('image/')) return;
@@ -1092,15 +1118,13 @@
       if (document.documentElement.dataset.edit !== 'on') return;
       const file = e.dataTransfer.files && e.dataTransfer.files[0];
       readImageFile(file, dataUrl => {
-        const store = loadEditStore();
         if (el.tagName === 'IMG') {
           el.src = dataUrl;
-          store[el.dataset.eid] = { type: 'img-src', value: dataUrl };
+          saveEdit(el.dataset.eid, 'img-src', dataUrl);
         } else {
           el.style.backgroundImage = "url('" + dataUrl + "')";
-          store[el.dataset.eid] = { type: 'bg-image', value: dataUrl };
+          saveEdit(el.dataset.eid, 'bg-image', dataUrl);
         }
-        saveEditStore(store);
       });
     });
   }
@@ -1120,9 +1144,9 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-  (function initEditSystem() {
+  (async function initEditSystem() {
     tagEditableElements();
-    applySavedEdits();
+    await applySavedEdits();
     document.addEventListener('blur', handleEditableBlur, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
