@@ -136,6 +136,10 @@
   .excursion-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--teal-bg);color:var(--teal-text);margin-top:3px;}
   .act-thumb{width:190px;height:132px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;}
   .act-thumb:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(0,0,0,0.18);}
+  .act-thumb-slot{display:none;position:relative;width:190px;height:132px;border-radius:var(--radius-sm);overflow:hidden;}
+  .act-thumb-slot.filled{display:block;}
+  .act-thumb-slot .act-thumb{width:100%;height:100%;display:block;}
+  .act-thumb-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-family:var(--sans);font-size:11px;font-weight:500;line-height:1.3;color:#fff;opacity:0;background:rgba(5,150,105,0);transition:opacity 0.15s,background 0.15s;pointer-events:none;border-radius:inherit;}
 
   /* TRANSFER LINK */
   .transfer-link{color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-size:12px;}
@@ -219,8 +223,8 @@
 
   /* RESPONSIVE */
   @media(max-width:640px){
-    .activity-row.has-thumb{grid-template-columns:48px 1fr;}
-    .act-thumb{display:none;}
+    .activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
+    .act-thumb,.act-thumb-slot{display:none;}
     .leg-hero{height:220px;}
     .restaurant-grid{grid-template-columns:1fr;}
     .nav-tab{padding:12px 12px;font-size:12px;}
@@ -241,9 +245,14 @@
   :root[data-edit="on"] [data-editable]:hover{background:var(--accent-bg);}
   :root[data-edit="on"] [data-editable]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
   :root[data-edit="on"] [data-drop-image]{position:relative;cursor:copy;}
-  :root[data-edit="on"] [data-drop-image]::after{content:'Drop image to replace';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;background:rgba(5,150,105,0);color:#fff;font-family:var(--sans);font-size:11px;font-weight:500;line-height:1.3;opacity:0;transition:opacity 0.15s,background 0.15s;pointer-events:none;}
-  :root[data-edit="on"] [data-drop-image]:hover::after{opacity:1;background:rgba(5,150,105,0.55);}
-  :root[data-edit="on"] [data-drop-image].drag-over::after{opacity:1;background:rgba(5,150,105,0.75);content:'Release to replace image';}
+  :root[data-edit="on"] [data-drop-image]:not(.act-thumb-slot)::after{content:'Drop image to replace';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;background:rgba(5,150,105,0);color:#fff;font-family:var(--sans);font-size:11px;font-weight:500;line-height:1.3;opacity:0;transition:opacity 0.15s,background 0.15s;pointer-events:none;}
+  :root[data-edit="on"] [data-drop-image]:not(.act-thumb-slot):hover::after{opacity:1;background:rgba(5,150,105,0.55);}
+  :root[data-edit="on"] [data-drop-image]:not(.act-thumb-slot).drag-over::after{opacity:1;background:rgba(5,150,105,0.75);content:'Release to replace image';}
+  :root[data-edit="on"] .activity-row.has-thumb-slot{grid-template-columns:56px 1fr 190px;}
+  :root[data-edit="on"] .act-thumb-slot{display:block;}
+  :root[data-edit="on"] .act-thumb-slot:not(.filled) .act-thumb-hint{opacity:1;background:var(--bg3);border:1.5px dashed var(--border2);color:var(--text3);}
+  :root[data-edit="on"] .act-thumb-slot:hover .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.55);color:#fff;border-color:transparent;}
+  :root[data-edit="on"] .act-thumb-slot.drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
   .edit-badge{position:fixed;bottom:1.25rem;left:1.25rem;z-index:200;display:none;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow);}
   :root[data-edit="on"] .edit-badge{display:block;}
   .edit-export{position:fixed;bottom:1.25rem;right:1.25rem;z-index:200;display:none;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;box-shadow:var(--shadow-hover);cursor:pointer;}
@@ -874,13 +883,13 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Hotel breakfast · final pack · check out</div><div class="act-note">EY 2 departs 1pm: we're aiming to get to JFK by 10am. B&B included: make the most of it.</div><div class="act-cost">Included</div></div></div><div class="activity-row"><div class="time-col">7:30am</div><div><div class="act-name">Walk to Penn Station · ~10 min from Row NYC</div></div></div><div class="activity-row"><div class="time-col">7:45am</div><div><div class="act-name">Buy LIRR tickets on TrainTime app · Jamaica-bound</div><div class="act-note">Off-peak fare. Pay contactless or via app: each passenger pays individually.</div><div class="act-cost">~R600 for 4 ($8.25pp)</div></div></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">LIRR departs Penn Station → Jamaica · ~20 min</div><div class="act-note">Comfortable commuter train with overhead luggage racks. The right call for full bags on a weekday morning.</div></div></div><div class="activity-row"><div class="time-col">8:20am</div><div><div class="act-name">Jamaica Station · AirTrain to JFK Terminal 4 · ~15 min</div><div class="act-note">Tap contactless at the AirTrain exit gate.</div><div class="act-cost">~R638 for 4 ($8.75pp)</div></div></div><div class="activity-row"><div class="time-col">8:35am</div><div><div class="act-name">Arrive JFK Terminal 4 · Etihad check-in · 4hr 25min before departure</div><div class="act-note">Very comfortable buffer. Security, airside, last American breakfast.</div></div></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Depart JFK · Etihad EY 2</div><div class="act-note">Airbus A350 · Premium Economy. Arrives Abu Dhabi Jan 14 at 10:30am.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row has-thumb"><div class="time-col">Jan 14, 10:30am</div><div><div class="act-name">Arrive Abu Dhabi · 13h 30m layover begins</div><div class="act-note">Exit airside, collect carry-on. Taxi to Sheikh Zayed Grand Mosque ~20 min: one of the most beautiful buildings in the world. Free entry. Dress modestly.</div><div class="act-cost">~R400 taxi return</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-abu-dhabi.jpg" alt="Abu Dhabi" onclick="openLightbox(this.src,'Abu Dhabi')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Corniche waterfront walk · late lunch at a waterfront restaurant</div><div class="act-note">Abu Dhabi feels clean, safe, and calm. Well worth the brief explore.</div><div class="act-cost">~R800 for 4</div></div></div><div class="activity-row"><div class="time-col">3:30pm</div><div><div class="act-name">Return to Abu Dhabi airport · airside · rest · duty free</div><div class="act-note">Allow plenty of time.</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 12:00am</div><div><div class="act-name">EY 747 departs Abu Dhabi</div><div class="act-note">Boeing 787 · Premium Economy. Last leg home.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 6:20am</div><div><div class="act-name">Arrive OR Tambo International · Home</div><div class="act-note">25 days. An extraordinary journey. Welcome home.</div></div></div>
+<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Hotel breakfast · final pack · check out</div><div class="act-note">EY 2 departs 1pm: we're aiming to get to JFK by 10am. B&B included: make the most of it.</div><div class="act-cost">Included</div></div></div><div class="activity-row"><div class="time-col">7:30am</div><div><div class="act-name">Walk to Penn Station · ~10 min from Row NYC</div></div></div><div class="activity-row"><div class="time-col">7:45am</div><div><div class="act-name">Buy LIRR tickets on TrainTime app · Jamaica-bound</div><div class="act-note">Off-peak fare. Pay contactless or via app: each passenger pays individually.</div><div class="act-cost">~R600 for 4 ($8.25pp)</div></div></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">LIRR departs Penn Station → Jamaica · ~20 min</div><div class="act-note">Comfortable commuter train with overhead luggage racks. The right call for full bags on a weekday morning.</div></div></div><div class="activity-row"><div class="time-col">8:20am</div><div><div class="act-name">Jamaica Station · AirTrain to JFK Terminal 4 · ~15 min</div><div class="act-note">Tap contactless at the AirTrain exit gate.</div><div class="act-cost">~R638 for 4 ($8.75pp)</div></div></div><div class="activity-row"><div class="time-col">8:35am</div><div><div class="act-name">Arrive JFK Terminal 4 · Etihad check-in · 4hr 25min before departure</div><div class="act-note">Very comfortable buffer. Security, airside, last American breakfast.</div></div></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Depart JFK · Etihad EY 2</div><div class="act-note">Airbus A350 · Premium Economy. Arrives Abu Dhabi Jan 14 at 10:30am.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row has-thumb"><div class="time-col">Jan 14, 10:30am</div><div><div class="act-name">Arrive Abu Dhabi · 13h 30m layover begins</div><div class="act-note">Pre-arranged 48hr Etihad transit visa in hand (single entry, applied via etihad.visaonline.ae 2–4 weeks ahead — South African passports need this pre-arranged, it's not visa-on-arrival). Clear immigration, collect carry-on: allow ~45 min.</div><div class="act-cost">Transit visa ~R1,540 for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-abu-dhabi.jpg" alt="Abu Dhabi" onclick="openLightbox(this.src,'Abu Dhabi')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">11:15am</div><div><div class="act-name">Taxi to Sheikh Zayed Grand Mosque · ~20–30 min</div><div class="act-note">Daytime visit this time, a nice contrast to the illuminated evening one on the outbound leg. Free entry. Dress modestly: robes and scarves are provided free at the entrance if needed.</div></div></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Corniche waterfront walk · late lunch at a waterfront restaurant</div><div class="act-note">Abu Dhabi feels clean, safe, and calm. Well worth the brief explore.</div><div class="act-cost">~R800 for 4</div></div></div><div class="activity-row"><div class="time-col">2:45pm</div><div><div class="act-name">Taxi to Qasr Al Watan · Presidential Palace · ~20 min</div><div class="act-note">The Great Hall, Presidential Gifts, the Library, the gardens. General admission includes the evening "Palace in Motion" light and sound show, so one ticket covers the whole afternoon.</div><div class="act-cost">~R1,820 for 4 (general admission)</div></div></div><div class="activity-row"><div class="time-col">6:00pm</div><div><div class="act-name">Early dinner at the Palace</div><div class="act-note">Light meal on-site before the show: no need to leave the grounds and risk the timing.</div><div class="act-cost">~R900 for 4</div></div></div><div class="activity-row"><div class="time-col">7:30pm</div><div><div class="act-name">"Palace in Motion" light & sound show · Qasr Al Watan façade</div><div class="act-note">15 minutes, included in general admission. A striking send-off before the last flight home.</div></div></div><div class="activity-row"><div class="time-col">7:45pm</div><div><div class="act-name">Taxi back to Abu Dhabi airport · ~25–30 min</div><div class="act-note">Allow plenty of time for immigration and security on the way back in, over and above check-in.</div><div class="act-cost">~R1,200 for 4 (all taxis today)</div></div></div><div class="activity-row"><div class="time-col">8:30pm</div><div><div class="act-name">Airside · duty free · rest before boarding</div><div class="act-note">A comfortable ~3.5hr buffer before the midnight departure: no time stress after a full day out.</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 12:00am</div><div><div class="act-name">EY 747 departs Abu Dhabi</div><div class="act-note">Boeing 787 · Premium Economy. Last leg home.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 6:20am</div><div><div class="act-name">Arrive OR Tambo International · Home</div><div class="act-note">25 days. An extraordinary journey. Welcome home.</div></div></div>
         </div>
-<div class="notice notice-info">Etihad's complimentary stopover hotel requires a minimum 24-hour stay, and your 13hr 30min layover falls short of the threshold. Explore Abu Dhabi independently: Sheikh Zayed Grand Mosque is unmissable and free. Your Etihad boarding pass gives discounts at participating restaurants and attractions.</div>
-<div class="spend-table"><div class="spend-row"><span>LIRR x4 · Penn Station → Jamaica</span><span>~R600</span></div><div class="spend-row"><span>AirTrain x4 · Jamaica → JFK T4</span><span>~R638</span></div><div class="spend-row"><span>Abu Dhabi · taxi · meals · transport</span><span>~R1,200</span></div><div class="spend-row total"><span>Total</span><span>~R2,438</span></div></div>
+<div class="notice notice-accent">Intentionally over the R3,000 daily budget: it's the only real chance to see Abu Dhabi properly, so we've made the most of the 13hr 30min layover instead of sitting airside. Apply for the transit visa 2–4 weeks ahead of Jan 14 via etihad.visaonline.ae.</div>
+<div class="spend-table"><div class="spend-row"><span>LIRR x4 · Penn Station → Jamaica</span><span>~R600</span></div><div class="spend-row"><span>AirTrain x4 · Jamaica → JFK T4</span><span>~R638</span></div><div class="spend-row"><span>Etihad transit visa x4 · 48hr, single entry</span><span>~R1,540</span></div><div class="spend-row"><span>Taxis · mosque, Corniche, Qasr Al Watan, airport</span><span>~R1,200</span></div><div class="spend-row"><span>Lunch · Corniche waterfront</span><span>~R800</span></div><div class="spend-row"><span>Qasr Al Watan general admission x4</span><span>~R1,820</span></div><div class="spend-row"><span>Dinner · at the Palace</span><span>~R900</span></div><div class="spend-row total"><span>Total</span><span>~R7,498</span></div></div>
         <div class="day-total-bar">
-          <div class="budget-track"><div class="budget-fill ok" style="width:70%"></div></div>
-          <div class="total-amount">~R2,438</div>
+          <div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div>
+          <div class="total-amount">~R7,498</div>
         </div>
       </div>
     </div></div><div class="leg-panel" id="panel-budget"><div class="summary-section">
@@ -945,6 +954,7 @@
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Broadway show · TKTS app · check availability Jan 10 (Sun) and Jan 12 (Tue)</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Blacklane · confirm Terminal 4 for Dec 22 JFK pickup and verify booking details</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Download MTA TrainTime app · buy LIRR tickets for Jan 13 departure (Penn → Jamaica)</span></li>
+    <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Etihad transit visa x4 (48hr, single entry) · etihad.visaonline.ae · apply mid-to-late Dec so it's valid for Jan 14 entry</span></li>
   </ul>
 </div></div></main>
 <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
@@ -985,6 +995,7 @@
     headerEl.closest('.day-card').classList.toggle('open');
   }
   function openLightbox(src, caption) {
+    if (!src) return;
     const lb = document.getElementById('lightbox');
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox-caption').textContent = caption || '';
@@ -1030,6 +1041,8 @@
   const EDIT_MODE_KEY = 'trip-itinerary-edit-mode';
   const TEXT_SELECTOR = '.header-eyebrow,.header-title,.header-sub,.leg-hero-title,.leg-hero-sub,.leg-intro,.birthday-banner,.day-title,.day-label,.time-col,.act-name,.act-note,.act-cost,.notice,.notice-warn,.notice-info,.notice-accent,.summary-title,.modal-title,.modal-subtitle,.modal-note,.rest-name,.rest-desc,.rest-cost,.excursion-tag';
   const IMAGE_SELECTOR = 'img.act-thumb,.restaurant-card img,.leg-hero';
+  const EMPTY_IMAGE_SELECTOR = '.act-thumb-slot';
+  const THUMB_TARGET_W = 560, THUMB_TARGET_H = 400, THUMB_QUALITY = 0.82;
 
   const SUPABASE_URL = 'https://cwnlofcrstwxoemzyazm.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_YR2yvumMz2KJdYWv8-YmWw_twduUCXn';
@@ -1068,6 +1081,39 @@
       alert('Could not save this edit to the server. Check your connection and try again, or export the file now to keep your changes.');
     }
   }
+  function ensureImageDropZones() {
+    document.querySelectorAll('.activity-row').forEach(row => {
+      if (row.classList.contains('has-thumb') || row.querySelector(':scope > img.act-thumb')) return;
+      const slot = document.createElement('div');
+      slot.className = 'act-thumb-slot';
+      const nameEl = row.querySelector('.act-name');
+      slot.dataset.caption = nameEl ? nameEl.textContent.trim() : '';
+      const hint = document.createElement('span');
+      hint.className = 'act-thumb-hint';
+      hint.textContent = '+ Drop image';
+      slot.appendChild(hint);
+      row.appendChild(slot);
+      row.classList.add('has-thumb-slot');
+    });
+  }
+  function fillThumbSlot(slot, dataUrl) {
+    let img = slot.querySelector('img.act-thumb');
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'act-thumb';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = slot.dataset.caption || '';
+      img.addEventListener('click', function () { openLightbox(this.src, this.alt); });
+      slot.insertBefore(img, slot.firstChild);
+      const hint = slot.querySelector('.act-thumb-hint');
+      if (hint) hint.textContent = 'Drop image to replace';
+    }
+    img.src = dataUrl;
+    slot.classList.add('filled');
+    const row = slot.closest('.activity-row');
+    if (row) row.classList.add('has-thumb');
+  }
   function tagEditableElements() {
     let i = 0;
     document.querySelectorAll(TEXT_SELECTOR).forEach(el => {
@@ -1075,6 +1121,10 @@
       el.dataset.eid = 'e' + (i++);
     });
     document.querySelectorAll(IMAGE_SELECTOR).forEach(el => {
+      el.dataset.dropImage = '1';
+      el.dataset.eid = 'e' + (i++);
+    });
+    document.querySelectorAll(EMPTY_IMAGE_SELECTOR).forEach(el => {
       el.dataset.dropImage = '1';
       el.dataset.eid = 'e' + (i++);
     });
@@ -1086,7 +1136,7 @@
       if (!el) return;
       const entry = store[eid];
       if (entry.type === 'text') el.innerHTML = entry.value;
-      else if (entry.type === 'img-src') el.src = entry.value;
+      else if (entry.type === 'img-src') { if (el.classList.contains('act-thumb-slot')) fillThumbSlot(el, entry.value); else el.src = entry.value; }
       else if (entry.type === 'bg-image') el.style.backgroundImage = "url('" + entry.value + "')";
     });
   }
@@ -1111,6 +1161,27 @@
     reader.onload = () => cb(reader.result);
     reader.readAsDataURL(file);
   }
+  function optimizeThumbImage(file, cb) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const dstRatio = THUMB_TARGET_W / THUMB_TARGET_H;
+        const srcRatio = img.width / img.height;
+        let sx, sy, sw, sh;
+        if (srcRatio > dstRatio) { sh = img.height; sw = sh * dstRatio; sx = (img.width - sw) / 2; sy = 0; }
+        else { sw = img.width; sh = sw / dstRatio; sx = 0; sy = (img.height - sh) / 2; }
+        const canvas = document.createElement('canvas');
+        canvas.width = THUMB_TARGET_W;
+        canvas.height = THUMB_TARGET_H;
+        canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, THUMB_TARGET_W, THUMB_TARGET_H);
+        cb(canvas.toDataURL('image/jpeg', THUMB_QUALITY));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
   function wireImageDrop(el) {
     el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
     el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
@@ -1119,8 +1190,14 @@
       el.classList.remove('drag-over');
       if (document.documentElement.dataset.edit !== 'on') return;
       const file = e.dataTransfer.files && e.dataTransfer.files[0];
-      readImageFile(file, dataUrl => {
-        if (el.tagName === 'IMG') {
+      const isSlot = el.classList.contains('act-thumb-slot');
+      const isThumb = isSlot || (el.tagName === 'IMG' && el.classList.contains('act-thumb'));
+      const processFile = isThumb ? optimizeThumbImage : readImageFile;
+      processFile(file, dataUrl => {
+        if (isSlot) {
+          fillThumbSlot(el, dataUrl);
+          saveEdit(el.dataset.eid, 'img-src', dataUrl);
+        } else if (el.tagName === 'IMG') {
           el.src = dataUrl;
           saveEdit(el.dataset.eid, 'img-src', dataUrl);
         } else {
@@ -1135,6 +1212,11 @@
     clone.removeAttribute('data-edit');
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    clone.querySelectorAll('.act-thumb-slot').forEach(slot => {
+      const img = slot.querySelector('img.act-thumb');
+      if (img) slot.replaceWith(img); else slot.remove();
+    });
+    clone.querySelectorAll('.has-thumb-slot').forEach(el => el.classList.remove('has-thumb-slot'));
     const html = '<!doctype html>\n' + clone.outerHTML;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -1200,6 +1282,7 @@
     });
   }
   (async function initEditSystem() {
+    ensureImageDropZones();
     tagEditableElements();
     await applySavedEdits();
     document.addEventListener('blur', handleEditableBlur, true);
