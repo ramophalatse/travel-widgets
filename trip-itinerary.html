@@ -64,8 +64,20 @@
   .meta-pill{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 14px;}
   .meta-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 
+  /* HEADER TOOLBAR */
+  .header-toolbar{position:absolute;top:1.25rem;right:1.25rem;display:flex;align-items:center;gap:12px;z-index:10;}
+
+  /* CHIP BUTTON — icon-only pill that reveals a label on hover/focus/touch-peek */
+  .chip-btn{display:inline-flex;align-items:center;height:28px;flex-shrink:0;overflow:hidden;border-radius:999px;border:1px solid var(--border2);background:none;cursor:pointer;padding:0 7px;color:var(--text3);transition:padding 0.2s ease-out,color 0.2s ease-out,border-color 0.2s ease-out,background 0.2s ease-out;}
+  .chip-btn:hover,.chip-btn:focus-visible,.chip-btn.revealed{padding:0 12px;color:var(--text);background:var(--bg3);}
+  .chip-btn.active{color:var(--accent);border-color:var(--accent);background:var(--accent-bg);}
+  .chip-btn svg{width:14px;height:14px;flex-shrink:0;display:block;}
+  .chip-btn .chip-label{overflow:hidden;white-space:nowrap;max-width:0;opacity:0;margin-left:0;font-family:var(--sans);font-size:12px;font-weight:500;transition:max-width 0.2s ease-out,opacity 0.2s ease-out,margin-left 0.2s ease-out;}
+  .chip-btn:hover .chip-label,.chip-btn:focus-visible .chip-label,.chip-btn.revealed .chip-label{max-width:100px;opacity:1;margin-left:6px;}
+  .chip-btn[hidden]{display:none;}
+
   /* THEME TOGGLE */
-  .theme-toggle{position:absolute;top:1.25rem;right:1.25rem;display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;z-index:10;}
+  .theme-toggle{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;}
   .toggle-track{position:relative;width:40px;height:22px;background:var(--bg3);border:none;border-radius:999px;transition:background 0.2s;flex-shrink:0;}
   .toggle-track.on{background:var(--accent);}
   .toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.3s var(--ease-pop);pointer-events:none;}
@@ -98,6 +110,7 @@
   /* LEG INTRO */
   .leg-intro{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:var(--text2);line-height:1.7;}
   .birthday-banner{background:var(--blue-bg);border:1px solid var(--blue);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--blue-text);font-weight:500;}
+
 
   /* DAY CARD */
   .day-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:1rem;overflow:hidden;transition:box-shadow 0.2s;}
@@ -237,10 +250,6 @@
   }
 
   /* EDIT MODE — inert and invisible unless data-edit="on" */
-  .edit-toggle{position:absolute;top:calc(1.25rem + 1px);right:6.25rem;display:flex;align-items:center;justify-content:center;width:18px;height:18px;background:none;border:none;padding:0;cursor:pointer;z-index:10;color:var(--text2);}
-  .edit-toggle svg{width:18px;height:18px;display:block;}
-  .edit-toggle:hover{color:var(--text);}
-  :root[data-edit="on"] .edit-toggle{color:var(--accent);}
   :root[data-edit="on"] [data-editable]{border-radius:4px;cursor:text;transition:background 0.15s;}
   :root[data-edit="on"] [data-editable]:hover{background:var(--accent-bg);}
   :root[data-edit="on"] [data-editable]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
@@ -264,8 +273,18 @@
 <body>
 
 <header class="site-header">
-  <button class="edit-toggle" onclick="toggleEditMode()" aria-label="Toggle edit mode" title="Edit mode">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-12 27-18t30-6q16 0 30.5 6t26.5 18l55 56q12 11 18 26.5t6 30.5q0 15-6 29.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-28 57 57-29-29Z"/></svg>
+<div class="header-toolbar">
+  <button class="chip-btn" id="expand-all-btn" onclick="expandAllCards()" aria-label="Expand all days" title="Expand all">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 9 12 5 16 9"/><polyline points="8 15 12 19 16 15"/></svg>
+    <span class="chip-label">Expand all</span>
+  </button>
+  <button class="chip-btn" id="collapse-all-btn" onclick="collapseAllCards()" aria-label="Collapse all days" title="Collapse all">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 5 12 9 16 5"/><polyline points="8 19 12 15 16 19"/></svg>
+    <span class="chip-label">Collapse all</span>
+  </button>
+  <button class="chip-btn" id="edit-toggle-btn" onclick="toggleEditMode()" aria-label="Toggle edit mode" title="Edit mode">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <span class="chip-label">Edit mode</span>
   </button>
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
     <span class="toggle-icon">
@@ -274,6 +293,7 @@
     </span>
     <div class="toggle-track" id="toggle-track"><div class="toggle-thumb"></div></div>
   </button>
+</div>
   <div class="header-eyebrow">Family Travel · December 2026 – January 2027</div>
   <h1 class="header-title">New York · Miami · <em>Caribbean</em></h1>
   <p class="header-sub">25 days · Party of 4 · A bucket list trip</p>
@@ -990,9 +1010,49 @@
     document.getElementById('panel-' + id).classList.add('active');
     btn.classList.add('active');
     window.scrollTo({top: 0, behavior: 'smooth'});
+    updateExpandAllControl();
   }
   function toggleCard(headerEl) {
     headerEl.closest('.day-card').classList.toggle('open');
+    updateExpandAllControl();
+  }
+  function activeDayCards() {
+    const panel = document.querySelector('.leg-panel.active');
+    return panel ? Array.from(panel.querySelectorAll('.day-card')) : [];
+  }
+  function updateExpandAllControl() {
+    const expandBtn = document.getElementById('expand-all-btn');
+    const collapseBtn = document.getElementById('collapse-all-btn');
+    if (!expandBtn || !collapseBtn) return;
+    const cards = activeDayCards();
+    const hide = cards.length === 0;
+    expandBtn.hidden = hide;
+    collapseBtn.hidden = hide;
+    if (hide) return;
+    const allOpen = cards.every(c => c.classList.contains('open'));
+    const allClosed = cards.every(c => !c.classList.contains('open'));
+    expandBtn.classList.toggle('active', allClosed);
+    collapseBtn.classList.toggle('active', allOpen);
+  }
+  function expandAllCards() {
+    activeDayCards().forEach(c => c.classList.add('open'));
+    updateExpandAllControl();
+  }
+  function collapseAllCards() {
+    activeDayCards().forEach(c => c.classList.remove('open'));
+    updateExpandAllControl();
+  }
+  function wireChipReveal(btn) {
+    let touchPeek = false;
+    btn.addEventListener('touchstart', () => {
+      if (btn.classList.contains('revealed')) return;
+      touchPeek = true;
+      btn.classList.add('revealed');
+      setTimeout(() => btn.classList.remove('revealed'), 2500);
+    }, { passive: true });
+    btn.addEventListener('click', e => {
+      if (touchPeek) { touchPeek = false; e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
   }
   function openLightbox(src, caption) {
     if (!src) return;
@@ -1145,6 +1205,8 @@
     document.querySelectorAll('[data-editable]').forEach(el => {
       el.setAttribute('contenteditable', on ? 'true' : 'false');
     });
+    const editBtn = document.getElementById('edit-toggle-btn');
+    if (editBtn) editBtn.classList.toggle('active', on);
     localStorage.setItem(EDIT_MODE_KEY, on ? '1' : '0');
   }
   function toggleEditMode() {
@@ -1289,6 +1351,8 @@
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
     addDurationLabels();
+    document.querySelectorAll('.chip-btn').forEach(wireChipReveal);
+    updateExpandAllControl();
   })();
 </script>
 <div class="edit-badge">Edit mode — click text to edit, drag images to replace</div>
