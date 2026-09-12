@@ -2917,8 +2917,25 @@
     }
   }
 
+  /* ── Last-focused action ────────────────────────────────────────────────
+     The drawer reopens on whichever action was last in focus rather than
+     always on the first one, so a repeated action is one gesture away. The
+     index is persisted, so it survives a reload too; a stored value that is
+     out of range (the action list changed since it was written) falls back to
+     the first action. */
+  const LAST_INDEX_KEY = 'trip-itinerary-edge-last-index';
+  function readLastIndex() {
+    try {
+      const i = parseInt(localStorage.getItem(LAST_INDEX_KEY) || '0', 10);
+      return (isNaN(i) || i < 0 || i >= N) ? 0 : i;
+    } catch (e) { return 0; }
+  }
+  function writeLastIndex(i) {
+    try { localStorage.setItem(LAST_INDEX_KEY, String(i)); } catch (e) {}
+  }
+
   const openS = spring(0, 320, 32);   // 0 = fully resting/invisible, 1 = fully expanded
-  const scrubS = spring(0, 210, 24);  // carousel position, in item-slots
+  const scrubS = spring(readLastIndex(), 210, 24);  // carousel position, in item-slots
 
   const notchEl = root.querySelector('.edge-notch');
   const ghostsEl = root.querySelector('.edge-ghosts');
@@ -3036,9 +3053,19 @@
   function collapseDrawer() {
     isOpen = false;
     springStart(openS, 0, 320, 32);
-    // Park the carousel back on the first action only once the drawer is fully
-    // invisible, so the reset never shows as a snap mid-fade.
-    openS.onRest = () => { setActive(false); springSet(scrubS, 0); render(); };
+    // Normalise the carousel onto the action it settled on — the one last in
+    // focus, which is where it will reopen — only once the drawer is fully
+    // invisible, so the wrap never shows as a snap mid-fade. Normalising from
+    // the spring's target rather than its current value keeps a settle that is
+    // still in flight from being truncated part-way, and the modulo stops
+    // repeated flings drifting the stored position unbounded.
+    openS.onRest = () => {
+      setActive(false);
+      const i = ((Math.round(scrubS.to) % N) + N) % N;
+      springSet(scrubS, i);
+      writeLastIndex(i);
+      render();
+    };
   }
 
   /** Which carousel index is drawn nearest a given viewport y. The carousel is
