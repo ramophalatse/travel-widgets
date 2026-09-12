@@ -23,6 +23,12 @@
     --shadow-hover:0 2px 8px rgba(20,22,28,.08),0 16px 48px -16px rgba(20,22,28,.28);
     --flight-bg:#ffffff;--flight-stub:#f3f5f6;--flight-border:rgba(31,35,42,0.14);
     --flight-text:#17202a;--flight-muted:#6f7883;--flight-soft:#eef2f3;
+    /* The punch-hole fill: the old rgba(0,0,0,0.7) composited over --flight-bg,
+       baked to an opaque colour so it fully hides the card border it crosses.
+       --flight-notch-arc is --flight-border composited over --flight-bg the same
+       way, so the arc round the notch reads at exactly the brightness of the
+       straight border it continues instead of dimming against the dark fill. */
+    --flight-notch:#4d4d4d;--flight-notch-arc:#e0e0e1;
     --radius:18px;--radius-sm:10px;
     --ease-pop:cubic-bezier(0.34,1.56,0.64,1);
     --serif:'Sora',system-ui,sans-serif;
@@ -42,6 +48,7 @@
     --shadow-hover:0 1px 0 rgba(255,255,255,.06) inset,0 28px 70px -24px rgba(0,0,0,.8);
     --flight-bg:#101922;--flight-stub:#18232d;--flight-border:rgba(255,255,255,0.14);
     --flight-text:#f7fafc;--flight-muted:rgba(255,255,255,0.55);--flight-soft:rgba(255,255,255,0.06);
+    --flight-notch:#05080a;--flight-notch-arc:#323941;
   }}
   :root[data-theme="dark"]{
     --bg:#0a0f14;--bg2:#05080c;--bg3:#20262c;--card:#151a20;
@@ -56,6 +63,7 @@
     --shadow-hover:0 1px 0 rgba(255,255,255,.06) inset,0 28px 70px -24px rgba(0,0,0,.8);
     --flight-bg:#101922;--flight-stub:#18232d;--flight-border:rgba(255,255,255,0.14);
     --flight-text:#f7fafc;--flight-muted:rgba(255,255,255,0.55);--flight-soft:rgba(255,255,255,0.06);
+    --flight-notch:#05080a;--flight-notch-arc:#323941;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;}
@@ -265,12 +273,26 @@
   .flight-trigger:hover,.flight-trigger:focus-visible{color:var(--accent-text);border-color:var(--accent);background:var(--accent-bg);transform:translateY(-1px);outline:none;}
   .flight-trigger svg{width:13px;height:13px;display:block;}
   .flight-modal-box{max-width:840px;padding:0;background:transparent;box-shadow:none;}
-  .boarding-pass{display:grid;grid-template-columns:minmax(0,1fr) 190px;position:relative;overflow:hidden;border:1px solid var(--flight-border);border-radius:22px;background:var(--flight-bg);color:var(--flight-text);box-shadow:0 28px 80px rgba(0,0,0,0.34);}
-  .boarding-pass::before,.boarding-pass::after{content:'';position:absolute;left:calc(100% - 190px);width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.7);transform:translate(-50%,-50%);z-index:3;}
-  .boarding-pass::before{top:0;}
-  .boarding-pass::after{top:100%;}
+  /* No overflow:hidden here on purpose. It used to be the corner clipper, but
+     overflow clips descendants to the PADDING box — so the notch pseudo-elements
+     could never paint over the card's own 1px border, and the border kept
+     running straight across each notch. The only child that actually needs
+     corner clipping is .flight-stub's background, so it rounds its own corners
+     instead (see below) and the notches are free to sit on top of the border. */
+  .boarding-pass{display:grid;grid-template-columns:minmax(0,1fr) 190px;position:relative;border:1px solid var(--flight-border);border-radius:22px;background:var(--flight-bg);color:var(--flight-text);box-shadow:0 28px 80px rgba(0,0,0,0.34);}
+  /* Each notch is one circle centred on the card's outer edge, carrying both
+     the punch-hole fill and a 1px ring in the border colour, then clipped to
+     the semicircle that falls inside the card. The opaque fill blanks out the
+     straight border across the notch's width; the ring's visible half becomes
+     the arc that dips around it. Vertical tangents at the clip line mean the
+     arc meets the straight border square on, like a real perforation. */
+  .boarding-pass::before,.boarding-pass::after{content:'';position:absolute;left:calc(100% - 190px);width:24px;height:24px;border-radius:50%;background:var(--flight-notch);border:1px solid var(--flight-notch-arc);transform:translate(-50%,-50%);pointer-events:none;z-index:3;}
+  .boarding-pass::before{top:-1px;clip-path:inset(50% 0 0 0);}
+  .boarding-pass::after{top:calc(100% + 1px);clip-path:inset(0 0 50% 0);}
   .flight-main{padding:26px 28px 24px;min-width:0;}
-  .flight-stub{display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:26px 22px 24px;border-left:1px dashed var(--flight-border);background:var(--flight-stub);}
+  /* 21px = the card's 22px radius minus its 1px border, i.e. the inner curve
+     that overflow:hidden used to produce. */
+  .flight-stub{display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:26px 22px 24px;border-left:1px dashed var(--flight-border);background:var(--flight-stub);border-radius:0 21px 21px 0;}
   .flight-kicker{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--flight-muted);}
   .flight-airline{display:inline-flex;align-items:center;gap:8px;color:var(--flight-text);font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:0;line-height:1.2;text-transform:none;}
   .flight-logo-wrap{display:flex;align-items:center;justify-content:flex-start;height:44px;padding:0;border:0;border-radius:0;background:transparent;}
@@ -318,7 +340,8 @@
     .boarding-pass{grid-template-columns:1fr;}
     .boarding-pass::before,.boarding-pass::after{display:none;}
     .flight-main{padding:24px 20px 20px;}
-    .flight-stub{padding:18px 20px;border-left:0;border-top:1px dashed rgba(255,255,255,0.28);}
+    /* Stub stacks under the main panel here, so it rounds the bottom corners. */
+    .flight-stub{padding:18px 20px;border-left:0;border-top:1px dashed rgba(255,255,255,0.28);border-radius:0 0 21px 21px;}
     .flight-route{gap:9px;}
     .flight-path{gap:4px;}
     .flight-path::before,.flight-path::after{width:14px;}
