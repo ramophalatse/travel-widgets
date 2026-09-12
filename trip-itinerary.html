@@ -180,10 +180,18 @@
   .act-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;}
   .act-note{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:3px;}
   .act-cost{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
-  /* Sits inside .act-note rather than beside it: a sibling would be another
-     TEXT_SELECTOR match, and those are numbered positionally into the eids the
-     edit store is keyed on. */
+  /* Note rows are stored per activity row as one JSON value, the way the day
+     budget tables are, so adding or deleting one touches nothing else. */
   .act-fineprint{display:block;margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--text3);}
+  .act-notes{display:block;}
+  .act-note-row{display:flex;align-items:baseline;gap:6px;}
+  .act-note-text{flex:0 1 auto;min-width:0;}
+  .act-note-text:empty::before{content:'Note…';color:var(--text3);opacity:0.6;}
+  .act-note-remove,.act-note-add{display:none;border:none;background:none;padding:0;cursor:pointer;font-family:var(--mono);line-height:1;}
+  .act-note-remove{flex:0 0 auto;font-size:14px;color:var(--text3);}
+  .act-note-remove:hover{color:#fda4af;}
+  .act-note-add{margin-top:4px;font-size:11px;color:var(--accent);}
+  .act-note-add:hover{text-decoration:underline;}
   .excursion-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--teal-bg);color:var(--teal-text);margin-top:3px;}
   .act-thumb{width:190px;height:132px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;}
   .act-thumb:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(0,0,0,0.18);}
@@ -381,6 +389,10 @@
   :root[data-edit="on"] .act-thumb-slot.drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
   :root[data-edit="on"] .act-thumb-wrap .act-thumb-remove,
   :root[data-edit="on"] .act-thumb-slot.filled .act-thumb-remove{display:flex;}
+  :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
+  :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
+  :root[data-edit="on"] [data-note-edit]:hover{background:var(--accent-bg);}
+  :root[data-edit="on"] [data-note-edit]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
   .edit-badge{position:fixed;bottom:1.25rem;left:1.25rem;z-index:200;display:none;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow);}
   /* Editable day budget table. The spend rows deliberately sit OUTSIDE
      TEXT_SELECTOR and keep their own storage key per day card: the text
@@ -621,7 +633,7 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Wake up · final pack</div><div class="act-note">Early start: the journey begins the moment we walk out the door.</div></div></div><div class="activity-row"><div class="time-col">6:30am</div><div><div class="act-name">Leave home · drive to OR Tambo</div><div class="act-note">35–45 min drive. We're aiming to get to the airport by 7:15am, a comfortable buffer before an international check-in over the holiday rush.<span class="act-fineprint">No access limits. Lounge open 24/7</span></div></div></div><div class="activity-row"><div class="time-col">9:50am</div><div><div class="act-name">EY 748 departs OR Tambo (JNB)</div><div class="act-note">7h 55m · Boeing 787-9 · Economy Deluxe.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">7:45pm</div><div><div class="act-name">Arrive Abu Dhabi · Zayed International</div><div class="act-note">6h 50m layover before we continue on to JFK. Stretch our legs, grab dinner airside.</div></div></div><div class="activity-row"><div class="time-col">8:15pm</div><div><div class="act-name">Pearl Lounge · Terminal A, International Departures, Airside, Level 5</div><div class="act-note">Ramo and Fez both have access, each with 1 free guest. Allow ~30 min to deplane and clear transit security first.<span class="act-fineprint">Maximum stay: 2 hours</span></div></div></div><div class="activity-row"><div class="time-col">Dec 22, 2:35am</div><div><div class="act-name">EY 1 departs Abu Dhabi · overnight to JFK</div><div class="act-note">14h 25m · Airbus A350-1000 · Economy Deluxe. Try to get some sleep, we land into Christmas week.</div><div class="act-cost">Flights pre-paid</div></div></div>
+<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Wake up · final pack</div><div class="act-note">Early start: the journey begins the moment we walk out the door.</div></div></div><div class="activity-row"><div class="time-col">6:30am</div><div><div class="act-name">Leave home · drive to OR Tambo</div><div class="act-note">35–45 min drive. We're aiming to get to the airport by 7:15am, a comfortable buffer before an international check-in over the holiday rush.</div><div class="act-notes"><div class="act-fineprint act-note-row"><span class="act-note-text">No access limits. Lounge open 24/7</span></div></div></div></div><div class="activity-row"><div class="time-col">9:50am</div><div><div class="act-name">EY 748 departs OR Tambo (JNB)</div><div class="act-note">7h 55m · Boeing 787-9 · Economy Deluxe.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">7:45pm</div><div><div class="act-name">Arrive Abu Dhabi · Zayed International</div><div class="act-note">6h 50m layover before we continue on to JFK. Stretch our legs, grab dinner airside.</div></div></div><div class="activity-row"><div class="time-col">8:15pm</div><div><div class="act-name">Pearl Lounge · Terminal A, International Departures, Airside, Level 5</div><div class="act-note">Ramo and Fez both have access, each with 1 free guest. Allow ~30 min to deplane and clear transit security first.</div><div class="act-notes"><div class="act-fineprint act-note-row"><span class="act-note-text">Maximum stay: 2 hours</span></div></div></div></div><div class="activity-row"><div class="time-col">Dec 22, 2:35am</div><div><div class="act-name">EY 1 departs Abu Dhabi · overnight to JFK</div><div class="act-note">14h 25m · Airbus A350-1000 · Economy Deluxe. Try to get some sleep, we land into Christmas week.</div><div class="act-cost">Flights pre-paid</div></div></div>
         </div>
       </div>
     </div>
@@ -1930,20 +1942,191 @@
       recalcSpendTable(cell.closest('.spend-table'), true);
     });
   }
+  /* ── PER-ROW NOTE ROWS ──────────────────────────────────────────────────
+     Notes are user-insertable, so they deliberately stay out of the keyed
+     element scheme entirely: a row's notes are one JSON array stored under
+     `notes:<rowKey>`, exactly as a day's budget table is stored whole. Adding or
+     deleting a note therefore cannot disturb any other stored value. */
+  const NOTES_PREFIX = 'notes:';
+  function notesContainer(row) {
+    let c = row.querySelector(':scope > div > .act-notes');
+    if (!c) {
+      c = document.createElement('div');
+      c.className = 'act-notes';
+      const nameEl = row.querySelector('.act-name');
+      (nameEl ? nameEl.parentElement : row).appendChild(c);
+    }
+    return c;
+  }
+  function makeNoteRow(text) {
+    const d = document.createElement('div');
+    d.className = 'act-fineprint act-note-row';
+    const span = document.createElement('span');
+    span.className = 'act-note-text';
+    span.dataset.noteEdit = '1';
+    span.textContent = text;
+    d.appendChild(span);
+    return d;
+  }
+  function renderNotes(row, value) {
+    let list;
+    try { list = JSON.parse(value); } catch (e) { list = []; }
+    if (!Array.isArray(list)) list = [];
+    const c = notesContainer(row);
+    c.querySelectorAll('.act-note-row').forEach(n => n.remove());
+    list.forEach(t => c.appendChild(makeNoteRow(String(t))));
+  }
+  function serializeNotes(row) {
+    return Array.from(row.querySelectorAll('.act-note-text'))
+      .map(s => s.textContent.trim()).filter(Boolean);
+  }
+  function saveNotes(row) {
+    saveEdit(NOTES_PREFIX + rowKey(row), 'notes', JSON.stringify(serializeNotes(row)));
+  }
+  /** Owns all note chrome, for notes from the store and notes an export baked
+   *  into the file alike, so there is one place that decides what a note looks
+   *  like in edit mode. */
+  function decorateNotes() {
+    document.querySelectorAll('.activity-row').forEach(row => {
+      const c = notesContainer(row);
+      c.querySelectorAll('.act-note-row').forEach(n => {
+        if (!n.querySelector('.act-note-remove')) {
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'act-note-remove';
+          del.title = 'Delete note';
+          del.setAttribute('aria-label', 'Delete note');
+          del.textContent = '×';
+          n.appendChild(del);
+        }
+        const t = n.querySelector('.act-note-text');
+        if (t) t.dataset.noteEdit = '1';
+      });
+      if (!c.querySelector('.act-note-add')) {
+        const add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'act-note-add';
+        add.textContent = '+ Add note';
+        c.appendChild(add);
+      }
+    });
+  }
+  function wireNotes() {
+    document.addEventListener('click', e => {
+      const del = e.target.closest && e.target.closest('.act-note-remove');
+      if (del) {
+        const row = del.closest('.activity-row');
+        del.closest('.act-note-row').remove();
+        saveNotes(row);
+        return;
+      }
+      const add = e.target.closest && e.target.closest('.act-note-add');
+      if (!add) return;
+      const row = add.closest('.activity-row');
+      const note = makeNoteRow('');
+      add.parentElement.insertBefore(note, add);
+      decorateNotes();
+      const t = note.querySelector('.act-note-text');
+      t.setAttribute('contenteditable', 'true');
+      t.focus();
+    });
+  }
+
+  /* ── STABLE EDIT KEYS ───────────────────────────────────────────────────
+     Keys are derived from where an element sits in the AUTHORED document, never
+     from its position in a counter. The old scheme numbered every selector match
+     e0, e1, e2… in document order, so inserting or deleting a single row
+     silently repointed every saved edit after it.
+
+     A key is anchored to content the file author controls and the page editor
+     does not: the day card's data-day-key plus a slug of the row's authored
+     .act-name. Inline edits live in the store, not in the file, so editing a
+     row's name in the browser cannot move its key. Renaming it *in the file*
+     does, and is a deliberate migration.
+
+     Uniqueness is checked at startup rather than assumed; see auditEditKeys(). */
+  function slugify(s) {
+    return String(s).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
+  }
+  function authoredRowName(row) {
+    if (row.dataset.authoredName != null) return row.dataset.authoredName;
+    const el = row.querySelector('.act-name');
+    return el ? el.textContent.trim() : '';
+  }
+  /** Row keys are sealed once, by seedRowKeys(), while the DOM still holds the
+   *  authored text. Every later caller reads the cache, so a saved edit landing
+   *  on .act-name can never move a key out from under the store. */
+  function rowKey(row) {
+    return row.dataset.rowKey || seedRowKey(row);
+  }
+  function seedRowKey(row) {
+    const card = row.closest('.day-card');
+    const day = (card && card.dataset.dayKey) || 'nocard';
+    const mine = slugify(authoredRowName(row));
+    let base = day + ':' + (mine || 'row');
+    const twins = card ? Array.from(card.querySelectorAll('.activity-row'))
+      .filter(r => slugify(authoredRowName(r)) === mine) : [row];
+    if (twins.length > 1) base += '~' + (twins.indexOf(row) + 1);
+    row.dataset.rowKey = base;
+    return base;
+  }
+  function seedRowKeys() {
+    // Stash the authored name before anything can overlay it, so re-deriving a
+    // key later in the session yields the same answer as the first pass did.
+    document.querySelectorAll('.activity-row').forEach(row => {
+      if (row.dataset.authoredName == null) row.dataset.authoredName = authoredRowName(row);
+    });
+    document.querySelectorAll('.activity-row').forEach(seedRowKey);
+  }
+  /** Key for any element the edit store can address. */
+  function editKey(el) {
+    const cls = (el.className || '').split(' ')[0] || el.tagName.toLowerCase();
+    const row = el.closest('.activity-row');
+    if (row) {
+      // A row's thumbnail and its empty drop slot are one logical image.
+      const k = rowKey(row);
+      if (el.classList.contains('act-thumb') || el.classList.contains('act-thumb-slot')) return k + '.thumb';
+      const peers = Array.from(row.querySelectorAll('.' + cls));
+      return k + '.' + cls + (peers.length > 1 ? '~' + (peers.indexOf(el) + 1) : '');
+    }
+    const card = el.closest('.day-card');
+    if (card && card.dataset.dayKey) {
+      const peers = Array.from(card.querySelectorAll('.' + cls)).filter(p => !p.closest('.activity-row'));
+      return card.dataset.dayKey + '.' + cls + (peers.length > 1 ? '~' + (peers.indexOf(el) + 1) : '');
+    }
+    const peers = Array.from(document.querySelectorAll('.' + cls)).filter(p => !p.closest('.activity-row,.day-card'));
+    return 'page.' + cls + (peers.length > 1 ? '~' + (peers.indexOf(el) + 1) : '');
+  }
   function tagEditableElements() {
-    let i = 0;
+    seedRowKeys();
     document.querySelectorAll(TEXT_SELECTOR).forEach(el => {
       el.dataset.editable = '1';
-      el.dataset.eid = 'e' + (i++);
+      el.dataset.eid = editKey(el);
     });
     document.querySelectorAll(IMAGE_SELECTOR).forEach(el => {
+      // A filled slot contains an img.act-thumb; both would resolve to the row's
+      // single .thumb key, so the slot owns it and the image inside is skipped.
+      if (el.closest('.act-thumb-slot')) return;
       el.dataset.dropImage = '1';
-      el.dataset.eid = 'e' + (i++);
+      el.dataset.eid = editKey(el);
     });
     document.querySelectorAll(EMPTY_IMAGE_SELECTOR).forEach(el => {
       el.dataset.dropImage = '1';
-      el.dataset.eid = 'e' + (i++);
+      el.dataset.eid = editKey(el);
     });
+    auditEditKeys();
+  }
+  /** A duplicate key would make two elements share one stored value. Cheap to
+   *  check, and the failure is silent otherwise, so it is checked every load. */
+  function auditEditKeys() {
+    const seen = new Map();
+    document.querySelectorAll('[data-eid]').forEach(el => {
+      seen.set(el.dataset.eid, (seen.get(el.dataset.eid) || 0) + 1);
+    });
+    const dupes = Array.from(seen.entries()).filter(([, n]) => n > 1);
+    if (dupes.length) console.error('[trip-itinerary] duplicate edit keys:', dupes);
+    return dupes;
   }
   async function applySavedEdits() {
     const store = await fetchEditStore();
@@ -1954,6 +2137,12 @@
         const card = document.querySelector('.day-card[data-day-key="' + eid.slice(SPEND_PREFIX.length) + '"]');
         const table = card && card.querySelector('.spend-table');
         if (table) applySpendTable(table, entry.value);
+        return;
+      }
+      if (eid.indexOf(NOTES_PREFIX) === 0) {
+        const key = eid.slice(NOTES_PREFIX.length);
+        const row = Array.from(document.querySelectorAll('.activity-row')).find(r => rowKey(r) === key);
+        if (row) renderNotes(row, entry.value);
         return;
       }
       const el = document.querySelector('[data-eid="' + eid + '"]');
@@ -1969,7 +2158,7 @@
   }
   function setEditMode(on) {
     document.documentElement.dataset.edit = on ? 'on' : 'off';
-    document.querySelectorAll('[data-editable],[data-spend-edit]').forEach(el => {
+    document.querySelectorAll('[data-editable],[data-spend-edit],[data-note-edit]').forEach(el => {
       el.setAttribute('contenteditable', on ? 'true' : 'false');
     });
     const editBtn = document.getElementById('edit-toggle-btn');
@@ -1985,6 +2174,13 @@
     if (el.matches('[data-spend-edit]')) {
       const table = el.closest('.spend-table');
       if (table) { recalcSpendTable(table, true); saveSpendTable(table); }
+      return;
+    }
+    if (el.matches('[data-note-edit]')) {
+      const row = el.closest('.activity-row');
+      // An emptied note is a deleted note; serializeNotes drops it either way.
+      if (!el.textContent.trim()) el.closest('.act-note-row').remove();
+      if (row) saveNotes(row);
       return;
     }
     if (!el.matches('[data-editable]')) return;
@@ -2063,6 +2259,12 @@
     // load, so the export ships the authored rows only. A table that is still
     // empty never existed in the source either: drop it rather than export a
     // hidden shell.
+    // Note rows are content and ship; their edit chrome is rebuilt on load.
+    clone.querySelectorAll('.act-note-remove,.act-note-add').forEach(el => el.remove());
+    clone.querySelectorAll('[data-note-edit]').forEach(el => el.removeAttribute('data-note-edit'));
+    clone.querySelectorAll('.act-notes').forEach(c => { if (!c.querySelector('.act-note-row')) c.remove(); });
+    clone.querySelectorAll('[data-row-key]').forEach(el => el.removeAttribute('data-row-key'));
+    clone.querySelectorAll('[data-authored-name]').forEach(el => el.removeAttribute('data-authored-name'));
     clone.querySelectorAll('.spend-remove,.spend-add').forEach(el => el.remove());
     clone.querySelectorAll('.spend-table[data-empty="1"]').forEach(el => el.remove());
     clone.querySelectorAll('.spend-table').forEach(el => el.removeAttribute('data-empty'));
@@ -2155,6 +2357,8 @@
     wireSpendTables();
     await applySavedEdits();
     wrapStaticThumbs();
+    decorateNotes();
+    wireNotes();
     document.addEventListener('blur', handleEditableBlur, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
