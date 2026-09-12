@@ -187,6 +187,12 @@
   .act-thumb-slot.filled{display:block;}
   .act-thumb-slot .act-thumb{width:100%;height:100%;display:block;}
   .act-thumb-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-family:var(--sans);font-size:11px;font-weight:500;line-height:1.3;color:#fff;opacity:0;background:rgba(5,150,105,0);transition:opacity 0.15s,background 0.15s;pointer-events:none;border-radius:inherit;}
+  /* Authored thumbs are bare <img> children of their row, so they get wrapped at
+     runtime to give the remove control something to anchor to. No overflow:hidden
+     here: that would clip .act-thumb's hover scale. */
+  .act-thumb-wrap{position:relative;width:190px;height:132px;}
+  .act-thumb-remove{position:absolute;top:4px;right:6px;z-index:2;display:none;align-items:center;justify-content:center;width:20px;height:20px;padding:0;border:none;background:none;color:#fff;font-family:var(--sans);font-size:18px;line-height:1;cursor:pointer;transition:color 0.15s,transform 0.15s;}
+  .act-thumb-remove:hover{color:#fda4af;transform:scale(1.15);}
 
   /* TRANSFER LINK */
   .transfer-link{color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-size:12px;}
@@ -329,7 +335,7 @@
   /* RESPONSIVE */
   @media(max-width:640px){
     .activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
-    .act-thumb,.act-thumb-slot{display:none;}
+    .act-thumb,.act-thumb-slot,.act-thumb-wrap{display:none;}
     .leg-hero{height:220px;}
     .restaurant-grid{grid-template-columns:1fr;}
     .nav-tab{padding:12px 12px;font-size:12px;}
@@ -369,6 +375,8 @@
   :root[data-edit="on"] .act-thumb-slot:not(.filled) .act-thumb-hint{opacity:1;background:var(--bg3);border:1.5px dashed var(--border2);color:var(--text3);}
   :root[data-edit="on"] .act-thumb-slot:hover .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.55);color:#fff;border-color:transparent;}
   :root[data-edit="on"] .act-thumb-slot.drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
+  :root[data-edit="on"] .act-thumb-wrap .act-thumb-remove,
+  :root[data-edit="on"] .act-thumb-slot.filled .act-thumb-remove{display:flex;}
   .edit-badge{position:fixed;bottom:1.25rem;left:1.25rem;z-index:200;display:none;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow);}
   /* Editable day budget table. The spend rows deliberately sit OUTSIDE
      TEXT_SELECTOR and keep their own storage key per day card: the text
@@ -1626,6 +1634,7 @@
       hint.className = 'act-thumb-hint';
       hint.textContent = '+ Drop image';
       slot.appendChild(hint);
+      slot.appendChild(makeThumbRemoveButton());
       row.appendChild(slot);
       row.classList.add('has-thumb-slot');
     });
@@ -1647,6 +1656,77 @@
     slot.classList.add('filled');
     const row = slot.closest('.activity-row');
     if (row) row.classList.add('has-thumb');
+  }
+  /* ── REMOVING A THUMBNAIL ───────────────────────────────────────────────
+     Removal is stored as its own edit type rather than as an empty `img-src`,
+     because the store only ever upserts on (page, eid): there is no delete, and
+     an empty value would be indistinguishable from a failed write. On load,
+     `img-removed` puts the element back into the same empty-slot state a click
+     on the × produces, so a removed image can be re-dropped under its own eid. */
+  function makeThumbRemoveButton() {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'act-thumb-remove';
+    btn.title = 'Remove image';
+    btn.setAttribute('aria-label', 'Remove image');
+    btn.textContent = '×';
+    btn.addEventListener('click', onThumbRemoveClick);
+    return btn;
+  }
+  function onThumbRemoveClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    const slot = btn.closest('.act-thumb-slot');
+    if (slot) {
+      emptyThumbSlot(slot);
+      saveEdit(slot.dataset.eid, 'img-removed', '');
+      return;
+    }
+    const img = btn.closest('.act-thumb-wrap').querySelector('img.act-thumb');
+    const newSlot = convertThumbToSlot(img);
+    wireImageDrop(newSlot);
+    saveEdit(newSlot.dataset.eid, 'img-removed', '');
+  }
+  function emptyThumbSlot(slot) {
+    const img = slot.querySelector('img.act-thumb');
+    if (img) img.remove();
+    slot.classList.remove('filled');
+    const hint = slot.querySelector('.act-thumb-hint');
+    if (hint) hint.textContent = '+ Drop image';
+    const row = slot.closest('.activity-row');
+    if (row) row.classList.remove('has-thumb');
+  }
+  /** Replaces an authored thumb with the empty slot it would have had if the
+   *  page had never carried an image there, carrying the image's eid across so
+   *  a later drop saves over the removal under the same key. */
+  function convertThumbToSlot(img) {
+    const row = img.closest('.activity-row');
+    const slot = document.createElement('div');
+    slot.className = 'act-thumb-slot';
+    const nameEl = row && row.querySelector('.act-name');
+    slot.dataset.caption = nameEl ? nameEl.textContent.trim() : (img.alt || '');
+    if (img.dataset.eid) slot.dataset.eid = img.dataset.eid;
+    slot.dataset.dropImage = '1';
+    const hint = document.createElement('span');
+    hint.className = 'act-thumb-hint';
+    hint.textContent = '+ Drop image';
+    slot.appendChild(hint);
+    slot.appendChild(makeThumbRemoveButton());
+    (img.closest('.act-thumb-wrap') || img).replaceWith(slot);
+    if (row) { row.classList.remove('has-thumb'); row.classList.add('has-thumb-slot'); }
+    return slot;
+  }
+  /** Must run after the positional eid pass, and after saved edits are applied
+   *  so an already-removed thumb is a slot by now and never gets wrapped. */
+  function wrapStaticThumbs() {
+    document.querySelectorAll('.activity-row > img.act-thumb').forEach(img => {
+      const wrap = document.createElement('div');
+      wrap.className = 'act-thumb-wrap';
+      img.replaceWith(wrap);
+      wrap.appendChild(img);
+      wrap.appendChild(makeThumbRemoveButton());
+    });
   }
   /* ── DAY BUDGET TABLES ──────────────────────────────────────────────────
      Each day card's spend table becomes editable in edit mode: row labels and
@@ -1876,6 +1956,10 @@
       if (!el) return;
       if (entry.type === 'text') el.innerHTML = entry.value;
       else if (entry.type === 'img-src') { if (el.classList.contains('act-thumb-slot')) fillThumbSlot(el, entry.value); else el.src = entry.value; }
+      else if (entry.type === 'img-removed') {
+        if (el.classList.contains('act-thumb-slot')) emptyThumbSlot(el);
+        else if (el.tagName === 'IMG' && el.classList.contains('act-thumb')) convertThumbToSlot(el);
+      }
       else if (entry.type === 'bg-image') el.style.backgroundImage = "url('" + entry.value + "')";
     });
   }
@@ -1959,6 +2043,13 @@
     clone.removeAttribute('data-edit');
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    // Both the wrapper and the remove control are runtime edit chrome; unwrap
+    // back to the bare <img> the source authored.
+    clone.querySelectorAll('.act-thumb-remove').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
+      const img = wrap.querySelector('img.act-thumb');
+      if (img) wrap.replaceWith(img); else wrap.remove();
+    });
     clone.querySelectorAll('.act-thumb-slot').forEach(slot => {
       const img = slot.querySelector('img.act-thumb');
       if (img) slot.replaceWith(img); else slot.remove();
@@ -2059,6 +2150,7 @@
     decorateSpendTables();
     wireSpendTables();
     await applySavedEdits();
+    wrapStaticThumbs();
     document.addEventListener('blur', handleEditableBlur, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
@@ -2067,7 +2159,7 @@
     updateExpandAllControl();
   })();
 </script>
-<div class="edit-badge">Edit mode — click text to edit, drag images to replace</div>
+<div class="edit-badge">Edit mode · click text to edit, drag images to replace, × to remove</div>
 <button class="edit-export" onclick="exportItinerary()">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
   Export edited HTML
