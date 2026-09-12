@@ -639,11 +639,11 @@
 
 <nav class="nav-wrapper">
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showLeg('nyc1',this)"><span class="tab-emoji">🗽</span>New York 1</button>
-    <button class="nav-tab" onclick="showLeg('miami',this)"><span class="tab-emoji">🌴</span>Miami</button>
-    <button class="nav-tab" onclick="showLeg('cruise',this)"><span class="tab-emoji">🚢</span>Cruise</button>
-    <button class="nav-tab" onclick="showLeg('nyc2',this)"><span class="tab-emoji">🗽</span>New York 2</button>
-    <button class="nav-tab" onclick="showLeg('budget',this)"><span class="tab-emoji">💰</span>Budget</button>
+    <button class="nav-tab active" data-leg="nyc1" onclick="showLeg('nyc1',this)"><span class="tab-emoji">🗽</span>New York 1</button>
+    <button class="nav-tab" data-leg="miami" onclick="showLeg('miami',this)"><span class="tab-emoji">🌴</span>Miami</button>
+    <button class="nav-tab" data-leg="cruise" onclick="showLeg('cruise',this)"><span class="tab-emoji">🚢</span>Cruise</button>
+    <button class="nav-tab" data-leg="nyc2" onclick="showLeg('nyc2',this)"><span class="tab-emoji">🗽</span>New York 2</button>
+    <button class="nav-tab" data-leg="budget" onclick="showLeg('budget',this)"><span class="tab-emoji">💰</span>Budget</button>
   </div>
   <!-- The masthead toolbar's desktop controls relocate here once the masthead
        scrolls away. Deliberately empty in the source: the nodes are moved,
@@ -1491,6 +1491,31 @@
   }
   function openLightboxFromBg(el,cap){var m=el.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);if(m)openLightbox(m[1],cap);}
   document.querySelectorAll('[data-dedup]').forEach(function(img){img.src=document.getElementById(img.dataset.dedup).src;});
+  const ITINERARY_VIEW_KEY = 'trip-itinerary-view-v1';
+  function saveItineraryView() {
+    try {
+      const activePanel = document.querySelector('.leg-panel.active');
+      const view = {
+        leg: activePanel ? activePanel.id.replace(/^panel-/, '') : 'nyc1',
+        openDays: Array.from(document.querySelectorAll('.day-card.open[data-day-key]'), card => card.dataset.dayKey)
+      };
+      localStorage.setItem(ITINERARY_VIEW_KEY, JSON.stringify(view));
+    } catch (e) {}
+  }
+  function restoreItineraryView() {
+    let view;
+    try { view = JSON.parse(localStorage.getItem(ITINERARY_VIEW_KEY) || 'null'); } catch (e) { return; }
+    if (!view || typeof view !== 'object') return;
+    const panel = typeof view.leg === 'string' && document.getElementById('panel-' + view.leg);
+    if (panel) {
+      document.querySelectorAll('.leg-panel').forEach(p => p.classList.toggle('active', p === panel));
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.toggle('active', tab.dataset.leg === view.leg));
+    }
+    if (Array.isArray(view.openDays)) {
+      const openDays = new Set(view.openDays);
+      document.querySelectorAll('.day-card[data-day-key]').forEach(card => card.classList.toggle('open', openDays.has(card.dataset.dayKey)));
+    }
+  }
   function showLeg(id, btn) {
     document.querySelectorAll('.leg-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1498,10 +1523,12 @@
     btn.classList.add('active');
     window.scrollTo({top: 0, behavior: 'smooth'});
     updateExpandAllControl();
+    saveItineraryView();
   }
   function toggleCard(headerEl) {
     headerEl.closest('.day-card').classList.toggle('open');
     updateExpandAllControl();
+    saveItineraryView();
   }
   function activeDayCards() {
     const panel = document.querySelector('.leg-panel.active');
@@ -1524,10 +1551,12 @@
   function expandAllCards() {
     activeDayCards().forEach(c => c.classList.add('open'));
     updateExpandAllControl();
+    saveItineraryView();
   }
   function collapseAllCards() {
     activeDayCards().forEach(c => c.classList.remove('open'));
     updateExpandAllControl();
+    saveItineraryView();
   }
   /* The desktop controls live in the masthead toolbar, which scrolls away.
      Rather than duplicating them into the sticky nav — including a second
@@ -2529,6 +2558,7 @@
     });
   }
   (async function initEditSystem() {
+    restoreItineraryView();
     initFlightDetails();
     ensureImageDropZones();
     tagEditableElements();
