@@ -344,6 +344,78 @@
   .edit-export svg{width:16px;height:16px;flex-shrink:0;}
   :root[data-edit="on"] .edit-export{display:flex;}
   .edit-export:hover{opacity:0.92;}
+
+  /* ── EDGE NAV DRAWER ──────────────────────────────────────────────────
+     Right-edge bezel-notch action carousel, ported 1:1 (geometry, timing,
+     colours, gesture model) from the Money Metrics app's EdgeNavDrawer.
+     Gated on input capability, not width: it wants a thumb on the bezel,
+     which is as true of a 13" iPad as of a phone and never true of a
+     desktop pointer. On coarse-pointer devices it replaces the header
+     toolbar outright, the way it replaced MM's bottom tab bar.
+
+     Layering rule carried over from MM: exactly one thing is touchable.
+     The notch and the ghost layer are clipped and inert; the icon layer is
+     inert and deliberately unclipped (clip-path clips hit-testing as well
+     as pixels, and its opacity falloff already fades icons out well inside
+     the silhouette); a single transparent surface on top owns every
+     pointer and decides tap vs scrub vs collapse from raw coordinates. */
+  #edge-drawer{display:none;}
+  @media (pointer:coarse){
+    #edge-drawer{display:block;}
+    .header-toolbar{display:none;}
+  }
+  /* Every visual layer renders around the same centre: true screen-centre
+     nudged up to sit flush with the physical camera cutout (measured
+     on-device in MM; there is no env(safe-area-*) equivalent for an iPad's
+     camera housing the way there is for an iPhone notch). */
+  .edge-layer{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);pointer-events:none;}
+  /* Fixed near-black fill, independent of the light/dark theme tokens — the
+     notch reads as a continuation of the phone's black bezel, not as app
+     chrome, so it must not lighten in light mode. A regular box-shadow would
+     follow the element's rectangular bounds rather than the clipped leaf
+     silhouette, so the lift comes from stacked drop-shadows instead. */
+  .edge-notch{z-index:30;background:rgba(4,4,6,0.94);border:1px solid rgba(255,255,255,0.08);border-right:0;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,0.55)) drop-shadow(0 12px 32px rgba(0,0,0,0.5));}
+  #edge-drawer[data-active="1"] .edge-notch{z-index:45;}
+  .edge-ghosts{z-index:45;}
+  .edge-icons{z-index:46;}
+  #edge-drawer:not([data-active="1"]) .edge-ghosts,
+  #edge-drawer:not([data-active="1"]) .edge-icons{display:none;}
+  /* Ghost names: each action's name as an oversized watermark running the
+     length of the notch, behind the icons — the same gradient-clipped
+     editorial treatment the cards use, rotated for a tall narrow strip.
+     Grey rather than accent: it sits directly behind the icons, and anything
+     with hue competes with them for the same few square centimetres. 46px,
+     not the cards' 56px: the container is a 64px strip whose width IS the
+     design, and at 56px the italic slant and ascenders overflowed the notch. */
+  .edge-ghost{position:absolute;inset:0;}
+  .edge-ghost span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);
+    white-space:nowrap;font-family:var(--serif);font-weight:800;font-style:italic;font-size:46px;
+    line-height:1;letter-spacing:-0.025em;user-select:none;
+    background-image:linear-gradient(135deg,#171720 0%,#26262f 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  /* The notch's own inner edge shading, over the names and under the icons:
+     a long name has to meet the bezel as a fade, not as a cut. Painted in the
+     notch fill so it reads as the inner shadow deepening towards the walls.
+     Vertical stops track the taper geometry; horizontal stops are tighter,
+     just enough to take contact off the side walls. */
+  .edge-veil{position:absolute;inset:0;background-image:
+    linear-gradient(to bottom,rgba(4,4,6,0.94) 0%,transparent 28%,transparent 72%,rgba(4,4,6,0.94) 100%),
+    linear-gradient(to right,rgba(4,4,6,0.94) 0%,transparent 15%,transparent 85%,rgba(4,4,6,0.94) 100%);}
+  /* No CSS transition on the icons: the scrub loop rewrites transform/opacity
+     every frame, and a transition would smear each write into the next and
+     visibly lag the falloff. */
+  .edge-icon{position:absolute;left:50%;top:50%;display:flex;align-items:center;justify-content:center;color:#7c7c88;}
+  .edge-icon svg{width:20px;height:20px;display:block;}
+  /* The one and only touchable surface: transparent, unclipped, on top of
+     everything. At rest it's a narrow edge strip confined to a band around
+     the notch so it can't steal gestures meant for page scroll; open, it
+     grows to cover the notch plus a little slack and shrinks its band to the
+     notch's own height, so presses beyond it fall through as tap-outside.
+     touch-action:none suppresses scroll/zoom but NOT iOS's long-press
+     callout, which needs the WebKit-specific properties below. */
+  .edge-surface{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:47;
+    touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 </style>
 </head>
 <body>
@@ -1323,6 +1395,9 @@
     const moon = document.getElementById('icon-moon');
     if (track) track.classList.toggle('on', dark);
     if (sun && moon) { sun.style.display = dark ? 'none' : 'block'; moon.style.display = dark ? 'block' : 'none'; }
+    const edgeSun = document.getElementById('edge-icon-sun');
+    const edgeMoon = document.getElementById('edge-icon-moon');
+    if (edgeSun && edgeMoon) { edgeSun.style.display = dark ? 'none' : 'block'; edgeMoon.style.display = dark ? 'block' : 'none'; }
     if (save) localStorage.setItem('theme', dark ? 'dark' : 'light');
   }
   function toggleTheme() {
@@ -1553,6 +1628,14 @@
       if (img) slot.replaceWith(img); else slot.remove();
     });
     clone.querySelectorAll('.has-thumb-slot').forEach(el => el.classList.remove('has-thumb-slot'));
+    // The edge drawer's layers carry inline styles written by its animation
+    // loop; strip them so the export ships the drawer at its authored rest
+    // state rather than frozen mid-gesture.
+    const edgeDrawer = clone.querySelector('#edge-drawer');
+    if (edgeDrawer) {
+      edgeDrawer.dataset.active = '0';
+      edgeDrawer.querySelectorAll('.edge-layer,.edge-surface,.edge-ghost,.edge-icon').forEach(el => el.removeAttribute('style'));
+    }
     const html = '<!doctype html>\n' + clone.outerHTML;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -1639,5 +1722,410 @@
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
   Export edited HTML
 </button>
+<!-- EDGE NAV DRAWER — right-edge bezel-notch action carousel (touch only).
+     Markup is authored statically rather than built in JS so exportItinerary()'s
+     clone of the live DOM stays idempotent; every authored style lives in CSS,
+     so the export only has to strip the inline styles the animation loop writes. -->
+<div id="edge-drawer">
+  <div class="edge-layer edge-notch" aria-hidden="true"></div>
+  <div class="edge-layer edge-ghosts" aria-hidden="true">
+    <div class="edge-ghost"><span>Expand</span></div>
+    <div class="edge-ghost"><span>Collapse</span></div>
+    <div class="edge-ghost"><span>Edit</span></div>
+    <div class="edge-ghost"><span>Theme</span></div>
+    <div class="edge-veil"></div>
+  </div>
+  <div class="edge-layer edge-icons" aria-hidden="true">
+    <div class="edge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 9 12 5 16 9"/><polyline points="8 15 12 19 16 15"/></svg></div>
+    <div class="edge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 5 12 9 16 5"/><polyline points="8 19 12 15 16 19"/></svg></div>
+    <div class="edge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+    <div class="edge-icon">
+      <svg id="edge-icon-sun" viewBox="0 -960 960 960" fill="currentColor"><path d="M565-395q35-35 35-85t-35-85q-35-35-85-35t-85 35q-35 35-35 85t35 85q35 35 85 35t85-35Zm-226.5 56.5Q280-397 280-480t58.5-141.5Q397-680 480-680t141.5 58.5Q680-563 680-480t-58.5 141.5Q563-280 480-280t-141.5-58.5ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+      <svg id="edge-icon-moon" viewBox="0 -960 960 960" fill="currentColor" style="display:none"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
+    </div>
+  </div>
+  <div class="edge-surface" role="navigation" aria-label="Itinerary actions"></div>
+</div>
+<script>
+/* ── EDGE NAV DRAWER ───────────────────────────────────────────────────────
+   Vanilla port of the Money Metrics app's EdgeNavDrawer. Same geometry, same
+   spring physics (react-spring's own integrator, reproduced below), same
+   gesture model: at rest the notch is fully invisible and reads as part of the
+   hardware bezel. Dragging in from the right edge reveals a track carrying a
+   circular, velocity-flung carousel of actions, and — unlike a release-to-
+   select scrubber — it then stays open: only an explicit tap on an icon, an
+   explicit drag back toward the edge, or a tap outside collapses it again. */
+(function initEdgeDrawer() {
+  const root = document.getElementById('edge-drawer');
+  if (!root) return;
+
+  /* Each entry's `run` fires on tap; the ghost names are authored in the
+     markup above in this same order. */
+  const ITEMS = [
+    { run: () => expandAllCards() },
+    { run: () => collapseAllCards() },
+    { run: () => toggleEditMode() },
+    { run: () => toggleTheme() }
+  ];
+  const N = ITEMS.length;
+
+  /** Vertical px between adjacent icons in the expanded carousel. */
+  const ITEM_SPACING = 56;
+  /** Notch box dimensions at rest vs fully expanded. The box's right wall
+   *  always sits flush with the screen edge (off-canvas) — `w` is how far the
+   *  track's left (content-facing) wall sits inset from that edge. */
+  const NOTCH_W_REST = 4, NOTCH_W_OPEN = 64;
+  const NOTCH_H_REST = 34;
+  const NOTCH_H_OPEN = Math.min(360, ITEM_SPACING * Math.min(N, 5) + 80);
+  /** Horizontal drag distance (px, dragging left/into the screen) needed to go
+   *  from fully resting to fully expanded. */
+  const EXPAND_DRAG_PX = 64;
+  /** Fraction of expand progress that must be crossed at release for the
+   *  gesture to "commit" (stay open) rather than cancel back to resting. */
+  const OPEN_COMMIT = 0.4;
+  /** Once open, how far right (back toward the edge) the track must be dragged
+   *  to collapse it again. A separate, larger gesture from opening — opening
+   *  reacts to any leftward drag, collapsing needs a deliberate rightward one
+   *  so it doesn't fire from an ordinary scrub. */
+  const COLLAPSE_DRAG_PX = 50;
+  /** Movement (px) before a drag on an already-open track is axis-locked to
+   *  either "scrub" (vertical) or "collapse" (rightward horizontal). */
+  const AXIS_DEADZONE = 8;
+  /** Width of the invisible edge-swipe hit-strip, and the vertical band
+   *  (centred on the notch) it's confined to, so it doesn't steal gestures
+   *  meant for page scroll elsewhere on the right edge. */
+  const EDGE_ZONE_PX = 20;
+  const EDGE_BAND_PX = NOTCH_H_OPEN + 80;
+  /** Extra px of touchable width beyond the drawn notch once open, so a press
+   *  aimed at an icon near the notch's left wall still lands on the surface. */
+  const HIT_PADDING_PX = 8;
+  /** Icons carry the accent colour only while they're the one in focus, and
+   *  sit in plain grey otherwise. The mix runs to fully grey within this many
+   *  slots of centre — under one, so no two icons are ever part-green at once. */
+  const ICON_FOCUS_SLOTS = 0.8;
+  const ICON_IDLE_COLOR = '#7c7c88';
+  /** How many icon-slots of falloff before an icon is fully faded/shrunk. */
+  const FALLOFF_SLOTS = 2.4;
+  /** Per-ms multiplicative decay applied to the release velocity each frame of
+   *  the hand-rolled momentum loop (real inertia, not a spring jump). */
+  const FLING_DECAY = 0.998;
+  /** Below this velocity (items/ms) a release is too slow to bother flinging —
+   *  just settle on the nearest item directly. */
+  const FLING_MIN_VELOCITY = 0.01;
+  /** How close (in icon-slots) an action must be to the centre of the notch
+   *  for its ghost name to be showing. Deliberately under half a slot, so the
+   *  outgoing name has fully faded before the incoming one starts: two rotated
+   *  words crossing at half strength is unreadable mush, whereas a brief empty
+   *  beat between them reads as a clean hand-off. */
+  const GHOST_FADE_SLOTS = 0.5;
+  /** A press is treated as a tap (select) rather than a drag if the finger
+   *  travels no further than this before lifting, however long it rests there.
+   *  Deliberately loose: on a real touchscreen a stationary finger still
+   *  wanders several px, and a press that is classified as neither tap nor
+   *  drag silently does nothing. */
+  const TAP_SLOP_PX = 12;
+  /** Vertical offset (px, +down) nudging the notch away from true screen-centre
+   *  to sit flush with the physical camera cutout. Mirrors the CSS. */
+  const NOTCH_Y_OFFSET = -72;
+  /** Fraction of the total height devoted to each end's taper — the rest is
+   *  the flat plateau in the middle. */
+  const NOTCH_TAPER_FRACTION = 0.28, NOTCH_TAPER_MAX = 90;
+
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  /** Shortest signed circular distance from `from` to `to` around a loop of length N. */
+  function circularDelta(to, from) {
+    let d = (to - from) % N;
+    if (d > N / 2) d -= N;
+    if (d < -N / 2) d += N;
+    return d;
+  }
+
+  /**
+   * A flat plateau bounded by two rounded tapers, not a fully-rounded lens:
+   * the right wall stays a single point flush with the screen edge at the very
+   * top and bottom; each end curves from that point in to the full inset
+   * width, then a straight vertical run carries the rest of the height before
+   * the mirrored taper. Each taper is a cubic bezier whose first control point
+   * sits directly below/above its start (a vertical tangent, giving a sharp
+   * cusp at the edge) and whose second sits directly beside its end (a
+   * horizontal tangent, rolling smoothly into the flat wall). Both states share
+   * this template — only w/h differ — so the shape interpolates frame to frame
+   * without re-deriving a different path structure per state.
+   */
+  function notchPath(w, h) {
+    const taper = Math.min(NOTCH_TAPER_MAX, h * NOTCH_TAPER_FRACTION);
+    const k = 0.62;
+    return 'M ' + w + ' 0 C ' + w + ' ' + taper * k + ', 0 ' + taper * (1 - k) + ', 0 ' + taper +
+      ' L 0 ' + (h - taper) + ' C 0 ' + (h - taper * (1 - k)) + ', ' + w + ' ' + (h - taper * k) +
+      ', ' + w + ' ' + h + ' Z';
+  }
+
+  /* ── Springs ────────────────────────────────────────────────────────────
+     react-spring's own integrator, reproduced so the tension/friction configs
+     from the MM component carry over numerically rather than being re-tuned by
+     eye: acceleration = -tension*1e-6*(x - to) - friction*1e-3*v, integrated in
+     1ms sub-steps (mass 1). */
+  function spring(value, tension, friction) {
+    return { v: value, vel: 0, to: value, tension: tension, friction: friction, done: true };
+  }
+  function springSet(s, value) { s.v = value; s.vel = 0; s.to = value; s.done = true; }
+  function springStart(s, to, tension, friction) {
+    s.to = to;
+    if (tension !== undefined) { s.tension = tension; s.friction = friction; }
+    s.done = false;
+    kick();
+  }
+  function springStep(s, dt) {
+    if (s.done) return;
+    let remaining = dt;
+    while (remaining > 0) {
+      const step = Math.min(1, remaining);
+      remaining -= step;
+      s.vel += (-s.tension * 1e-6 * (s.v - s.to) - s.friction * 1e-3 * s.vel) * step;
+      s.v += s.vel * step;
+    }
+    if (Math.abs(s.vel) < 0.002 && Math.abs(s.v - s.to) < 0.002) {
+      s.v = s.to; s.vel = 0; s.done = true;
+      if (s.onRest) { const f = s.onRest; s.onRest = null; f(); }
+    }
+  }
+
+  const openS = spring(0, 320, 32);   // 0 = fully resting/invisible, 1 = fully expanded
+  const scrubS = spring(0, 210, 24);  // carousel position, in item-slots
+
+  const notchEl = root.querySelector('.edge-notch');
+  const ghostsEl = root.querySelector('.edge-ghosts');
+  const iconsEl = root.querySelector('.edge-icons');
+  const surfaceEl = root.querySelector('.edge-surface');
+  const ghostEls = Array.prototype.slice.call(root.querySelectorAll('.edge-ghost'));
+  const iconEls = Array.prototype.slice.call(root.querySelectorAll('.edge-icon'));
+
+  let isOpen = false, active = false;
+  let raf = null, lastT = null, fling = null;
+
+  function setActive(on) {
+    active = on;
+    root.dataset.active = on ? '1' : '0';
+  }
+
+  function render() {
+    const t = openS.v;
+    const w = lerp(NOTCH_W_REST, NOTCH_W_OPEN, t);
+    const h = lerp(NOTCH_H_REST, NOTCH_H_OPEN, t);
+    const clip = 'path(\'' + notchPath(w, h) + '\')';
+    notchEl.style.width = ghostsEl.style.width = iconsEl.style.width = w + 'px';
+    notchEl.style.height = ghostsEl.style.height = iconsEl.style.height = h + 'px';
+    notchEl.style.opacity = ghostsEl.style.opacity = iconsEl.style.opacity = t;
+    // The notch and the ghost layer are clipped; the icon layer deliberately
+    // is not — see the layering note in the CSS.
+    notchEl.style.clipPath = ghostsEl.style.clipPath = clip;
+    surfaceEl.style.width = lerp(EDGE_ZONE_PX, NOTCH_W_OPEN + HIT_PADDING_PX, t) + 'px';
+    surfaceEl.style.height = lerp(EDGE_BAND_PX, NOTCH_H_OPEN, t) + 'px';
+
+    const s = scrubS.v;
+    for (let i = 0; i < N; i++) {
+      const d = circularDelta(i, s);
+      ghostEls[i].style.opacity = Math.max(0, 1 - Math.abs(d) / GHOST_FADE_SLOTS);
+      const f = Math.min(1, Math.abs(d) / FALLOFF_SLOTS);
+      const el = iconEls[i];
+      el.style.transform = 'translate(-50%, calc(-50% + ' + d * ITEM_SPACING + 'px)) scale(' + (1.35 - 0.65 * f) + ')';
+      el.style.opacity = 1 - f;
+      const focus = Math.max(0, 1 - Math.abs(d) / ICON_FOCUS_SLOTS);
+      el.style.color = 'color-mix(in oklab, var(--accent) ' + focus * 100 + '%, ' + ICON_IDLE_COLOR + ')';
+    }
+  }
+
+  function frame(t) {
+    const dt = lastT === null ? 16 : Math.min(64, t - lastT);
+    lastT = t;
+    if (fling) {
+      fling.v *= Math.pow(FLING_DECAY, dt);
+      fling.pos += fling.v * dt;
+      springSet(scrubS, fling.pos);
+      if (Math.abs(fling.v) < FLING_MIN_VELOCITY) {
+        const pos = fling.pos;
+        fling = null;
+        springStart(scrubS, Math.round(pos), 210, 24);
+      }
+    }
+    springStep(openS, dt);
+    springStep(scrubS, dt);
+    render();
+    if (!openS.done || !scrubS.done || fling) raf = requestAnimationFrame(frame);
+    else { raf = null; lastT = null; }
+  }
+  function kick() {
+    if (raf === null) { lastT = null; raf = requestAnimationFrame(frame); }
+  }
+  function cancelFling() { fling = null; }
+
+  function openDrawer() {
+    isOpen = true;
+    setActive(true);
+    springStart(openS, 1, 320, 32);
+  }
+  function collapseDrawer() {
+    isOpen = false;
+    springStart(openS, 0, 320, 32);
+    // Park the carousel back on the first action only once the drawer is fully
+    // invisible, so the reset never shows as a snap mid-fade.
+    openS.onRest = () => { setActive(false); springSet(scrubS, 0); render(); };
+  }
+
+  /** Which carousel index is drawn nearest a given viewport y. The carousel is
+   *  centred on the same point every visual layer renders around, and icon `i`
+   *  is drawn at circularDelta(i, scrub) * ITEM_SPACING from it, so inverting
+   *  that gives the index directly — no per-icon hit-testing, and therefore
+   *  nothing a clip-path or stacking-order mistake can make untappable. */
+  function indexFromY(clientY) {
+    const offset = (clientY - (window.innerHeight / 2 + NOTCH_Y_OFFSET)) / ITEM_SPACING;
+    return ((Math.round(scrubS.v + offset) % N) + N) % N;
+  }
+
+  /** Coast from the current scrub position at `velocityItems` (items/ms), hand-
+   *  rolled frame by frame rather than handed to a decay spring: chaining decay
+   *  straight into a settle spring produces a visible backward flick at the
+   *  handoff. Driving position directly each frame and only reaching for a real
+   *  spring once velocity has crossed the stopping threshold keeps it seamless. */
+  function flingAndSettle(velocityItems) {
+    cancelFling();
+    if (Math.abs(velocityItems) < FLING_MIN_VELOCITY) {
+      springStart(scrubS, Math.round(scrubS.v), 210, 24);
+      return;
+    }
+    fling = { v: velocityItems, pos: scrubS.v };
+    kick();
+  }
+
+  /** Run the action immediately and let the drawer collapse over the top of it.
+   *  The chosen icon still glides to centre, but nothing waits on that
+   *  animation — hanging a discrete action off an animation callback is how it
+   *  ends up being swallowed by an interrupted spring. */
+  function selectIndex(i) {
+    cancelFling();
+    springStart(scrubS, scrubS.v + circularDelta(i, scrubS.v), 210, 24);
+    ITEMS[i].run();
+    collapseDrawer();
+  }
+
+  /* ── Gesture ────────────────────────────────────────────────────────────
+     One pointer, classified from raw geometry. Tap vs drag is decided from
+     real distance rather than by a library's ~3px pre-classification, which is
+     what made careful presses vanish in MM's earlier revisions. */
+  let pid = null, sx = 0, sy = 0, startScrub = 0, wasOpen = false, axis = null;
+  let prevY = 0, prevT = 0, vy = 0;
+
+  surfaceEl.addEventListener('contextmenu', e => e.preventDefault());
+
+  surfaceEl.addEventListener('pointerdown', e => {
+    if (pid !== null) return;
+    pid = e.pointerId;
+    try { surfaceEl.setPointerCapture(pid); } catch (err) {}
+    sx = e.clientX; sy = e.clientY;
+    prevY = e.clientY; prevT = e.timeStamp; vy = 0;
+    cancelFling();
+    startScrub = scrubS.v;
+    wasOpen = isOpen;
+    axis = null;
+    openS.onRest = null;
+    setActive(true);
+    render();
+  });
+
+  surfaceEl.addEventListener('pointermove', e => {
+    if (e.pointerId !== pid) return;
+    const dt = e.timeStamp - prevT;
+    if (dt > 0) { vy = (e.clientY - prevY) / dt; prevY = e.clientY; prevT = e.timeStamp; }
+    drag(e.clientX - sx, e.clientY - sy, e.clientY, false);
+  });
+
+  function endPointer(e) {
+    if (e.pointerId !== pid) return;
+    drag(e.clientX - sx, e.clientY - sy, e.clientY, true);
+    try { surfaceEl.releasePointerCapture(pid); } catch (err) {}
+    pid = null;
+  }
+  surfaceEl.addEventListener('pointerup', endPointer);
+  surfaceEl.addEventListener('pointercancel', endPointer);
+
+  function drag(mx, my, cy, last) {
+    const travel = Math.hypot(mx, my);
+
+    if (!wasOpen) {
+      // Opening drag, starting from fully closed: horizontal distance
+      // (dragging left, into the screen) live-drives how far open it is.
+      const expandProgress = Math.min(1, Math.max(0, -mx / EXPAND_DRAG_PX));
+      springSet(openS, expandProgress);
+      if (expandProgress > 0.08) springSet(scrubS, startScrub - my / ITEM_SPACING);
+      if (last) {
+        if (expandProgress >= OPEN_COMMIT) {
+          openDrawer();
+          flingAndSettle(-vy / ITEM_SPACING);
+        } else {
+          springStart(scrubS, Math.round(startScrub), 210, 24);
+          collapseDrawer();
+          // A bare tap on the invisible edge strip: nothing opened, so drop
+          // straight back to the fully-inert resting state.
+          if (travel <= TAP_SLOP_PX) { springSet(openS, 0); setActive(false); }
+        }
+      }
+      render(); kick();
+      return;
+    }
+
+    // Open, and this press stayed put: it's a tap, not a scrub. Decided before
+    // any axis locking, so a stationary finger never falls between the two
+    // buckets. There's deliberately no upper bound on how long the press
+    // lasted — a long press has no separate meaning here, and timing out a
+    // slow, careful tap into nothing is exactly the kind of silent dead-end
+    // this interaction has already been through once.
+    if (last && travel <= TAP_SLOP_PX) { selectIndex(indexFromY(cy)); return; }
+
+    // Already open: lock this drag to whichever axis moves first — vertical
+    // re-scrubs the carousel, a rightward horizontal drag collapses. Locking
+    // stops an ordinary scrub triggering a collapse via incidental jitter.
+    if (axis === null && (Math.abs(mx) > AXIS_DEADZONE || Math.abs(my) > AXIS_DEADZONE)) {
+      axis = (Math.abs(mx) > Math.abs(my) && mx > 0) ? 'collapse' : 'scrub';
+    }
+
+    if (axis === 'collapse') {
+      const collapseProgress = Math.min(1, Math.max(0, mx / COLLAPSE_DRAG_PX));
+      springSet(openS, 1 - collapseProgress * 0.5);
+    } else {
+      springSet(scrubS, startScrub - my / ITEM_SPACING);
+    }
+
+    if (last) {
+      if (axis === 'collapse' && mx > COLLAPSE_DRAG_PX) {
+        collapseDrawer();
+      } else {
+        springStart(openS, 1, 320, 32);
+        flingAndSettle(axis === 'scrub' ? -vy / ITEM_SPACING : 0);
+      }
+    }
+    render(); kick();
+  }
+
+  // Tap outside: settle the carousel where it is and shut.
+  document.addEventListener('pointerdown', e => {
+    if (!isOpen || root.contains(e.target)) return;
+    cancelFling();
+    springStart(scrubS, Math.round(scrubS.v), 210, 24);
+    collapseDrawer();
+  }, true);
+
+  // The theme was applied before this markup existed in the DOM, so bring the
+  // drawer's sun/moon in line with whatever applyTheme() already settled on.
+  (function syncThemeIcon() {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    const sun = document.getElementById('edge-icon-sun');
+    const moon = document.getElementById('edge-icon-moon');
+    if (sun && moon) { sun.style.display = dark ? 'none' : 'block'; moon.style.display = dark ? 'block' : 'none'; }
+  })();
+
+  render();
+})();
+</script>
 </body>
 </html>
