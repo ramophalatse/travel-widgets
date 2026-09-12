@@ -108,7 +108,15 @@
   /* LEG HERO */
   .leg-hero{width:100%;height:320px;background-size:cover;background-position:center;border-radius:var(--radius);margin-bottom:1.5rem;position:relative;overflow:hidden;cursor:zoom-in;}
   .leg-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.55) 100%);}
-  .ghost-title{position:absolute;top:-8px;right:16px;z-index:1;font-family:var(--serif);font-weight:800;font-style:italic;font-size:56px;line-height:1;color:#fff;opacity:0.16;white-space:nowrap;pointer-events:none;user-select:none;}
+  /* IX-2 ghost text. Gradient-clipped rather than a flat tint, matching the
+     Money Metrics WatermarkText and this page's own .edge-ghost: the glyphs
+     start invisible and fade in across the word, so the mark reads as an
+     embossed layer of the photograph rather than as dimmed text sitting on it.
+     `from` is transparent, not a surface token, because a photo masthead has
+     no single surface colour for the fade to start from. Size stays a fixed
+     56px per IX-2 — never computed from label length. */
+  .ghost-title{position:absolute;top:-8px;right:16px;z-index:1;font-family:var(--serif);font-weight:800;font-style:italic;font-size:56px;line-height:1;letter-spacing:-0.03em;opacity:0.42;white-space:nowrap;pointer-events:none;user-select:none;
+    background-image:linear-gradient(135deg,rgba(255,255,255,0) 0%,#fff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
   .leg-hero-text{position:absolute;bottom:1.5rem;left:1.5rem;z-index:2;color:#fff;}
   .leg-hero-title{font-family:var(--serif);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.03em;}
   .leg-hero-sub{display:flex;flex-wrap:wrap;align-items:center;gap:5px 18px;font-size:13px;opacity:0.85;margin-top:7px;font-weight:300;}
@@ -339,6 +347,37 @@
   :root[data-edit="on"] .act-thumb-slot:hover .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.55);color:#fff;border-color:transparent;}
   :root[data-edit="on"] .act-thumb-slot.drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
   .edit-badge{position:fixed;bottom:1.25rem;left:1.25rem;z-index:200;display:none;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow);}
+  /* Editable day budget table. The spend rows deliberately sit OUTSIDE
+     TEXT_SELECTOR and keep their own storage key per day card: the text
+     editor's `eid`s are positional (e0, e1, …), so pulling rows that can be
+     added and removed into that scheme would repoint every saved edit after
+     them. A whole table is saved as one JSON value keyed by data-day-key
+     instead, which has no ordering to corrupt. */
+  .spend-row [data-spend-edit]{border-radius:4px;}
+  .spend-row .spend-amount{text-align:right;white-space:nowrap;}
+  .spend-remove,.spend-add{display:none;}
+  /* A table with nothing but its total row is authored by ensureSpendTables()
+     for the days that never had one; it stays out of the reader's way until
+     there is something in it. */
+  .spend-table[data-empty="1"]{display:none;}
+  :root[data-edit="on"] .spend-table[data-empty="1"]{display:block;}
+  :root[data-edit="on"] .spend-row{gap:8px;}
+  :root[data-edit="on"] [data-spend-edit]{cursor:text;transition:background 0.15s;}
+  :root[data-edit="on"] [data-spend-edit]:hover{background:var(--accent-bg);}
+  :root[data-edit="on"] [data-spend-edit]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
+  :root[data-edit="on"] .spend-label{flex:1;}
+  :root[data-edit="on"] .spend-remove{display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+    width:18px;height:18px;padding:0;margin:-1px 0;border:0;border-radius:5px;background:transparent;
+    color:var(--text3);cursor:pointer;transition:background 0.15s,color 0.15s;}
+  :root[data-edit="on"] .spend-remove:hover{background:color-mix(in oklab,var(--red) 16%,transparent);color:var(--red);}
+  :root[data-edit="on"] .spend-remove svg{width:12px;height:12px;display:block;}
+  :root[data-edit="on"] .spend-add{display:flex;align-items:center;gap:6px;width:100%;
+    padding:7px 12px;border:0;border-top:1px dashed var(--border2);background:transparent;
+    font-family:var(--sans);font-size:12px;color:var(--accent);cursor:pointer;text-align:left;
+    transition:background 0.15s;}
+  :root[data-edit="on"] .spend-add:hover{background:var(--accent-bg);}
+  :root[data-edit="on"] .spend-add svg{width:12px;height:12px;}
+
   :root[data-edit="on"] .edit-badge{display:block;}
   .edit-export{position:fixed;bottom:1.25rem;right:1.25rem;z-index:200;display:none;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;box-shadow:var(--shadow-hover);cursor:pointer;}
   .edit-export svg{width:16px;height:16px;flex-shrink:0;}
@@ -416,6 +455,40 @@
      callout, which needs the WebKit-specific properties below. */
   .edge-surface{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:47;
     touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+
+  /* ── EDGE HINT ────────────────────────────────────────────────────────
+     At rest the drawer draws nothing at all (the notch renders at opacity 0
+     until a drag starts), so on a touch device there is no standing signal
+     that an edge gesture exists. This is the discoverability cue for it: a
+     brief accent glow at the notch's own centre and height, pulsing twice
+     and then gone.
+
+     It is a self-contained overlay rather than a scripted peek of the real
+     notch on purpose — the drawer's gesture and spring model is settled, and
+     a hint has no business writing to the same springs a live gesture reads.
+     The one shape cue it does borrow is growth leftward, away from the edge:
+     the direction the finger has to travel.
+
+     Shown at most three times, and never again once the drawer has actually
+     been opened — a nudge that keeps firing after the affordance is learned
+     is nagging, not onboarding. */
+  .edge-hint{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:29;
+    width:6px;height:34px;border-radius:7px 0 0 7px;background:var(--accent);opacity:0;
+    pointer-events:none;
+    box-shadow:0 0 14px 4px color-mix(in oklab,var(--accent) 55%,transparent),
+               0 0 38px 12px color-mix(in oklab,var(--accent) 26%,transparent);}
+  #edge-drawer[data-hint="1"] .edge-hint{animation:edge-hint-pulse 1400ms ease-in-out 2;}
+  @keyframes edge-hint-pulse{
+    0%{opacity:0;width:6px;}
+    32%{opacity:0.9;width:15px;}
+    58%{opacity:0.62;width:10px;}
+    100%{opacity:0;width:6px;}
+  }
+  /* Reduced motion keeps the cue but drops the travel: it breathes, it doesn't move. */
+  @media (prefers-reduced-motion:reduce){
+    #edge-drawer[data-hint="1"] .edge-hint{animation:edge-hint-fade 1600ms ease-in-out 2;}
+    @keyframes edge-hint-fade{0%{opacity:0;}40%{opacity:0.8;}100%{opacity:0;}}
+  }
 </style>
 </head>
 <body>
@@ -475,7 +548,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Monday 21 – Thursday 24 December</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Arlo SoHo</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Dec 21–24 · SoHo, Manhattan · Arlo SoHo Hotel (4-star) · Party of 4 · Budget R3,000/day</div><div class="birthday-banner">🎂 Dec 22 is Nammies' 18th birthday: tonight's reserved for a special celebration dinner in the neighbourhood.</div>
-    <div class="day-card open">
+    <div class="day-card open" data-day-key="d1">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Dec 21 · Day 1 : Departure</div>
@@ -492,7 +565,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d2">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue, Dec 22 · Day 2 : Birthday</div>
@@ -523,7 +596,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d3">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Wed, Dec 23 · Day 3</div>
@@ -546,7 +619,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d4">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Dec 24 · Day 4 : Christmas Eve</div>
@@ -574,7 +647,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Thursday 24 December – Sunday 3 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>North Miami Beach</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>11 Days / 10 Nights</span></div>
       </div>
     </div><div class="leg-intro">Dec 24 – Jan 3 · 1601 NE 160th St, North Miami Beach · Confirmed Airbnb · Avis Standard Elite SUV · Party of 4 · Budget R3,000/day</div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d5">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Fri, Dec 25 · Day 5 : Christmas Day</div>
@@ -597,7 +670,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d6">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sat, Dec 26 · Day 6</div>
@@ -620,7 +693,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d7">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Dec 27 · Day 7</div>
@@ -643,7 +716,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d8">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Dec 28 · Day 8</div>
@@ -666,7 +739,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d9">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue–Wed, Dec 29–30 · Days 9–10</div>
@@ -689,7 +762,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d10">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Dec 31 · Day 11 : New Year's Eve</div>
@@ -712,7 +785,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d11">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Fri, Jan 1 · Day 12 : New Year's Day</div>
@@ -735,7 +808,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d12">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sat, Jan 2 · Day 13</div>
@@ -758,7 +831,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d13">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 3 · Day 14 : Embarkation</div>
@@ -786,7 +859,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 3 – Sunday 10 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Norwegian Aqua</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>8 Days / 7 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 3–10 · Norwegian Aqua · 7 nights · Free at Sea Plus package · Drinks, specialty dining, Wi-Fi & gratuities all included</div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d14">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 3 · Day 14</div>
@@ -809,7 +882,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d15">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Jan 4 · Day 15</div>
@@ -832,7 +905,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d16">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue, Jan 5 · Day 16</div>
@@ -855,7 +928,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d17">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Wed, Jan 6 · Day 17</div>
@@ -878,7 +951,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d18">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Jan 7 · Day 18</div>
@@ -901,7 +974,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d19">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Fri, Jan 8 · Day 19</div>
@@ -924,7 +997,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d20">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sat, Jan 9 · Day 20</div>
@@ -947,7 +1020,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d21">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 10 · Day 21</div>
@@ -975,7 +1048,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 10 – Wednesday 13 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Row NYC · Midtown Manhattan</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 10–13 · Row NYC Hotel (4-star, B&B) · Midtown Manhattan · Post-cruise · Party of 4 · Budget R3,000/day</div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d22">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 10 · Day 21 : Arrival</div>
@@ -998,7 +1071,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d23">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Jan 11 · Day 22</div>
@@ -1021,7 +1094,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d24">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue, Jan 12 · Day 23</div>
@@ -1044,7 +1117,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card">
+    <div class="day-card" data-day-key="d25">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Wed, Jan 13 · Day 24 : Departure</div>
@@ -1527,6 +1600,204 @@
     const row = slot.closest('.activity-row');
     if (row) row.classList.add('has-thumb');
   }
+  /* ── DAY BUDGET TABLES ──────────────────────────────────────────────────
+     Each day card's spend table becomes editable in edit mode: row labels and
+     amounts are contenteditable, rows can be added and removed, and the total
+     is derived rather than typed.
+
+     Storage is deliberately separate from the `eid` text scheme. `eid`s are
+     positional (`tagEditableElements` numbers every TEXT_SELECTOR match in
+     document order), so anything the user can insert or delete would shift
+     every id after it and silently repoint saved edits. A table is therefore
+     saved whole, as one JSON value under `spend:<data-day-key>`. */
+  const SPEND_PREFIX = 'spend:';
+  /** Stated in every leg-intro on the page ("Budget R3,000/day"); the day
+   *  progress bar is re-derived against it after an edit. */
+  const DAILY_BUDGET = 3000;
+  const BUDGET_WARN_FRACTION = 0.9;
+
+  /** Every Rand figure in a cell, so a range ("~R800–R1,000") contributes its
+   *  own low and high to the day's low and high. Text with no figure at all
+   *  ("Included", "Per budget") contributes nothing but stays on the row. */
+  function parseSpendAmount(text) {
+    const matches = String(text).match(/R\s?\d[\d,]*(?:\.\d+)?/g);
+    if (!matches) return null;
+    const nums = matches.map(m => parseFloat(m.replace(/[R,\s]/g, ''))).filter(n => !isNaN(n));
+    if (!nums.length) return null;
+    return { min: Math.min.apply(null, nums), max: Math.max.apply(null, nums) };
+  }
+  function formatRand(n) {
+    return 'R' + Math.round(n).toLocaleString('en-GB');
+  }
+  function formatSpendTotal(min, max) {
+    return '~' + formatRand(min) + (Math.round(max) > Math.round(min) ? '–' + formatRand(max) : '');
+  }
+  function spendRows(table) {
+    return Array.prototype.slice.call(table.querySelectorAll('.spend-row:not(.total)'));
+  }
+  function makeSpendRow(label, amount, isTotal) {
+    const row = document.createElement('div');
+    row.className = 'spend-row' + (isTotal ? ' total' : '');
+    const l = document.createElement('span');
+    l.className = 'spend-label';
+    l.textContent = label;
+    l.dataset.spendEdit = '1';
+    const a = document.createElement('span');
+    a.className = 'spend-amount';
+    a.textContent = amount;
+    // The total's amount is derived, never typed.
+    if (!isTotal) a.dataset.spendEdit = '1';
+    row.appendChild(l);
+    row.appendChild(a);
+    if (!isTotal) row.appendChild(makeRemoveButton());
+    return row;
+  }
+  function makeRemoveButton() {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'spend-remove';
+    btn.setAttribute('aria-label', 'Remove this line');
+    btn.title = 'Remove this line';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    return btn;
+  }
+  /** Days that were never given a spend table get an empty one, so every day
+   *  has somewhere to record spend. It stays hidden until it has a row. */
+  function ensureSpendTables() {
+    document.querySelectorAll('.day-card').forEach(card => {
+      if (card.querySelector('.spend-table')) return;
+      const bar = card.querySelector('.day-total-bar');
+      const body = card.querySelector('.day-card-body');
+      if (!body) return;
+      const table = document.createElement('div');
+      table.className = 'spend-table';
+      table.appendChild(makeSpendRow('Total', '~R0', true));
+      if (bar) body.insertBefore(table, bar); else body.appendChild(table);
+    });
+  }
+  /** Bring the authored markup (bare spans) up to the structure the editor
+   *  works with, and hang the add-row control off each table. */
+  function decorateSpendTables() {
+    document.querySelectorAll('.spend-table').forEach(table => {
+      table.querySelectorAll('.spend-row').forEach(row => {
+        const isTotal = row.classList.contains('total');
+        const spans = row.querySelectorAll(':scope > span');
+        if (spans[0]) {
+          spans[0].classList.add('spend-label');
+          spans[0].dataset.spendEdit = '1';
+        }
+        if (spans[1]) {
+          spans[1].classList.add('spend-amount');
+          if (!isTotal) spans[1].dataset.spendEdit = '1';
+        }
+        if (!isTotal && !row.querySelector('.spend-remove')) row.appendChild(makeRemoveButton());
+      });
+      if (!table.querySelector('.spend-add')) {
+        const add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'spend-add';
+        add.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add line';
+        table.appendChild(add);
+      }
+      recalcSpendTable(table, false);
+    });
+  }
+  /**
+   * Re-derive the total from the rows. `updateChrome` also re-derives the day
+   * bar beneath the table (its amount is the same number, and its fill is a
+   * fraction of the stated R3,000/day) — only ever after a user edit, so the
+   * hand-authored bars on untouched days are left exactly as written.
+   */
+  function recalcSpendTable(table, updateChrome) {
+    const rows = spendRows(table);
+    let min = 0, max = 0, counted = 0;
+    rows.forEach(row => {
+      const amountEl = row.querySelector('.spend-amount');
+      const parsed = amountEl ? parseSpendAmount(amountEl.textContent) : null;
+      if (!parsed) return;
+      min += parsed.min; max += parsed.max; counted++;
+    });
+    table.dataset.empty = rows.length ? '0' : '1';
+    const totalRow = table.querySelector('.spend-row.total');
+    const totalAmount = totalRow && totalRow.querySelector('.spend-amount');
+    const text = counted ? formatSpendTotal(min, max) : '—';
+    if (totalAmount) totalAmount.textContent = text;
+    if (!updateChrome) return;
+    const card = table.closest('.day-card');
+    const bar = card && card.querySelector('.day-total-bar');
+    if (!bar) return;
+    const barAmount = bar.querySelector('.total-amount');
+    if (barAmount) barAmount.textContent = text;
+    const fill = bar.querySelector('.budget-fill');
+    if (!fill) return;
+    const ratio = counted ? max / DAILY_BUDGET : 0;
+    fill.style.width = Math.max(4, Math.min(100, Math.round(ratio * 100))) + '%';
+    fill.classList.remove('ok', 'warn', 'over');
+    fill.classList.add(ratio > 1 ? 'over' : (ratio >= BUDGET_WARN_FRACTION ? 'warn' : 'ok'));
+  }
+  function serializeSpendTable(table) {
+    const totalRow = table.querySelector('.spend-row.total');
+    const totalLabel = totalRow && totalRow.querySelector('.spend-label');
+    return JSON.stringify({
+      rows: spendRows(table).map(row => ({
+        label: (row.querySelector('.spend-label') || {}).textContent || '',
+        amount: (row.querySelector('.spend-amount') || {}).textContent || ''
+      })),
+      totalLabel: totalLabel ? totalLabel.textContent : 'Total'
+    });
+  }
+  function applySpendTable(table, json) {
+    let data;
+    try { data = JSON.parse(json); } catch (e) { return; }
+    if (!data || !Array.isArray(data.rows)) return;
+    const add = table.querySelector('.spend-add');
+    table.querySelectorAll('.spend-row').forEach(row => row.remove());
+    data.rows.forEach(r => table.insertBefore(makeSpendRow(r.label, r.amount, false), add));
+    table.insertBefore(makeSpendRow(data.totalLabel || 'Total', '', true), add);
+    if (document.documentElement.dataset.edit === 'on') {
+      table.querySelectorAll('[data-spend-edit]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    }
+    recalcSpendTable(table, true);
+  }
+  function saveSpendTable(table) {
+    const card = table.closest('.day-card');
+    if (!card || !card.dataset.dayKey) return;
+    saveEdit(SPEND_PREFIX + card.dataset.dayKey, 'spend-table', serializeSpendTable(table));
+  }
+  function wireSpendTables() {
+    document.addEventListener('click', e => {
+      if (document.documentElement.dataset.edit !== 'on') return;
+      const remove = e.target.closest && e.target.closest('.spend-remove');
+      if (remove) {
+        const table = remove.closest('.spend-table');
+        remove.closest('.spend-row').remove();
+        recalcSpendTable(table, true);
+        saveSpendTable(table);
+        return;
+      }
+      const add = e.target.closest && e.target.closest('.spend-add');
+      if (add) {
+        const table = add.closest('.spend-table');
+        const totalRow = table.querySelector('.spend-row.total');
+        const row = makeSpendRow('New line', '~R0', false);
+        table.insertBefore(row, totalRow || add);
+        if (document.documentElement.dataset.edit === 'on') {
+          row.querySelectorAll('[data-spend-edit]').forEach(el => el.setAttribute('contenteditable', 'true'));
+        }
+        recalcSpendTable(table, true);
+        saveSpendTable(table);
+        const label = row.querySelector('.spend-label');
+        if (label) { label.focus(); document.getSelection().selectAllChildren(label); }
+      }
+    });
+    // Live total while typing; the write to the store waits for blur, matching
+    // how the text fields behave.
+    document.addEventListener('input', e => {
+      const cell = e.target.closest && e.target.closest('[data-spend-edit]');
+      if (!cell) return;
+      recalcSpendTable(cell.closest('.spend-table'), true);
+    });
+  }
   function tagEditableElements() {
     let i = 0;
     document.querySelectorAll(TEXT_SELECTOR).forEach(el => {
@@ -1545,9 +1816,16 @@
   async function applySavedEdits() {
     const store = await fetchEditStore();
     Object.keys(store).forEach(eid => {
+      const entry = store[eid];
+      // Day budget tables are keyed by day card, not by positional eid.
+      if (eid.indexOf(SPEND_PREFIX) === 0) {
+        const card = document.querySelector('.day-card[data-day-key="' + eid.slice(SPEND_PREFIX.length) + '"]');
+        const table = card && card.querySelector('.spend-table');
+        if (table) applySpendTable(table, entry.value);
+        return;
+      }
       const el = document.querySelector('[data-eid="' + eid + '"]');
       if (!el) return;
-      const entry = store[eid];
       if (entry.type === 'text') el.innerHTML = entry.value;
       else if (entry.type === 'img-src') { if (el.classList.contains('act-thumb-slot')) fillThumbSlot(el, entry.value); else el.src = entry.value; }
       else if (entry.type === 'bg-image') el.style.backgroundImage = "url('" + entry.value + "')";
@@ -1555,7 +1833,7 @@
   }
   function setEditMode(on) {
     document.documentElement.dataset.edit = on ? 'on' : 'off';
-    document.querySelectorAll('[data-editable]').forEach(el => {
+    document.querySelectorAll('[data-editable],[data-spend-edit]').forEach(el => {
       el.setAttribute('contenteditable', on ? 'true' : 'false');
     });
     const editBtn = document.getElementById('edit-toggle-btn');
@@ -1567,7 +1845,13 @@
   }
   function handleEditableBlur(e) {
     const el = e.target;
-    if (!el.matches || !el.matches('[data-editable]')) return;
+    if (!el.matches) return;
+    if (el.matches('[data-spend-edit]')) {
+      const table = el.closest('.spend-table');
+      if (table) { recalcSpendTable(table, true); saveSpendTable(table); }
+      return;
+    }
+    if (!el.matches('[data-editable]')) return;
     saveEdit(el.dataset.eid, 'text', el.innerHTML);
   }
   function readImageFile(file, cb) {
@@ -1632,13 +1916,22 @@
       if (img) slot.replaceWith(img); else slot.remove();
     });
     clone.querySelectorAll('.has-thumb-slot').forEach(el => el.classList.remove('has-thumb-slot'));
+    // Budget-table edit chrome is rebuilt by decorateSpendTables() on every
+    // load, so the export ships the authored rows only. A table that is still
+    // empty never existed in the source either: drop it rather than export a
+    // hidden shell.
+    clone.querySelectorAll('.spend-remove,.spend-add').forEach(el => el.remove());
+    clone.querySelectorAll('.spend-table[data-empty="1"]').forEach(el => el.remove());
+    clone.querySelectorAll('.spend-table').forEach(el => el.removeAttribute('data-empty'));
+    clone.querySelectorAll('[data-spend-edit]').forEach(el => el.removeAttribute('data-spend-edit'));
     // The edge drawer's layers carry inline styles written by its animation
     // loop; strip them so the export ships the drawer at its authored rest
     // state rather than frozen mid-gesture.
     const edgeDrawer = clone.querySelector('#edge-drawer');
     if (edgeDrawer) {
       edgeDrawer.dataset.active = '0';
-      edgeDrawer.querySelectorAll('.edge-layer,.edge-surface,.edge-ghost,.edge-icon').forEach(el => el.removeAttribute('style'));
+      delete edgeDrawer.dataset.hint;
+      edgeDrawer.querySelectorAll('.edge-layer,.edge-surface,.edge-ghost,.edge-icon,.edge-hint').forEach(el => el.removeAttribute('style'));
     }
     const html = '<!doctype html>\n' + clone.outerHTML;
     const blob = new Blob([html], { type: 'text/html' });
@@ -1712,6 +2005,11 @@
     initFlightDetails();
     ensureImageDropZones();
     tagEditableElements();
+    // After tagging, so the rows and controls these add can never be caught by
+    // the positional eid pass.
+    ensureSpendTables();
+    decorateSpendTables();
+    wireSpendTables();
     await applySavedEdits();
     document.addEventListener('blur', handleEditableBlur, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
@@ -1731,6 +2029,7 @@
      clone of the live DOM stays idempotent; every authored style lives in CSS,
      so the export only has to strip the inline styles the animation loop writes. -->
 <div id="edge-drawer">
+  <div class="edge-hint" aria-hidden="true"></div>
   <div class="edge-layer edge-notch" aria-hidden="true"></div>
   <div class="edge-layer edge-ghosts" aria-hidden="true">
     <div class="edge-ghost"><span>Expand</span></div>
@@ -1964,8 +2263,50 @@
   }
   function cancelFling() { fling = null; }
 
+  /* ── Discoverability hint ───────────────────────────────────────────────
+     See the .edge-hint note in the CSS for why this is an overlay rather than
+     a scripted peek of the notch itself. */
+  const HINT_SEEN_KEY = 'trip-itinerary-edge-hint-count';
+  const HINT_USED_KEY = 'trip-itinerary-edge-used';
+  const HINT_MAX_SHOWS = 3;
+  const HINT_DELAY_MS = 1200;
+  let hintTimer = null;
+
+  function readHintCount() {
+    const n = parseInt(localStorage.getItem(HINT_SEEN_KEY) || '0', 10);
+    return isNaN(n) ? 0 : n;
+  }
+  function endHint() {
+    if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
+    delete root.dataset.hint;
+  }
+  /** Called the first time the drawer is actually opened: the gesture has been
+   *  found, so the cue retires permanently. */
+  function markDrawerUsed() {
+    endHint();
+    try { localStorage.setItem(HINT_USED_KEY, '1'); } catch (e) {}
+  }
+  function maybeHint() {
+    // Only where the drawer exists at all: it is display:none on fine pointers.
+    if (!window.matchMedia || !window.matchMedia('(pointer:coarse)').matches) return;
+    let count;
+    try {
+      if (localStorage.getItem(HINT_USED_KEY) === '1') return;
+      count = readHintCount();
+      if (count >= HINT_MAX_SHOWS) return;
+    } catch (e) { return; }
+    hintTimer = setTimeout(() => {
+      hintTimer = null;
+      // A gesture may have started during the delay; don't cut across it.
+      if (isOpen || pid !== null) return;
+      root.dataset.hint = '1';
+      try { localStorage.setItem(HINT_SEEN_KEY, String(count + 1)); } catch (e) {}
+    }, HINT_DELAY_MS);
+  }
+
   function openDrawer() {
     isOpen = true;
+    markDrawerUsed();
     setActive(true);
     springStart(openS, 1, 320, 32);
   }
@@ -2024,6 +2365,9 @@
 
   surfaceEl.addEventListener('pointerdown', e => {
     if (pid !== null) return;
+    // Any touch on the edge means the cue has been read, whether or not the
+    // drag goes on to commit.
+    endHint();
     pid = e.pointerId;
     try { surfaceEl.setPointerCapture(pid); } catch (err) {}
     sx = e.clientX; sy = e.clientY;
@@ -2128,7 +2472,11 @@
     if (sun && moon) { sun.style.display = dark ? 'none' : 'block'; moon.style.display = dark ? 'block' : 'none'; }
   })();
 
+  const hintEl = root.querySelector('.edge-hint');
+  if (hintEl) hintEl.addEventListener('animationend', endHint);
+
   render();
+  maybeHint();
 })();
 </script>
 </body>
