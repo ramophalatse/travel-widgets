@@ -413,11 +413,18 @@
      chrome, so it must not lighten in light mode. A regular box-shadow would
      follow the element's rectangular bounds rather than the clipped leaf
      silhouette, so the lift comes from stacked drop-shadows instead. */
-  .edge-notch{z-index:30;background:rgba(4,4,6,0.94);border:1px solid rgba(255,255,255,0.08);border-right:0;
+  /* Stacking band. Every layer is position:fixed with no positioned ancestor,
+     so these numbers compete directly with the rest of the page rather than
+     only with each other. They must clear the sticky .nav-wrapper (100) and
+     the edit chrome (200) — the drawer is the control surface, nothing chrome
+     may paint over it — while staying under the flight modal (900) and the
+     lightbox (1000), which are meant to cover it. Their order within the band
+     is the original one, unchanged. */
+  .edge-notch{z-index:301;background:rgba(4,4,6,0.94);border:1px solid rgba(255,255,255,0.08);border-right:0;
     filter:drop-shadow(0 2px 6px rgba(0,0,0,0.55)) drop-shadow(0 12px 32px rgba(0,0,0,0.5));}
-  #edge-drawer[data-active="1"] .edge-notch{z-index:45;}
-  .edge-ghosts{z-index:45;}
-  .edge-icons{z-index:46;}
+  #edge-drawer[data-active="1"] .edge-notch{z-index:316;}
+  .edge-ghosts{z-index:316;}
+  .edge-icons{z-index:317;}
   #edge-drawer:not([data-active="1"]) .edge-ghosts,
   #edge-drawer:not([data-active="1"]) .edge-icons{display:none;}
   /* Ghost names: each action's name as an oversized watermark running the
@@ -453,7 +460,7 @@
      notch's own height, so presses beyond it fall through as tap-outside.
      touch-action:none suppresses scroll/zoom but NOT iOS's long-press
      callout, which needs the WebKit-specific properties below. */
-  .edge-surface{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:47;
+  .edge-surface{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:318;
     touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 
   /* ── EDGE HINT ────────────────────────────────────────────────────────
@@ -471,23 +478,41 @@
 
      Shown at most three times, and never again once the drawer has actually
      been opened — a nudge that keeps firing after the affordance is learned
-     is nagging, not onboarding. */
-  .edge-hint{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:29;
-    width:6px;height:34px;border-radius:7px 0 0 7px;background:var(--accent);opacity:0;
-    pointer-events:none;
+     is nagging, not onboarding.
+
+     The glow alone says "something is here"; the label says what to do about
+     it. Both ride one wrapper so the word and the pill can never drift out of
+     sync, and the wrapper is what slides — pill and label arrive together from
+     the edge, in the direction the finger has to travel. */
+  .edge-hint{position:fixed;right:0;top:calc(50% - 72px);transform:translateY(-50%);z-index:300;
+    display:flex;align-items:center;gap:10px;opacity:0;pointer-events:none;}
+  /* The eyebrow face (TY-5), at the eyebrow's own size: this is a label on the
+     interface, not copy in the page. */
+  .edge-hint-text{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;
+    color:var(--accent);white-space:nowrap;
+    text-shadow:0 1px 3px var(--bg),0 0 10px var(--bg);}
+  .edge-hint-pill{display:block;width:6px;height:34px;border-radius:7px 0 0 7px;background:var(--accent);
     box-shadow:0 0 14px 4px color-mix(in oklab,var(--accent) 55%,transparent),
                0 0 38px 12px color-mix(in oklab,var(--accent) 26%,transparent);}
   #edge-drawer[data-hint="1"] .edge-hint{animation:edge-hint-pulse 1400ms ease-in-out 2;}
+  #edge-drawer[data-hint="1"] .edge-hint-pill{animation:edge-hint-grow 1400ms ease-in-out 2;}
   @keyframes edge-hint-pulse{
-    0%{opacity:0;width:6px;}
-    32%{opacity:0.9;width:15px;}
-    58%{opacity:0.62;width:10px;}
-    100%{opacity:0;width:6px;}
+    0%{opacity:0;transform:translateY(-50%) translateX(10px);}
+    32%{opacity:0.92;transform:translateY(-50%) translateX(0);}
+    58%{opacity:0.66;transform:translateY(-50%) translateX(0);}
+    100%{opacity:0;transform:translateY(-50%) translateX(10px);}
+  }
+  @keyframes edge-hint-grow{
+    0%{width:6px;}
+    32%{width:15px;}
+    58%{width:10px;}
+    100%{width:6px;}
   }
   /* Reduced motion keeps the cue but drops the travel: it breathes, it doesn't move. */
   @media (prefers-reduced-motion:reduce){
     #edge-drawer[data-hint="1"] .edge-hint{animation:edge-hint-fade 1600ms ease-in-out 2;}
-    @keyframes edge-hint-fade{0%{opacity:0;}40%{opacity:0.8;}100%{opacity:0;}}
+    #edge-drawer[data-hint="1"] .edge-hint-pill{animation:none;width:12px;}
+    @keyframes edge-hint-fade{0%{opacity:0;}40%{opacity:0.85;}100%{opacity:0;}}
   }
 </style>
 </head>
@@ -1931,7 +1956,7 @@
     if (edgeDrawer) {
       edgeDrawer.dataset.active = '0';
       delete edgeDrawer.dataset.hint;
-      edgeDrawer.querySelectorAll('.edge-layer,.edge-surface,.edge-ghost,.edge-icon,.edge-hint').forEach(el => el.removeAttribute('style'));
+      edgeDrawer.querySelectorAll('.edge-layer,.edge-surface,.edge-ghost,.edge-icon,.edge-hint,.edge-hint-pill').forEach(el => el.removeAttribute('style'));
     }
     const html = '<!doctype html>\n' + clone.outerHTML;
     const blob = new Blob([html], { type: 'text/html' });
@@ -2029,7 +2054,7 @@
      clone of the live DOM stays idempotent; every authored style lives in CSS,
      so the export only has to strip the inline styles the animation loop writes. -->
 <div id="edge-drawer">
-  <div class="edge-hint" aria-hidden="true"></div>
+  <div class="edge-hint" aria-hidden="true"><span class="edge-hint-text">Swipe</span><span class="edge-hint-pill"></span></div>
   <div class="edge-layer edge-notch" aria-hidden="true"></div>
   <div class="edge-layer edge-ghosts" aria-hidden="true">
     <div class="edge-ghost"><span>Expand</span></div>
