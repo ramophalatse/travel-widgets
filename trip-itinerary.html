@@ -175,11 +175,12 @@
   .day-card-header--festive > :not(.festive-header-art){position:relative;}
   .day-card-header--festive .day-card-header-right{align-self:flex-end;}
   .day-card-header--birthday .festive-header-art{object-position:center top;}
-  .day-card-header--nye{padding-top:12.25rem;min-height:236px;}
-  .day-card-header--nye .festive-header-art{height:190px;object-position:center 50%;}
+  .day-card-header--christmas{padding-top:12.25rem;min-height:236px;}
+  .day-card-header--christmas .festive-header-art{height:190px;object-position:center 50%;}
+  .day-card-header--nye .festive-header-art{object-position:center 48%;}
   :root[data-theme="dark"] .festive-header-art{opacity:0.7;}
   @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .festive-header-art{opacity:0.7;}}
-  @media(max-width:560px){.day-card-header--festive{padding-top:6rem;min-height:145px;}.festive-header-art{height:88px;}.day-card-header--nye{padding-top:10.5rem;min-height:202px;}.day-card-header--nye .festive-header-art{height:156px;}}
+  @media(max-width:560px){.day-card-header--festive{padding-top:6rem;min-height:145px;}.festive-header-art{height:88px;}.day-card-header--christmas{padding-top:10.5rem;min-height:202px;}.day-card-header--christmas .festive-header-art{height:156px;}}
   .chevron{width:18px;height:18px;color:var(--text3);transition:transform 0.3s var(--ease-pop);flex-shrink:0;}
   .day-card.open .chevron{transform:rotate(180deg);}
 
@@ -754,7 +755,8 @@
       </div>
     </div><div class="leg-intro">Dec 24 – Jan 3 · 1601 NE 160th St, North Miami Beach · Confirmed Airbnb · Avis Standard Elite SUV · Party of 4 · Budget R3,000/day</div>
     <div class="day-card" data-day-key="d5">
-      <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header day-card-header--festive day-card-header--christmas" onclick="toggleCard(this)">
+        <img class="festive-header-art" src="assets/nyc-miami-2026/header-christmas-garland.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
           <div class="day-label">Fri, Dec 25 · Day 5 : Christmas Day</div>
           <div class="day-title">Secret Santa · South Beach · Lincoln Road</div>
@@ -870,7 +872,7 @@
     </div>
     <div class="day-card" data-day-key="d10">
       <div class="day-card-header day-card-header--festive day-card-header--nye" onclick="toggleCard(this)">
-        <img class="festive-header-art" src="assets/nyc-miami-2026/header-christmas-garland.png" alt="" aria-hidden="true" decoding="async">
+        <img class="festive-header-art" src="assets/nyc-miami-2026/header-nye-celebration.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Dec 31 · Day 11 : New Year's Eve</div>
           <div class="day-title">Countdown Miami · Bayfront Park · Fireworks over Biscayne Bay</div>
