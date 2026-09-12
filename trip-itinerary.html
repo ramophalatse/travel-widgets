@@ -176,11 +176,11 @@
   .day-card-header--festive .day-card-header-right{align-self:flex-end;}
   .day-card-header--birthday .festive-header-art{object-position:center top;}
   .day-card-header--christmas{padding-top:12.25rem;min-height:236px;}
-  .day-card-header--christmas .festive-header-art{height:190px;object-position:center 50%;}
+  .day-card-header--christmas .festive-header-art{height:190px;object-position:center 50%;transform:translateY(-40px);}
   .day-card-header--nye .festive-header-art{object-position:center 48%;}
   :root[data-theme="dark"] .festive-header-art{opacity:0.7;}
   @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .festive-header-art{opacity:0.7;}}
-  @media(max-width:560px){.day-card-header--festive{padding-top:6rem;min-height:145px;}.festive-header-art{height:88px;}.day-card-header--christmas{padding-top:10.5rem;min-height:202px;}.day-card-header--christmas .festive-header-art{height:156px;}}
+  @media(max-width:560px){.day-card-header--festive{padding-top:6rem;min-height:145px;}.festive-header-art{height:88px;}.day-card-header--christmas{padding-top:10.5rem;min-height:202px;}.day-card-header--christmas .festive-header-art{height:156px;transform:translateY(-16px);}}
   .chevron{width:18px;height:18px;color:var(--text3);transition:transform 0.3s var(--ease-pop);flex-shrink:0;}
   .day-card.open .chevron{transform:rotate(180deg);}
 
