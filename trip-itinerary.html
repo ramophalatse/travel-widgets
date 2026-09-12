@@ -21,6 +21,8 @@
     --red:#b04040;--red-bg:rgba(176,64,64,0.10);--red-text:#803030;
     --shadow:0 1px 2px rgba(20,22,28,.05),0 12px 40px -16px rgba(20,22,28,.22);
     --shadow-hover:0 2px 8px rgba(20,22,28,.08),0 16px 48px -16px rgba(20,22,28,.28);
+    --flight-bg:#ffffff;--flight-stub:#f3f5f6;--flight-border:rgba(31,35,42,0.14);
+    --flight-text:#17202a;--flight-muted:#6f7883;--flight-soft:#eef2f3;
     --radius:18px;--radius-sm:10px;
     --ease-pop:cubic-bezier(0.34,1.56,0.64,1);
     --serif:'Sora',system-ui,sans-serif;
@@ -38,6 +40,8 @@
     --red:#d06060;--red-bg:rgba(208,96,96,0.12);--red-text:#e08080;
     --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 24px 60px -24px rgba(0,0,0,.7);
     --shadow-hover:0 1px 0 rgba(255,255,255,.06) inset,0 28px 70px -24px rgba(0,0,0,.8);
+    --flight-bg:#101922;--flight-stub:#18232d;--flight-border:rgba(255,255,255,0.14);
+    --flight-text:#f7fafc;--flight-muted:rgba(255,255,255,0.55);--flight-soft:rgba(255,255,255,0.06);
   }}
   :root[data-theme="dark"]{
     --bg:#0a0f14;--bg2:#05080c;--bg3:#20262c;--card:#151a20;
@@ -50,6 +54,8 @@
     --red:#d06060;--red-bg:rgba(208,96,96,0.12);--red-text:#e08080;
     --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 24px 60px -24px rgba(0,0,0,.7);
     --shadow-hover:0 1px 0 rgba(255,255,255,.06) inset,0 28px 70px -24px rgba(0,0,0,.8);
+    --flight-bg:#101922;--flight-stub:#18232d;--flight-border:rgba(255,255,255,0.14);
+    --flight-text:#f7fafc;--flight-muted:rgba(255,255,255,0.55);--flight-soft:rgba(255,255,255,0.06);
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;}
@@ -105,7 +111,19 @@
   .ghost-title{position:absolute;top:-8px;right:16px;z-index:1;font-family:var(--serif);font-weight:800;font-style:italic;font-size:56px;line-height:1;color:#fff;opacity:0.16;white-space:nowrap;pointer-events:none;user-select:none;}
   .leg-hero-text{position:absolute;bottom:1.5rem;left:1.5rem;z-index:2;color:#fff;}
   .leg-hero-title{font-family:var(--serif);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.03em;}
-  .leg-hero-sub{font-size:13px;opacity:0.85;margin-top:4px;font-weight:300;}
+  .leg-hero-sub{display:flex;flex-wrap:wrap;align-items:center;gap:5px 18px;font-size:13px;opacity:0.85;margin-top:7px;font-weight:300;}
+  .leg-hero-sub .meta-item{display:inline-flex;align-items:center;gap:7px;}
+  .leg-hero-sub .meta-ico{width:16px;height:16px;flex:none;fill:currentColor;opacity:0.72;}
+  .act-rating{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:7px;font-size:11px;color:var(--text2);}
+  .act-rating:empty{display:none;}
+  .ta-pill{display:inline-flex;align-items:center;gap:7px;padding:3px 9px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);}
+  .ta-score{font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0.01em;color:var(--text);}
+  .ta-bubbles{height:11px;width:auto;display:block;flex:none;}
+  .ta-reviews{color:var(--text2);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;}
+  .ta-reviews:hover,.ta-reviews:focus-visible{color:var(--accent-text);}
+  .ta-rank{opacity:0.78;}
+  .ta-name{font-weight:600;color:var(--text);}
+  .ta-name::after{content:'·';margin-left:7px;opacity:0.45;font-weight:400;}
 
   /* LEG INTRO */
   .leg-intro{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:var(--text2);line-height:1.7;}
@@ -234,6 +252,50 @@
   .modal-table tr.highlight td{color:var(--text);font-weight:500;background:var(--teal-bg);}
   .modal-note{font-size:12px;color:var(--teal-text);margin-top:0.75rem;padding:8px 12px;background:var(--teal-bg);border-radius:var(--radius-sm);}
 
+  /* FLIGHT DETAILS */
+  .flight-trigger{display:inline-flex;align-items:center;gap:6px;margin-top:7px;padding:5px 9px;border:1px solid var(--border2);border-radius:999px;background:var(--bg2);color:var(--text2);font-family:var(--sans);font-size:11px;font-weight:600;line-height:1;cursor:pointer;transition:color 0.15s,border-color 0.15s,background 0.15s,transform 0.15s;}
+  .flight-trigger:hover,.flight-trigger:focus-visible{color:var(--accent-text);border-color:var(--accent);background:var(--accent-bg);transform:translateY(-1px);outline:none;}
+  .flight-trigger svg{width:13px;height:13px;display:block;}
+  .flight-modal-box{max-width:840px;padding:0;background:transparent;box-shadow:none;}
+  .boarding-pass{display:grid;grid-template-columns:minmax(0,1fr) 190px;position:relative;overflow:hidden;border:1px solid var(--flight-border);border-radius:22px;background:var(--flight-bg);color:var(--flight-text);box-shadow:0 28px 80px rgba(0,0,0,0.34);}
+  .boarding-pass::before,.boarding-pass::after{content:'';position:absolute;left:calc(100% - 190px);width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.7);transform:translate(-50%,-50%);z-index:3;}
+  .boarding-pass::before{top:0;}
+  .boarding-pass::after{top:100%;}
+  .flight-main{padding:26px 28px 24px;min-width:0;}
+  .flight-stub{display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:26px 22px 24px;border-left:1px dashed var(--flight-border);background:var(--flight-stub);}
+  .flight-kicker{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--flight-muted);}
+  .flight-airline{display:inline-flex;align-items:center;gap:8px;color:var(--flight-text);font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:0;line-height:1.2;text-transform:none;}
+  .flight-logo-wrap{display:flex;align-items:center;justify-content:flex-start;height:44px;padding:0;border:0;border-radius:0;background:transparent;}
+  .flight-airline-logo{display:block;width:auto;height:auto;max-width:260px;max-height:44px;}
+  .flight-airline #flight-airline{display:none;}
+  .flight-route{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:18px;}
+  .flight-stop:last-child{text-align:right;}
+  .flight-code{font-family:var(--serif);font-size:clamp(40px,8vw,64px);font-weight:800;letter-spacing:-0.06em;line-height:0.9;color:var(--flight-text);}
+  .flight-time{margin-top:9px;font-family:var(--mono);font-size:13px;color:var(--flight-text);font-variant-numeric:tabular-nums;}
+  .flight-city{margin-top:3px;font-size:11px;color:var(--flight-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .flight-terminal{margin-top:2px;font-family:var(--mono);font-size:9px;color:var(--flight-muted);}
+  .flight-path{display:flex;align-items:center;gap:7px;color:var(--accent);}
+  .flight-path::before,.flight-path::after{content:'';width:34px;border-top:1px dashed var(--flight-border);}
+  .flight-path svg{width:18px;height:18px;transform:rotate(90deg);}
+  .flight-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px;padding-top:17px;border-top:1px solid var(--flight-border);}
+  .flight-label{font-family:var(--mono);font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--flight-muted);}
+  .flight-value{margin-top:4px;font-size:12px;font-weight:600;color:var(--flight-text);}
+  .flight-seats{margin-top:18px;padding-top:16px;border-top:1px solid var(--flight-border);}
+  .flight-seats-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;}
+  .flight-seats-note{font-size:10px;color:var(--flight-muted);}
+  .flight-seat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;}
+  .flight-seat{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:8px 9px;border-radius:9px;background:var(--flight-soft);border:1px solid var(--flight-border);min-width:0;}
+  .flight-seat-name{font-size:10px;color:var(--flight-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .flight-seat-number{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--flight-text);}
+  .flight-seat-empty{grid-column:1/-1;padding:8px 10px;border-radius:9px;background:var(--flight-soft);font-size:11px;color:var(--flight-muted);}
+  .flight-stub-route{font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-0.05em;line-height:1;color:var(--flight-text);white-space:nowrap;}
+  .flight-stub-number{margin-top:7px;font-family:var(--mono);font-size:12px;color:var(--accent-text);}
+  .flight-status{display:inline-flex;align-items:center;gap:6px;width:max-content;padding:5px 9px;border-radius:999px;background:rgba(16,185,129,0.15);color:#6ee7b7;font-size:10px;font-weight:600;}
+  .flight-status::before{content:'';width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,0.12);}
+  .flight-barcode{height:42px;background:repeating-linear-gradient(90deg,var(--flight-text) 0 2px,transparent 2px 4px,var(--flight-text) 4px 5px,transparent 5px 8px,var(--flight-text) 8px 11px,transparent 11px 13px);opacity:0.55;}
+  .flight-family{margin-top:8px;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--flight-muted);}
+  .flight-modal-close{top:12px;right:12px;z-index:4;background:var(--flight-soft);color:var(--flight-text);}
+
   /* RESPONSIVE */
   @media(max-width:640px){
     .activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
@@ -242,6 +304,20 @@
     .restaurant-grid{grid-template-columns:1fr;}
     .nav-tab{padding:12px 12px;font-size:12px;}
     .main{padding:1.5rem 0.75rem 3rem;}
+    .flight-modal-box{width:min(100%,430px);}
+    .flight-logo-wrap{height:36px;}
+    .flight-airline-logo{max-width:190px;max-height:36px;}
+    .boarding-pass{grid-template-columns:1fr;}
+    .boarding-pass::before,.boarding-pass::after{display:none;}
+    .flight-main{padding:24px 20px 20px;}
+    .flight-stub{padding:18px 20px;border-left:0;border-top:1px dashed rgba(255,255,255,0.28);}
+    .flight-route{gap:9px;}
+    .flight-path{gap:4px;}
+    .flight-path::before,.flight-path::after{width:14px;}
+    .flight-code{font-size:38px;}
+    .flight-meta{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px;}
+    .flight-seat-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .flight-barcode{display:none;}
   }
 
   /* REDUCED MOTION */
@@ -271,6 +347,12 @@
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="ico-period" viewBox="0 -960 960 960"><path d="M277.5-405.5Q266-417 266-434t11.5-28.5Q289-474 306-474t28.5 11.5Q346-451 346-434t-11.5 28.5Q323-394 306-394t-28.5-11.5Zm177 0Q443-417 443-434t11.5-28.5Q466-474 483-474t28.5 11.5Q523-451 523-434t-11.5 28.5Q500-394 483-394t-28.5-11.5Zm170 0Q613-417 613-434t11.5-28.5Q636-474 653-474t28.5 11.5Q693-451 693-434t-11.5 28.5Q670-394 653-394t-28.5-11.5ZM180-80q-24 0-42-18t-18-42v-620q0-24 18-42t42-18h65v-60h65v60h340v-60h65v60h65q24 0 42 18t18 42v620q0 24-18 42t-42 18H180Zm0-60h600v-430H180v430Zm0-490h600v-130H180v130Zm0 0v-130 130Z"/></symbol>
+<symbol id="ico-hotel" viewBox="0 -960 960 960"><path d="M40-200v-585h60v394h353v-309h322q59.81 0 102.41 42.59Q920-614.81 920-555v355h-60v-131H100v131H40Zm154.5-279.5Q164-510 164-555t30.5-75.5Q225-661 270-661t75.5 30.5Q376-600 376-555t-30.5 75.5Q315-449 270-449t-75.5-30.5ZM513-391h347v-164q0-35.06-24.97-60.03T775-640H513v249ZM302.5-522.5Q316-536 316-555t-13.5-32.5Q289-601 270-601t-32.5 13.5Q224-574 224-555t13.5 32.5Q251-509 270-509t32.5-13.5ZM270-555Zm243-85v249-249Z"/></symbol>
+<symbol id="ico-days" viewBox="0 -960 960 960"><path d="M140-220h187v-520H140v520Zm247 0h186v-520H387v520Zm246 0h187v-520H633v520Zm-493 60q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H140Z"/></symbol>
+</defs></svg>
 
 <header class="site-header">
 <div class="header-toolbar">
@@ -318,7 +400,7 @@
 <div class="leg-panel active" id="panel-nyc1"><div class="leg-hero" style="background-image:url('https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/hero-nyc1.jpg')" onclick="openLightboxFromBg(this,'New York City')"><div class="ghost-title">New York City</div>
       <div class="leg-hero-text">
         <div class="leg-hero-title">New York City</div>
-        <div class="leg-hero-sub">Monday 21 – Thursday 24 December · Arlo SoHo · Days 1–4</div>
+        <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Monday 21 – Thursday 24 December</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Arlo SoHo</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Dec 21–24 · SoHo, Manhattan · Arlo SoHo Hotel (4-star) · Party of 4 · Budget R3,000/day</div><div class="birthday-banner">🎂 Dec 22 is Nammies' 18th birthday: tonight's reserved for a special celebration dinner in the neighbourhood.</div>
     <div class="day-card open">
@@ -334,7 +416,7 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Wake up · final pack</div><div class="act-note">Early start: the journey begins the moment we walk out the door.</div></div></div><div class="activity-row"><div class="time-col">6:30am</div><div><div class="act-name">Leave home · drive to OR Tambo</div><div class="act-note">35–45 min drive. We're aiming to get to the airport by 7:15am, a comfortable buffer before an international check-in over the holiday rush.</div></div></div><div class="activity-row"><div class="time-col">9:50am</div><div><div class="act-name">EY 748 departs OR Tambo (JNB)</div><div class="act-note">7h 55m · Boeing 787 · Premium Economy.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">7:45pm</div><div><div class="act-name">Arrive Abu Dhabi · Zayed International</div><div class="act-note">6h 50m layover before we continue on to JFK. Stretch our legs, grab dinner airside.</div></div></div><div class="activity-row"><div class="time-col">Dec 22, 2:35am</div><div><div class="act-name">EY 1 departs Abu Dhabi · overnight to JFK</div><div class="act-note">14h 25m · Airbus A350 · Premium Economy. Try to get some sleep, we land into Christmas week.</div><div class="act-cost">Flights pre-paid</div></div></div>
+<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Wake up · final pack</div><div class="act-note">Early start: the journey begins the moment we walk out the door.</div></div></div><div class="activity-row"><div class="time-col">6:30am</div><div><div class="act-name">Leave home · drive to OR Tambo</div><div class="act-note">35–45 min drive. We're aiming to get to the airport by 7:15am, a comfortable buffer before an international check-in over the holiday rush.</div></div></div><div class="activity-row"><div class="time-col">9:50am</div><div><div class="act-name">EY 748 departs OR Tambo (JNB)</div><div class="act-note">7h 55m · Boeing 787-9 · Economy Deluxe.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">7:45pm</div><div><div class="act-name">Arrive Abu Dhabi · Zayed International</div><div class="act-note">6h 50m layover before we continue on to JFK. Stretch our legs, grab dinner airside.</div></div></div><div class="activity-row"><div class="time-col">Dec 22, 2:35am</div><div><div class="act-name">EY 1 departs Abu Dhabi · overnight to JFK</div><div class="act-note">14h 25m · Airbus A350-1000 · Economy Deluxe. Try to get some sleep, we land into Christmas week.</div><div class="act-cost">Flights pre-paid</div></div></div>
         </div>
       </div>
     </div>
@@ -359,7 +441,7 @@
     <div class="act-cost">~R3,640 (~$200) · all-in, tolls and gratuity included</div>
   </div>
   <img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-blacklane.jpg" alt="Blacklane Escalade SUV" onclick="openLightbox(this.src,'Blacklane Escalade SUV')" loading="lazy" decoding="async">
-</div><div class="activity-row has-thumb"><div class="time-col">11:30am</div><div><div class="act-name">Arrive Arlo SoHo · drop luggage</div><div class="act-note">Free luggage storage confirmed. Freshen up in the lobby, our rooms won't be ready until 3pm. Take a moment to exhale.</div><div class="act-cost">Accommodation pre-paid</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-arlo-soho.jpg" alt="Arlo SoHo" onclick="openLightbox(this.src,'Arlo SoHo')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">12:00pm</div><div><div class="act-name">Free Tours by Foot · meet at Spring St</div><div class="act-note">SoHo & Nolita walking tour with a local guide. 1.5 hours covering cast-iron architecture, the neighbourhood's history, best spots and hidden gems. Tip-based: budget $20–25pp (~R1,820 for 4).</div><div class="act-cost">Free tour · ~R1,820 tip for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-nolita.jpg" alt="Dominique Ansel Bakery" onclick="openLightbox(this.src,'Dominique Ansel Bakery')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">1:30pm</div><div><div class="act-name">Post-tour explore · Spring St / Prince St corridor</div><div class="act-note">Low-energy browse. Pop into a gallery, grab a coffee at Dominique Ansel Bakery or Cafe Gitane. This is SoHo at its best: unhurried and beautiful.</div><div class="act-cost">Free</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-dominique-ansel.jpg" alt="Nolita, New York" onclick="openLightbox(this.src,'Nolita, New York')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">3:30pm</div><div><div class="act-name">Check in · rooms ready · rest</div><div class="act-note">Two to three hours of downtime before dinner. We've been travelling since Dec 21 via Abu Dhabi: the rest is earned.</div><div class="act-cost">Accommodation pre-paid</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-arlo-king-courtyard.jpg" alt="Check in · rooms ready · rest" onclick="openLightbox(this.src,'Check in · rooms ready · rest')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">6:30pm</div><div><div class="act-name">Get ready for dinner</div></div></div><div class="activity-row has-thumb"><div class="time-col">7:00pm</div><div><div class="act-name">Birthday dinner · Carbone or Balthazar · both walkable</div><div class="act-note">Carbone (181 Thompson St, 4 min): theatrical Italian-American, tableside Caesar, leather banquettes: dinner-as-event. Book exactly 30 days in advance on Resy at midnight. Balthazar (80 Spring St, 3 min): iconic French brasserie, grand room, timeless. Slightly easier to book.</div><div class="act-cost">~R5,000–R8,000 for 4 depending on venue</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-balthazar.jpg" alt="Balthazar" onclick="openLightbox(this.src,'Balthazar')" loading="lazy" decoding="async"></div>
+</div><div class="activity-row has-thumb"><div class="time-col">11:30am</div><div><div class="act-name">Arrive Arlo SoHo · drop luggage</div><div class="act-note">Free luggage storage confirmed. Freshen up in the lobby, our rooms won't be ready until 3pm. Take a moment to exhale.</div><div class="act-cost">Accommodation pre-paid</div><div class="act-rating" data-ta="arlo-soho" data-ta-name></div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-arlo-soho.jpg" alt="Arlo SoHo" onclick="openLightbox(this.src,'Arlo SoHo')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">12:00pm</div><div><div class="act-name">Free Tours by Foot · meet at Spring St</div><div class="act-note">SoHo & Nolita walking tour with a local guide. 1.5 hours covering cast-iron architecture, the neighbourhood's history, best spots and hidden gems. Tip-based: budget $20–25pp (~R1,820 for 4).</div><div class="act-cost">Free tour · ~R1,820 tip for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-nolita.jpg" alt="Dominique Ansel Bakery" onclick="openLightbox(this.src,'Dominique Ansel Bakery')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">1:30pm</div><div><div class="act-name">Post-tour explore · Spring St / Prince St corridor</div><div class="act-note">Low-energy browse. Pop into a gallery, grab a coffee at Dominique Ansel Bakery or Cafe Gitane. This is SoHo at its best: unhurried and beautiful.</div><div class="act-cost">Free</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-dominique-ansel.jpg" alt="Nolita, New York" onclick="openLightbox(this.src,'Nolita, New York')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">3:30pm</div><div><div class="act-name">Check in · rooms ready · rest</div><div class="act-note">Two to three hours of downtime before dinner. We've been travelling since Dec 21 via Abu Dhabi: the rest is earned.</div><div class="act-cost">Accommodation pre-paid</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-arlo-king-courtyard.jpg" alt="Check in · rooms ready · rest" onclick="openLightbox(this.src,'Check in · rooms ready · rest')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">6:30pm</div><div><div class="act-name">Get ready for dinner</div></div></div><div class="activity-row has-thumb"><div class="time-col">7:00pm</div><div><div class="act-name">Birthday dinner · Carbone or Balthazar · both walkable</div><div class="act-note">Carbone (181 Thompson St, 4 min): theatrical Italian-American, tableside Caesar, leather banquettes: dinner-as-event. Book exactly 30 days in advance on Resy at midnight. Balthazar (80 Spring St, 3 min): iconic French brasserie, grand room, timeless. Slightly easier to book.</div><div class="act-cost">~R5,000–R8,000 for 4 depending on venue</div><div class="act-rating" data-ta="carbone,balthazar" data-ta-name></div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-balthazar.jpg" alt="Balthazar" onclick="openLightbox(this.src,'Balthazar')" loading="lazy" decoding="async"></div>
         </div>
 <div class="notice notice-accent">Intentionally over the R3,000 daily budget: a once-in-a-lifetime 18th birthday in New York warrants it. Book as far in advance as possible.</div>
 <div class="spend-table"><div class="spend-row"><span>Blacklane SUV · JFK Terminal 4 → Arlo SoHo</span><span>~R3,640</span></div><div class="spend-row"><span>Free Tours by Foot · tip</span><span>~R1,820</span></div><div class="spend-row"><span>Post-tour coffee & snacks</span><span>~R400</span></div><div class="spend-row"><span>Birthday dinner · Carbone or Balthazar</span><span>~R5,000–R8,000</span></div><div class="spend-row total"><span>Total</span><span>~R10,860–R13,860</span></div></div>
@@ -417,7 +499,7 @@
     </div></div><div class="leg-panel" id="panel-miami"><div class="leg-hero" style="background-image:url('https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/hero-miami.jpg')" onclick="openLightboxFromBg(this,'Miami')"><div class="ghost-title">Miami</div>
       <div class="leg-hero-text">
         <div class="leg-hero-title">Miami</div>
-        <div class="leg-hero-sub">Thursday 24 December – Sunday 3 January · North Miami Beach · Days 4–14</div>
+        <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Thursday 24 December – Sunday 3 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>North Miami Beach</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>11 Days / 10 Nights</span></div>
       </div>
     </div><div class="leg-intro">Dec 24 – Jan 3 · 1601 NE 160th St, North Miami Beach · Confirmed Airbnb · Avis Standard Elite SUV · Party of 4 · Budget R3,000/day</div>
     <div class="day-card">
@@ -456,7 +538,7 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row has-thumb"><div class="time-col">7:00am</div><div><div class="act-name">Wake up · light breakfast at the Airbnb</div><div class="act-note">Early start: tour departs at 9am from Lincoln Rd.</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-airbnb-dining.jpg" alt="Wake up · light breakfast at the Airbnb" onclick="openLightbox(this.src,'Wake up · light breakfast at the Airbnb')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Depart Airbnb · drive to 305 Lincoln Rd, Miami Beach</div><div class="act-note">~25 min. Park at the municipal garage at 1619 Meridian Ave: daily cap $20.</div><div class="act-cost">~R364 parking (daily cap)</div></div></div><div class="activity-row"><div class="time-col">8:30am</div><div><div class="act-name">Check in at main station · priority boarding as walk-ins</div><div class="act-note">Grab a good seat on the upper deck of the double decker bus.</div></div></div><div class="activity-row"><div class="time-col">9:00am</div><div><div class="act-name">Double Decker Bus Tour begins</div><div class="act-note">Art Deco District, Coconut Grove, Coral Gables, Little Havana (free Cuban coffee shot), Downtown, Financial District.</div><div class="act-cost">Included in combo</div></div></div><div class="activity-row has-thumb"><div class="time-col">11:30am</div><div><div class="act-name">Bayside Marketplace · free time</div><div class="act-note">Lunch at the waterfront food hall. Browse the market.</div><div class="act-cost">~R600 for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-bayside.jpg" alt="Bayside Marketplace · free time" onclick="openLightbox(this.src,'Bayside Marketplace · free time')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Miami Boat Tour · 90 min</div><div class="act-note">Around Star Island and Millionaires' Row: celebrity homes, the causeway islands, Biscayne Bay from the water.</div><div class="act-cost">Included in combo</div></div></div><div class="activity-row"><div class="time-col">2:30pm</div><div><div class="act-name">Transfer to Everglades · included in combo</div></div></div><div class="activity-row has-thumb"><div class="time-col">3:30pm</div><div><div class="act-name">Everglades airboat ride · wildlife show · alligator exhibits</div><div class="act-note">Unmissable. Gliding through sawgrass with gators inches away.</div><div class="act-cost">Included in combo</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-everglades.jpg" alt="Everglades" onclick="openLightbox(this.src,'Everglades')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">5:30pm</div><div><div class="act-name">Return transfer to Lincoln Rd · collect SUV</div><div class="act-note">~R364 parking already paid.</div></div></div><div class="activity-row"><div class="time-col">6:30pm</div><div><div class="act-name">Drive back to Airbnb · ~25 min</div></div></div><div class="activity-row has-thumb"><div class="time-col">8:00pm</div><div><div class="act-name">Easy dinner at the Airbnb</div><div class="act-note">Feet up. It's been a big day covering a lot of Miami.</div><div class="act-cost">~R400 (from groceries)</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-airbnb-fridge.jpg" alt="Easy dinner at the Airbnb" onclick="openLightbox(this.src,'Easy dinner at the Airbnb')" loading="lazy" decoding="async"></div>
+<div class="activity-row has-thumb"><div class="time-col">7:00am</div><div><div class="act-name">Wake up · light breakfast at the Airbnb</div><div class="act-note">Early start: tour departs at 9am from Lincoln Rd.</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-airbnb-dining.jpg" alt="Wake up · light breakfast at the Airbnb" onclick="openLightbox(this.src,'Wake up · light breakfast at the Airbnb')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Depart Airbnb · drive to 305 Lincoln Rd, Miami Beach</div><div class="act-note">~25 min. Park at the municipal garage at 1619 Meridian Ave: daily cap $20.</div><div class="act-cost">~R364 parking (daily cap)</div></div></div><div class="activity-row"><div class="time-col">8:30am</div><div><div class="act-name">Check in at main station · priority boarding as walk-ins</div><div class="act-note">Grab a good seat on the upper deck of the double decker bus.</div></div></div><div class="activity-row"><div class="time-col">9:00am</div><div><div class="act-name">Double Decker Bus Tour begins</div><div class="act-note">Art Deco District, Coconut Grove, Coral Gables, Little Havana (free Cuban coffee shot), Downtown, Financial District.</div><div class="act-cost">Included in combo</div></div></div><div class="activity-row has-thumb"><div class="time-col">11:30am</div><div><div class="act-name">Bayside Marketplace · free time</div><div class="act-note">Lunch at the waterfront food hall. Browse the market.</div><div class="act-cost">~R600 for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-bayside.jpg" alt="Bayside Marketplace · free time" onclick="openLightbox(this.src,'Bayside Marketplace · free time')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">3:00pm</div><div><div class="act-name">Miami Boat Tour · 90 min</div><div class="act-note">Around Star Island and Millionaires' Row: celebrity homes, the causeway islands, Biscayne Bay from the water.</div><div class="act-cost">Included in combo</div></div></div><div class="activity-row"><div class="time-col">2:30pm</div><div><div class="act-name">Transfer to Everglades · included in combo</div></div></div><div class="activity-row has-thumb"><div class="time-col">3:30pm</div><div><div class="act-name">Everglades airboat ride · wildlife show · alligator exhibits</div><div class="act-note">Unmissable. Gliding through sawgrass with gators inches away.</div><div class="act-cost">Included in combo</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-everglades.jpg" alt="Everglades" onclick="openLightbox(this.src,'Everglades')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">5:30pm</div><div><div class="act-name">Return transfer to Lincoln Rd · collect SUV</div><div class="act-note">~R364 parking already paid.</div></div></div><div class="activity-row"><div class="time-col">6:30pm</div><div><div class="act-name">Drive back to Airbnb · ~25 min</div></div></div><div class="activity-row has-thumb"><div class="time-col">8:00pm</div><div><div class="act-name">Easy dinner at the Airbnb</div><div class="act-note">Feet up. It's been a big day covering a lot of Miami.</div><div class="act-cost">~R400 (from groceries)</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-airbnb-fridge.jpg" alt="Easy dinner at the Airbnb" onclick="openLightbox(this.src,'Easy dinner at the Airbnb')" loading="lazy" decoding="async"></div>
         </div>
 <div class="notice notice-info">Book online at miamitours.com then call 305-222-0111 to confirm. Tell them you're a party of 4 driving to the main station for priority boarding.</div>
 <div class="spend-table"><div class="spend-row"><span>3-in-1 Combo · $75pp x4</span><span>~R5,460</span></div><div class="spend-row"><span>Parking · municipal garage daily cap</span><span>~R364</span></div><div class="spend-row"><span>Lunch · Bayside Marketplace</span><span>~R600</span></div><div class="spend-row"><span>Snacks / drinks</span><span>~R300</span></div><div class="spend-row"><span>Dinner · Airbnb</span><span>~R400</span></div><div class="spend-row total"><span>Total</span><span>~R7,124</span></div></div>
@@ -629,7 +711,7 @@
     </div></div><div class="leg-panel" id="panel-cruise"><div class="leg-hero" style="background-image:url('https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/hero-cruise.jpg')" onclick="openLightboxFromBg(this,'Norwegian Aqua Caribbean')"><div class="ghost-title">Caribbean Cruise</div>
       <div class="leg-hero-text">
         <div class="leg-hero-title">Caribbean Cruise</div>
-        <div class="leg-hero-sub">Sunday 3 – Sunday 10 January · Norwegian Aqua · Days 14–21</div>
+        <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 3 – Sunday 10 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Norwegian Aqua</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>8 Days / 7 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 3–10 · Norwegian Aqua · 7 nights · Free at Sea Plus package · Drinks, specialty dining, Wi-Fi & gratuities all included</div>
     <div class="day-card">
@@ -806,7 +888,7 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row has-thumb"><div class="time-col">Morning</div><div><div class="act-name">Disembark Norwegian Aqua · Port Miami</div><div class="act-note">Pack the night before. Request early disembarkation when completing NCL online check-in: flag our 10:05am FLL departure. AA 1717 departs at 10:05am.</div></div><img class="act-thumb" data-dedup="dedup-0" src="" alt="Port Miami" onclick="openLightbox(this.src,'Port Miami')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">7:00am</div><div><div class="act-name">Target disembarkation · clear terminal · Uber to FLL</div><div class="act-note">~R650 (~$35) · ~35–40 min from Port Miami to Fort Lauderdale–Hollywood Airport.</div></div></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Arrive FLL · check in · domestic security · breakfast airside</div><div class="act-note">AA 1717 is a domestic flight: no customs after clearing on Dec 22. Allow a full hour for check-in and security given the earlier departure.</div></div></div><div class="activity-row"><div class="time-col">10:05am</div><div><div class="act-name">AA 1717 departs FLL · nonstop to LGA</div><div class="act-note">2h 55m · Boeing 737 MAX. Arrives New York LaGuardia 1:00pm.</div><div class="act-cost">Flights pre-paid</div></div></div>
+<div class="activity-row has-thumb"><div class="time-col">Morning</div><div><div class="act-name">Disembark Norwegian Aqua · Port Miami</div><div class="act-note">Pack the night before. Request early disembarkation when completing NCL online check-in: flag our 12:05pm FLL departure. AA 2896 departs at 12:05pm.</div></div><img class="act-thumb" data-dedup="dedup-0" src="" alt="Port Miami" onclick="openLightbox(this.src,'Port Miami')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">7:00am</div><div><div class="act-name">Target disembarkation · clear terminal · Uber to FLL</div><div class="act-note">~R650 (~$35) · ~35–40 min from Port Miami to Fort Lauderdale–Hollywood Airport.</div></div></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Arrive FLL · check in · domestic security · breakfast airside</div><div class="act-note">AA 2896 is a domestic flight: no customs after clearing on Dec 22. Allow a full hour for check-in and security given the earlier departure.</div></div></div><div class="activity-row"><div class="time-col">12:05pm</div><div><div class="act-name">AA 2896 departs FLL · nonstop to LGA</div><div class="act-note">2h 55m · Boeing 737. Arrives New York LaGuardia 3:00pm.</div><div class="act-cost">Flights pre-paid</div></div></div>
         </div>
 
 
@@ -818,7 +900,7 @@
     </div></div><div class="leg-panel" id="panel-nyc2"><div class="leg-hero" style="background-image:url('https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/hero-nyc2.jpg')" onclick="openLightboxFromBg(this,'New York City Return')"><div class="ghost-title">New York City</div>
       <div class="leg-hero-text">
         <div class="leg-hero-title">New York City</div>
-        <div class="leg-hero-sub">Sunday 10 – Wednesday 13 January · Row NYC · Midtown Manhattan · Days 21–24</div>
+        <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 10 – Wednesday 13 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Row NYC · Midtown Manhattan</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 10–13 · Row NYC Hotel (4-star, B&B) · Midtown Manhattan · Post-cruise · Party of 4 · Budget R3,000/day</div>
     <div class="day-card">
@@ -834,7 +916,7 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row has-thumb"><div class="time-col">1:00pm</div><div><div class="act-name">Arrive LGA · Uber XL to Row NYC</div><div class="act-note">~45 min depending on Sunday traffic. We may need two vehicles with cruise luggage for 4.</div><div class="act-cost">~R800–R1,000</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-row-nyc.jpg" alt="Row NYC Hotel" onclick="openLightbox(this.src,'Row NYC Hotel')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">1:45pm</div><div><div class="act-name">Check in · rest · freshen up</div><div class="act-note">7 nights at sea followed by a travel day. A free afternoon to recharge before we head out this evening.</div><div class="act-cost">Accommodation pre-paid (B&B)</div></div></div><div class="activity-row has-thumb"><div class="time-col">7:15pm</div><div><div class="act-name">Times Square first look · steps from the hotel</div><div class="act-note">Walk outside and let Midtown wash over you. The scale, the lights, the energy: completely different from SoHo.</div><div class="act-cost">Free</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-times-square.jpg" alt="Times Square" onclick="openLightbox(this.src,'Times Square')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">8:00pm</div><div><div class="act-name">TKTS check · then dinner nearby</div><div class="act-note">Check the TKTS app for tonight's Broadway availability. Whether or not you catch a show, dinner at Marseille (44th St brasserie) or John's Times Square Pizza: both close, no fuss.</div><div class="act-cost">~R1,200–R1,600 for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-tkts-times-square.jpg" alt="TKTS Times Square" onclick="openLightbox(this.src,'TKTS Times Square')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">8:00pm (if TKTS available)</div><div><div class="act-name">Broadway show · TKTS discounted tickets</div><div class="act-note">Same-day discounted tickets at 20–50% off. Check the TKTS app for what's showing tonight. Sunday is typically a good TKTS night: strong availability. Best TKTS nights: Jan 10 (Sun) and Jan 12 (Tue). Jan 11 (Mon) is traditionally Broadway's dark night.</div><div class="act-cost">~R5,840 (~$80pp discounted) · or full price if preferred</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-broadway.jpg" alt="Broadway NYC" onclick="openLightbox(this.src,'Broadway NYC')" loading="lazy" decoding="async"></div>
+<div class="activity-row has-thumb"><div class="time-col">3:00pm</div><div><div class="act-name">Arrive LGA · Uber XL to Row NYC</div><div class="act-note">~45 min depending on Sunday traffic. We may need two vehicles with cruise luggage for 4.</div><div class="act-cost">~R800–R1,000</div><div class="act-rating" data-ta="row-nyc" data-ta-name></div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-row-nyc.jpg" alt="Row NYC Hotel" onclick="openLightbox(this.src,'Row NYC Hotel')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">1:45pm</div><div><div class="act-name">Check in · rest · freshen up</div><div class="act-note">7 nights at sea followed by a travel day. A free afternoon to recharge before we head out this evening.</div><div class="act-cost">Accommodation pre-paid (B&B)</div></div></div><div class="activity-row has-thumb"><div class="time-col">7:15pm</div><div><div class="act-name">Times Square first look · steps from the hotel</div><div class="act-note">Walk outside and let Midtown wash over you. The scale, the lights, the energy: completely different from SoHo.</div><div class="act-cost">Free</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-times-square.jpg" alt="Times Square" onclick="openLightbox(this.src,'Times Square')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">8:00pm</div><div><div class="act-name">TKTS check · then dinner nearby</div><div class="act-note">Check the TKTS app for tonight's Broadway availability. Whether or not you catch a show, dinner at Marseille (44th St brasserie) or John's Times Square Pizza: both close, no fuss.</div><div class="act-cost">~R1,200–R1,600 for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-tkts-times-square.jpg" alt="TKTS Times Square" onclick="openLightbox(this.src,'TKTS Times Square')" loading="lazy" decoding="async"></div><div class="activity-row has-thumb"><div class="time-col">8:00pm (if TKTS available)</div><div><div class="act-name">Broadway show · TKTS discounted tickets</div><div class="act-note">Same-day discounted tickets at 20–50% off. Check the TKTS app for what's showing tonight. Sunday is typically a good TKTS night: strong availability. Best TKTS nights: Jan 10 (Sun) and Jan 12 (Tue). Jan 11 (Mon) is traditionally Broadway's dark night.</div><div class="act-cost">~R5,840 (~$80pp discounted) · or full price if preferred</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-broadway.jpg" alt="Broadway NYC" onclick="openLightbox(this.src,'Broadway NYC')" loading="lazy" decoding="async"></div>
         </div>
 <div class="notice notice-info">TKTS booth at 47th St & Broadway opens at 3pm for evening shows. The app shows availability before you queue. Jan 12 (Tuesday) is your backup night if tonight doesn't have a show you want.</div>
 <div class="spend-table"><div class="spend-row"><span>Uber · LGA → Row NYC</span><span>~R800–R1,000</span></div><div class="spend-row"><span>TKTS Broadway tickets x4 (if tonight)</span><span>~R5,840</span></div><div class="spend-row"><span>Dinner · nearby</span><span>~R1,400</span></div><div class="spend-row"><span>Total (with show)</span><span>~R8,040–R8,240</span></div><div class="spend-row total"><span>Total (without show)</span><span>~R2,200–R2,400</span></div></div>
@@ -880,7 +962,7 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Hotel breakfast</div><div class="act-note">Last B&B morning. Take your time.</div><div class="act-cost">Included</div></div></div><div class="activity-row"><div class="time-col">9:30am</div><div><div class="act-name">Subway to Central Park · B or C to 72nd St</div><div class="act-note">3 stops · $3pp · tap individual contactless cards.</div><div class="act-cost">~R218 for 4</div></div></div><div class="activity-row has-thumb"><div class="time-col">9:45am</div><div><div class="act-name">Central Park · Bethesda Fountain · Bow Bridge · the Reservoir</div><div class="act-note">January morning in Central Park is genuinely magical: quiet, crisp, possibly frost on the ground. Wrap up warm.</div><div class="act-cost">Free</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-central-park.jpg" alt="Central Park" onclick="openLightbox(this.src,'Central Park')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">11:30am</div><div><div class="act-name">Walk out through the park · exit at 59th St · Columbus Circle</div></div></div><div class="activity-row"><div class="time-col">12:00pm</div><div><div class="act-name">Lunch · Midtown</div><div class="act-note">Whole Foods Market hot food counter at Columbus Circle for a warm casual lunch, or Bouchon Bakery in the Time Warner Center above it.</div><div class="act-cost">~R800–R1,000 for 4</div></div></div><div class="activity-row"><div class="time-col">1:30pm</div><div><div class="act-name">Free time · last Midtown wanders</div><div class="act-note">Any final shopping. Broadway memorabilia if anyone wants a keepsake. Top of the Rock, tickets booked for 3:30pm.</div></div></div><div class="activity-row has-thumb"><div class="time-col">3:30pm</div><div><div class="act-name">Top of the Rock · Rockefeller Center · golden hour</div><div class="act-note">Pre-booked timed entry. Low winter sun casts warm amber light across the skyline: the Empire State Building glows. Then watch the city light up as darkness falls. Spectacular.</div><div class="act-cost">~R2,180 for 4 (~$30pp)</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-top-of-rock.jpg" alt="Top of the Rock" onclick="openLightbox(this.src,'Top of the Rock')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">5:00pm</div><div><div class="act-name">Back to Row NYC · rest and change for dinner</div></div></div><div class="activity-row"><div class="time-col">7:00pm</div><div><div class="act-name">Walk to Nobu 57 · 40 W 57th St · 10 min from hotel</div><div class="act-note">Smart casual. Book well in advance via OpenTable or Nobu's website.</div></div></div><div class="activity-row has-thumb"><div class="time-col">8:00pm</div><div><div class="act-name">Farewell dinner · Nobu 57</div><div class="act-note">Japanese-Peruvian. Black cod miso, yellowtail jalapeño, rock shrimp tempura. The full experience. We've earned every course.</div><div class="act-cost">~R10,950 (~$150pp) for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-farewell-dinner.jpg" alt="Farewell Dinner" onclick="openLightbox(this.src,'Farewell Dinner')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">10:30pm</div><div><div class="act-name">Walk back to Row NYC through Midtown at night</div><div class="act-note">Times Square one last time. Don't rush it: let the last evening of a 25-day bucket list trip sink in properly.</div><div class="act-cost">Free</div></div></div><div class="activity-row"><div class="time-col">11:00pm</div><div><div class="act-name">Back at the hotel · pack remaining bags · early night</div><div class="act-note">EY 2 departs 1pm tomorrow: JFK check-in by 10am.</div></div></div>
+<div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Hotel breakfast</div><div class="act-note">Last B&B morning. Take your time.</div><div class="act-cost">Included</div></div></div><div class="activity-row"><div class="time-col">9:30am</div><div><div class="act-name">Subway to Central Park · B or C to 72nd St</div><div class="act-note">3 stops · $3pp · tap individual contactless cards.</div><div class="act-cost">~R218 for 4</div></div></div><div class="activity-row has-thumb"><div class="time-col">9:45am</div><div><div class="act-name">Central Park · Bethesda Fountain · Bow Bridge · the Reservoir</div><div class="act-note">January morning in Central Park is genuinely magical: quiet, crisp, possibly frost on the ground. Wrap up warm.</div><div class="act-cost">Free</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-central-park.jpg" alt="Central Park" onclick="openLightbox(this.src,'Central Park')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">11:30am</div><div><div class="act-name">Walk out through the park · exit at 59th St · Columbus Circle</div></div></div><div class="activity-row"><div class="time-col">12:00pm</div><div><div class="act-name">Lunch · Midtown</div><div class="act-note">Whole Foods Market hot food counter at Columbus Circle for a warm casual lunch, or Bouchon Bakery in the Time Warner Center above it.</div><div class="act-cost">~R800–R1,000 for 4</div></div></div><div class="activity-row"><div class="time-col">1:30pm</div><div><div class="act-name">Free time · last Midtown wanders</div><div class="act-note">Any final shopping. Broadway memorabilia if anyone wants a keepsake. Top of the Rock, tickets booked for 3:30pm.</div></div></div><div class="activity-row has-thumb"><div class="time-col">3:30pm</div><div><div class="act-name">Top of the Rock · Rockefeller Center · golden hour</div><div class="act-note">Pre-booked timed entry. Low winter sun casts warm amber light across the skyline: the Empire State Building glows. Then watch the city light up as darkness falls. Spectacular.</div><div class="act-cost">~R2,180 for 4 (~$30pp)</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-top-of-rock.jpg" alt="Top of the Rock" onclick="openLightbox(this.src,'Top of the Rock')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">5:00pm</div><div><div class="act-name">Back to Row NYC · rest and change for dinner</div></div></div><div class="activity-row"><div class="time-col">7:00pm</div><div><div class="act-name">Walk to Nobu 57 · 40 W 57th St · 10 min from hotel</div><div class="act-note">Smart casual. Book well in advance via OpenTable or Nobu's website.</div></div></div><div class="activity-row has-thumb"><div class="time-col">8:00pm</div><div><div class="act-name">Farewell dinner · Nobu 57</div><div class="act-note">Japanese-Peruvian. Black cod miso, yellowtail jalapeño, rock shrimp tempura. The full experience. We've earned every course.</div><div class="act-cost">~R10,950 (~$150pp) for 4</div><div class="act-rating" data-ta="nobu-57" data-ta-name></div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-farewell-dinner.jpg" alt="Farewell Dinner" onclick="openLightbox(this.src,'Farewell Dinner')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">10:30pm</div><div><div class="act-name">Walk back to Row NYC through Midtown at night</div><div class="act-note">Times Square one last time. Don't rush it: let the last evening of a 25-day bucket list trip sink in properly.</div><div class="act-cost">Free</div></div></div><div class="activity-row"><div class="time-col">11:00pm</div><div><div class="act-name">Back at the hotel · pack remaining bags · early night</div><div class="act-note">EY 4 departs 10pm tomorrow: a full bonus day in New York before JFK.</div></div></div>
         </div>
 <div class="notice notice-accent">Book Top of the Rock timed tickets online before the trip. Jan 12 is a Tuesday evening and popular. Book Nobu 57 as far in advance as possible.</div>
 <div class="spend-table"><div class="spend-row"><span>Hotel breakfast</span><span>Included</span></div><div class="spend-row"><span>Subway x4 · to Central Park</span><span>~R218</span></div><div class="spend-row"><span>Lunch · Midtown</span><span>~R900</span></div><div class="spend-row"><span>Top of the Rock x4</span><span>~R2,180</span></div><div class="spend-row"><span>Nobu 57 farewell dinner x4 (~$150pp)</span><span>~R10,950</span></div><div class="spend-row total"><span>Total</span><span>~R14,248</span></div></div>
@@ -903,13 +985,13 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row"><div class="time-col">6:00am</div><div><div class="act-name">Hotel breakfast · final pack · check out</div><div class="act-note">EY 2 departs 1pm: we're aiming to get to JFK by 10am. B&B included: make the most of it.</div><div class="act-cost">Included</div></div></div><div class="activity-row"><div class="time-col">7:30am</div><div><div class="act-name">Walk to Penn Station · ~10 min from Row NYC</div></div></div><div class="activity-row"><div class="time-col">7:45am</div><div><div class="act-name">Buy LIRR tickets on TrainTime app · Jamaica-bound</div><div class="act-note">Off-peak fare. Pay contactless or via app: each passenger pays individually.</div><div class="act-cost">~R600 for 4 ($8.25pp)</div></div></div><div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">LIRR departs Penn Station → Jamaica · ~20 min</div><div class="act-note">Comfortable commuter train with overhead luggage racks. The right call for full bags on a weekday morning.</div></div></div><div class="activity-row"><div class="time-col">8:20am</div><div><div class="act-name">Jamaica Station · AirTrain to JFK Terminal 4 · ~15 min</div><div class="act-note">Tap contactless at the AirTrain exit gate.</div><div class="act-cost">~R638 for 4 ($8.75pp)</div></div></div><div class="activity-row"><div class="time-col">8:35am</div><div><div class="act-name">Arrive JFK Terminal 4 · Etihad check-in · 4hr 25min before departure</div><div class="act-note">Very comfortable buffer. Security, airside, last American breakfast.</div></div></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Depart JFK · Etihad EY 2</div><div class="act-note">Airbus A350 · Premium Economy. Arrives Abu Dhabi Jan 14 at 10:30am.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row has-thumb"><div class="time-col">Jan 14, 10:30am</div><div><div class="act-name">Arrive Abu Dhabi · 13h 30m layover begins</div><div class="act-note">Pre-arranged 48hr Etihad transit visa in hand (single entry, applied via etihad.visaonline.ae 2–4 weeks ahead — South African passports need this pre-arranged, it's not visa-on-arrival). Clear immigration, collect carry-on: allow ~45 min.</div><div class="act-cost">Transit visa ~R1,540 for 4</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-abu-dhabi.jpg" alt="Abu Dhabi" onclick="openLightbox(this.src,'Abu Dhabi')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">11:15am</div><div><div class="act-name">Taxi to Sheikh Zayed Grand Mosque · ~20–30 min</div><div class="act-note">Daytime visit this time, a nice contrast to the illuminated evening one on the outbound leg. Free entry. Dress modestly: robes and scarves are provided free at the entrance if needed.</div></div></div><div class="activity-row"><div class="time-col">1:00pm</div><div><div class="act-name">Corniche waterfront walk · late lunch at a waterfront restaurant</div><div class="act-note">Abu Dhabi feels clean, safe, and calm. Well worth the brief explore.</div><div class="act-cost">~R800 for 4</div></div></div><div class="activity-row"><div class="time-col">2:45pm</div><div><div class="act-name">Taxi to Qasr Al Watan · Presidential Palace · ~20 min</div><div class="act-note">The Great Hall, Presidential Gifts, the Library, the gardens. General admission includes the evening "Palace in Motion" light and sound show, so one ticket covers the whole afternoon.</div><div class="act-cost">~R1,820 for 4 (general admission)</div></div></div><div class="activity-row"><div class="time-col">6:00pm</div><div><div class="act-name">Early dinner at the Palace</div><div class="act-note">Light meal on-site before the show: no need to leave the grounds and risk the timing.</div><div class="act-cost">~R900 for 4</div></div></div><div class="activity-row"><div class="time-col">7:30pm</div><div><div class="act-name">"Palace in Motion" light & sound show · Qasr Al Watan façade</div><div class="act-note">15 minutes, included in general admission. A striking send-off before the last flight home.</div></div></div><div class="activity-row"><div class="time-col">7:45pm</div><div><div class="act-name">Taxi back to Abu Dhabi airport · ~25–30 min</div><div class="act-note">Allow plenty of time for immigration and security on the way back in, over and above check-in.</div><div class="act-cost">~R1,200 for 4 (all taxis today)</div></div></div><div class="activity-row"><div class="time-col">8:30pm</div><div><div class="act-name">Airside · duty free · rest before boarding</div><div class="act-note">A comfortable ~3.5hr buffer before the midnight departure: no time stress after a full day out.</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 12:00am</div><div><div class="act-name">EY 747 departs Abu Dhabi</div><div class="act-note">Boeing 787 · Premium Economy. Last leg home.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 6:20am</div><div><div class="act-name">Arrive OR Tambo International · Home</div><div class="act-note">25 days. An extraordinary journey. Welcome home.</div></div></div>
+<div class="activity-row"><div class="time-col">8:00am</div><div><div class="act-name">Hotel breakfast · final pack</div><div class="act-note">EY 4 departs at 10:00pm, giving us a final unhurried day in New York.</div><div class="act-cost">Included</div></div></div><div class="activity-row"><div class="time-col">10:00am</div><div><div class="act-name">Check out · store luggage at Row NYC</div><div class="act-note">Keep passports and flight essentials with us; leave the main bags securely with the hotel.</div></div></div><div class="activity-row"><div class="time-col">10:30am</div><div><div class="act-name">Final Midtown wander · relaxed lunch</div><div class="act-note">A low-pressure last look around Times Square and Midtown before collecting our bags.</div><div class="act-cost">~R800 for 4</div></div></div><div class="activity-row"><div class="time-col">4:30pm</div><div><div class="act-name">Collect luggage · walk to Penn Station</div><div class="act-note">About 10 minutes from Row NYC. Allow extra time with full bags.</div></div></div><div class="activity-row"><div class="time-col">5:00pm</div><div><div class="act-name">Buy LIRR tickets on TrainTime · Jamaica-bound</div><div class="act-note">Off-peak fare. Each passenger taps or holds an individual ticket.</div><div class="act-cost">~R600 for 4 ($8.25pp)</div></div></div><div class="activity-row"><div class="time-col">5:20pm</div><div><div class="act-name">LIRR · Penn Station → Jamaica</div><div class="act-note">About 20 minutes, with overhead luggage racks.</div></div></div><div class="activity-row"><div class="time-col">5:45pm</div><div><div class="act-name">AirTrain · Jamaica → JFK Terminal 4</div><div class="act-note">Tap contactless at the AirTrain exit gate.</div><div class="act-cost">~R638 for 4 ($8.75pp)</div></div></div><div class="activity-row"><div class="time-col">6:15pm</div><div><div class="act-name">Arrive JFK Terminal 4 · Etihad check-in</div><div class="act-note">A comfortable 3h 45m buffer for bag drop, security and dinner airside.</div></div></div><div class="activity-row"><div class="time-col">10:00pm</div><div><div class="act-name">EY 4 departs JFK · overnight to Abu Dhabi</div><div class="act-note">12h 40m · Boeing 787-9 · Economy Deluxe. Seats 18J/18K and 25J/25K.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row has-thumb"><div class="time-col">Jan 14, 7:40pm</div><div><div class="act-name">Arrive Abu Dhabi · Zayed International Terminal A</div><div class="act-note">6h 20m connection. Stay airside, have dinner, stretch our legs and rest before the final sector.</div><div class="act-cost">No transit visa needed</div></div><img class="act-thumb" src="https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/thumb-abu-dhabi.jpg" alt="Abu Dhabi" onclick="openLightbox(this.src,'Abu Dhabi')" loading="lazy" decoding="async"></div><div class="activity-row"><div class="time-col">Jan 15, 2:00am</div><div><div class="act-name">EY 747 departs Abu Dhabi · home to Johannesburg</div><div class="act-note">8h 20m · Boeing 787-9 · Economy Deluxe. Seats 23A/23B and 24A/24B.</div><div class="act-cost">Flights pre-paid</div></div></div><div class="activity-row"><div class="time-col">Jan 15, 8:20am</div><div><div class="act-name">Arrive OR Tambo International · Terminal B · Home</div><div class="act-note">25 days. An extraordinary journey. Welcome home.</div></div></div>
         </div>
-<div class="notice notice-accent">Intentionally over the R3,000 daily budget: it's the only real chance to see Abu Dhabi properly, so we've made the most of the 13hr 30min layover instead of sitting airside. Apply for the transit visa 2–4 weeks ahead of Jan 14 via etihad.visaonline.ae.</div>
-<div class="spend-table"><div class="spend-row"><span>LIRR x4 · Penn Station → Jamaica</span><span>~R600</span></div><div class="spend-row"><span>AirTrain x4 · Jamaica → JFK T4</span><span>~R638</span></div><div class="spend-row"><span>Etihad transit visa x4 · 48hr, single entry</span><span>~R1,540</span></div><div class="spend-row"><span>Taxis · mosque, Corniche, Qasr Al Watan, airport</span><span>~R1,200</span></div><div class="spend-row"><span>Lunch · Corniche waterfront</span><span>~R800</span></div><div class="spend-row"><span>Qasr Al Watan general admission x4</span><span>~R1,820</span></div><div class="spend-row"><span>Dinner · at the Palace</span><span>~R900</span></div><div class="spend-row total"><span>Total</span><span>~R7,498</span></div></div>
+<div class="notice notice-info">The confirmed Etihad schedule gives us a full final day in New York and a 6h 20m airside connection in Abu Dhabi. No transit visa or city excursion is needed.</div>
+<div class="spend-table"><div class="spend-row"><span>Final New York lunch</span><span>~R800</span></div><div class="spend-row"><span>LIRR x4 · Penn Station → Jamaica</span><span>~R600</span></div><div class="spend-row"><span>AirTrain x4 · Jamaica → JFK T4</span><span>~R638</span></div><div class="spend-row"><span>Airport meals</span><span>~R800</span></div><div class="spend-row total"><span>Total</span><span>~R2,838</span></div></div>
         <div class="day-total-bar">
-          <div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div>
-          <div class="total-amount">~R7,498</div>
+          <div class="budget-track"><div class="budget-fill ok" style="width:82%"></div></div>
+          <div class="total-amount">~R2,838</div>
         </div>
       </div>
     </div></div><div class="leg-panel" id="panel-budget"><div class="summary-section">
@@ -941,8 +1023,8 @@
     <tr><td>EY 748 · OR Tambo → Abu Dhabi · Dec 21</td><td>R15,349 (R3,837pp)</td></tr>
     <tr><td>EY 1 · Abu Dhabi → JFK · Dec 22</td><td>R15,349 (R3,837pp)</td></tr>
     <tr><td>AA 503 · LGA → FLL · Dec 24 (Main Plus)</td><td>Included in flights</td></tr>
-    <tr><td>AA 1717 · FLL → LGA · Jan 10</td><td>Included in flights</td></tr>
-    <tr><td>EY 2 · JFK → Abu Dhabi · Jan 13</td><td>R15,349 (R3,837pp)</td></tr>
+    <tr><td>AA 2896 · FLL → LGA · Jan 10</td><td>Included in flights</td></tr>
+    <tr><td>EY 4 · JFK → Abu Dhabi · Jan 13</td><td>R15,349 (R3,837pp)</td></tr>
     <tr><td>EY 747 · Abu Dhabi → OR Tambo · Jan 15</td><td>R15,349 (R3,837pp)</td></tr>
     <tr><td>Blacklane SUV · JFK T4 → Arlo SoHo · Dec 22</td><td>R3,640 (~$200)</td></tr>
     <tr><td>Blacklane · Arlo SoHo → LGA · Dec 24</td><td>R1,819 (~$99.97)</td></tr>
@@ -974,7 +1056,6 @@
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Broadway show · TKTS app · check availability Jan 10 (Sun) and Jan 12 (Tue)</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Blacklane · confirm Terminal 4 for Dec 22 JFK pickup and verify booking details</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Download MTA TrainTime app · buy LIRR tickets for Jan 13 departure (Penn → Jamaica)</span></li>
-    <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Etihad transit visa x4 (48hr, single entry) · etihad.visaonline.ae · apply mid-to-late Dec so it's valid for Jan 14 entry</span></li>
   </ul>
 </div></div></main>
 <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
@@ -1001,7 +1082,149 @@
     <div class="modal-note">Blacklane booked · Terminal 4 confirmed · pickup ~10:30am</div>
   </div>
 </div>
+
+<div class="modal-overlay" id="flight-modal" role="dialog" aria-modal="true" aria-labelledby="flight-modal-title" onclick="closeFlightDetails(event)">
+  <div class="modal-box flight-modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close flight-modal-close" type="button" aria-label="Close flight details" onclick="closeFlightDetails()">✕</button>
+    <div class="boarding-pass">
+      <div class="flight-main">
+        <div class="flight-kicker">
+          <span class="flight-airline"><span class="flight-logo-wrap"><img class="flight-airline-logo" id="flight-logo" src="" alt=""></span><span id="flight-airline"></span></span>
+          <span>Boarding pass</span>
+        </div>
+        <div class="flight-route">
+          <div class="flight-stop">
+            <div class="flight-code" id="flight-from"></div>
+            <div class="flight-time" id="flight-departure"></div>
+            <div class="flight-city" id="flight-from-city"></div>
+            <div class="flight-terminal" id="flight-from-terminal"></div>
+          </div>
+          <div class="flight-path" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16Z"/></svg>
+          </div>
+          <div class="flight-stop">
+            <div class="flight-code" id="flight-to"></div>
+            <div class="flight-time" id="flight-arrival"></div>
+            <div class="flight-city" id="flight-to-city"></div>
+            <div class="flight-terminal" id="flight-to-terminal"></div>
+          </div>
+        </div>
+        <div class="flight-meta">
+          <div><div class="flight-label">Date</div><div class="flight-value" id="flight-date"></div></div>
+          <div><div class="flight-label">Duration</div><div class="flight-value" id="flight-duration"></div></div>
+          <div><div class="flight-label">Aircraft</div><div class="flight-value" id="flight-aircraft"></div></div>
+          <div><div class="flight-label">Cabin</div><div class="flight-value" id="flight-cabin"></div></div>
+        </div>
+        <div class="flight-seats">
+          <div class="flight-seats-heading"><div class="flight-label">Assigned seats</div><div class="flight-seats-note" id="flight-seats-note"></div></div>
+          <div class="flight-seat-grid" id="flight-seat-grid"></div>
+        </div>
+      </div>
+      <div class="flight-stub">
+        <div>
+          <div class="flight-label">Flight</div>
+          <div class="flight-stub-route" id="flight-modal-title"></div>
+          <div class="flight-stub-number" id="flight-number"></div>
+        </div>
+        <div class="flight-status">Confirmed</div>
+        <div>
+          <div class="flight-barcode" aria-hidden="true"></div>
+          <div class="flight-family">Phalatse family · 4 travellers</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
+  const TRAVELLERS = [
+    {name:'Ramo',seats:{EY748:'23K',EY1:'25A',EY4:'18K',EY747:'23A'}},
+    {name:'Fez',seats:{EY748:'23J',EY1:'25B',EY4:'18J',EY747:'23B'}},
+    {name:'Tshiamo',seats:{EY748:'24K',EY1:'26A',EY4:'25J',EY747:'24B'}},
+    {name:'Unam',seats:{EY748:'24J',EY1:'26B',EY4:'25K',EY747:'24A'}}
+  ];
+  const FLIGHT_DETAILS = {
+    EY748:{airline:'Etihad Airways',logo:'assets/nyc-miami-2026/etihad-airways-logo.svg',number:'EY 748',from:'JNB',fromCity:'Johannesburg',fromTerminal:'Terminal B',to:'AUH',toCity:'Abu Dhabi',toTerminal:'Terminal A',date:'21 Dec 2026',departure:'09:50',arrival:'19:45',duration:'7h 55m',aircraft:'Boeing 787-9',cabin:'Economy Deluxe'},
+    EY1:{airline:'Etihad Airways',logo:'assets/nyc-miami-2026/etihad-airways-logo.svg',number:'EY 1',from:'AUH',fromCity:'Abu Dhabi',fromTerminal:'Terminal A',to:'JFK',toCity:'New York',toTerminal:'Terminal 4',date:'22 Dec 2026',departure:'02:35',arrival:'08:00',duration:'14h 25m',aircraft:'Airbus A350-1000',cabin:'Economy Deluxe'},
+    AA503:{airline:'American Airlines',logo:'assets/nyc-miami-2026/american-airlines-logo.svg',logoDark:'assets/nyc-miami-2026/american-airlines-logo-dark.svg',number:'AA 503',from:'LGA',fromCity:'New York',fromTerminal:'',to:'FLL',toCity:'Fort Lauderdale',toTerminal:'',date:'24 Dec 2026',departure:'13:35',arrival:'16:51',duration:'3h 16m',aircraft:'Boeing 737',cabin:'Main Plus'},
+    AA2896:{airline:'American Airlines',logo:'assets/nyc-miami-2026/american-airlines-logo.svg',logoDark:'assets/nyc-miami-2026/american-airlines-logo-dark.svg',number:'AA 2896',from:'FLL',fromCity:'Fort Lauderdale',fromTerminal:'',to:'LGA',toCity:'New York',toTerminal:'',date:'10 Jan 2027',departure:'12:05',arrival:'15:00',duration:'2h 55m',aircraft:'Boeing 737',cabin:'Main Plus'},
+    EY4:{airline:'Etihad Airways',logo:'assets/nyc-miami-2026/etihad-airways-logo.svg',number:'EY 4',from:'JFK',fromCity:'New York',fromTerminal:'Terminal 4',to:'AUH',toCity:'Abu Dhabi',toTerminal:'Terminal A',date:'13 Jan 2027',departure:'22:00',arrival:'19:40 (+1 day)',duration:'12h 40m',aircraft:'Boeing 787-9',cabin:'Economy Deluxe'},
+    EY747:{airline:'Etihad Airways',logo:'assets/nyc-miami-2026/etihad-airways-logo.svg',number:'EY 747',from:'AUH',fromCity:'Abu Dhabi',fromTerminal:'Terminal A',to:'JNB',toCity:'Johannesburg',toTerminal:'Terminal B',date:'15 Jan 2027',departure:'02:00',arrival:'08:20',duration:'8h 20m',aircraft:'Boeing 787-9',cabin:'Economy Deluxe'}
+  };
+  let flightTriggerToRestore = null;
+  function flightKeyFromText(text) {
+    const match = text.match(/\b(EY|AA)\s*(\d{1,4})\b/i);
+    return match ? (match[1] + match[2]).toUpperCase() : null;
+  }
+  function initFlightDetails() {
+    document.querySelectorAll('.activity-row').forEach(row => {
+      const name = row.querySelector('.act-name');
+      if (!name || !/\b(departs|depart)\b/i.test(name.textContent)) return;
+      const key = flightKeyFromText(name.textContent);
+      if (!key || !FLIGHT_DETAILS[key] || row.querySelector('.flight-trigger')) return;
+      const details = name.parentElement;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'flight-trigger';
+      button.dataset.flight = key;
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16Z"/></svg><span>View flight details</span>';
+      button.addEventListener('click', () => openFlightDetails(key, button));
+      details.appendChild(button);
+    });
+  }
+  function openFlightDetails(key, trigger) {
+    const flight = FLIGHT_DETAILS[key];
+    if (!flight) return;
+    const fields = {
+      'flight-airline':flight.airline,'flight-from':flight.from,'flight-from-city':flight.fromCity,
+      'flight-from-terminal':flight.fromTerminal,'flight-to':flight.to,'flight-to-city':flight.toCity,
+      'flight-to-terminal':flight.toTerminal,'flight-departure':flight.departure,
+      'flight-arrival':flight.arrival,'flight-date':flight.date,'flight-duration':flight.duration,
+      'flight-aircraft':flight.aircraft,'flight-cabin':flight.cabin,'flight-modal-title':flight.from + ' → ' + flight.to,
+      'flight-number':flight.number
+    };
+    Object.entries(fields).forEach(([id,value]) => { document.getElementById(id).textContent = value; });
+    const logo = document.getElementById('flight-logo');
+    logo.dataset.logoLight = flight.logo;
+    logo.dataset.logoDark = flight.logoDark || flight.logo;
+    logo.alt = flight.airline + ' logo';
+    applyFlightLogo();
+    const assigned = TRAVELLERS.map(traveller => ({name:traveller.name,seat:traveller.seats[key]})).filter(item => item.seat);
+    const seatGrid = document.getElementById('flight-seat-grid');
+    seatGrid.replaceChildren();
+    document.getElementById('flight-seats-note').textContent = assigned.length ? assigned.length + ' travellers' : '';
+    if (assigned.length) {
+      assigned.forEach(item => {
+        const seat = document.createElement('div');
+        seat.className = 'flight-seat';
+        const name = document.createElement('span');
+        name.className = 'flight-seat-name';
+        name.textContent = item.name;
+        const number = document.createElement('span');
+        number.className = 'flight-seat-number';
+        number.textContent = item.seat;
+        seat.append(name, number);
+        seatGrid.appendChild(seat);
+      });
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'flight-seat-empty';
+      empty.textContent = 'Seat assignments were not included in the supplied booking details.';
+      seatGrid.appendChild(empty);
+    }
+    flightTriggerToRestore = trigger || null;
+    document.getElementById('flight-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.querySelector('.flight-modal-close').focus();
+  }
+  function closeFlightDetails(event) {
+    const modal = document.getElementById('flight-modal');
+    if (event && event.target !== modal) return;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    if (flightTriggerToRestore) flightTriggerToRestore.focus();
+    flightTriggerToRestore = null;
+  }
   function openLightboxFromBg(el,cap){var m=el.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);if(m)openLightbox(m[1],cap);}
   document.querySelectorAll('[data-dedup]').forEach(function(img){img.src=document.getElementById(img.dataset.dedup).src;});
   function showLeg(id, btn) {
@@ -1077,6 +1300,8 @@
       document.getElementById('lightbox').classList.remove('open');
       document.body.style.overflow = '';
       document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+      if (flightTriggerToRestore) flightTriggerToRestore.focus();
+      flightTriggerToRestore = null;
     }
   });
   (function initTheme() {
@@ -1084,8 +1309,15 @@
     const stored = localStorage.getItem('theme');
     applyTheme(stored ? stored === 'dark' : systemDark, false);
   })();
+  function applyFlightLogo() {
+    const logo = document.getElementById('flight-logo');
+    if (!logo || !logo.dataset.logoLight) return;
+    const dark = document.documentElement.dataset.theme === 'dark';
+    logo.src = dark ? logo.dataset.logoDark : logo.dataset.logoLight;
+  }
   function applyTheme(dark, save) {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    applyFlightLogo();
     const track = document.getElementById('toggle-track');
     const sun = document.getElementById('icon-sun');
     const moon = document.getElementById('icon-moon');
@@ -1096,6 +1328,48 @@
   function toggleTheme() {
     applyTheme(document.documentElement.dataset.theme !== 'dark', true);
   }
+
+  /* TRIPADVISOR RATINGS */
+  const TRIPADVISOR = {
+    'arlo-soho':{name:'Arlo SoHo',score:4.7,reviews:4107,rank:'#18 of 526 hotels in New York City',url:'https://www.tripadvisor.com/Hotel_Review-g60763-d7891458-Reviews-Arlo_Soho-New_York_City_New_York.html'},
+    'row-nyc':{name:'Row NYC',score:3.0,reviews:26308,rank:'#423 of 507 hotels in New York City',url:'https://www.tripadvisor.com/Hotel_Review-g60763-d1938661-Reviews-Row_Nyc-New_York_City_New_York.html'},
+    'carbone':{name:'Carbone',score:4.0,reviews:527,rank:'#872 of 9,077 restaurants in New York City',url:'https://www.tripadvisor.com/Restaurant_Review-g60763-d3958626-Reviews-Carbone-New_York_City_New_York.html'},
+    'balthazar':{name:'Balthazar',score:4.3,reviews:6679,rank:'#429 of 9,117 restaurants in New York City',url:'https://www.tripadvisor.com/Restaurant_Review-g60763-d423353-Reviews-Balthazar-New_York_City_New_York.html'},
+    'nobu-57':{name:'Nobu Fifty Seven',score:4.3,reviews:1964,rank:'#335 of 9,117 restaurants in New York City',url:'https://www.tripadvisor.com/Restaurant_Review-g60763-d590535-Reviews-Nobu_Fifty_Seven-New_York_City_New_York.html'}
+  };
+  let bubbleSeq = 0;
+  function ratingBubbles(score) {
+    const uid = 'tab' + (bubbleSeq++);
+    let defs = '', marks = '';
+    for (let i = 0; i < 5; i++) {
+      const frac = Math.min(1, Math.max(0, score - i));
+      const cx = 9 + i * 21;
+      marks += '<circle cx="' + cx + '" cy="9" r="7.75" fill="none" stroke="#00AA6C" stroke-width="2.5"/>';
+      if (frac > 0) {
+        defs += '<clipPath id="' + uid + '-' + i + '"><rect x="' + (cx - 9) + '" y="0" width="' + (18 * frac) + '" height="18"/></clipPath>';
+        marks += '<circle cx="' + cx + '" cy="9" r="9" fill="#00AA6C" clip-path="url(#' + uid + '-' + i + ')"/>';
+      }
+    }
+    return '<svg class="ta-bubbles" viewBox="0 0 102 18" role="img" aria-label="' + score + ' out of 5 bubbles on Tripadvisor"><defs>' + defs + '</defs>' + marks + '</svg>';
+  }
+  function ratingPill(data, withName) {
+    return '<span class="ta-pill">'
+      + (withName && data.name ? '<span class="ta-name">' + data.name + '</span>' : '')
+      + '<span class="ta-score">' + data.score.toFixed(1) + '</span>'
+      + ratingBubbles(data.score)
+      + '<a class="ta-reviews" href="' + data.url + '" target="_blank" rel="noopener noreferrer">('
+      + data.reviews.toLocaleString('en-GB') + ' reviews)</a></span>';
+  }
+  function renderRatings() {
+    document.querySelectorAll('[data-ta]').forEach(el => {
+      const withName = el.hasAttribute('data-ta-name');
+      const entries = el.dataset.ta.split(',').map(k => TRIPADVISOR[k.trim()]).filter(d => d && d.score != null);
+      if (!entries.length) return;
+      el.innerHTML = entries.map(d => ratingPill(d, withName)).join('')
+        + (entries.length === 1 && entries[0].rank ? '<span class="ta-rank">' + entries[0].rank + '</span>' : '');
+    });
+  }
+  renderRatings();
 
   /* EDIT MODE */
   const EDIT_MODE_KEY = 'trip-itinerary-edit-mode';
@@ -1310,11 +1584,11 @@
   function addDurationLabels() {
     document.querySelectorAll('.activities').forEach(container => {
       const rows = Array.from(container.querySelectorAll(':scope > .activity-row'));
-      let lastDateKey = null, lastDayIdx = 0, lastTotal = null, seenAny = false;
+      let lastDateKey = null, lastDayIdx = 0, lastTotal = null, lastRow = null, seenAny = false;
       rows.forEach(row => {
         const timeEl = row.querySelector('.time-col');
         const parsed = timeEl ? parseActivityTime(timeEl.textContent) : null;
-        if (!parsed) { lastTotal = null; return; }
+        if (!parsed) { lastTotal = null; lastRow = null; return; }
         let dayIdx;
         if (!seenAny) {
           dayIdx = 0;
@@ -1329,7 +1603,10 @@
         lastDayIdx = dayIdx;
         const total = dayIdx * 1440 + parsed.minutes;
         if (lastTotal !== null && total > lastTotal) {
-          const dur = formatDuration(total - lastTotal);
+          const previousName = lastRow && lastRow.querySelector('.act-name');
+          const previousFlightKey = previousName && /\b(departs|depart)\b/i.test(previousName.textContent) ? flightKeyFromText(previousName.textContent) : null;
+          const flightDuration = previousFlightKey && FLIGHT_DETAILS[previousFlightKey] ? FLIGHT_DETAILS[previousFlightKey].duration.replace('h', ' hr').replace('m', ' min') : null;
+          const dur = flightDuration || formatDuration(total - lastTotal);
           if (dur) {
             const div = document.createElement('div');
             div.className = 'duration-label';
@@ -1340,10 +1617,12 @@
           }
         }
         lastTotal = total;
+        lastRow = row;
       });
     });
   }
   (async function initEditSystem() {
+    initFlightDetails();
     ensureImageDropZones();
     tagEditableElements();
     await applySavedEdits();
