@@ -103,7 +103,7 @@
   .nav-wrapper{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 1rem;}
   .nav-tabs{display:flex;max-width:900px;margin:0 auto;overflow-x:auto;scrollbar-width:none;}
   /* Anchored to the sticky nav's right gutter, matching where .header-toolbar
-     sits in the masthead, so the chips appear to stay put as the masthead
+     sits in the masthead, so the desktop controls appear to stay put as the masthead
      leaves. visibility is transitioned with a delay rather than toggled so the
      chips are not tabbable while faded out. */
   .nav-toolbar{position:absolute;top:50%;right:1.25rem;display:flex;align-items:center;gap:12px;z-index:2;
@@ -167,6 +167,19 @@
   .day-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;}
   .day-title{font-family:var(--serif);font-size:17px;font-weight:700;letter-spacing:-0.03em;color:var(--text);line-height:1.3;}
   .day-card-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;padding-top:2px;}
+  /* The two supplied festive illustrations become a shallow, cropped art band
+     above their card copy. This keeps the occasion readable at every width,
+     rather than treating the entire card header as a background photograph. */
+  .day-card-header--festive{position:relative;isolation:isolate;padding-top:6.9rem;min-height:158px;overflow:hidden;}
+  .festive-header-art{position:absolute;inset:0 0 auto;width:100%;height:102px;object-fit:cover;pointer-events:none;user-select:none;z-index:-1;opacity:0.9;}
+  .day-card-header--festive > :not(.festive-header-art){position:relative;}
+  .day-card-header--festive .day-card-header-right{align-self:flex-end;}
+  .day-card-header--birthday .festive-header-art{object-position:center top;}
+  .day-card-header--nye{padding-top:12.25rem;min-height:236px;}
+  .day-card-header--nye .festive-header-art{height:190px;object-position:center 50%;}
+  :root[data-theme="dark"] .festive-header-art{opacity:0.7;}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .festive-header-art{opacity:0.7;}}
+  @media(max-width:560px){.day-card-header--festive{padding-top:6rem;min-height:145px;}.festive-header-art{height:88px;}.day-card-header--nye{padding-top:10.5rem;min-height:202px;}.day-card-header--nye .festive-header-art{height:156px;}}
   .chevron{width:18px;height:18px;color:var(--text3);transition:transform 0.3s var(--ease-pop);flex-shrink:0;}
   .day-card.open .chevron{transform:rotate(180deg);}
 
@@ -628,9 +641,9 @@
     <button class="nav-tab" onclick="showLeg('nyc2',this)"><span class="tab-emoji">🗽</span>New York 2</button>
     <button class="nav-tab" onclick="showLeg('budget',this)"><span class="tab-emoji">💰</span>Budget</button>
   </div>
-  <!-- The masthead toolbar's chips relocate here once the masthead scrolls
-       away. Deliberately empty in the source: the chips are moved, never
-       duplicated, so their ids, listeners and .active state stay intact. -->
+  <!-- The masthead toolbar's desktop controls relocate here once the masthead
+       scrolls away. Deliberately empty in the source: the nodes are moved,
+       never duplicated, so their ids, listeners and state stay intact. -->
   <div class="nav-toolbar" id="nav-toolbar"></div>
 </nav>
 <main class="main">
@@ -658,7 +671,8 @@
       </div>
     </div>
     <div class="day-card" data-day-key="d2">
-      <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header day-card-header--festive day-card-header--birthday" onclick="toggleCard(this)">
+        <img class="festive-header-art" src="assets/nyc-miami-2026/header-birthday-balloons.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
           <div class="day-label">Tue, Dec 22 · Day 2 : Birthday</div>
           <div class="day-title">Arrival · SoHo Walking Tour · Nammies' 18th Birthday Celebration</div>
@@ -855,7 +869,8 @@
       </div>
     </div>
     <div class="day-card" data-day-key="d10">
-      <div class="day-card-header" onclick="toggleCard(this)">
+      <div class="day-card-header day-card-header--festive day-card-header--nye" onclick="toggleCard(this)">
+        <img class="festive-header-art" src="assets/nyc-miami-2026/header-christmas-garland.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Dec 31 · Day 11 : New Year's Eve</div>
           <div class="day-title">Countdown Miami · Bayfront Park · Fireworks over Biscayne Bay</div>
@@ -1502,29 +1517,29 @@
     activeDayCards().forEach(c => c.classList.remove('open'));
     updateExpandAllControl();
   }
-  /* The chips live in the masthead toolbar, which scrolls away. Rather than
-     duplicating them into the sticky nav — two #edit-toggle-btn ids, two
-     .active states to keep in step — the same nodes are moved between the two
+  /* The desktop controls live in the masthead toolbar, which scrolls away.
+     Rather than duplicating them into the sticky nav — including a second
+     theme switch and edit button — the same nodes move between the two
      toolbars, so their listeners and state travel with them. */
   function initNavToolbar() {
     const header = document.querySelector('.site-header');
     const home = document.querySelector('.header-toolbar');
     const dock = document.getElementById('nav-toolbar');
     if (!header || !home || !dock) return;
-    const chips = Array.from(home.querySelectorAll('.chip-btn'));
-    if (!chips.length) return;
+    const controls = Array.from(home.querySelectorAll('.chip-btn,.theme-toggle'));
+    if (!controls.length) return;
     let docked = false, settle = null;
 
-    function dockChips() {
+    function dockControls() {
       if (docked) return;
       docked = true;
       clearTimeout(settle);
-      chips.forEach(c => dock.appendChild(c));
+      controls.forEach(c => dock.appendChild(c));
       // Commit the move in its own frame: setting the class in the same frame
       // lets the browser coalesce both, and nothing animates.
       requestAnimationFrame(() => { if (docked) dock.dataset.show = '1'; });
     }
-    function undockChips() {
+    function undockControls() {
       if (!docked) return;
       docked = false;
       dock.dataset.show = '0';
@@ -1532,13 +1547,12 @@
       // Return them only once faded out, so the move itself is never seen.
       settle = setTimeout(() => {
         if (docked) return;
-        const anchor = home.querySelector('.theme-toggle');
-        chips.forEach(c => anchor ? home.insertBefore(c, anchor) : home.appendChild(c));
+        controls.forEach(c => home.appendChild(c));
       }, 300);
     }
 
     new IntersectionObserver(entries => {
-      entries[0].isIntersecting ? undockChips() : dockChips();
+      entries[0].isIntersecting ? undockControls() : dockControls();
       // The masthead counts as gone once it is behind the sticky nav, not once
       // it clears the viewport, so the handover happens where the eye expects.
     }, { rootMargin: '-48px 0px 0px 0px' }).observe(header);
@@ -2366,8 +2380,7 @@
     const exportDock = clone.querySelector('#nav-toolbar');
     const exportHome = clone.querySelector('.header-toolbar');
     if (exportDock && exportHome) {
-      const anchor = exportHome.querySelector('.theme-toggle');
-      exportDock.querySelectorAll('.chip-btn').forEach(c => anchor ? exportHome.insertBefore(c, anchor) : exportHome.appendChild(c));
+      exportDock.querySelectorAll('.chip-btn,.theme-toggle').forEach(c => exportHome.appendChild(c));
       exportDock.removeAttribute('data-show');
     }
     clone.querySelectorAll('.spend-remove,.spend-add').forEach(el => el.remove());
