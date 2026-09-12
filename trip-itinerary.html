@@ -198,7 +198,7 @@
   .activities{padding:0 1.25rem 1rem;border-top:1px solid var(--border);}
 
   /* ACTIVITY ROWS */
-  .activity-row{display:grid;grid-template-columns:56px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+  .activity-row{position:relative;display:grid;grid-template-columns:56px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
   .activity-row:last-of-type{border-bottom:none;}
   .activity-row.has-thumb{grid-template-columns:56px 1fr 190px;}
   .duration-label{position:relative;height:0;}
@@ -219,6 +219,8 @@
   .act-note-remove:hover{color:#fda4af;}
   .act-note-add{margin-top:4px;font-size:11px;color:var(--accent);}
   .act-note-add:hover{text-decoration:underline;}
+  .activity-row-delete{display:none;position:absolute;right:6px;bottom:6px;z-index:3;align-items:center;justify-content:center;height:24px;padding:0 8px;border:1px solid rgba(190,24,60,0.5);border-radius:999px;background:var(--card);color:#fb7185;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;}
+  .activity-row-delete:hover{background:#be123c;color:#fff;border-color:#be123c;}
   .excursion-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--teal-bg);color:var(--teal-text);margin-top:3px;}
   .act-thumb{width:190px;height:132px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;}
   .act-thumb:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(0,0,0,0.18);}
@@ -417,6 +419,7 @@
   :root[data-edit="on"] .act-thumb-wrap .act-thumb-remove,
   :root[data-edit="on"] .act-thumb-slot.filled .act-thumb-remove{display:flex;}
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
+  :root[data-edit="on"] .activity-row-delete{display:flex;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
   :root[data-edit="on"] [data-note-edit]:hover{background:var(--accent-bg);}
   :root[data-edit="on"] [data-note-edit]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
@@ -1855,6 +1858,44 @@
       wrap.appendChild(makeThumbRemoveButton());
     });
   }
+  /* ── REMOVING AN ACTIVITY ───────────────────────────────────────────────
+     Activity edits use stable row keys, not document positions. A deletion is
+     therefore a small tombstone record rather than a DOM-only change: later
+     text/image edits retain their original keys and cannot be repointed. */
+  const ACTIVITY_ROW_PREFIX = 'activity-row:';
+  function refreshDurationLabels() {
+    document.querySelectorAll('.activities > .duration-label').forEach(label => label.remove());
+    addDurationLabels();
+  }
+  async function onActivityRowDeleteClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (document.documentElement.dataset.edit !== 'on') return;
+    const button = e.currentTarget;
+    const row = button.closest('.activity-row');
+    if (!row || button.disabled) return;
+    const name = row.querySelector('.act-name');
+    const label = name ? name.textContent.trim() : 'this activity';
+    if (!window.confirm('Delete “' + label + '”? This cannot be undone from the itinerary.')) return;
+    button.disabled = true;
+    const saved = await saveEdit(ACTIVITY_ROW_PREFIX + rowKey(row), 'activity-row-deleted', '1');
+    if (!saved) { button.disabled = false; return; }
+    row.remove();
+    refreshDurationLabels();
+  }
+  function decorateActivityRows() {
+    document.querySelectorAll('.activity-row').forEach(row => {
+      if (row.querySelector(':scope > .activity-row-delete')) return;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'activity-row-delete';
+      button.title = 'Delete activity row';
+      button.setAttribute('aria-label', 'Delete activity row');
+      button.textContent = 'Delete';
+      button.addEventListener('click', onActivityRowDeleteClick);
+      row.appendChild(button);
+    });
+  }
   /* ── DAY BUDGET TABLES ──────────────────────────────────────────────────
      Each day card's spend table becomes editable in edit mode: row labels and
      amounts are contenteditable, rows can be added and removed, and the total
@@ -2241,8 +2282,18 @@
   }
   async function applySavedEdits() {
     const store = await fetchEditStore();
+    // Remove activities first so a tombstone always wins over older field-level
+    // edits that may still be present for the same row.
     Object.keys(store).forEach(eid => {
       const entry = store[eid];
+      if (eid.indexOf(ACTIVITY_ROW_PREFIX) !== 0 || entry.type !== 'activity-row-deleted') return;
+      const key = eid.slice(ACTIVITY_ROW_PREFIX.length);
+      const row = Array.from(document.querySelectorAll('.activity-row')).find(r => rowKey(r) === key);
+      if (row) row.remove();
+    });
+    Object.keys(store).forEach(eid => {
+      const entry = store[eid];
+      if (eid.indexOf(ACTIVITY_ROW_PREFIX) === 0) return;
       // Day budget tables are keyed by day card, not by positional eid.
       if (eid.indexOf(SPEND_PREFIX) === 0) {
         const card = document.querySelector('.day-card[data-day-key="' + eid.slice(SPEND_PREFIX.length) + '"]');
@@ -2357,6 +2408,7 @@
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
     clone.querySelectorAll('.act-thumb-remove').forEach(el => el.remove());
+    clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
       const img = wrap.querySelector('img.act-thumb');
       if (img) wrap.replaceWith(img); else wrap.remove();
@@ -2482,6 +2534,7 @@
     initNavToolbar();
     await applySavedEdits();
     wrapStaticThumbs();
+    decorateActivityRows();
     decorateNotes();
     wireNotes();
     document.addEventListener('blur', handleEditableBlur, true);
@@ -2492,7 +2545,7 @@
     updateExpandAllControl();
   })();
 </script>
-<div class="edit-badge">Edit mode · click text to edit, drag images to replace, × to remove</div>
+<div class="edit-badge">Edit mode · click text to edit, drag images to replace, Delete to remove an activity</div>
 <button class="edit-export" onclick="exportItinerary()">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
   Export edited HTML
