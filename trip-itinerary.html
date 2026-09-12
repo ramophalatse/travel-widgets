@@ -102,6 +102,19 @@
   /* NAV */
   .nav-wrapper{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 1rem;}
   .nav-tabs{display:flex;max-width:900px;margin:0 auto;overflow-x:auto;scrollbar-width:none;}
+  /* Anchored to the sticky nav's right gutter, matching where .header-toolbar
+     sits in the masthead, so the chips appear to stay put as the masthead
+     leaves. visibility is transitioned with a delay rather than toggled so the
+     chips are not tabbable while faded out. */
+  .nav-toolbar{position:absolute;top:50%;right:1.25rem;display:flex;align-items:center;gap:12px;z-index:2;
+    opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-50%) translateX(6px);
+    transition:opacity 0.26s ease,transform 0.26s ease,visibility 0s linear 0.26s;}
+  .nav-toolbar[data-show="1"]{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(-50%);
+    transition:opacity 0.26s ease,transform 0.26s ease,visibility 0s;}
+  /* Narrow windows have no gutter to sit in, and coarse pointers reach these
+     same actions through the edge drawer, which is why .header-toolbar hides
+     there too. */
+  @media (max-width:900px){.nav-toolbar{display:none;}}
   .nav-tabs::-webkit-scrollbar{display:none;}
   .nav-tab{flex-shrink:0;padding:14px 18px;font-size:13px;font-weight:500;font-family:var(--sans);color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color 0.2s,border-color 0.2s;white-space:nowrap;}
   .nav-tab:hover{color:var(--text);}
@@ -451,7 +464,7 @@
   #edge-drawer{display:none;}
   @media (pointer:coarse){
     #edge-drawer{display:block;}
-    .header-toolbar{display:none;}
+    .header-toolbar,.nav-toolbar{display:none;}
   }
   /* Every visual layer renders around the same centre: true screen-centre
      nudged up to sit flush with the physical camera cutout (measured
@@ -615,6 +628,10 @@
     <button class="nav-tab" onclick="showLeg('nyc2',this)"><span class="tab-emoji">🗽</span>New York 2</button>
     <button class="nav-tab" onclick="showLeg('budget',this)"><span class="tab-emoji">💰</span>Budget</button>
   </div>
+  <!-- The masthead toolbar's chips relocate here once the masthead scrolls
+       away. Deliberately empty in the source: the chips are moved, never
+       duplicated, so their ids, listeners and .active state stay intact. -->
+  <div class="nav-toolbar" id="nav-toolbar"></div>
 </nav>
 <main class="main">
 <div class="leg-panel active" id="panel-nyc1"><div class="leg-hero" style="background-image:url('https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/hero-nyc1.jpg')" onclick="openLightboxFromBg(this,'New York City')"><div class="ghost-title">New York City</div>
@@ -1485,6 +1502,47 @@
     activeDayCards().forEach(c => c.classList.remove('open'));
     updateExpandAllControl();
   }
+  /* The chips live in the masthead toolbar, which scrolls away. Rather than
+     duplicating them into the sticky nav — two #edit-toggle-btn ids, two
+     .active states to keep in step — the same nodes are moved between the two
+     toolbars, so their listeners and state travel with them. */
+  function initNavToolbar() {
+    const header = document.querySelector('.site-header');
+    const home = document.querySelector('.header-toolbar');
+    const dock = document.getElementById('nav-toolbar');
+    if (!header || !home || !dock) return;
+    const chips = Array.from(home.querySelectorAll('.chip-btn'));
+    if (!chips.length) return;
+    let docked = false, settle = null;
+
+    function dockChips() {
+      if (docked) return;
+      docked = true;
+      clearTimeout(settle);
+      chips.forEach(c => dock.appendChild(c));
+      // Commit the move in its own frame: setting the class in the same frame
+      // lets the browser coalesce both, and nothing animates.
+      requestAnimationFrame(() => { if (docked) dock.dataset.show = '1'; });
+    }
+    function undockChips() {
+      if (!docked) return;
+      docked = false;
+      dock.dataset.show = '0';
+      clearTimeout(settle);
+      // Return them only once faded out, so the move itself is never seen.
+      settle = setTimeout(() => {
+        if (docked) return;
+        const anchor = home.querySelector('.theme-toggle');
+        chips.forEach(c => anchor ? home.insertBefore(c, anchor) : home.appendChild(c));
+      }, 300);
+    }
+
+    new IntersectionObserver(entries => {
+      entries[0].isIntersecting ? undockChips() : dockChips();
+      // The masthead counts as gone once it is behind the sticky nav, not once
+      // it clears the viewport, so the handover happens where the eye expects.
+    }, { rootMargin: '-48px 0px 0px 0px' }).observe(header);
+  }
   function wireChipReveal(btn) {
     let touchPeek = false;
     btn.addEventListener('touchstart', () => {
@@ -2303,6 +2361,15 @@
     clone.querySelectorAll('[data-authored-name]').forEach(el => el.removeAttribute('data-authored-name'));
     const status = clone.querySelector('#save-status');
     if (status) status.remove();
+    // Exporting while scrolled would otherwise bake the chips into the nav,
+    // where the source never had them.
+    const exportDock = clone.querySelector('#nav-toolbar');
+    const exportHome = clone.querySelector('.header-toolbar');
+    if (exportDock && exportHome) {
+      const anchor = exportHome.querySelector('.theme-toggle');
+      exportDock.querySelectorAll('.chip-btn').forEach(c => anchor ? exportHome.insertBefore(c, anchor) : exportHome.appendChild(c));
+      exportDock.removeAttribute('data-show');
+    }
     clone.querySelectorAll('.spend-remove,.spend-add').forEach(el => el.remove());
     clone.querySelectorAll('.spend-table[data-empty="1"]').forEach(el => el.remove());
     clone.querySelectorAll('.spend-table').forEach(el => el.removeAttribute('data-empty'));
@@ -2393,6 +2460,10 @@
     ensureSpendTables();
     decorateSpendTables();
     wireSpendTables();
+    // Ahead of the await: the chips are authored markup and owe nothing to the
+    // store, and waiting on that fetch would leave an early scroll with no
+    // toolbar until every saved image had come down the wire.
+    initNavToolbar();
     await applySavedEdits();
     wrapStaticThumbs();
     decorateNotes();
