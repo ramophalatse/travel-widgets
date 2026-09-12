@@ -284,6 +284,20 @@
   .summary-table tr.total td{border-bottom:none;color:var(--text);font-weight:500;font-size:14px;border-top:2px solid var(--border2);}
   .summary-table tr.deduction td{color:var(--teal-text);}
   .summary-table tr.deduction td:last-child{color:var(--teal-text);}
+  .budget-remove,.budget-add{display:none;}
+  :root[data-edit="on"] .summary-table [data-budget-edit]{cursor:text;transition:background 0.15s;border-radius:4px;}
+  :root[data-edit="on"] .summary-table [data-budget-edit]:hover{background:var(--accent-bg);}
+  :root[data-edit="on"] .summary-table [data-budget-edit]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
+  :root[data-edit="on"] .budget-remove{display:inline-flex;align-items:center;justify-content:center;float:right;
+    width:18px;height:18px;padding:0;margin:0 0 0 8px;border:0;border-radius:5px;background:transparent;
+    color:var(--text3);cursor:pointer;transition:background 0.15s,color 0.15s;}
+  :root[data-edit="on"] .budget-remove:hover{background:color-mix(in oklab,var(--red) 16%,transparent);color:var(--red);}
+  :root[data-edit="on"] .budget-remove svg{width:12px;height:12px;display:block;}
+  :root[data-edit="on"] .budget-add{display:flex;align-items:center;gap:6px;width:100%;padding:7px 1.25rem;
+    border:0;border-top:1px dashed var(--border2);background:transparent;font-family:var(--sans);font-size:12px;
+    color:var(--accent);cursor:pointer;text-align:left;transition:background 0.15s;}
+  :root[data-edit="on"] .budget-add:hover{background:var(--accent-bg);}
+  :root[data-edit="on"] .budget-add svg{width:12px;height:12px;}
   .booking-list{padding:0;list-style:none;}
   .booking-item{display:flex;align-items:flex-start;gap:10px;padding:10px 1.25rem;border-bottom:1px solid var(--border);font-size:13px;}
   .booking-item:last-child{border-bottom:none;}
@@ -1259,7 +1273,7 @@
       </div>
     </div></div><div class="leg-panel" id="panel-budget"><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Trip Cost Summary</div></div>
-  <table class="summary-table">
+  <table class="summary-table" data-budget-key="summary">
     <tr><td>✈️ Flights (4 passengers · all legs)</td><td>R104,333</td></tr>
     <tr><td>🏨 Accommodation (all stays)</td><td>R244,142</td></tr>
     <tr><td>🚢 NCL Free at Sea Plus (incl. gratuities)</td><td>R24,051</td></tr>
@@ -1273,7 +1287,7 @@
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Accommodation Breakdown</div></div>
-  <table class="summary-table">
+  <table class="summary-table" data-budget-key="accommodation">
     <tr><td>Arlo SoHo · Dec 22–24 (3 rooms, 2 nights)</td><td>R36,553</td></tr>
     <tr><td>Airbnb North Miami Beach · Dec 24 – Jan 3 (10 nights)</td><td>R55,817</td></tr>
     <tr><td>Norwegian Aqua · Jan 3–10 (3 cabins, 7 nights)</td><td>R113,752</td></tr>
@@ -1282,7 +1296,7 @@
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Flights & Transfers</div></div>
-  <table class="summary-table">
+  <table class="summary-table" data-budget-key="flights-transfers">
     <tr><td>EY 748 · OR Tambo → Abu Dhabi · Dec 21</td><td>R15,349 (R3,837pp)</td></tr>
     <tr><td>EY 1 · Abu Dhabi → JFK · Dec 22</td><td>R15,349 (R3,837pp)</td></tr>
     <tr><td>AA 503 · LGA → FLL · Dec 24 (Main Plus)</td><td>Included in flights</td></tr>
@@ -1296,7 +1310,7 @@
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Cruise Excursions (pre-paid via NCL)</div></div>
-  <table class="summary-table">
+  <table class="summary-table" data-budget-key="excursions">
     <tr><td>🇩🇴 Puerto Plata · Damajagua Waterfalls & Buggies ($190pp × 4)</td><td>~R3,570</td></tr>
     <tr><td>🇻🇬 Tortola · Best of Tortola & Beach (~$90pp × 4)</td><td>~R1,690</td></tr>
     <tr><td>🇧🇸 Great Stirrup Cay · Wave Runner Tour – 2 guests ($219)</td><td>~R4,110</td></tr>
@@ -2132,6 +2146,135 @@
       recalcSpendTable(cell.closest('.spend-table'), true);
     });
   }
+  /* ── TRIP BUDGET TABLES ─────────────────────────────────────────────────
+     The Budget tab uses the same whole-table persistence principle as daily
+     spend tables, but totals are calculated within each financial section.
+     Keeping these records separate means adding a line cannot disturb any
+     positional text-edit key elsewhere in the itinerary. */
+  const TRIP_BUDGET_PREFIX = 'trip-budget:';
+  function parseBudgetAmount(text) {
+    const match = String(text).match(/([−-])?\s*~?R\s?(\d[\d,]*(?:\.\d+)?)/i);
+    if (!match) return null;
+    const amount = parseFloat(match[2].replace(/,/g, ''));
+    if (isNaN(amount)) return null;
+    return match[1] ? -amount : amount;
+  }
+  function formatBudgetTotal(amount) {
+    const sign = amount < 0 ? '−' : '';
+    return sign + formatRand(Math.abs(amount));
+  }
+  function budgetRows(table) {
+    return Array.from(table.querySelectorAll('tr:not(.total)'));
+  }
+  function makeBudgetRemoveButton() {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'budget-remove';
+    btn.setAttribute('aria-label', 'Remove this budget line');
+    btn.title = 'Remove this budget line';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    return btn;
+  }
+  function makeBudgetRow(label, amount, deduction, isTotal) {
+    const row = document.createElement('tr');
+    if (deduction) row.classList.add('deduction');
+    if (isTotal) row.classList.add('total');
+    const labelCell = document.createElement('td');
+    labelCell.textContent = label;
+    labelCell.dataset.budgetEdit = '1';
+    const amountCell = document.createElement('td');
+    amountCell.textContent = amount;
+    amountCell.dataset.budgetAmount = '1';
+    if (!isTotal) amountCell.dataset.budgetEdit = '1';
+    if (!isTotal) amountCell.appendChild(makeBudgetRemoveButton());
+    row.append(labelCell, amountCell);
+    return row;
+  }
+  function recalcBudgetTable(table) {
+    let total = 0;
+    budgetRows(table).forEach(row => {
+      const amount = row.querySelector('[data-budget-amount]');
+      const parsed = amount && parseBudgetAmount(amount.textContent);
+      if (parsed !== null) total += parsed;
+    });
+    const totalCell = table.querySelector('tr.total [data-budget-amount]');
+    if (totalCell) totalCell.textContent = formatBudgetTotal(total);
+  }
+  function decorateBudgetTables() {
+    document.querySelectorAll('.summary-table[data-budget-key]').forEach(table => {
+      table.querySelectorAll('tr').forEach(row => {
+        const cells = row.querySelectorAll(':scope > td');
+        if (!cells.length) return;
+        cells[0].dataset.budgetEdit = '1';
+        if (cells[1]) {
+          cells[1].dataset.budgetAmount = '1';
+          if (!row.classList.contains('total')) cells[1].dataset.budgetEdit = '1';
+          if (!row.classList.contains('total') && !cells[1].querySelector('.budget-remove')) cells[1].appendChild(makeBudgetRemoveButton());
+        }
+      });
+      if (!table.parentElement.querySelector(':scope > .budget-add')) {
+        const add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'budget-add';
+        add.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add line';
+        table.after(add);
+      }
+      recalcBudgetTable(table);
+    });
+  }
+  function serializeBudgetTable(table) {
+    const totalLabel = table.querySelector('tr.total td:first-child');
+    return JSON.stringify({
+      rows: budgetRows(table).map(row => {
+        const cells = row.querySelectorAll(':scope > td');
+        return { label: cells[0] ? cells[0].textContent.trim() : '', amount: cells[1] ? cells[1].childNodes[0].textContent.trim() : '', deduction: row.classList.contains('deduction') };
+      }),
+      totalLabel: totalLabel ? totalLabel.textContent.trim() : 'Total'
+    });
+  }
+  function applyBudgetTable(table, json) {
+    let data;
+    try { data = JSON.parse(json); } catch (e) { return; }
+    if (!data || !Array.isArray(data.rows)) return;
+    const body = table.tBodies[0] || table;
+    body.replaceChildren();
+    data.rows.forEach(row => body.appendChild(makeBudgetRow(row.label, row.amount, Boolean(row.deduction), false)));
+    body.appendChild(makeBudgetRow(data.totalLabel || 'Total', '', false, true));
+    if (document.documentElement.dataset.edit === 'on') table.querySelectorAll('[data-budget-edit]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    recalcBudgetTable(table);
+  }
+  function saveBudgetTable(table) {
+    const key = table.dataset.budgetKey;
+    if (key) saveEdit(TRIP_BUDGET_PREFIX + key, 'trip-budget-table', serializeBudgetTable(table));
+  }
+  function wireBudgetTables() {
+    document.addEventListener('click', e => {
+      if (document.documentElement.dataset.edit !== 'on') return;
+      const remove = e.target.closest && e.target.closest('.budget-remove');
+      if (remove) {
+        const table = remove.closest('.summary-table');
+        remove.closest('tr').remove();
+        recalcBudgetTable(table); saveBudgetTable(table);
+        return;
+      }
+      const add = e.target.closest && e.target.closest('.budget-add');
+      if (!add) return;
+      const table = add.previousElementSibling;
+      if (!table || !table.matches('.summary-table[data-budget-key]')) return;
+      const total = table.querySelector('tr.total');
+      const row = makeBudgetRow('New line', 'R0', false, false);
+      (total ? total.before(row) : table.tBodies[0].appendChild(row));
+      row.querySelectorAll('[data-budget-edit]').forEach(el => el.setAttribute('contenteditable', 'true'));
+      recalcBudgetTable(table); saveBudgetTable(table);
+      const label = row.querySelector('td:first-child');
+      if (label) { label.focus(); document.getSelection().selectAllChildren(label); }
+    });
+    document.addEventListener('input', e => {
+      const cell = e.target.closest && e.target.closest('[data-budget-edit]');
+      const table = cell && cell.closest('.summary-table[data-budget-key]');
+      if (table) recalcBudgetTable(table);
+    });
+  }
   /* ── PER-ROW NOTE ROWS ──────────────────────────────────────────────────
      Notes are user-insertable, so they deliberately stay out of the keyed
      element scheme entirely: a row's notes are one JSON array stored under
@@ -2339,6 +2482,11 @@
         if (table) applySpendTable(table, entry.value);
         return;
       }
+      if (eid.indexOf(TRIP_BUDGET_PREFIX) === 0) {
+        const table = document.querySelector('.summary-table[data-budget-key="' + eid.slice(TRIP_BUDGET_PREFIX.length) + '"]');
+        if (table) applyBudgetTable(table, entry.value);
+        return;
+      }
       if (eid.indexOf(NOTES_PREFIX) === 0) {
         const key = eid.slice(NOTES_PREFIX.length);
         const row = Array.from(document.querySelectorAll('.activity-row')).find(r => rowKey(r) === key);
@@ -2358,7 +2506,7 @@
   }
   function setEditMode(on) {
     document.documentElement.dataset.edit = on ? 'on' : 'off';
-    document.querySelectorAll('[data-editable],[data-spend-edit],[data-note-edit]').forEach(el => {
+    document.querySelectorAll('[data-editable],[data-spend-edit],[data-budget-edit],[data-note-edit]').forEach(el => {
       el.setAttribute('contenteditable', on ? 'true' : 'false');
     });
     const editBtn = document.getElementById('edit-toggle-btn');
@@ -2374,6 +2522,11 @@
     if (el.matches('[data-spend-edit]')) {
       const table = el.closest('.spend-table');
       if (table) { recalcSpendTable(table, true); saveSpendTable(table); }
+      return;
+    }
+    if (el.matches('[data-budget-edit]')) {
+      const table = el.closest('.summary-table[data-budget-key]');
+      if (table) { recalcBudgetTable(table); saveBudgetTable(table); }
       return;
     }
     if (el.matches('[data-note-edit]')) {
@@ -2476,10 +2629,13 @@
       exportDock.querySelectorAll('.chip-btn,.theme-toggle').forEach(c => exportHome.appendChild(c));
       exportDock.removeAttribute('data-show');
     }
-    clone.querySelectorAll('.spend-remove,.spend-add').forEach(el => el.remove());
+    clone.querySelectorAll('.spend-remove,.spend-add,.budget-remove,.budget-add').forEach(el => el.remove());
     clone.querySelectorAll('.spend-table[data-empty="1"]').forEach(el => el.remove());
     clone.querySelectorAll('.spend-table').forEach(el => el.removeAttribute('data-empty'));
     clone.querySelectorAll('[data-spend-edit]').forEach(el => el.removeAttribute('data-spend-edit'));
+    clone.querySelectorAll('[data-budget-edit]').forEach(el => el.removeAttribute('data-budget-edit'));
+    clone.querySelectorAll('[data-budget-amount]').forEach(el => el.removeAttribute('data-budget-amount'));
+    clone.querySelectorAll('.summary-table[data-budget-key]').forEach(el => el.removeAttribute('data-budget-key'));
     // The edge drawer's layers carry inline styles written by its animation
     // loop; strip them so the export ships the drawer at its authored rest
     // state rather than frozen mid-gesture.
@@ -2567,6 +2723,8 @@
     ensureSpendTables();
     decorateSpendTables();
     wireSpendTables();
+    decorateBudgetTables();
+    wireBudgetTables();
     // Ahead of the await: the chips are authored markup and owe nothing to the
     // store, and waiting on that fetch would leave an early scroll with no
     // toolbar until every saved image had come down the wire.
