@@ -263,14 +263,46 @@
   .transfer-link{color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-size:12px;}
   .transfer-link:hover{opacity:0.8;}
 
-  /* BUDGET BAR */
-  .day-total-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 1.25rem;background:var(--bg2);border-top:1px solid var(--border);}
-  .budget-track{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
-  .budget-fill{height:100%;border-radius:2px;}
-  .budget-fill.ok{background:var(--teal);}
-  .budget-fill.warn{background:var(--accent);}
-  .budget-fill.over{background:var(--red);}
+  /* BUDGET METERS. Modelled on AI Dash's UsageMeter: one track carrying the
+     spend fill, and (for the trip-wide meter) a pace marker on the same track
+     at "how far through the budget days we are", so spend against time is one
+     comparison rather than two charts. The trip meter is segmented one segment
+     per budget day, like AI Dash's seven-day bar. A spend range draws solid to
+     its low figure and faint to its high one. Everything inside
+     .day-total-bar is rebuilt by renderBudgetMeters(); the authored
+     .total-amount is only read once, for days with no spend table. */
+  .day-total-bar{display:flex;flex-direction:column;gap:14px;padding:12px 1.25rem 14px;background:var(--bg2);border-top:1px solid var(--border);}
   .total-amount{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text2);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .meter{--meter-tint:var(--accent);display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .meter.is-warn{--meter-tint:var(--warn);}
+  .meter.is-over{--meter-tint:var(--red);}
+  .meter-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 12px;}
+  .meter-label{font-size:12px;color:var(--text2);}
+  .meter-value{font-family:var(--mono);font-size:11px;color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .meter-pct{color:var(--text3);}
+  .meter-track{position:relative;height:10px;display:flex;align-items:center;}
+  .meter-bars{display:flex;gap:2px;width:100%;}
+  .meter-seg{position:relative;flex:1;min-width:0;height:6px;border-radius:2px;overflow:hidden;background:color-mix(in oklab,var(--meter-tint) 16%,transparent);}
+  .meter-bars.is-single .meter-seg{border-radius:999px;}
+  .meter-fill{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--meter-tint);transition:width .5s cubic-bezier(.2,.8,.2,1),background-color .3s;}
+  .meter-fill.is-range{opacity:.38;}
+  .meter-pace{position:absolute;top:0;left:0;width:2px;height:10px;margin-left:-1px;border-radius:1px;background:var(--text);box-shadow:0 0 0 1.5px var(--bg2);transition:left .5s cubic-bezier(.2,.8,.2,1);}
+  .meter-pace[hidden]{display:none;}
+  .budget-pace .meter-pace{box-shadow:0 0 0 1.5px var(--card);}
+  .meter-foot{font-family:var(--mono);font-size:10px;line-height:1.5;color:var(--text3);font-variant-numeric:tabular-nums;}
+  .meter-word{color:var(--text2);font-weight:500;}
+  .meter.is-warn .meter-word{color:var(--warn-text);}
+  .meter.is-over .meter-word{color:var(--red-text);}
+  .meter.is-idle .meter-track{display:none;}
+  .meter.is-idle .meter-value{color:var(--text2);}
+  @media (prefers-reduced-motion:reduce){.meter-fill,.meter-pace{transition:none;}}
+  /* Budget tab overview of the same numbers */
+  .budget-pace-title{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-0.03em;color:var(--text);}
+  .budget-pace-body{padding:1rem 1.25rem 1.15rem;}
+  .budget-pace-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--border);}
+  .budget-pace-stat{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .budget-pace-stat span{font-size:11px;color:var(--text3);}
+  .budget-pace-stat strong{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums;}
 
   /* NOTICES */
   .notice{font-size:12px;line-height:1.6;padding:10px 14px;border-radius:var(--radius-sm);margin:8px 1.25rem 4px;}
@@ -704,7 +736,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Monday 21 – Thursday 24 December</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Arlo SoHo</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Dec 21–24 · SoHo, Manhattan · Arlo SoHo Hotel (4-star) · Party of 4 · Budget R3,000/day</div><div class="birthday-banner">🎂 Dec 22 is Nammies' 18th birthday: tonight's reserved for a special celebration dinner in the neighbourhood.</div>
-    <div class="day-card open" data-day-key="d1">
+    <div class="day-card open" data-day-key="d1" data-date="2026-12-21" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Dec 21 · Day 1 : Departure</div>
@@ -721,7 +753,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d2">
+    <div class="day-card" data-day-key="d2" data-date="2026-12-22">
       <div class="day-card-header day-card-header--festive day-card-header--birthday" onclick="toggleCard(this)">
         <img class="festive-header-art" src="assets/nyc-miami-2026/header-birthday-balloons.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
@@ -759,7 +791,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d3">
+    <div class="day-card" data-day-key="d3" data-date="2026-12-23">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Wed, Dec 23 · Day 3</div>
@@ -782,7 +814,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d4">
+    <div class="day-card" data-day-key="d4" data-date="2026-12-24">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Dec 24 · Day 4 : Christmas Eve</div>
@@ -810,7 +842,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Thursday 24 December – Sunday 3 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>North Miami Beach</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>11 Days / 10 Nights</span></div>
       </div>
     </div><div class="leg-intro">Dec 24 – Jan 3 · 1601 NE 160th St, North Miami Beach · Confirmed Airbnb · Avis Standard Elite SUV · Party of 4 · Budget R3,000/day</div>
-    <div class="day-card" data-day-key="d5">
+    <div class="day-card" data-day-key="d5" data-date="2026-12-25">
       <div class="day-card-header day-card-header--festive day-card-header--christmas" onclick="toggleCard(this)">
         <img class="festive-header-art" src="assets/nyc-miami-2026/header-christmas-garland-2.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
@@ -834,7 +866,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d6">
+    <div class="day-card" data-day-key="d6" data-date="2026-12-26">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sat, Dec 26 · Day 6</div>
@@ -857,7 +889,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d7">
+    <div class="day-card" data-day-key="d7" data-date="2026-12-27">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Dec 27 · Day 7</div>
@@ -880,7 +912,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d8">
+    <div class="day-card" data-day-key="d8" data-date="2026-12-28">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Dec 28 · Day 8</div>
@@ -903,7 +935,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d9">
+    <div class="day-card" data-day-key="d9" data-date="2026-12-29" data-allowance="2">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue–Wed, Dec 29–30 · Days 9–10</div>
@@ -926,7 +958,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d10">
+    <div class="day-card" data-day-key="d10" data-date="2026-12-31">
       <div class="day-card-header day-card-header--festive day-card-header--nye" onclick="toggleCard(this)">
         <img class="festive-header-art" src="assets/nyc-miami-2026/header-nye-celebration.png" alt="" aria-hidden="true" decoding="async">
         <div class="day-card-header-left">
@@ -950,7 +982,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d11">
+    <div class="day-card" data-day-key="d11" data-date="2027-01-01">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Fri, Jan 1 · Day 12 : New Year's Day</div>
@@ -973,7 +1005,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d12">
+    <div class="day-card" data-day-key="d12" data-date="2027-01-02">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sat, Jan 2 · Day 13</div>
@@ -996,7 +1028,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d13">
+    <div class="day-card" data-day-key="d13" data-date="2027-01-03">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 3 · Day 14 : Embarkation</div>
@@ -1024,7 +1056,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 3 – Sunday 10 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Norwegian Aqua</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>8 Days / 7 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 3–10 · Norwegian Aqua · 7 nights · Free at Sea Plus package · Drinks, specialty dining, Wi-Fi & gratuities all included</div>
-    <div class="day-card" data-day-key="d14">
+    <div class="day-card" data-day-key="d14" data-date="2027-01-03" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 3 · Day 14</div>
@@ -1047,7 +1079,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d15">
+    <div class="day-card" data-day-key="d15" data-date="2027-01-04" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Jan 4 · Day 15</div>
@@ -1070,7 +1102,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d16">
+    <div class="day-card" data-day-key="d16" data-date="2027-01-05" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue, Jan 5 · Day 16</div>
@@ -1093,7 +1125,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d17">
+    <div class="day-card" data-day-key="d17" data-date="2027-01-06" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Wed, Jan 6 · Day 17</div>
@@ -1116,7 +1148,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d18">
+    <div class="day-card" data-day-key="d18" data-date="2027-01-07" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Thu, Jan 7 · Day 18</div>
@@ -1139,7 +1171,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d19">
+    <div class="day-card" data-day-key="d19" data-date="2027-01-08" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Fri, Jan 8 · Day 19</div>
@@ -1162,7 +1194,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d20">
+    <div class="day-card" data-day-key="d20" data-date="2027-01-09" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sat, Jan 9 · Day 20</div>
@@ -1185,7 +1217,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d21">
+    <div class="day-card" data-day-key="d21" data-date="2027-01-10" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 10 · Day 21</div>
@@ -1213,7 +1245,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 10 – Wednesday 13 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Row NYC · Midtown Manhattan</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 10–13 · Row NYC Hotel (4-star, B&B) · Midtown Manhattan · Post-cruise · Party of 4 · Budget R3,000/day</div>
-    <div class="day-card" data-day-key="d22">
+    <div class="day-card" data-day-key="d22" data-date="2027-01-10">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 10 · Day 21 : Arrival</div>
@@ -1236,7 +1268,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d23">
+    <div class="day-card" data-day-key="d23" data-date="2027-01-11">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Mon, Jan 11 · Day 22</div>
@@ -1259,7 +1291,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d24">
+    <div class="day-card" data-day-key="d24" data-date="2027-01-12">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Tue, Jan 12 · Day 23</div>
@@ -1282,7 +1314,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d25">
+    <div class="day-card" data-day-key="d25" data-date="2027-01-13">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Wed, Jan 13 · Day 24 : Departure</div>
@@ -2034,8 +2066,10 @@
      every id after it and silently repoint saved edits. A table is therefore
      saved whole, as one JSON value under `spend:<data-day-key>`. */
   const SPEND_PREFIX = 'spend:';
-  /** Stated in every leg-intro on the page ("Budget R3,000/day"); the day
-   *  progress bar is re-derived against it after an edit. */
+  /** Stated in every leg-intro on the page ("Budget R3,000/day"). Only a
+   *  fallback: the meters derive the per-day figure from the Budget tab's
+   *  "Daily spending" line divided by the budget days, so editing that line
+   *  moves every meter. */
   const DAILY_BUDGET = 3000;
   const BUDGET_WARN_FRACTION = 0.9;
 
@@ -2122,16 +2156,12 @@
         add.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add line';
         table.appendChild(add);
       }
-      recalcSpendTable(table, false);
+      recalcSpendTable(table);
     });
   }
-  /**
-   * Re-derive the total from the rows. `updateChrome` also re-derives the day
-   * bar beneath the table (its amount is the same number, and its fill is a
-   * fraction of the stated R3,000/day) — only ever after a user edit, so the
-   * hand-authored bars on untouched days are left exactly as written.
-   */
-  function recalcSpendTable(table, updateChrome) {
+  /** Re-derive the total from the rows, then queue a redraw of the budget
+   *  meters, which read the same rows. */
+  function recalcSpendTable(table) {
     const rows = spendRows(table);
     let min = 0, max = 0, counted = 0;
     rows.forEach(row => {
@@ -2145,18 +2175,9 @@
     const totalAmount = totalRow && totalRow.querySelector('.spend-amount');
     const text = counted ? formatSpendTotal(min, max) : '—';
     if (totalAmount) totalAmount.textContent = text;
-    if (!updateChrome) return;
-    const card = table.closest('.day-card');
-    const bar = card && card.querySelector('.day-total-bar');
-    if (!bar) return;
-    const barAmount = bar.querySelector('.total-amount');
-    if (barAmount) barAmount.textContent = text;
-    const fill = bar.querySelector('.budget-fill');
-    if (!fill) return;
-    const ratio = counted ? max / DAILY_BUDGET : 0;
-    fill.style.width = Math.max(4, Math.min(100, Math.round(ratio * 100))) + '%';
-    fill.classList.remove('ok', 'warn', 'over');
-    fill.classList.add(ratio > 1 ? 'over' : (ratio >= BUDGET_WARN_FRACTION ? 'warn' : 'ok'));
+    // Every day's meter depends on every earlier day (the trip-to-date
+    // running total), so one edit redraws them all.
+    scheduleBudgetMeters();
   }
   function serializeSpendTable(table) {
     const totalRow = table.querySelector('.spend-row.total');
@@ -2180,7 +2201,7 @@
     if (document.documentElement.dataset.edit === 'on') {
       table.querySelectorAll('[data-spend-edit]').forEach(el => el.setAttribute('contenteditable', 'true'));
     }
-    recalcSpendTable(table, true);
+    recalcSpendTable(table);
   }
   function saveSpendTable(table) {
     const card = table.closest('.day-card');
@@ -2194,7 +2215,7 @@
       if (remove) {
         const table = remove.closest('.spend-table');
         remove.closest('.spend-row').remove();
-        recalcSpendTable(table, true);
+        recalcSpendTable(table);
         saveSpendTable(table);
         return;
       }
@@ -2207,7 +2228,7 @@
         if (document.documentElement.dataset.edit === 'on') {
           row.querySelectorAll('[data-spend-edit]').forEach(el => el.setAttribute('contenteditable', 'true'));
         }
-        recalcSpendTable(table, true);
+        recalcSpendTable(table);
         saveSpendTable(table);
         const label = row.querySelector('.spend-label');
         if (label) { label.focus(); document.getSelection().selectAllChildren(label); }
@@ -2218,7 +2239,302 @@
     document.addEventListener('input', e => {
       const cell = e.target.closest && e.target.closest('[data-spend-edit]');
       if (!cell) return;
-      recalcSpendTable(cell.closest('.spend-table'), true);
+      recalcSpendTable(cell.closest('.spend-table'));
+    });
+  }
+  /* ── BUDGET METERS ──────────────────────────────────────────────────────
+     Every day card gets two meters, both drawn from the spend tables:
+
+     - Day spend: that day's out-of-pocket spend against its own allowance.
+     - Trip to date: the running total through that day against the whole
+       daily-spending pot, one segment per budget day, with a pace marker at
+       the share of budget days used so far. "Ahead" means we've spent more
+       than the days elapsed entitle us to.
+
+     The Budget tab carries the whole-trip version, its pace marker placed by
+     today's date once the trip is under way.
+
+     A day card's allowance comes from `data-allowance` (budget days it
+     covers; default 1, 0 for all-inclusive cruise days and the flight out).
+     Lines marked "pre-paid" are skipped: they are paid from their own budget
+     table, so counting them here would count them twice. */
+  const PREPAID_RE = /pre-?paid/i;
+  const PACE_DEAD_BAND = 0.02;
+  let budgetMetersQueued = false;
+  function scheduleBudgetMeters() {
+    if (budgetMetersQueued) return;
+    budgetMetersQueued = true;
+    // A microtask rather than rAF: it still folds a burst of synchronous
+    // recalcs (every table on load) into one redraw, but also runs in a
+    // background tab, where rAF is paused.
+    Promise.resolve().then(() => { budgetMetersQueued = false; renderBudgetMeters(); });
+  }
+  function allowanceOf(card) {
+    const n = parseFloat(card.dataset.allowance);
+    return isNaN(n) ? 1 : Math.max(0, n);
+  }
+  /** Out-of-pocket spend for a day, as a low/high pair. Falls back to the
+   *  authored bar figure for days that never had a spend table (the cruise). */
+  function daySpend(card, bar) {
+    let min = 0, max = 0, counted = 0, prepaid = false;
+    const table = card.querySelector('.spend-table');
+    if (table) spendRows(table).forEach(row => {
+      const label = row.querySelector('.spend-label');
+      const amount = row.querySelector('.spend-amount');
+      if (!amount) return;
+      const parsed = parseSpendAmount(amount.textContent);
+      if (!parsed) return;
+      if (PREPAID_RE.test((label ? label.textContent : '') + ' ' + amount.textContent)) { prepaid = true; return; }
+      min += parsed.min; max += parsed.max; counted++;
+    });
+    const authored = bar ? bar.dataset.authoredAmount || '' : '';
+    if (!counted && authored) {
+      const parsed = parseSpendAmount(authored);
+      if (parsed && PREPAID_RE.test(authored)) prepaid = true;
+      else if (parsed) { min = parsed.min; max = parsed.max; counted = 1; }
+    }
+    return { min, max, counted: counted > 0, prepaid, authored };
+  }
+  /** The Budget tab's "Daily spending" line, so the meters follow its edits. */
+  function dailySpendingPot() {
+    const table = document.querySelector('.summary-table[data-budget-key="summary"]');
+    if (!table) return null;
+    const row = Array.prototype.find.call(table.rows, r => r.cells[0] && /daily spending/i.test(r.cells[0].textContent));
+    const amount = row && row.cells[1] ? parseBudgetAmount(row.cells[1].textContent) : null;
+    return amount > 0 ? amount : null;
+  }
+  function formatPct(lo, hi) {
+    const a = Math.round(lo * 100), b = Math.round(hi * 100);
+    return (b > a ? a + '–' + b : String(b)) + '%';
+  }
+  function clamp01(n) { return Math.min(1, Math.max(0, n)); }
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+  /** Built once per host and updated in place afterwards, so a live edit
+   *  animates the fills from where they were instead of redrawing from zero. */
+  function ensureMeter(host, key, segments) {
+    let meter = host.querySelector(':scope > .meter[data-meter="' + key + '"]');
+    if (meter && meter.querySelectorAll('.meter-seg').length === segments) return meter;
+    if (meter) meter.remove();
+    meter = el('div', 'meter');
+    meter.dataset.meter = key;
+    const head = el('div', 'meter-head');
+    head.appendChild(el('span', 'meter-label'));
+    head.appendChild(el('span', 'meter-value'));
+    const track = el('div', 'meter-track');
+    const bars = el('div', 'meter-bars' + (segments === 1 ? ' is-single' : ''));
+    for (let i = 0; i < segments; i++) {
+      const seg = el('span', 'meter-seg');
+      seg.appendChild(el('span', 'meter-fill is-range'));
+      seg.appendChild(el('span', 'meter-fill'));
+      bars.appendChild(seg);
+    }
+    track.appendChild(bars);
+    const pace = el('span', 'meter-pace');
+    pace.hidden = true;
+    track.appendChild(pace);
+    meter.appendChild(head);
+    meter.appendChild(track);
+    meter.appendChild(el('div', 'meter-foot'));
+    host.appendChild(meter);
+    return meter;
+  }
+  /**
+   * @param o.lo, o.hi  fractions of the limit (may exceed 1)
+   * @param o.pace      marker position 0..1, or null for none
+   * @param o.tone      'ok' | 'warn' | 'over'
+   * @param o.foot      array of [text, isWord] parts, or null
+   */
+  function updateMeter(meter, o) {
+    meter.classList.toggle('is-warn', o.tone === 'warn');
+    meter.classList.toggle('is-over', o.tone === 'over');
+    meter.classList.toggle('is-idle', !!o.idle);
+    meter.querySelector('.meter-label').textContent = o.label;
+    const value = meter.querySelector('.meter-value');
+    value.textContent = o.value;
+    if (o.pct) { value.appendChild(document.createTextNode(' · ')); value.appendChild(el('span', 'meter-pct', o.pct)); }
+    const segs = meter.querySelectorAll('.meter-seg');
+    const n = segs.length;
+    segs.forEach((seg, i) => {
+      const fills = seg.querySelectorAll('.meter-fill');
+      fills[0].style.width = clamp01(o.hi * n - i) * 100 + '%';
+      fills[1].style.width = clamp01(o.lo * n - i) * 100 + '%';
+    });
+    const pace = meter.querySelector('.meter-pace');
+    pace.hidden = o.pace == null;
+    if (o.pace != null) pace.style.left = clamp01(o.pace) * 100 + '%';
+    const foot = meter.querySelector('.meter-foot');
+    foot.textContent = '';
+    foot.hidden = !o.foot;
+    (o.foot || []).forEach((part, i) => {
+      if (i) foot.appendChild(document.createTextNode(' · '));
+      foot.appendChild(part[1] ? el('span', 'meter-word', part[0]) : document.createTextNode(part[0]));
+    });
+  }
+  /** Spend against pace, collapsed to a word plus the Rand gap, the same
+   *  reading AI Dash gives its quota bars. The word follows the high figure. */
+  function paceReading(spentLo, spentHi, paceAmount, pot) {
+    const dLo = spentLo - paceAmount, dHi = spentHi - paceAmount;
+    if (dHi / pot > PACE_DEAD_BAND) {
+      const gap = dLo > 0 && Math.round(dLo) < Math.round(dHi) ? formatRand(dLo) + '–' + formatRand(dHi)
+        : (dLo > 0 ? formatRand(dHi) : 'up to ' + formatRand(dHi));
+      return { word: 'Ahead', gap: gap + ' over pace', tone: 'warn' };
+    }
+    if (dHi / pot < -PACE_DEAD_BAND) {
+      const gap = Math.round(-dHi) < Math.round(-dLo) ? formatRand(-dHi) + '–' + formatRand(-dLo) : formatRand(-dHi);
+      return { word: 'Under', gap: gap + ' in hand', tone: 'ok' };
+    }
+    return { word: 'On', gap: 'on pace', tone: 'ok' };
+  }
+  function budgetDayLabel(done, total) {
+    return done <= 0 ? 'budget days not started' : 'budget day ' + done + ' of ' + total;
+  }
+  function renderBudgetMeters() {
+    const cards = Array.prototype.slice.call(document.querySelectorAll('.day-card[data-day-key]'));
+    const days = cards.map(card => {
+      let bar = card.querySelector('.day-total-bar');
+      if (!bar) {
+        const body = card.querySelector('.day-card-body');
+        if (!body) return null;
+        bar = el('div', 'day-total-bar');
+        body.appendChild(bar);
+      }
+      if (bar.dataset.authoredAmount == null) {
+        const amount = bar.querySelector('.total-amount');
+        bar.dataset.authoredAmount = amount ? amount.textContent.trim() : '';
+        bar.textContent = '';
+      }
+      return { card, bar, allowance: allowanceOf(card), spend: daySpend(card, bar) };
+    }).filter(Boolean);
+    const totalDays = days.reduce((n, d) => n + d.allowance, 0);
+    if (!totalDays) return;
+    const pot = dailySpendingPot() || DAILY_BUDGET * totalDays;
+    const perDay = pot / totalDays;
+    let cumLo = 0, cumHi = 0, cumDays = 0;
+    days.forEach(d => {
+      const s = d.spend;
+      cumLo += s.min; cumHi += s.max; cumDays += d.allowance;
+
+      const dayMeter = ensureMeter(d.bar, 'day', 1);
+      const amountText = s.counted ? formatSpendTotal(s.min, s.max) : (s.authored || '—');
+      if (d.allowance > 0) {
+        const limit = d.allowance * perDay;
+        const hi = s.max / limit;
+        updateMeter(dayMeter, {
+          label: d.allowance > 1 ? 'Spend · ' + d.allowance + ' days' : 'Day spend',
+          value: amountText + ' / ' + formatRand(limit),
+          pct: s.counted ? formatPct(s.min / limit, hi) : null,
+          lo: s.min / limit, hi, pace: null,
+          tone: hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : 'ok'),
+          foot: s.prepaid ? [['Pre-paid lines excluded']] : null
+        });
+      } else {
+        updateMeter(dayMeter, {
+          label: 'Day spend', value: amountText, lo: 0, hi: 0, pace: null, tone: 'ok', idle: true,
+          foot: [['No daily allowance' + (s.counted ? ', spend still counts to date' : '')]]
+        });
+      }
+
+      const tripMeter = ensureMeter(d.bar, 'trip', totalDays);
+      const reading = paceReading(cumLo, cumHi, cumDays * perDay, pot);
+      const hi = cumHi / pot;
+      updateMeter(tripMeter, {
+        label: 'Trip to date',
+        value: formatSpendTotal(cumLo, cumHi) + ' / ' + formatRand(pot),
+        pct: formatPct(cumLo / pot, hi),
+        lo: cumLo / pot, hi, pace: cumDays / totalDays,
+        tone: hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : reading.tone),
+        foot: [[reading.word, true], [reading.gap], [budgetDayLabel(cumDays, totalDays)]]
+      });
+    });
+    renderBudgetOverview(days, { pot, perDay, totalDays, cumLo, cumHi });
+  }
+  /** Budget days begun as of now, by each card's `data-date`. Whole days:
+   *  today counts from midnight, matching the planned spend it is set
+   *  against, which includes today's plan in full. */
+  function budgetDaysElapsed(days, now) {
+    let elapsed = 0;
+    days.forEach(d => {
+      if (!d.allowance || !d.card.dataset.date) return;
+      const start = new Date(d.card.dataset.date + 'T00:00:00');
+      if (isNaN(start)) return;
+      if (now >= start) elapsed += Math.min(d.allowance, Math.floor((now - start) / 86400000) + 1);
+    });
+    return elapsed;
+  }
+  function renderBudgetOverview(days, t) {
+    const panel = document.getElementById('panel-budget');
+    if (!panel) return;
+    let section = panel.querySelector(':scope > .budget-pace');
+    if (!section) {
+      section = el('div', 'summary-section budget-pace');
+      const header = el('div', 'summary-header');
+      // Deliberately not .summary-title: that class is in TEXT_SELECTOR, and
+      // a generated node must never take a positional edit id.
+      header.appendChild(el('div', 'budget-pace-title', 'Daily Spending Pace'));
+      section.appendChild(header);
+      section.appendChild(el('div', 'budget-pace-body'));
+      panel.insertBefore(section, panel.firstChild);
+    }
+    const body = section.querySelector('.budget-pace-body');
+    const meter = ensureMeter(body, 'overview', t.totalDays);
+    const dated = days.filter(d => d.allowance && d.card.dataset.date).map(d => new Date(d.card.dataset.date + 'T00:00:00'));
+    const now = new Date();
+    const elapsed = budgetDaysElapsed(days, now);
+    const first = dated.length ? new Date(Math.min.apply(null, dated)) : null;
+    const hi = t.cumHi / t.pot;
+    let foot;
+    if (elapsed <= 0 || elapsed >= t.totalDays) {
+      const daysOut = first ? Math.ceil((first - now) / 86400000) : null;
+      const gapHi = t.cumHi - t.pot, gapLo = t.cumLo - t.pot;
+      const gap = gapHi > 0
+        ? (gapLo > 0 && Math.round(gapLo) < Math.round(gapHi) ? formatRand(gapLo) + '–' + formatRand(gapHi) : formatRand(gapHi)) + ' over as planned'
+        : formatRand(-gapHi) + ' spare as planned';
+      const when = elapsed >= t.totalDays ? 'all budget days done'
+        : (daysOut != null && daysOut > 0 ? 'budget days start in ' + daysOut + (daysOut === 1 ? ' day' : ' days') : 'budget days not started');
+      foot = [[gapHi > 0 ? 'Over' : 'Within', true], [gap], [when]];
+    } else {
+      // During the trip: planned spend of the days already behind us, against
+      // the pace marker at today.
+      let doneLo = 0, doneHi = 0;
+      days.forEach(d => {
+        if (!d.card.dataset.date) return;
+        const start = new Date(d.card.dataset.date + 'T00:00:00');
+        if (start <= now) { doneLo += d.spend.min; doneHi += d.spend.max; }
+      });
+      const reading = paceReading(doneLo, doneHi, elapsed * t.perDay, t.pot);
+      foot = [[reading.word, true], [reading.gap], [budgetDayLabel(elapsed, t.totalDays)]];
+    }
+    updateMeter(meter, {
+      label: 'Planned spend, whole trip',
+      value: formatSpendTotal(t.cumLo, t.cumHi) + ' / ' + formatRand(t.pot),
+      pct: formatPct(t.cumLo / t.pot, hi),
+      lo: t.cumLo / t.pot, hi,
+      pace: elapsed > 0 ? Math.min(1, elapsed / t.totalDays) : null,
+      tone: hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : 'ok'),
+      foot
+    });
+    let stats = body.querySelector('.budget-pace-stats');
+    if (!stats) { stats = el('div', 'budget-pace-stats'); body.appendChild(stats); }
+    // Counted in budget days, not cards: one card can cover two days.
+    const overDays = days.filter(d => d.allowance > 0 && d.spend.max > d.allowance * t.perDay)
+      .reduce((n, d) => n + d.allowance, 0);
+    const avgLo = t.cumLo / t.totalDays, avgHi = t.cumHi / t.totalDays;
+    stats.textContent = '';
+    [
+      ['Allowance per day', formatRand(t.perDay)],
+      ['Planned average per day', formatSpendTotal(avgLo, avgHi)],
+      ['Budget days', String(t.totalDays)],
+      ['Days over allowance', overDays + ' of ' + t.totalDays]
+    ].forEach(pair => {
+      const stat = el('div', 'budget-pace-stat');
+      stat.appendChild(el('span', null, pair[0]));
+      stat.appendChild(el('strong', null, pair[1]));
+      stats.appendChild(stat);
     });
   }
   /* ── TRIP BUDGET TABLES ─────────────────────────────────────────────────
@@ -2274,6 +2590,7 @@
     });
     const totalCell = table.querySelector('tr.total [data-budget-amount]');
     if (totalCell) totalCell.textContent = formatBudgetTotal(total);
+    scheduleBudgetMeters();
   }
   function decorateBudgetTables() {
     document.querySelectorAll('.summary-table[data-budget-key]').forEach(table => {
@@ -2596,7 +2913,7 @@
     if (!el.matches) return;
     if (el.matches('[data-spend-edit]')) {
       const table = el.closest('.spend-table');
-      if (table) { recalcSpendTable(table, true); saveSpendTable(table); }
+      if (table) { recalcSpendTable(table); saveSpendTable(table); }
       return;
     }
     if (el.matches('[data-budget-edit]')) {
@@ -2800,6 +3117,7 @@
     wireSpendTables();
     decorateBudgetTables();
     wireBudgetTables();
+    renderBudgetMeters();
     // Ahead of the await: the chips are authored markup and owe nothing to the
     // store, and waiting on that fetch would leave an early scroll with no
     // toolbar until every saved image had come down the wire.
