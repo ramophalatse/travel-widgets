@@ -523,6 +523,12 @@
   @media (pointer:coarse){
     #edge-drawer{display:block;}
     .header-toolbar,.nav-toolbar{display:none;}
+    /* Back to top is the only chip left on screen once the toolbars go, so it can
+       grow to a thumb-sized target without sitting oddly beside 28px siblings.
+       10 + 22px icon + 10 + 2 x 1px border = 44px, keeping the rest state circular
+       at the 44px minimum touch target. */
+    .to-top{height:44px;padding:0 10px;}
+    .to-top svg{width:22px;height:22px;}
   }
   /* Every visual layer renders around the same centre: true screen-centre
      nudged up to sit flush with the physical camera cutout (measured
@@ -2807,7 +2813,7 @@
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
     addDurationLabels();
-    document.querySelectorAll('.chip-btn').forEach(wireChipReveal);
+    document.querySelectorAll('.chip-btn:not(.to-top)').forEach(wireChipReveal);
     wireBackToTop();
     updateExpandAllControl();
   })();
