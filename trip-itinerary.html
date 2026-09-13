@@ -4012,6 +4012,9 @@
   // Stepping back out of the pushed entry would otherwise restore the scroll
   // position from when the browser opened, over the row revealInList() finds.
   let restoreScrollMode = null;
+  // Where the browser was opened from, so closing can put the page back
+  // exactly as it was. Null for a deep link, which has no place to return to.
+  let origin = null;
 
   function buildModel() {
     items = []; legs = [];
@@ -4493,6 +4496,13 @@
     index = at;
     if (!root) {
       opener = document.activeElement;
+      const anchor = opts && opts.from && opts.from.isConnected ? opts.from : null;
+      origin = opts && opts.fromHash ? null : {
+        scrollY: window.scrollY,
+        anchor,
+        anchorTop: anchor ? anchor.getBoundingClientRect().top : 0,
+        flash: anchor && anchor.classList.contains('activity-row') ? anchor : null
+      };
       if ('scrollRestoration' in history && history.scrollRestoration !== 'manual') { restoreScrollMode = history.scrollRestoration; history.scrollRestoration = 'manual'; }
       createRoot();
       if (opts && opts.fromHash) pushedHistory = false;
@@ -4516,13 +4526,49 @@
       else history.replaceState(null, '', location.pathname + location.search);
     }
     pushedHistory = false;
-    revealInList(item);
+    const from = origin;
+    origin = null;
+    if (from) returnToOrigin(from); else revealInList(item);
     if (opener && opener.isConnected && typeof opener.focus === 'function') opener.focus({ preventScroll: true });
     opener = null;
   }
 
-  /** Closing lands on the card we were looking at, not where we opened from:
-   *  its phase tab, its day expanded, the row centred and briefly lit. */
+  /** Closing puts the list back exactly where the browser was opened: same
+   *  scroll, same phase, same open days (the browser never changes them), with
+   *  the control or row that opened it at the same height on screen. Anchoring
+   *  to that element rather than trusting the saved offset alone absorbs any
+   *  layout shift while the cards were up, such as late images. A row that
+   *  opened the cards gets a brief highlight so the eye lands on it. */
+  function returnToOrigin(from) {
+    setTimeout(() => {
+      let y = from.scrollY;
+      const a = from.anchor;
+      if (a && a.isConnected && a.getClientRects().length && !inStickyLayer(a)) {
+        y = a.getBoundingClientRect().top + window.scrollY - from.anchorTop;
+      }
+      window.scrollTo({ top: Math.max(0, y), behavior: 'instant' });
+      if (from.flash && from.flash.isConnected) {
+        from.flash.classList.remove('cv-flash');
+        void from.flash.offsetWidth;
+        from.flash.classList.add('cv-flash');
+        setTimeout(() => from.flash.classList.remove('cv-flash'), 1700);
+      }
+      if (restoreScrollMode) { history.scrollRestoration = restoreScrollMode; restoreScrollMode = null; }
+    }, 60);
+  }
+  // A control in the sticky nav sits at the same height whatever the scroll,
+  // so it says nothing about where the page was.
+  function inStickyLayer(el) {
+    for (let n = el; n && n !== document.body; n = n.parentElement) {
+      const pos = getComputedStyle(n).position;
+      if (pos === 'sticky' || pos === 'fixed') return true;
+    }
+    return false;
+  }
+
+  /** A deep link has nowhere to return to, so closing one lands on the card we
+   *  were looking at: its phase tab, its day expanded, the row centred and
+   *  briefly lit. */
   function revealInList(item) {
     if (!item || !item.day.card.isConnected) return;
     const panel = item.leg.panel;
@@ -4689,7 +4735,7 @@
      tap made early waits for the edits with the control pulsing meanwhile. */
   let editsLoaded = false;
   function openWhenReady(target, control) {
-    if (editsLoaded) { window.openCardBrowser(target); return; }
+    if (editsLoaded) { window.openCardBrowser(target, { from: control }); return; }
     if (control.classList.contains('cv-waiting')) return;
     control.classList.add('cv-waiting');
     control.setAttribute('aria-busy', 'true');
@@ -4697,7 +4743,7 @@
       control.classList.remove('cv-waiting');
       control.removeAttribute('aria-busy');
       // A row can be deleted by a saved edit while we wait.
-      if (!target || !target.row || target.row.isConnected) window.openCardBrowser(target);
+      if (!target || !target.row || target.row.isConnected) window.openCardBrowser(target, { from: control });
     });
   }
 
