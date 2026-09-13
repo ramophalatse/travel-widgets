@@ -204,8 +204,8 @@
      nothing keeps true. */
   .pill-day{background:var(--bg3);color:var(--text2);}
   .budget-chip{font-family:var(--mono);font-size:10.5px;font-variant-numeric:tabular-nums;padding:3px 8px;}
-  .budget-chip.is-ok{background:var(--teal-bg);color:var(--teal-text);}
-  .budget-chip.is-warn{background:var(--warn-bg);color:var(--warn-text);}
+  .budget-chip.is-at{background:var(--teal-bg);color:var(--teal-text);}
+  .budget-chip.is-under{background:var(--blue-bg);color:var(--blue-text);}
   .budget-chip.is-over{background:var(--red-bg);color:var(--red-text);}
   /* On a phone, side by side the two pills cost the title ~50px; stack the
      chip under the day pill instead, chevron staying top right. */
@@ -2470,8 +2470,12 @@
     renderBudgetOverview(days, { pot, perDay, totalDays, cumLo, cumHi });
   }
   /** The day's budget status in its header, so a collapsed card still shows
-   *  it. Same figure and thresholds as the Day spend meter; judged on the
-   *  high figure. No chip on days without an allowance. */
+   *  it: the Rand gap between planned spend and the day's allowance, signed,
+   *  so it reads as how the budget is tracking rather than a ratio. Green
+   *  when within CHIP_AT_BAND of the allowance, blue under, red over. Judged
+   *  on the high figure, like the meters; the full range is in the title.
+   *  No chip on days without an allowance. */
+  const CHIP_AT_BAND = 0.05;
   function renderBudgetChip(card, o) {
     const right = card.querySelector('.day-card-header-right');
     if (!right) return;
@@ -2481,14 +2485,14 @@
       chip = el('span', 'pill budget-chip');
       right.insertBefore(chip, right.querySelector('.chevron'));
     }
-    const lo = o.spend.min / o.limit, hi = o.spend.max / o.limit;
-    const tone = hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : 'ok');
-    chip.classList.toggle('is-ok', tone === 'ok');
-    chip.classList.toggle('is-warn', tone === 'warn');
+    const gap = Math.round(o.spend.max - o.limit);
+    const tone = Math.abs(gap) <= o.limit * CHIP_AT_BAND ? 'at' : (gap > 0 ? 'over' : 'under');
+    chip.classList.toggle('is-at', tone === 'at');
+    chip.classList.toggle('is-under', tone === 'under');
     chip.classList.toggle('is-over', tone === 'over');
-    chip.textContent = Math.round(hi * 100) + '%';
-    const summary = 'Day spend ' + formatSpendTotal(o.spend.min, o.spend.max) + ' of ' + formatRand(o.limit)
-      + ' (' + formatPct(lo, hi) + ')';
+    chip.textContent = (gap > 0 ? '+' : gap < 0 ? '−' : '±') + formatRand(Math.abs(gap));
+    const verdict = tone === 'at' ? 'at budget' : (tone === 'over' ? formatRand(gap) + ' over budget' : formatRand(-gap) + ' under budget');
+    const summary = 'Day spend ' + formatSpendTotal(o.spend.min, o.spend.max) + ' of ' + formatRand(o.limit) + ', ' + verdict;
     chip.title = summary;
     chip.setAttribute('aria-label', summary);
   }
