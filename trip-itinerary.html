@@ -2453,7 +2453,7 @@
         });
       }
 
-      renderBudgetChip(d.card, d.allowance > 0 && s.counted ? { spend: s, limit: d.allowance * perDay } : null);
+      renderBudgetChip(d.card, d.allowance > 0 && s.counted ? { spend: s, limit: d.allowance * perDay, days: d.allowance } : null);
 
       const tripMeter = ensureMeter(d.bar, 'trip', totalDays);
       const reading = paceReading(cumLo, cumHi, cumDays * perDay, pot);
@@ -2472,10 +2472,11 @@
   /** The day's budget status in its header, so a collapsed card still shows
    *  it: the Rand gap between planned spend and the day's allowance, signed,
    *  so it reads as how the budget is tracking rather than a ratio. Green
-   *  when within CHIP_AT_BAND of the allowance, blue under, red over. Judged
+   *  when within CHIP_AT_BAND Rand either side per budget day (Ramo's
+   *  tolerance for "at budget"), blue under, red over. Judged
    *  on the high figure, like the meters; the full range is in the title.
    *  No chip on days without an allowance. */
-  const CHIP_AT_BAND = 0.05;
+  const CHIP_AT_BAND = 500;
   function renderBudgetChip(card, o) {
     const right = card.querySelector('.day-card-header-right');
     if (!right) return;
@@ -2486,7 +2487,7 @@
       right.insertBefore(chip, right.querySelector('.chevron'));
     }
     const gap = Math.round(o.spend.max - o.limit);
-    const tone = Math.abs(gap) <= o.limit * CHIP_AT_BAND ? 'at' : (gap > 0 ? 'over' : 'under');
+    const tone = Math.abs(gap) <= CHIP_AT_BAND * o.days ? 'at' : (gap > 0 ? 'over' : 'under');
     chip.classList.toggle('is-at', tone === 'at');
     chip.classList.toggle('is-under', tone === 'under');
     chip.classList.toggle('is-over', tone === 'over');
