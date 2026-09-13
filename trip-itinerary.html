@@ -792,6 +792,8 @@
   .cv-card--day .cv-media{flex-basis:42%;}
   .cv-media-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;animation:cv-drift 9s cubic-bezier(0.2,0.6,0.3,1) both;}
   .cv-media--fallback .cv-media-img{filter:saturate(0.85) brightness(0.82);animation-name:cv-drift-fallback;}
+  .cv-media-sharp{opacity:0;transition:opacity 0.5s ease;}
+  .cv-media-sharp.is-loaded{opacity:1;}
   /* A slow settle on the photo, so a card feels arrived at rather than swapped. */
   @keyframes cv-drift{from{transform:scale(1.07);}to{transform:scale(1);}}
   @keyframes cv-drift-fallback{from{transform:scale(1.2);}to{transform:scale(1.12);}}
@@ -4082,10 +4084,41 @@
     };
   }
 
+  /* Sharp card photos: 1600px squares made for the cards, kept apart from the
+     560 x 400 list thumbnails. A card shows the thumbnail at once (the list
+     has already loaded it) and fades the sharp file in over it when it lands.
+     Two ways in, both listing only files that exist so nothing 404s:
+     CARD_BY_THUMB takes a thumb-<slug>.jpg row to card-<slug>.jpg;
+     CARD_BY_ROW names a row by its sealed key (stable through renames) for
+     photos uploaded through the page, which live inline in the edit store,
+     and for stops with no list photo at all. */
+  const CARD_DIR = 'https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/';
+  const CARD_BY_THUMB = new Set(['abu-dhabi']);
+  const CARD_BY_ROW = {
+    'd1:leave-home-drive-to-or-tambo': 'slow-lounge',
+    'd1:ey-748-departs-or-tambo-jnb': 'or-tambo',
+    'd1:arrive-abu-dhabi-zayed-international': 'abu-dhabi',
+    'd1:pearl-lounge-terminal-a-international-departures': 'pearl-lounge',
+    'd25:arrive-or-tambo-international-terminal-b-home': 'or-tambo'
+  };
+
+  function sharpFor(row) {
+    const byRow = CARD_BY_ROW[row.dataset.rowKey];
+    if (byRow) return CARD_DIR + 'card-' + byRow + '.jpg';
+    const img = row.querySelector('img.act-thumb');
+    const m = img && (img.getAttribute('src') || '').match(/thumb-([a-z0-9-]+)\.jpg(?:$|\?)/);
+    return m && CARD_BY_THUMB.has(m[1]) ? CARD_DIR + 'card-' + m[1] + '.jpg' : '';
+  }
+
   function itemImage(item) {
-    if (item.type === 'stop') { const img = item.row.querySelector('img.act-thumb'); if (img) return { src: img.src, real: true }; }
-    else { const first = item.day.card.querySelector('.activity-row img.act-thumb'); if (first) return { src: first.src, real: true }; }
-    return { src: item.leg.hero, real: false };
+    const row = item.type === 'stop' ? item.row
+      : Array.from(item.day.card.querySelectorAll('.activity-row')).find(r => r.querySelector('img.act-thumb') || CARD_BY_ROW[r.dataset.rowKey]);
+    if (row) {
+      const img = row.querySelector('img.act-thumb'), sharp = sharpFor(row);
+      if (img) return { src: img.src, sharp, real: true };
+      if (sharp) return { src: sharp, sharp: '', real: true };
+    }
+    return { src: item.leg.hero, sharp: '', real: false };
   }
 
   function keyOf(item) { return item.type === 'day' ? item.day.key : item.day.key + '.' + (item.i + 1); }
@@ -4221,9 +4254,10 @@
     const image = itemImage(item);
     const place = item.leg.place || item.leg.name;
     let media, sheet, cls;
-    const mediaImg = image.src
+    const mediaImg = (image.src
       ? '<img class="cv-media-img" src="' + esc(image.src) + '" alt="" decoding="async"' + (image.real ? '' : ' style="object-position:' + ((item.type === 'stop' ? item.i * 29 : 50) % 100) + '% 50%"') + '>'
-      : '';
+      : '')
+      + (image.sharp ? '<img class="cv-media-img cv-media-sharp" data-src="' + esc(image.sharp) + '" alt="" decoding="async">' : '');
     if (item.type === 'stop') {
       const s = stopInfo(item);
       cls = 'cv-card cv-card--stop';
@@ -4377,6 +4411,14 @@
     });
     card.classList.add('cv-in-' + motion);
     slot.appendChild(card);
+    card.querySelectorAll('.cv-media-sharp').forEach(img => {
+      img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+      img.addEventListener('error', () => img.remove(), { once: true });
+      img.src = img.dataset.src;
+    });
+    // Warm the next card's sharp photo so stepping forward rarely waits.
+    const ahead = items[index + 1] && itemImage(items[index + 1]).sharp;
+    if (ahead) new Image().src = ahead;
     setBackdrop(itemImage(item).src);
     renderChrome();
     const key = keyOf(item);
@@ -4520,7 +4562,7 @@
       case 'close': closeBrowser(); break;
       case 'prev': step(-1); break;
       case 'next': step(1); break;
-      case 'zoom': { const img = itemImage(item); if (img.real) openLightbox(img.src, stopInfo(item).name); break; }
+      case 'zoom': { const img = itemImage(item); if (img.real) openLightbox(img.sharp || img.src, stopInfo(item).name); break; }
       case 'flight': {
         const s = stopInfo(item);
         if (s.flight && typeof openFlightDetails === 'function') openFlightDetails(s.flight.dataset.flight, el);
