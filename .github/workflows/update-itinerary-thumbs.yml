@@ -22,6 +22,7 @@ jobs:
         run: |
           FILES=$(git show --name-only --diff-filter=A --pretty="" HEAD \
             | { grep -Ei '^assets/nyc-miami-2026/.*\.(jpg|jpeg|png|webp)$' || true; } \
+            | { grep -Ev '^assets/nyc-miami-2026/(card|cover)-' || true; } \
             | xargs -r -I{} basename {} \
             | paste -sd ',' -)
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
