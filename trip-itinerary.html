@@ -226,6 +226,13 @@
   .act-note-add:hover{text-decoration:underline;}
   .activity-row-delete{display:none;position:absolute;right:6px;bottom:16px;z-index:3;align-items:center;justify-content:center;height:24px;padding:0 8px;border:1px solid rgba(190,24,60,0.5);border-radius:999px;background:var(--card);color:#fb7185;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;}
   .activity-row-delete:hover{background:#be123c;color:#fff;border-color:#be123c;}
+  /* The control tracks the bottom edge of the thumbnail rather than the foot of
+     the row: the thumb is a fixed 132px box at the top of the row, while the row
+     itself grows with the prose, so a bottom anchor drifts away from the image on
+     any row with more than a couple of lines. 8px row padding + 132px thumb
+     - 8px inset - 24px control height = 108px. */
+  :root[data-edit="on"] .activity-row.has-thumb .activity-row-delete,
+  :root[data-edit="on"] .activity-row.has-thumb-slot .activity-row-delete{top:108px;bottom:auto;}
   .excursion-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--teal-bg);color:var(--teal-text);margin-top:3px;}
   .act-thumb{width:190px;height:132px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;}
   .act-thumb:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(0,0,0,0.18);}
@@ -396,6 +403,8 @@
   @media(max-width:640px){
     .activity-row,.activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
     .act-body{padding-right:0;}
+    .activity-row.has-thumb .activity-row-delete,
+    .activity-row.has-thumb-slot .activity-row-delete{top:auto;bottom:16px;}
     .act-thumb,.act-thumb-slot,.act-thumb-wrap{display:none;}
     .leg-hero{height:220px;}
     .restaurant-grid{grid-template-columns:1fr;}
