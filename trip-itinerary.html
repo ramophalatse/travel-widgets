@@ -711,6 +711,9 @@
   .cv-hero-btn{position:absolute;right:1.25rem;bottom:1.5rem;z-index:3;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,0.28);background:rgba(10,14,20,0.32);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.2s var(--ease-pop);}
   .cv-hero-btn:hover{background:rgba(10,14,20,0.5);transform:translateY(-1px);}
   .cv-hero-btn svg{width:16px;height:16px;}
+  .cv-waiting{animation:cv-waiting 0.9s ease-in-out infinite;}
+  .activity-row.cv-waiting{animation-duration:1.2s;}
+  @keyframes cv-waiting{0%,100%{opacity:1;}50%{opacity:0.45;}}
   @media(max-width:640px){.cv-hero-btn{right:0.9rem;top:0.9rem;bottom:auto;padding:7px 13px 7px 11px;font-size:12px;}}
 
   .cv{position:fixed;inset:0;z-index:880;display:flex;flex-direction:column;color:#fff;font-family:var(--sans);background:#06090d;overscroll-behavior:contain;animation:cv-enter 0.28s ease-out;}
@@ -971,6 +974,7 @@
     .cv-card[class*="cv-in-"] .cv-timeline li,.cv-card[class*="cv-in-"] .cv-strip-item{animation:none;}
     .cv-media--fallback .cv-media-img{transform:scale(1.12);}
     .cv-ind{transition:opacity 0.2s;}
+    .cv-waiting{animation:none;opacity:0.6;}
     .cv-icon-btn svg,.cv-cta-next svg,.cv-cta-back svg,.cv-stop-go,.cv-review-go svg,.cv-phase,.cv-day{transition:none;transform:none !important;}
     @keyframes cv-in-plain{from{opacity:0;}to{opacity:1;}}
     @keyframes cv-out-fade-plain{to{opacity:0;}}
@@ -987,7 +991,7 @@
 
 <header class="site-header">
 <div class="header-toolbar">
-  <button class="chip-btn" id="browse-cards-btn" onclick="openCardBrowser()" aria-label="Browse as cards" title="Browse as cards">
+  <button class="chip-btn" id="browse-cards-btn" onclick="openCardBrowserWhenReady(this)" aria-label="Browse as cards" title="Browse as cards">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M2.5 6.5v11M21.5 6.5v11"/></svg>
     <span class="chip-label">Browse cards</span>
   </button>
@@ -3474,7 +3478,9 @@
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
     addDurationLabels();
-    document.querySelectorAll('.chip-btn:not(.to-top)').forEach(wireChipReveal);
+    // The card browser's day chips are excluded: they are added before the
+    // store loads and must open on the first tap.
+    document.querySelectorAll('.chip-btn:not(.to-top):not(.cv-day-btn)').forEach(wireChipReveal);
     wireBackToTop();
     updateExpandAllControl();
   })();
@@ -4600,7 +4606,7 @@
     if (sel && !sel.isCollapsed && row.contains(sel.anchorNode)) return;
     e.preventDefault();
     e.stopPropagation();
-    window.openCardBrowser({ row });
+    openWhenReady({ row }, row);
   }, true);
 
   window.addEventListener('resize', () => {
@@ -4614,9 +4620,28 @@
     else if (!root && inHash) window.openCardBrowser(decodeURIComponent(location.hash.slice(HASH_PREFIX.length)), { fromHash: true });
   });
 
-  // Added once the edit system has finished wiring .chip-btn touch peeking:
-  // that peek swallows the first tap, which suits the toolbar but would make
-  // every day's browse button a two-tap control.
+  /* The saved-edits download can take several seconds on a phone (the store
+     carries uploaded thumbnails inline), and cards built before it lands would
+     show the authored file. So the entry points appear straight away, and a
+     tap made early waits for the edits with the control pulsing meanwhile. */
+  let editsLoaded = false;
+  function openWhenReady(target, control) {
+    if (editsLoaded) { window.openCardBrowser(target); return; }
+    if (control.classList.contains('cv-waiting')) return;
+    control.classList.add('cv-waiting');
+    control.setAttribute('aria-busy', 'true');
+    Promise.resolve(window.editsReady).catch(() => {}).then(() => {
+      control.classList.remove('cv-waiting');
+      control.removeAttribute('aria-busy');
+      // A row can be deleted by a saved edit while we wait.
+      if (!target || !target.row || target.row.isConnected) window.openCardBrowser(target);
+    });
+  }
+
+  window.openCardBrowserWhenReady = control => openWhenReady(undefined, control);
+
+  // Added before saved edits load. The day buttons are chip-btns, but the edit
+  // system's touch peek skips .cv-day-btn, so one tap always opens the day.
   function addEntryButtons() {
     document.querySelectorAll('.leg-panel').forEach(panel => {
       const hero = panel.querySelector('.leg-hero');
@@ -4625,7 +4650,7 @@
       btn.type = 'button';
       btn.className = 'cv-hero-btn';
       btn.innerHTML = ICON.cards + '<span>Browse as cards</span>';
-      btn.addEventListener('click', e => { e.stopPropagation(); window.openCardBrowser({ legId: panel.id.replace(/^panel-/, '') }); });
+      btn.addEventListener('click', e => { e.stopPropagation(); openWhenReady({ legId: panel.id.replace(/^panel-/, '') }, btn); });
       hero.appendChild(btn);
     });
     document.querySelectorAll('.day-card[data-day-key]').forEach(card => {
@@ -4638,13 +4663,18 @@
       btn.title = 'Browse this day as cards';
       btn.setAttribute('aria-label', 'Browse ' + (num ? 'Day ' + num : 'this day') + ' as cards');
       btn.innerHTML = ICON.cards + '<span class="chip-label">Browse</span>';
-      btn.addEventListener('click', e => { e.stopPropagation(); window.openCardBrowser({ dayKey: card.dataset.dayKey }); });
+      btn.addEventListener('click', e => { e.stopPropagation(); openWhenReady({ dayKey: card.dataset.dayKey }, btn); });
       right.insertBefore(btn, right.firstChild);
     });
   }
 
+  addEntryButtons();
   Promise.resolve(window.editsReady).catch(() => {}).then(() => {
-    addEntryButtons();
+    editsLoaded = true;
+    // Saved edits can delete every row in a day; its button has nothing to open.
+    document.querySelectorAll('.day-card[data-day-key] .cv-day-btn').forEach(btn => {
+      if (!btn.closest('.day-card').querySelector('.activity-row')) btn.remove();
+    });
     if (location.hash.indexOf(HASH_PREFIX) === 0) window.openCardBrowser(decodeURIComponent(location.hash.slice(HASH_PREFIX.length)), { fromHash: true });
   });
 })();
