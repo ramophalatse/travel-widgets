@@ -198,8 +198,22 @@
 
   /* PILLS */
   .pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:999px;white-space:nowrap;}
-  .pill-ok{background:var(--teal-bg);color:var(--teal-text);}
-  .pill-warn{background:var(--warn-bg);color:var(--warn-text);}
+  /* Header pills describe the kind of day and are authored. Colour is kept
+     out of them on purpose: budget status is the calculated .budget-chip
+     beside them, so a colour never claims something about spend that
+     nothing keeps true. */
+  .pill-day{background:var(--bg3);color:var(--text2);}
+  .budget-chip{font-family:var(--mono);font-size:10.5px;font-variant-numeric:tabular-nums;padding:3px 8px;}
+  .budget-chip.is-ok{background:var(--teal-bg);color:var(--teal-text);}
+  .budget-chip.is-warn{background:var(--warn-bg);color:var(--warn-text);}
+  .budget-chip.is-over{background:var(--red-bg);color:var(--red-text);}
+  /* On a phone, side by side the two pills cost the title ~50px; stack the
+     chip under the day pill instead, chevron staying top right. */
+  @media(max-width:560px){
+    .day-card-header-right{display:grid;grid-template-columns:auto auto;column-gap:8px;row-gap:4px;align-items:center;justify-items:end;}
+    .day-card-header-right .chevron{grid-column:2;grid-row:1;}
+    .day-card-header-right .budget-chip{grid-column:1;grid-row:2;}
+  }
   .pill-info{background:var(--blue-bg);color:var(--blue-text);}
   .pill-special{background:var(--accent-bg);color:var(--accent-text);}
   .pill-transit{background:var(--bg3);color:var(--text2);}
@@ -761,7 +775,7 @@
           <div class="day-title">Arrival · SoHo Walking Tour · Nammies' 18th Birthday Celebration</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Special occasion</span>
+          <span class="pill pill-day">Special occasion</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -798,7 +812,7 @@
           <div class="day-title">Downtown · Brooklyn Bridge · DUMBO · High Line</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Slightly over</span>
+          <span class="pill pill-day">Downtown day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -850,7 +864,7 @@
           <div class="day-title">Secret Santa · South Beach · Lincoln Road</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Within budget</span>
+          <span class="pill pill-day">Christmas Day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -873,7 +887,7 @@
           <div class="day-title">Miami 3-in-1 Combo Tour · Bus + Boat + Everglades</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Big day</span>
+          <span class="pill pill-day">Big day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -896,7 +910,7 @@
           <div class="day-title">IKEA Miami + Dolphin Mall Outlets</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Shopping day</span>
+          <span class="pill pill-day">Shopping day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -919,7 +933,7 @@
           <div class="day-title">Florida Keys · Scuba · Snorkel · Robbie's Marina</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Big water day</span>
+          <span class="pill pill-day">Big water day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -942,7 +956,7 @@
           <div class="day-title">Bal Harbour · Rest · Christmas Wonderland at Tropical Park</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Within budget</span>
+          <span class="pill pill-day">Easy days</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -966,7 +980,7 @@
           <div class="day-title">Countdown Miami · Bayfront Park · Fireworks over Biscayne Bay</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Splurge night</span>
+          <span class="pill pill-day">Splurge night</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -989,7 +1003,7 @@
           <div class="day-title">Rest · Recover · Haulover Beach</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Rest day</span>
+          <span class="pill pill-day">Rest day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1012,7 +1026,7 @@
           <div class="day-title">Last Full Day in Miami · Coconut Grove · Farewell Dinner</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Within budget</span>
+          <span class="pill pill-day">Last Miami day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1086,7 +1100,7 @@
           <div class="day-title">🌊 Day at Sea</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Relaxed</span>
+          <span class="pill pill-day">Relaxed</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1132,7 +1146,7 @@
           <div class="day-title">🇻🇮 St. Thomas, US Virgin Islands</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Explore at leisure</span>
+          <span class="pill pill-day">Explore at leisure</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1178,7 +1192,7 @@
           <div class="day-title">🌊 Day at Sea</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Relaxed</span>
+          <span class="pill pill-day">Relaxed</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1252,7 +1266,7 @@
           <div class="day-title">Post-cruise · Times Square · Possible Broadway</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-ok">Within budget</span>
+          <span class="pill pill-day">Back in New York</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1275,7 +1289,7 @@
           <div class="day-title">The Met · January Sales · NY Public Library · Koreatown</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Plan carefully</span>
+          <span class="pill pill-day">Plan carefully</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -1298,7 +1312,7 @@
           <div class="day-title">Central Park · Top of the Rock · Farewell Dinner at Nobu 57</div>
         </div>
         <div class="day-card-header-right">
-          <span class="pill pill-warn">Splurge day</span>
+          <span class="pill pill-day">Splurge day</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </div>
@@ -2439,6 +2453,8 @@
         });
       }
 
+      renderBudgetChip(d.card, d.allowance > 0 && s.counted ? { spend: s, limit: d.allowance * perDay } : null);
+
       const tripMeter = ensureMeter(d.bar, 'trip', totalDays);
       const reading = paceReading(cumLo, cumHi, cumDays * perDay, pot);
       const hi = cumHi / pot;
@@ -2452,6 +2468,29 @@
       });
     });
     renderBudgetOverview(days, { pot, perDay, totalDays, cumLo, cumHi });
+  }
+  /** The day's budget status in its header, so a collapsed card still shows
+   *  it. Same figure and thresholds as the Day spend meter; judged on the
+   *  high figure. No chip on days without an allowance. */
+  function renderBudgetChip(card, o) {
+    const right = card.querySelector('.day-card-header-right');
+    if (!right) return;
+    let chip = right.querySelector('.budget-chip');
+    if (!o) { if (chip) chip.remove(); return; }
+    if (!chip) {
+      chip = el('span', 'pill budget-chip');
+      right.insertBefore(chip, right.querySelector('.chevron'));
+    }
+    const lo = o.spend.min / o.limit, hi = o.spend.max / o.limit;
+    const tone = hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : 'ok');
+    chip.classList.toggle('is-ok', tone === 'ok');
+    chip.classList.toggle('is-warn', tone === 'warn');
+    chip.classList.toggle('is-over', tone === 'over');
+    chip.textContent = Math.round(hi * 100) + '%';
+    const summary = 'Day spend ' + formatSpendTotal(o.spend.min, o.spend.max) + ' of ' + formatRand(o.limit)
+      + ' (' + formatPct(lo, hi) + ')';
+    chip.title = summary;
+    chip.setAttribute('aria-label', summary);
   }
   /** Budget days begun as of now, by each card's `data-date`. Whole days:
    *  today counts from midnight, matching the planned spend it is set
