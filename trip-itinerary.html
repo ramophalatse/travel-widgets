@@ -718,6 +718,8 @@
 
   .cv{position:fixed;inset:0;z-index:880;display:flex;flex-direction:column;color:#fff;font-family:var(--sans);background:#06090d;overscroll-behavior:contain;animation:cv-enter 0.28s ease-out;}
   .cv:focus{outline:none;}
+  /* Clicking the space around the card closes the browser; the cursor says so. */
+  @media(hover:hover){.cv-stage,.cv-top,.cv-days{cursor:zoom-out;}.cv-card,.cv-phases{cursor:auto;}}
   @keyframes cv-enter{from{opacity:0;}to{opacity:1;}}
   .cv-backdrop{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
   .cv-backdrop-img{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(38px) saturate(1.4) brightness(0.62);transform:scale(1.08);transition:opacity 0.5s ease;}
@@ -4474,6 +4476,7 @@
       + '<div class="cv-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> stops · <kbd>↑</kbd><kbd>↓</kbd> days · <kbd>1</kbd>–<kbd>' + legs.length + '</kbd> phases · <kbd>Esc</kbd> list</div>'
       + '</div>'
       + '<div class="cv-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></div>';
+    root.addEventListener('pointerdown', e => { downOnBackdrop = isBackdrop(e); }, true);
     root.addEventListener('click', onRootClick);
     wireGestures(root.querySelector('.cv-stage'));
     document.body.appendChild(root);
@@ -4551,8 +4554,26 @@
 
   /* ---------- input ---------- */
 
+  /** The dark space around the card and its controls. The phase switch and
+   *  the run of day buttons count as controls even between their buttons, so
+   *  a near miss on a day never throws the whole browser away. */
+  let downOnBackdrop = false;
+  function isBackdrop(e) {
+    const t = e.target;
+    if (!root || !root.contains(t) || t.closest('.cv-card,.cv-phases,[data-go],[data-act],button,a')) return false;
+    const days = root.querySelectorAll('.cv-day');
+    if (days.length && t.closest('.cv-days')) {
+      const first = days[0].getBoundingClientRect(), last = days[days.length - 1].getBoundingClientRect();
+      if (e.clientX >= first.left - 8 && e.clientX <= last.right + 8 && e.clientY >= first.top - 8 && e.clientY <= first.bottom + 8) return false;
+    }
+    return true;
+  }
+
   function onRootClick(e) {
     if (performance.now() < suppressClickUntil) { e.preventDefault(); e.stopPropagation(); return; }
+    // Both ends on the backdrop: a text selection dragged off the card ends
+    // with a click on the stage, and that must not close anything.
+    if (downOnBackdrop && isBackdrop(e)) { downOnBackdrop = false; closeBrowser(); return; }
     const el = e.target.closest('[data-go],[data-act]');
     if (!el || !root.contains(el) || el.disabled) return;
     if (el.closest('.cv-card[data-leaving]')) return;
