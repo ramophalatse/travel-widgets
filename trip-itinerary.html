@@ -687,6 +687,194 @@
     #edge-drawer[data-hint="1"] .edge-hint-pill{animation:none;width:12px;}
     @keyframes edge-hint-fade{0%{opacity:0;}40%{opacity:0.85;}100%{opacity:0;}}
   }
+
+  /* CARD BROWSER: a read-only layer over the list. Every card is built from the
+     live DOM at the moment it is shown, after saved edits have landed, so it can
+     never disagree with the list. Every class is cv- prefixed and none appears
+     in TEXT_SELECTOR or IMAGE_SELECTOR: the positional edit ids must never see
+     these nodes. It sits under the modals (900) and lightbox (1000) so the
+     transfer comparison, flight details and zoom all open on top of it. */
+  html.cv-open{overflow:hidden;}
+  html.cv-open #edge-drawer{visibility:hidden;}
+  :root:not([data-edit="on"]) .activity-row{cursor:pointer;}
+  :root:not([data-edit="on"]) .activity-row .act-name{transition:color 0.15s;}
+  @media(hover:hover){:root:not([data-edit="on"]) .activity-row:hover .act-name{color:var(--accent-text);}}
+  :root[data-edit="on"] .cv-day-btn,:root[data-edit="on"] .cv-hero-btn{display:none;}
+  .activity-row.cv-flash,.day-card.cv-flash{animation:cv-flash 1.6s ease-out;}
+  @keyframes cv-flash{0%,30%{background:var(--accent-bg);}100%{background:transparent;}}
+  .day-card.cv-flash{animation-name:cv-flash-card;}
+  @keyframes cv-flash-card{0%,30%{box-shadow:0 0 0 2px var(--accent),var(--shadow);}100%{box-shadow:var(--shadow);}}
+  .cv-day-btn{margin-right:2px;}
+  /* The header's phone grid pins the chevron top right and the budget chip
+     bottom left; the browse button takes the free cell under the chevron. */
+  @media(max-width:560px){.day-card-header-right .cv-day-btn{grid-column:2;grid-row:2;margin-right:-5px;}}
+  .cv-hero-btn{position:absolute;right:1.25rem;bottom:1.5rem;z-index:3;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,0.28);background:rgba(10,14,20,0.32);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.2s var(--ease-pop);}
+  .cv-hero-btn:hover{background:rgba(10,14,20,0.5);transform:translateY(-1px);}
+  .cv-hero-btn svg{width:16px;height:16px;}
+  @media(max-width:640px){.cv-hero-btn{right:0.9rem;top:0.9rem;bottom:auto;padding:7px 13px 7px 11px;font-size:12px;}}
+
+  .cv{position:fixed;inset:0;z-index:880;display:flex;flex-direction:column;color:#fff;font-family:var(--sans);background:#06090d;overscroll-behavior:contain;animation:cv-enter 0.28s ease-out;}
+  .cv:focus{outline:none;}
+  @keyframes cv-enter{from{opacity:0;}to{opacity:1;}}
+  .cv-backdrop{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+  .cv-backdrop-img{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(38px) saturate(1.4) brightness(0.62);transform:scale(1.08);transition:opacity 0.5s ease;}
+  .cv-backdrop::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 35%,rgba(6,9,13,0.1) 0%,rgba(6,9,13,0.72) 100%);}
+
+  .cv-top{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:14px max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));}
+  .cv-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;cursor:pointer;text-decoration:none;transition:background 0.15s,transform 0.2s var(--ease-pop);}
+  .cv-icon-btn:hover{background:rgba(255,255,255,0.2);}
+  .cv-icon-btn:active{transform:scale(0.94);}
+  .cv-icon-btn svg{width:18px;height:18px;display:block;}
+  .cv-phases{justify-self:center;display:flex;gap:4px;padding:4px;max-width:100%;overflow-x:auto;scrollbar-width:none;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);}
+  .cv-phases::-webkit-scrollbar,.cv-days::-webkit-scrollbar{display:none;}
+  .cv-phase{flex:none;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:999px;background:none;color:rgba(255,255,255,0.68);font-family:var(--sans);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer;transition:background 0.2s,color 0.2s;}
+  .cv-phase:hover{color:#fff;}
+  .cv-phase[aria-selected="true"]{background:#fff;color:#11161c;font-weight:600;}
+  .cv-count{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:rgba(255,255,255,0.6);font-variant-numeric:tabular-nums;min-width:40px;text-align:right;}
+
+  .cv-days{position:relative;z-index:2;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:12px 16px 4px;scroll-padding-inline:40%;justify-content:safe center;}
+  .cv-day{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:62px;padding:7px 10px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.72);font-family:var(--sans);cursor:pointer;transition:background 0.2s,border-color 0.2s,color 0.2s;}
+  .cv-day:hover{background:rgba(255,255,255,0.12);color:#fff;}
+  .cv-day-num{font-family:var(--mono);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.75;}
+  .cv-day-date{font-size:13px;font-weight:600;white-space:nowrap;}
+  .cv-day[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .cv-day[aria-selected="true"] .cv-day-num{opacity:0.9;}
+
+  .cv-stage{position:relative;z-index:1;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:28px;padding:14px 16px max(16px,env(safe-area-inset-bottom));}
+  .cv-arrow{width:52px;height:52px;}
+  .cv-arrow svg{width:22px;height:22px;}
+  .cv-arrow:disabled{opacity:0.25;cursor:default;}
+  .cv-slot{position:relative;width:min(440px,100%);height:min(100%,840px);}
+  .cv-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:2;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.42);white-space:nowrap;pointer-events:none;}
+  .cv-hint kbd{font-family:inherit;padding:1px 5px;border-radius:4px;border:1px solid rgba(255,255,255,0.22);margin:0 2px;}
+
+  .cv-card{position:absolute;inset:0;display:flex;flex-direction:column;border-radius:30px;overflow:hidden;background:var(--card);color:var(--text);box-shadow:0 30px 80px -20px rgba(0,0,0,0.75),0 0 0 1px rgba(255,255,255,0.06);touch-action:pan-y;will-change:transform;}
+  .cv-card.cv-in-next{animation:cv-in-next 0.42s cubic-bezier(0.2,0.8,0.2,1) both;}
+  .cv-card.cv-in-prev{animation:cv-in-prev 0.42s cubic-bezier(0.2,0.8,0.2,1) both;}
+  .cv-card.cv-out-next{animation:cv-out-next 0.32s ease-in both;pointer-events:none;}
+  .cv-card.cv-out-prev{animation:cv-out-prev 0.32s ease-in both;pointer-events:none;}
+  .cv-card.cv-in-fade{animation:cv-in-fade 0.4s ease-out both;}
+  .cv-card.cv-out-fade{animation:cv-out-fade 0.25s ease-in both;pointer-events:none;}
+  @keyframes cv-in-next{from{opacity:0;transform:translateX(70px) scale(0.97) rotate(1deg);}to{opacity:1;transform:none;}}
+  @keyframes cv-in-prev{from{opacity:0;transform:translateX(-70px) scale(0.97) rotate(-1deg);}to{opacity:1;transform:none;}}
+  @keyframes cv-out-next{to{opacity:0;transform:translateX(-90px) scale(0.94) rotate(-2deg);}}
+  @keyframes cv-out-prev{to{opacity:0;transform:translateX(90px) scale(0.94) rotate(2deg);}}
+  @keyframes cv-in-fade{from{opacity:0;transform:translateY(24px) scale(0.98);}to{opacity:1;transform:none;}}
+  @keyframes cv-out-fade{to{opacity:0;transform:scale(0.96);}}
+
+  .cv-media{position:relative;flex:0 0 57%;min-height:0;overflow:hidden;background:#11161c;touch-action:none;}
+  .cv-card--day .cv-media{flex-basis:42%;}
+  .cv-media-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+  .cv-media--fallback .cv-media-img{filter:saturate(0.85) brightness(0.82);transform:scale(1.12);}
+  .cv-media::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,0.38) 0%,rgba(0,0,0,0) 24%,rgba(0,0,0,0) 36%,rgba(0,0,0,0.3) 58%,rgba(0,0,0,0.8) 100%);}
+  .cv-media-text .cv-kicker,.cv-media-text .cv-meta,.cv-media-text .cv-subtitle{text-shadow:0 1px 12px rgba(0,0,0,0.55);}
+  .cv-progress{position:absolute;top:10px;left:16px;right:16px;z-index:2;display:flex;gap:4px;}
+  .cv-seg{flex:1;height:3px;padding:6px 0;border:none;background:none;cursor:pointer;background-clip:content-box;position:relative;}
+  .cv-seg::before{content:'';position:absolute;left:0;right:0;top:6px;height:3px;border-radius:2px;background:rgba(255,255,255,0.32);transition:background 0.2s;}
+  .cv-seg.is-done::before{background:rgba(255,255,255,0.72);}
+  .cv-seg.is-current::before{background:#fff;box-shadow:0 0 8px rgba(255,255,255,0.6);}
+  .cv-media-top{position:absolute;top:28px;left:16px;right:16px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .cv-glass{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(12,16,22,0.34);border:1px solid rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);color:#fff;font-size:12px;font-weight:500;white-space:nowrap;min-width:0;}
+  .cv-tag{overflow:hidden;text-overflow:ellipsis;}
+  .cv-media-actions{display:flex;gap:8px;flex:none;}
+  .cv-media-actions .cv-icon-btn{width:36px;height:36px;background:rgba(12,16,22,0.34);border-color:rgba(255,255,255,0.2);}
+  .cv-media-actions .cv-icon-btn svg{width:17px;height:17px;}
+  .cv-strip{position:absolute;right:14px;bottom:40px;z-index:2;display:flex;flex-direction:column;gap:8px;}
+  .cv-strip-item{position:relative;width:54px;height:54px;padding:0;border-radius:14px;overflow:hidden;border:2px solid rgba(255,255,255,0.9);background:#2a3038;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.35);transition:transform 0.2s var(--ease-pop);}
+  .cv-strip-item:hover{transform:scale(1.07);}
+  .cv-strip-item img{width:100%;height:100%;object-fit:cover;display:block;}
+  .cv-strip-item .cv-strip-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:9.5px;line-height:1.15;color:#fff;background:rgba(10,14,20,0.45);padding:3px;}
+  .cv-strip-item.is-more .cv-strip-time{font-family:var(--serif);font-size:15px;font-weight:700;background:rgba(10,14,20,0.58);}
+  .cv-media-text{position:absolute;left:22px;right:84px;bottom:40px;z-index:2;color:#fff;}
+  .cv-card--day .cv-media-text{right:22px;}
+  .cv-score{padding:5px 11px 5px 9px;font-family:var(--serif);font-size:14px;font-weight:700;margin-bottom:10px;}
+  .cv-score svg{width:14px;height:14px;color:#34d399;}
+  .cv-kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.78);margin-bottom:6px;}
+  .cv-title{font-family:var(--serif);font-weight:800;font-size:clamp(26px,7.2vw,34px);line-height:1.04;letter-spacing:-0.035em;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,0.35);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .cv-title.is-long{font-size:clamp(22px,6vw,27px);}
+  .cv-subtitle{margin-top:6px;font-size:14px;font-weight:500;color:rgba(255,255,255,0.86);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .cv-meta{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:13px;color:rgba(255,255,255,0.8);}
+  .cv-meta span{display:inline-flex;align-items:center;gap:6px;}
+  .cv-meta svg{width:15px;height:15px;opacity:0.85;}
+
+  .cv-sheet{position:relative;z-index:3;flex:1;min-height:0;display:flex;flex-direction:column;margin-top:-24px;border-radius:26px 26px 0 0;background:var(--card);}
+  .cv-sheet-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 22px 8px;scrollbar-width:thin;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 20px);mask-image:linear-gradient(to bottom,transparent 0,#000 20px);}
+  .cv-section-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--accent-text);margin-bottom:10px;}
+  .cv-section-label::after{content:'';width:4px;height:4px;border-radius:50%;background:var(--accent);}
+  .cv-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin-bottom:16px;}
+  .cv-fact{padding:9px 11px;border-radius:14px;background:var(--bg3);min-width:0;}
+  .cv-fact-k{font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);}
+  .cv-fact-v{margin-top:2px;font-size:13.5px;font-weight:600;color:var(--text);line-height:1.3;overflow-wrap:anywhere;}
+  .cv-fact-v.is-over{color:var(--red-text);}
+  .cv-fact-v.is-under{color:var(--blue-text);}
+  .cv-fact-v.is-at{color:var(--teal-text);}
+  .cv-fact--wide{grid-column:1/-1;}
+  .cv-body{font-size:14.5px;line-height:1.65;color:var(--text2);}
+  .cv-body + .cv-body{margin-top:10px;}
+  .cv-body .transfer-link{color:var(--accent-text);font-weight:500;cursor:pointer;}
+  .cv-fine{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:6px;}
+  .cv-fine li{display:flex;gap:8px;font-size:13px;color:var(--text2);}
+  .cv-fine li::before{content:'';flex:none;width:6px;height:6px;margin-top:7px;border-radius:50%;background:var(--warn);}
+  .cv-reviews{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+  .cv-review{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:border-color 0.15s,background 0.15s;}
+  .cv-review:hover{border-color:var(--border2);background:var(--bg3);}
+  .cv-review-score{font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-0.03em;color:#00AA6C;}
+  .cv-review-body{min-width:0;flex:1;}
+  .cv-review-name{font-size:13px;font-weight:600;}
+  .cv-review-meta{font-size:11.5px;color:var(--text3);}
+  .cv-review .ta-bubbles{width:72px;height:13px;display:block;margin:2px 0;}
+  .cv-review-go{width:16px;height:16px;color:var(--text3);flex:none;}
+  .cv-action{margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--border2);background:none;color:var(--text);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;}
+  .cv-action:hover{background:var(--bg3);}
+  .cv-action svg{width:15px;height:15px;}
+  .cv-notice{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.55;background:var(--accent-bg);color:var(--accent-text);}
+  .cv-notice.is-warn{background:var(--warn-bg);color:var(--warn-text);}
+  .cv-notice.is-info{background:var(--blue-bg);color:var(--blue-text);}
+  .cv-timeline{list-style:none;margin-top:16px;display:flex;flex-direction:column;}
+  .cv-timeline li + li{border-top:1px solid var(--border);}
+  .cv-stop{display:grid;grid-template-columns:44px 64px 1fr 14px;align-items:center;gap:12px;width:100%;padding:8px 2px;border:none;background:none;text-align:left;color:var(--text);font-family:var(--sans);cursor:pointer;border-radius:10px;}
+  .cv-stop:hover .cv-stop-name{color:var(--accent-text);}
+  .cv-stop-thumb{width:44px;height:44px;border-radius:11px;object-fit:cover;background:var(--bg3);display:block;}
+  .cv-stop-thumb.is-empty{display:flex;align-items:center;justify-content:center;color:var(--text3);}
+  .cv-stop-thumb.is-empty svg{width:16px;height:16px;}
+  .cv-stop-time{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
+  .cv-stop-name{font-size:14px;font-weight:500;line-height:1.35;transition:color 0.15s;}
+  .cv-stop svg.cv-stop-go{width:14px;height:14px;color:var(--text3);}
+
+  .cv-cta{display:flex;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--card);}
+  .cv-cta-back{width:54px;height:54px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:18px;border:1px solid var(--border2);background:none;color:var(--text);cursor:pointer;}
+  .cv-cta-back:hover{background:var(--bg3);}
+  .cv-cta-back:disabled{opacity:0.35;cursor:default;}
+  .cv-cta-back svg,.cv-cta-next svg{width:20px;height:20px;flex:none;}
+  .cv-cta-next{flex:1;min-width:0;height:54px;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;border:none;border-radius:18px;background:var(--accent);color:#fff;font-family:var(--sans);text-align:left;cursor:pointer;box-shadow:0 10px 24px -10px rgba(5,150,105,0.7);transition:filter 0.15s,transform 0.2s var(--ease-pop);}
+  .cv-cta-next:hover{filter:brightness(1.07);}
+  .cv-cta-next:active{transform:scale(0.98);}
+  .cv-cta-next.is-leg{background:#11161c;box-shadow:0 10px 24px -12px rgba(0,0,0,0.6);}
+  :root[data-theme="dark"] .cv-cta-next.is-leg{background:#f1f4f7;color:#11161c;}
+  .cv-cta-next:disabled{background:var(--bg3);color:var(--text3);box-shadow:none;cursor:default;}
+  .cv-cta-text{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2;}
+  .cv-cta-kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.8;}
+  .cv-cta-label{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  @media(max-width:760px){
+    .cv-arrow,.cv-hint{display:none;}
+    .cv-count{display:none;}
+    .cv-top{grid-template-columns:auto 1fr;gap:10px;padding-top:max(10px,env(safe-area-inset-top));}
+    .cv-phases{justify-self:stretch;}
+    .cv-phase{padding:7px 11px;font-size:12.5px;}
+    .cv-days{justify-content:flex-start;padding:10px 16px 2px;}
+    .cv-stage{padding:10px 10px max(10px,env(safe-area-inset-bottom));}
+    .cv-slot{width:100%;height:100%;}
+    .cv-card{border-radius:26px;}
+  }
+  @media(max-height:700px){.cv-media{flex-basis:50%;}.cv-strip-item:nth-child(3){display:none;}}
+  @media(hover:none){.cv-hint{display:none;}}
+  @media (prefers-reduced-motion:reduce){
+    .cv,.cv-card.cv-in-next,.cv-card.cv-in-prev,.cv-card.cv-in-fade{animation:cv-in-plain 0.2s ease both;}
+    .cv-card.cv-out-next,.cv-card.cv-out-prev,.cv-card.cv-out-fade{animation:cv-out-fade-plain 0.12s ease both;}
+    @keyframes cv-in-plain{from{opacity:0;}to{opacity:1;}}
+    @keyframes cv-out-fade-plain{to{opacity:0;}}
+  }
 </style>
 </head>
 <body>
@@ -699,6 +887,10 @@
 
 <header class="site-header">
 <div class="header-toolbar">
+  <button class="chip-btn" id="browse-cards-btn" onclick="openCardBrowser()" aria-label="Browse as cards" title="Browse as cards">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M2.5 6.5v11M21.5 6.5v11"/></svg>
+    <span class="chip-label">Browse cards</span>
+  </button>
   <button class="chip-btn" id="expand-all-btn" onclick="expandAllCards()" aria-label="Expand all days" title="Expand all">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 9 12 5 16 9"/><polyline points="8 15 12 19 16 15"/></svg>
     <span class="chip-label">Expand all</span>
@@ -3058,6 +3250,10 @@
     clone.querySelectorAll('[data-authored-name]').forEach(el => el.removeAttribute('data-authored-name'));
     const status = clone.querySelector('#save-status');
     if (status) status.remove();
+    // The card browser and its entry buttons are rebuilt from the list on load.
+    clone.querySelectorAll('#cv-root,.cv-day-btn,.cv-hero-btn').forEach(el => el.remove());
+    clone.classList.remove('cv-open');
+    clone.querySelectorAll('.cv-flash').forEach(el => el.classList.remove('cv-flash'));
     // Exporting while scrolled would otherwise bake the chips into the nav,
     // where the source never had them.
     const exportDock = clone.querySelector('#nav-toolbar');
@@ -3150,7 +3346,9 @@
       });
     });
   }
-  (async function initEditSystem() {
+  // Exposed so a deep link into the card browser waits for saved edits rather
+  // than showing the authored file for a moment.
+  window.editsReady = (async function initEditSystem() {
     restoreItineraryView();
     initFlightDetails();
     ensureImageDropZones();
@@ -3666,6 +3864,626 @@
 
   render();
   maybeHint();
+})();
+</script>
+<script>
+/* CARD BROWSER: one stop per card, walked in trip order.
+   The sequence is flat: each day contributes an overview card followed by one
+   card per activity row, and days follow each other across phase boundaries, so
+   "next" always means the next thing that happens on the trip. Phases and days
+   are shortcuts into that sequence, never separate modes.
+   Nothing is cached between opens: the model is rebuilt from the live list each
+   time, so saved edits, deleted rows and replaced photos are always current. */
+(function () {
+  const ICON = {
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+    zoom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>',
+    directions: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11 21 3l-8 18-2-8-8-2Z"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8Z"/></svg>',
+    ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>',
+    plane: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16Z"/></svg>',
+    cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M2.5 6.5v11M21.5 6.5v11"/></svg>',
+    image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/></svg>'
+  };
+  const HASH_PREFIX = '#browse=';
+  const LAST_KEY = 'trip-itinerary-card-browser-last';
+  const INERT_SELECTOR = '.site-header,.nav-wrapper,.main,#edge-drawer,.to-top,.edit-badge,.edit-export';
+
+  const txt = el => el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const bgUrl = el => { const m = el && el.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/); return m ? m[1] : ''; };
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let root = null, items = [], legs = [], index = 0, pushedHistory = false, opener = null, suppressClickUntil = 0;
+  // Stepping back out of the pushed entry would otherwise restore the scroll
+  // position from when the browser opened, over the row revealInList() finds.
+  let restoreScrollMode = null;
+
+  function buildModel() {
+    items = []; legs = [];
+    document.querySelectorAll('.leg-panel').forEach(panel => {
+      const dayCards = Array.from(panel.querySelectorAll('.day-card[data-day-key]')).filter(c => c.querySelector('.activity-row'));
+      if (!dayCards.length) return;
+      const id = panel.id.replace(/^panel-/, '');
+      const tab = document.querySelector('.nav-tab[data-leg="' + id + '"]');
+      const emoji = txt(tab && tab.querySelector('.tab-emoji'));
+      const leg = {
+        id, panel, emoji,
+        name: txt(tab).replace(emoji, '').trim() || id,
+        place: txt(panel.querySelector('.leg-hero-title')),
+        hero: bgUrl(panel.querySelector('.leg-hero')),
+        days: [], first: items.length
+      };
+      dayCards.forEach(card => {
+        const rows = Array.from(card.querySelectorAll('.activity-row')).filter(r => !r.parentElement.closest('.activity-row'));
+        const day = { key: card.dataset.dayKey, card, leg, rows, first: items.length, index: leg.days.length };
+        leg.days.push(day);
+        items.push({ type: 'day', leg, day });
+        rows.forEach((row, i) => items.push({ type: 'stop', leg, day, row, i }));
+      });
+      legs.push(leg);
+    });
+  }
+
+  function dayInfo(day) {
+    const label = txt(day.card.querySelector('.day-label'));
+    const date = day.card.dataset.date ? new Date(day.card.dataset.date + 'T12:00:00') : null;
+    const kindEl = day.card.querySelector('.day-card-header-right .pill:not(.budget-chip)');
+    const chip = day.card.querySelector('.budget-chip');
+    const total = day.card.querySelector('.spend-row.total span:last-child');
+    // "Days 9–10" cards cover a span: the number and both dates say so.
+    const num = ((label.match(/Days?\s*(\d+(?:\s*[–-]\s*\d+)?)/i) || [])[1] || String(day.index + 1)).replace(/\s*[–-]\s*/, '–');
+    const span = num.indexOf('–') > 0 ? num.split('–').reduce((a, b) => Number(b) - Number(a)) : 0;
+    const end = date && span ? new Date(date.getTime() + span * 86400000) : null;
+    const fmt = (d, o) => d.toLocaleDateString('en-GB', o);
+    return {
+      num,
+      dayLabel: (span ? 'Days ' : 'Day ') + num,
+      dateShort: !date ? label.split('·')[0].trim() : end ? fmt(date, { day: 'numeric' }) + '–' + fmt(end, { day: 'numeric', month: 'short' }) : fmt(date, { day: 'numeric', month: 'short' }),
+      dateLong: !date ? label.split('·')[0].trim() : end ? fmt(date, { weekday: 'short' }) + '–' + fmt(end, { weekday: 'short' }) + ' ' + date.getDate() + '–' + fmt(end, { day: 'numeric', month: 'short' }) : fmt(date, { weekday: 'short', day: 'numeric', month: 'short' }),
+      title: txt(day.card.querySelector('.day-title')),
+      kind: txt(kindEl),
+      spend: txt(total),
+      chip: chip ? { text: txt(chip), tone: ['over', 'under', 'at'].find(t => chip.classList.contains('is-' + t)) || '' } : null
+    };
+  }
+
+  function stopInfo(item) {
+    const row = item.row;
+    const name = txt(row.querySelector('.act-name'));
+    const parts = name.split(/\s+·\s+/);
+    const img = row.querySelector('img.act-thumb');
+    // A .duration-label sits before the row it leads into, so the one after
+    // this row measures how long we stay here.
+    const after = row.nextElementSibling;
+    const taEl = row.querySelector('[data-ta]');
+    const ratings = taEl && typeof TRIPADVISOR !== 'undefined'
+      ? taEl.dataset.ta.split(',').map(k => TRIPADVISOR[k.trim()]).filter(d => d && d.score != null) : [];
+    return {
+      name, title: parts[0], subtitle: parts.slice(1).join(' · ').replace(/^\p{Ll}/u, c => c.toUpperCase()),
+      time: txt(row.querySelector('.time-col')),
+      img: img ? img.src : '',
+      cost: txt(row.querySelector('.act-cost')),
+      duration: after && after.classList.contains('duration-label') ? txt(after) : '',
+      notes: Array.from(row.querySelectorAll('.act-note')),
+      fine: Array.from(row.querySelectorAll('.act-note-text'), txt).filter(Boolean),
+      ratings,
+      flight: row.querySelector('.flight-trigger')
+    };
+  }
+
+  function itemImage(item) {
+    if (item.type === 'stop') { const img = item.row.querySelector('img.act-thumb'); if (img) return { src: img.src, real: true }; }
+    else { const first = item.day.card.querySelector('.activity-row img.act-thumb'); if (first) return { src: first.src, real: true }; }
+    return { src: item.leg.hero, real: false };
+  }
+
+  function keyOf(item) { return item.type === 'day' ? item.day.key : item.day.key + '.' + (item.i + 1); }
+
+  function resolve(target) {
+    if (target && target.row) return items.findIndex(it => it.row === target.row);
+    if (target && target.dayKey) return items.findIndex(it => it.type === 'day' && it.day.key === target.dayKey);
+    if (target && target.legId) return items.findIndex(it => it.leg.id === target.legId);
+    if (typeof target === 'string') {
+      const [dayKey, n] = target.split('.');
+      const base = items.findIndex(it => it.type === 'day' && it.day.key === dayKey);
+      if (base < 0) return -1;
+      const stop = n ? base + Number(n) : base;
+      return items[stop] && items[stop].day.key === dayKey ? stop : base;
+    }
+    // The toolbar button: resume where we left off if that is in the phase
+    // on screen, otherwise start at the top of that phase.
+    const active = document.querySelector('.leg-panel.active');
+    const legId = active ? active.id.replace(/^panel-/, '') : '';
+    let last = null;
+    try { last = sessionStorage.getItem(LAST_KEY); } catch (e) {}
+    if (last) {
+      const at = resolve(last);
+      if (at >= 0 && items[at].leg.id === legId) return at;
+    }
+    const legStart = items.findIndex(it => it.leg.id === legId);
+    return legStart >= 0 ? legStart : 0;
+  }
+
+  /* ---------- rendering ---------- */
+
+  function progressHtml(item) {
+    const day = item.day, current = item.type === 'day' ? 0 : item.i + 1;
+    let html = '';
+    for (let n = 0; n <= day.rows.length; n++) {
+      const label = n === 0 ? 'Day overview' : 'Stop ' + n + ' of ' + day.rows.length;
+      html += '<button type="button" class="cv-seg' + (n < current ? ' is-done' : '') + (n === current ? ' is-current' : '') + '" data-go="' + (day.first + n) + '" aria-label="' + label + '"></button>';
+    }
+    return '<div class="cv-progress">' + html + '</div>';
+  }
+
+  function stripHtml(item) {
+    const day = item.day;
+    const startAt = item.type === 'day' ? 0 : item.i + 1;
+    const remaining = day.rows.length - startAt;
+    if (remaining <= 0) return '';
+    const showMore = remaining > 3;
+    const count = showMore ? 2 : remaining;
+    let html = '';
+    for (let n = 0; n < count; n++) {
+      const idx = day.first + 1 + startAt + n;
+      const it = items[idx], info = stopInfo(it);
+      html += '<button type="button" class="cv-strip-item" data-go="' + idx + '" aria-label="' + esc(info.time + ' ' + info.title) + '">'
+        + (info.img ? '<img src="' + esc(info.img) + '" alt="" decoding="async">' : '<span class="cv-strip-time">' + esc(info.time) + '</span>')
+        + '</button>';
+    }
+    if (showMore) {
+      const idx = day.first + 1 + startAt + 2;
+      const it = items[idx], img = it.row.querySelector('img.act-thumb');
+      html += '<button type="button" class="cv-strip-item is-more" data-go="' + idx + '" aria-label="' + (remaining - 2) + ' more stops today">'
+        + (img ? '<img src="' + esc(img.src) + '" alt="" loading="lazy" decoding="async">' : '')
+        + '<span class="cv-strip-time">+' + (remaining - 2) + '</span></button>';
+    }
+    return '<div class="cv-strip">' + html + '</div>';
+  }
+
+  function ctaHtml() {
+    const here = items[index], next = items[index + 1];
+    let kicker = 'The end', label = "That's the whole trip", cls = '';
+    if (next) {
+      if (next.type === 'stop') {
+        const info = stopInfo(next);
+        kicker = (here.type === 'day' ? 'Start the day' : 'Next') + (info.time ? ' · ' + info.time : '');
+        label = info.title;
+      } else if (next.leg === here.leg) {
+        const d = dayInfo(next.day);
+        kicker = 'Next day · ' + d.dayLabel;
+        label = d.dateLong + ' · ' + d.title.split(/\s+·\s+/)[0];
+      } else {
+        kicker = 'Next phase';
+        label = (next.leg.emoji ? next.leg.emoji + ' ' : '') + next.leg.name;
+        cls = ' is-leg';
+      }
+    }
+    return '<div class="cv-cta">'
+      + '<button type="button" class="cv-cta-back" data-act="prev" aria-label="Previous"' + (index === 0 ? ' disabled' : '') + '>' + ICON.prev + '</button>'
+      + '<button type="button" class="cv-cta-next' + cls + '" data-act="next"' + (next ? '' : ' disabled') + '>'
+      + '<span class="cv-cta-text"><span class="cv-cta-kicker">' + esc(kicker) + '</span><span class="cv-cta-label">' + esc(label) + '</span></span>'
+      + (next ? ICON.next : '') + '</button></div>';
+  }
+
+  function fact(k, v, extra) {
+    if (!v) return '';
+    const wide = v.length > 26 ? ' cv-fact--wide' : '';
+    return '<div class="cv-fact' + wide + '"><div class="cv-fact-k">' + esc(k) + '</div><div class="cv-fact-v' + (extra || '') + '">' + esc(v) + '</div></div>';
+  }
+
+  function reviewsHtml(ratings) {
+    if (!ratings.length) return '';
+    return '<div class="cv-reviews">' + ratings.map(d =>
+      '<a class="cv-review" href="' + esc(d.url) + '" target="_blank" rel="noopener noreferrer">'
+      + '<span class="cv-review-score">' + d.score.toFixed(1) + '</span>'
+      + '<span class="cv-review-body"><span class="cv-review-name">' + esc(d.name) + '</span>'
+      + (typeof ratingBubbles === 'function' ? ratingBubbles(d.score) : '')
+      + '<span class="cv-review-meta">' + d.reviews.toLocaleString('en-GB') + ' Tripadvisor reviews' + (d.rank && ratings.length === 1 ? ' · ' + esc(d.rank) : '') + '</span></span>'
+      + '<span class="cv-review-go">' + ICON.ext + '</span></a>'
+    ).join('') + '</div>';
+  }
+
+  /** Note markup comes across so inline links (the transfer comparison) keep
+   *  working, minus every attribute the edit layer owns. */
+  function noteHtml(noteEl) {
+    const clone = noteEl.cloneNode(true);
+    [clone, ...clone.querySelectorAll('*')].forEach(n => ['contenteditable', 'data-editable', 'data-eid', 'data-note-edit'].forEach(a => n.removeAttribute(a)));
+    return '<div class="cv-body">' + clone.innerHTML + '</div>';
+  }
+
+  function cardHtml(item) {
+    const d = dayInfo(item.day);
+    const image = itemImage(item);
+    const place = item.leg.place || item.leg.name;
+    let media, sheet, cls;
+    const mediaImg = image.src
+      ? '<img class="cv-media-img" src="' + esc(image.src) + '" alt="" decoding="async"' + (image.real ? '' : ' style="object-position:' + ((item.type === 'stop' ? item.i * 29 : 50) % 100) + '% 50%"') + '>'
+      : '';
+    if (item.type === 'stop') {
+      const s = stopInfo(item);
+      cls = 'cv-card cv-card--stop';
+      const top = s.ratings[0];
+      const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.title + ', ' + place);
+      media = '<div class="cv-media' + (image.real ? '' : ' cv-media--fallback') + '">' + mediaImg + progressHtml(item)
+        + '<div class="cv-media-top"><span class="cv-glass cv-tag">' + esc(d.dayLabel) + ' · ' + esc(d.dateLong) + '</span><span class="cv-media-actions">'
+        + (image.real ? '<button type="button" class="cv-icon-btn" data-act="zoom" aria-label="View photo full size">' + ICON.zoom + '</button>' : '')
+        + '<a class="cv-icon-btn" href="' + esc(mapsUrl) + '" target="_blank" rel="noopener noreferrer" aria-label="Search in Google Maps">' + ICON.directions + '</a>'
+        + '</span></div>'
+        + stripHtml(item)
+        + '<div class="cv-media-text">'
+        + (top ? '<span class="cv-glass cv-score">' + ICON.star + top.score.toFixed(1) + '</span>' : '')
+        + '<h2 class="cv-title' + (s.title.length > 34 ? ' is-long' : '') + '">' + esc(s.title) + '</h2>'
+        + (s.subtitle ? '<div class="cv-subtitle">' + esc(s.subtitle) + '</div>' : '')
+        + '<div class="cv-meta">' + (s.time ? '<span>' + ICON.clock + esc(s.time) + '</span>' : '') + '<span>' + ICON.pin + esc(place) + '</span></div>'
+        + '</div></div>';
+      const facts = fact('Time', s.time) + fact('Here for', s.duration) + fact('Cost', s.cost);
+      sheet = (facts ? '<div class="cv-facts">' + facts + '</div>' : '')
+        + (s.notes.length ? '<div class="cv-section-label">The plan</div>' + s.notes.map(noteHtml).join('') : '')
+        + (s.fine.length ? '<ul class="cv-fine">' + s.fine.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>' : '')
+        + reviewsHtml(s.ratings)
+        + (s.flight ? '<button type="button" class="cv-action" data-act="flight">' + ICON.plane + 'View flight details</button>' : '');
+    } else {
+      cls = 'cv-card cv-card--day';
+      const rows = item.day.rows.map((row, i) => stopInfo(items[item.day.first + 1 + i]));
+      const first = rows.find(r => r.time), last = rows.slice().reverse().find(r => r.time);
+      media = '<div class="cv-media' + (image.real ? '' : ' cv-media--fallback') + '">' + mediaImg + progressHtml(item)
+        + '<div class="cv-media-top"><span class="cv-glass cv-tag">' + esc(item.leg.emoji ? item.leg.emoji + ' ' : '') + esc(item.leg.name) + (d.kind ? ' · ' + esc(d.kind) : '') + '</span></div>'
+        + '<div class="cv-media-text">'
+        + '<div class="cv-kicker">' + esc(d.dayLabel) + ' · ' + esc(d.dateLong) + '</div>'
+        + '<h2 class="cv-title' + (d.title.length > 38 ? ' is-long' : '') + '">' + esc(d.title) + '</h2>'
+        + '<div class="cv-meta"><span>' + ICON.pin + esc(place) + '</span>'
+        + (first && last && first !== last ? '<span>' + ICON.clock + esc(first.time) + ' – ' + esc(last.time) + '</span>' : '')
+        + '</div></div></div>';
+      const notices = Array.from(item.day.card.querySelectorAll('.day-card-body > .notice')).map(n =>
+        '<div class="cv-notice' + (n.classList.contains('notice-warn') ? ' is-warn' : n.classList.contains('notice-info') ? ' is-info' : '') + '">' + esc(txt(n)) + '</div>').join('');
+      sheet = '<div class="cv-facts">'
+        + fact('Stops', String(rows.length))
+        + fact('Day spend', d.spend)
+        + (d.chip ? fact('Vs budget', d.chip.text, d.chip.tone ? ' is-' + d.chip.tone : '') : '')
+        + '</div>'
+        + notices
+        + '<ul class="cv-timeline">' + rows.map((r, i) =>
+          '<li><button type="button" class="cv-stop" data-go="' + (item.day.first + 1 + i) + '">'
+          + (r.img ? '<img class="cv-stop-thumb" src="' + esc(r.img) + '" alt="" loading="lazy" decoding="async">' : '<span class="cv-stop-thumb is-empty">' + ICON.image + '</span>')
+          + '<span class="cv-stop-time">' + esc(r.time) + '</span><span class="cv-stop-name">' + esc(r.title) + '</span>'
+          + '<svg class="cv-stop-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+          + '</button></li>').join('') + '</ul>';
+    }
+    const article = document.createElement('article');
+    article.className = cls;
+    article.setAttribute('aria-roledescription', 'card');
+    article.innerHTML = media + '<div class="cv-sheet"><div class="cv-sheet-scroll">' + sheet + '</div>' + ctaHtml() + '</div>';
+    return article;
+  }
+
+  function renderChrome() {
+    const item = items[index];
+    root.querySelector('.cv-phases').innerHTML = legs.map(leg =>
+      '<button type="button" class="cv-phase" role="tab" aria-selected="' + (leg === item.leg) + '" data-go="' + leg.first + '">'
+      + (leg.emoji ? '<span aria-hidden="true">' + esc(leg.emoji) + '</span>' : '') + esc(leg.name) + '</button>').join('');
+    const days = root.querySelector('.cv-days');
+    days.innerHTML = item.leg.days.map(day => {
+      const d = dayInfo(day);
+      return '<button type="button" class="cv-day" role="tab" aria-selected="' + (day === item.day) + '" data-go="' + day.first + '">'
+        + '<span class="cv-day-num">' + esc(d.dayLabel) + '</span><span class="cv-day-date">' + esc(d.dateShort) + '</span></button>';
+    }).join('');
+    const activeDay = days.querySelector('[aria-selected="true"]');
+    if (activeDay) days.scrollLeft = activeDay.offsetLeft - (days.clientWidth - activeDay.offsetWidth) / 2;
+    const phase = root.querySelector('.cv-phases [aria-selected="true"]');
+    const phases = root.querySelector('.cv-phases');
+    if (phase && phases.scrollWidth > phases.clientWidth) phases.scrollLeft = phase.offsetLeft - (phases.clientWidth - phase.offsetWidth) / 2;
+    root.querySelector('.cv-count').textContent = item.type === 'day' ? 'Overview' : (item.i + 1) + ' / ' + item.day.rows.length;
+    root.querySelector('.cv-prev').disabled = index === 0;
+    root.querySelector('.cv-next').disabled = index === items.length - 1;
+  }
+
+  function setBackdrop(src) {
+    const holder = root.querySelector('.cv-backdrop');
+    const old = holder.querySelector('.cv-backdrop-img');
+    if (old && old.dataset.src === src) return;
+    const layer = document.createElement('div');
+    layer.className = 'cv-backdrop-img';
+    layer.dataset.src = src;
+    layer.style.backgroundImage = src ? 'url("' + src.replace(/"/g, '%22') + '")' : 'none';
+    layer.style.opacity = '0';
+    holder.prepend(layer);
+    setTimeout(() => {
+      layer.style.opacity = '1';
+      holder.querySelectorAll('.cv-backdrop-img').forEach(l => { if (l !== layer) { l.style.opacity = '0'; setTimeout(() => l.remove(), 520); } });
+    }, 20);
+  }
+
+  function render(motion) {
+    const item = items[index];
+    const slot = root.querySelector('.cv-slot');
+    const card = cardHtml(item);
+    slot.querySelectorAll('.cv-card').forEach(old => {
+      if (old.dataset.leaving) return;
+      old.dataset.leaving = '1';
+      old.classList.remove('cv-in-next', 'cv-in-prev', 'cv-in-fade');
+      old.classList.add('cv-out-' + motion);
+      old.setAttribute('aria-hidden', 'true');
+      setTimeout(() => old.remove(), 360);
+    });
+    card.classList.add('cv-in-' + motion);
+    slot.appendChild(card);
+    setBackdrop(itemImage(item).src);
+    renderChrome();
+    const key = keyOf(item);
+    try { sessionStorage.setItem(LAST_KEY, key); } catch (e) {}
+    history.replaceState(history.state, '', HASH_PREFIX + key);
+    root.querySelector('.cv-live').textContent = item.type === 'day'
+      ? dayInfo(item.day).dayLabel + ' overview'
+      : stopInfo(item).time + ', ' + stopInfo(item).name;
+  }
+
+  function go(target, motion) {
+    if (target < 0 || target >= items.length || target === index) return false;
+    const from = items[index];
+    const to = items[target];
+    const m = motion || (to.leg !== from.leg || Math.abs(target - index) > 1 && to.day !== from.day ? 'fade' : target > index ? 'next' : 'prev');
+    index = target;
+    render(m);
+    return true;
+  }
+  const step = delta => go(index + delta, delta > 0 ? 'next' : 'prev');
+  function jumpDay(delta) {
+    const here = items[index];
+    const allDays = items.map((it, i) => it.type === 'day' ? i : -1).filter(i => i >= 0);
+    const at = allDays.indexOf(here.day.first);
+    // Up from a stop lands on its own day's overview first, the way a list
+    // header would.
+    if (delta < 0 && here.type === 'stop') return go(here.day.first, 'fade');
+    const target = allDays[at + delta];
+    return target === undefined ? false : go(target, 'fade');
+  }
+
+  /* ---------- open / close ---------- */
+
+  function createRoot() {
+    root = document.createElement('div');
+    root.id = 'cv-root';
+    root.className = 'cv';
+    root.tabIndex = -1;
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-label', 'Trip cards');
+    root.innerHTML = '<div class="cv-backdrop" aria-hidden="true"></div>'
+      + '<div class="cv-top">'
+      + '<button type="button" class="cv-icon-btn" data-act="close" aria-label="Back to the list">' + ICON.close + '</button>'
+      + '<div class="cv-phases" role="tablist" aria-label="Trip phases"></div>'
+      + '<div class="cv-count" aria-hidden="true"></div>'
+      + '</div>'
+      + '<div class="cv-days" role="tablist" aria-label="Days"></div>'
+      + '<div class="cv-stage">'
+      + '<button type="button" class="cv-icon-btn cv-arrow cv-prev" data-act="prev" aria-label="Previous">' + ICON.prev + '</button>'
+      + '<div class="cv-slot"></div>'
+      + '<button type="button" class="cv-icon-btn cv-arrow cv-next" data-act="next" aria-label="Next">' + ICON.next + '</button>'
+      + '<div class="cv-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> stops · <kbd>↑</kbd><kbd>↓</kbd> days · <kbd>1</kbd>–<kbd>' + legs.length + '</kbd> phases · <kbd>Esc</kbd> list</div>'
+      + '</div>'
+      + '<div class="cv-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></div>';
+    root.addEventListener('click', onRootClick);
+    wireGestures(root.querySelector('.cv-stage'));
+    document.body.appendChild(root);
+    document.documentElement.classList.add('cv-open');
+    document.querySelectorAll(INERT_SELECTOR).forEach(el => { el.inert = true; });
+  }
+
+  window.openCardBrowser = function (target, opts) {
+    if (document.documentElement.dataset.edit === 'on') return;
+    buildModel();
+    if (!items.length) return;
+    const at = resolve(target);
+    if (at < 0) return;
+    index = at;
+    if (!root) {
+      opener = document.activeElement;
+      if ('scrollRestoration' in history && history.scrollRestoration !== 'manual') { restoreScrollMode = history.scrollRestoration; history.scrollRestoration = 'manual'; }
+      createRoot();
+      if (opts && opts.fromHash) pushedHistory = false;
+      else { history.pushState({ cardBrowser: true }, '', HASH_PREFIX + keyOf(items[index])); pushedHistory = true; }
+      render('fade');
+      root.focus({ preventScroll: true });
+    } else {
+      render('fade');
+    }
+  };
+
+  function closeBrowser(fromPop) {
+    if (!root) return;
+    const item = items[index];
+    root.remove();
+    root = null;
+    document.documentElement.classList.remove('cv-open');
+    document.querySelectorAll(INERT_SELECTOR).forEach(el => { el.inert = false; });
+    if (!fromPop) {
+      if (pushedHistory && history.state && history.state.cardBrowser) history.back();
+      else history.replaceState(null, '', location.pathname + location.search);
+    }
+    pushedHistory = false;
+    revealInList(item);
+    if (opener && opener.isConnected && typeof opener.focus === 'function') opener.focus({ preventScroll: true });
+    opener = null;
+  }
+
+  /** Closing lands on the card we were looking at, not where we opened from:
+   *  its phase tab, its day expanded, the row centred and briefly lit. */
+  function revealInList(item) {
+    if (!item || !item.day.card.isConnected) return;
+    const panel = item.leg.panel;
+    if (!panel.classList.contains('active')) {
+      document.querySelectorAll('.leg-panel').forEach(p => p.classList.toggle('active', p === panel));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.leg === item.leg.id));
+    }
+    item.day.card.classList.add('open');
+    if (typeof updateExpandAllControl === 'function') updateExpandAllControl();
+    if (typeof saveItineraryView === 'function') saveItineraryView();
+    const target = item.type === 'stop' && item.row.isConnected ? item.row : item.day.card;
+    // A timeout, not rAF (which stalls in background tabs), and late enough to
+    // land after the history.back() above has had its popstate.
+    setTimeout(() => {
+      const r = target.getBoundingClientRect();
+      const nav = document.querySelector('.nav-wrapper');
+      const navH = nav ? nav.offsetHeight : 0;
+      const y = item.type === 'stop'
+        ? r.top + scrollY - Math.max(navH + 16, (innerHeight - r.height) / 2)
+        : r.top + scrollY - navH - 16;
+      window.scrollTo(0, Math.max(0, y));
+      target.classList.remove('cv-flash');
+      void target.offsetWidth;
+      target.classList.add('cv-flash');
+      setTimeout(() => target.classList.remove('cv-flash'), 1700);
+      if (restoreScrollMode) { history.scrollRestoration = restoreScrollMode; restoreScrollMode = null; }
+    }, 60);
+  }
+
+  /* ---------- input ---------- */
+
+  function onRootClick(e) {
+    if (performance.now() < suppressClickUntil) { e.preventDefault(); e.stopPropagation(); return; }
+    const el = e.target.closest('[data-go],[data-act]');
+    if (!el || !root.contains(el) || el.disabled) return;
+    if (el.closest('.cv-card[data-leaving]')) return;
+    if (el.dataset.go !== undefined) { go(Number(el.dataset.go)); return; }
+    const item = items[index];
+    switch (el.dataset.act) {
+      case 'close': closeBrowser(); break;
+      case 'prev': step(-1); break;
+      case 'next': step(1); break;
+      case 'zoom': { const img = itemImage(item); if (img.real) openLightbox(img.src, stopInfo(item).name); break; }
+      case 'flight': {
+        const s = stopInfo(item);
+        if (s.flight && typeof openFlightDetails === 'function') openFlightDetails(s.flight.dataset.flight, el);
+        break;
+      }
+    }
+  }
+
+  // Capture phase on window, ahead of the page's own Escape handler: while the
+  // lightbox or a modal is up, every key belongs to it, not to the cards.
+  window.addEventListener('keydown', e => {
+    if (!root || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (document.querySelector('.lightbox-overlay.open,.modal-overlay.open')) return;
+    const n = Number(e.key);
+    if (e.key === 'Escape') closeBrowser();
+    else if (e.key === 'ArrowRight') step(1);
+    else if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowDown') jumpDay(1);
+    else if (e.key === 'ArrowUp') jumpDay(-1);
+    else if (n >= 1 && n <= legs.length) go(legs[n - 1].first, 'fade');
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+
+  /* Touch only: a mouse drag should select text, not throw the card. The card
+     is pan-y, so vertical movement over the sheet stays a native scroll and
+     arrives here as pointercancel; the photo is touch-action:none, which is
+     what lets a downward pull on it close the browser. */
+  function wireGestures(stage) {
+    let g = null;
+    stage.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' || g) return;
+      const card = e.target.closest('.cv-card');
+      if (!card || card.dataset.leaving) return;
+      g = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), card, axis: null, onMedia: !!e.target.closest('.cv-media') };
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!g || e.pointerId !== g.id) return;
+      const dx = e.clientX - g.x, dy = e.clientY - g.y;
+      if (!g.axis) {
+        if (Math.hypot(dx, dy) < 10) return;
+        g.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : (g.onMedia && dy > 0 ? 'y' : 'none');
+        if (g.axis !== 'none') { g.card.style.transition = 'none'; try { stage.setPointerCapture(e.pointerId); } catch (err) {} }
+      }
+      if (g.axis === 'x') {
+        const edge = (dx < 0 && index === items.length - 1) || (dx > 0 && index === 0);
+        const x = edge ? dx * 0.25 : dx;
+        g.card.style.transform = 'translateX(' + x + 'px) rotate(' + (x / 45) + 'deg)';
+      } else if (g.axis === 'y') {
+        const y = Math.max(0, dy);
+        g.card.style.transform = 'translateY(' + y + 'px) scale(' + (1 - Math.min(y, 400) / 2400) + ')';
+        root.style.background = 'rgba(6,9,13,' + (1 - Math.min(y, 400) / 700) + ')';
+      }
+    });
+    const end = e => {
+      if (!g || e.pointerId !== g.id) return;
+      const s = g; g = null;
+      if (!s.axis || s.axis === 'none') return;
+      suppressClickUntil = performance.now() + 350;
+      const dx = e.clientX - s.x, dy = e.clientY - s.y;
+      const v = dx / Math.max(1, performance.now() - s.t);
+      if (e.type === 'pointerup' && s.axis === 'x' && (Math.abs(dx) > 70 || Math.abs(v) > 0.55) && step(dx < 0 ? 1 : -1)) return;
+      if (e.type === 'pointerup' && s.axis === 'y' && dy > 110) { closeBrowser(); return; }
+      root.style.background = '';
+      s.card.style.transition = reducedMotion() ? 'none' : 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      s.card.style.transform = '';
+      setTimeout(() => { s.card.style.transition = ''; }, 420);
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', end);
+  }
+
+  // A row in the list opens its card. Capture phase so a tap on the thumbnail
+  // opens the card (which has its own full-size view) rather than the
+  // lightbox. Edit mode keeps every click for editing.
+  document.addEventListener('click', e => {
+    if (root || document.documentElement.dataset.edit === 'on') return;
+    const row = e.target.closest('.leg-panel .activity-row');
+    if (!row) return;
+    if (e.target.closest('a,button,input,textarea,select,label,.transfer-link,[contenteditable="true"]')) return;
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && row.contains(sel.anchorNode)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    window.openCardBrowser({ row });
+  }, true);
+
+  window.addEventListener('popstate', () => {
+    const inHash = location.hash.indexOf(HASH_PREFIX) === 0;
+    if (root && !inHash) closeBrowser(true);
+    else if (!root && inHash) window.openCardBrowser(decodeURIComponent(location.hash.slice(HASH_PREFIX.length)), { fromHash: true });
+  });
+
+  // Added once the edit system has finished wiring .chip-btn touch peeking:
+  // that peek swallows the first tap, which suits the toolbar but would make
+  // every day's browse button a two-tap control.
+  function addEntryButtons() {
+    document.querySelectorAll('.leg-panel').forEach(panel => {
+      const hero = panel.querySelector('.leg-hero');
+      if (!hero || hero.querySelector('.cv-hero-btn') || !panel.querySelector('.day-card .activity-row')) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cv-hero-btn';
+      btn.innerHTML = ICON.cards + '<span>Browse as cards</span>';
+      btn.addEventListener('click', e => { e.stopPropagation(); window.openCardBrowser({ legId: panel.id.replace(/^panel-/, '') }); });
+      hero.appendChild(btn);
+    });
+    document.querySelectorAll('.day-card[data-day-key]').forEach(card => {
+      const right = card.querySelector('.day-card-header-right');
+      if (!right || right.querySelector('.cv-day-btn') || !card.querySelector('.activity-row')) return;
+      const num = (txt(card.querySelector('.day-label')).match(/Day\s*(\d+)/i) || [])[1];
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip-btn cv-day-btn';
+      btn.title = 'Browse this day as cards';
+      btn.setAttribute('aria-label', 'Browse ' + (num ? 'Day ' + num : 'this day') + ' as cards');
+      btn.innerHTML = ICON.cards + '<span class="chip-label">Browse</span>';
+      btn.addEventListener('click', e => { e.stopPropagation(); window.openCardBrowser({ dayKey: card.dataset.dayKey }); });
+      right.insertBefore(btn, right.firstChild);
+    });
+  }
+
+  Promise.resolve(window.editsReady).catch(() => {}).then(() => {
+    addEntryButtons();
+    if (location.hash.indexOf(HASH_PREFIX) === 0) window.openCardBrowser(decodeURIComponent(location.hash.slice(HASH_PREFIX.length)), { fromHash: true });
+  });
 })();
 </script>
 </body>
