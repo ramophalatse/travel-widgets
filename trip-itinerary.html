@@ -725,25 +725,48 @@
   .cv-icon-btn:hover{background:rgba(255,255,255,0.2);}
   .cv-icon-btn:active{transform:scale(0.94);}
   .cv-icon-btn svg{width:18px;height:18px;display:block;}
-  .cv-phases{justify-self:center;display:flex;gap:4px;padding:4px;max-width:100%;overflow-x:auto;scrollbar-width:none;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);}
+  .cv-phases{position:relative;justify-self:center;display:flex;gap:4px;padding:4px;max-width:100%;overflow-x:auto;scrollbar-width:none;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);}
   .cv-phases::-webkit-scrollbar,.cv-days::-webkit-scrollbar{display:none;}
-  .cv-phase{flex:none;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:999px;background:none;color:rgba(255,255,255,0.68);font-family:var(--sans);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer;transition:background 0.2s,color 0.2s;}
+  .cv-phase{position:relative;z-index:1;flex:none;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:999px;background:none;color:rgba(255,255,255,0.68);font-family:var(--sans);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color 0.3s,transform 0.2s var(--ease-pop);}
   .cv-phase:hover{color:#fff;}
-  .cv-phase[aria-selected="true"]{background:#fff;color:#11161c;font-weight:600;}
+  .cv-phase:active,.cv-day:active{transform:scale(0.95);}
+  .cv-phase[aria-selected="true"]{color:#11161c;font-weight:600;}
+  /* One pill per switch that slides to the selected option, rather than each
+     button lighting up on its own: the eye follows the move. JS sets its
+     offset and width; the spring overshoot is kept small. */
+  .cv-ind{position:absolute;top:0;left:0;z-index:0;pointer-events:none;will-change:transform,width;transition:transform 0.45s cubic-bezier(0.34,1.3,0.64,1),width 0.45s cubic-bezier(0.34,1.3,0.64,1),opacity 0.2s;}
+  .cv-ind.is-instant{transition:none;}
+  .cv-phases .cv-ind{border-radius:999px;background:#fff;box-shadow:0 4px 14px -4px rgba(0,0,0,0.4);}
   .cv-count{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:rgba(255,255,255,0.6);font-variant-numeric:tabular-nums;min-width:40px;text-align:right;}
+  .cv-count.is-tick{animation:cv-tick 0.35s cubic-bezier(0.2,0.8,0.2,1);}
+  @keyframes cv-tick{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
 
   .cv-days{position:relative;z-index:2;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:12px 16px 4px;scroll-padding-inline:40%;justify-content:safe center;}
-  .cv-day{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:62px;padding:7px 10px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.72);font-family:var(--sans);cursor:pointer;transition:background 0.2s,border-color 0.2s,color 0.2s;}
+  .cv-day{position:relative;z-index:1;flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:62px;padding:7px 10px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.72);font-family:var(--sans);cursor:pointer;transition:background 0.25s,border-color 0.25s,color 0.25s,transform 0.2s var(--ease-pop);}
   .cv-day:hover{background:rgba(255,255,255,0.12);color:#fff;}
-  .cv-day-num{font-family:var(--mono);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.75;}
+  .cv-day-num{font-family:var(--mono);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.75;transition:opacity 0.25s;}
   .cv-day-date{font-size:13px;font-weight:600;white-space:nowrap;}
-  .cv-day[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .cv-day[aria-selected="true"]{background:transparent;border-color:transparent;color:#fff;}
   .cv-day[aria-selected="true"] .cv-day-num{opacity:0.9;}
+  .cv-days .cv-ind{border-radius:14px;background:var(--accent);box-shadow:0 8px 20px -8px rgba(5,150,105,0.8);}
+  /* A new phase brings a new set of days: they deal in from the left. */
+  .cv-days.is-dealing .cv-day{animation:cv-deal 0.4s cubic-bezier(0.2,0.8,0.2,1) both;animation-delay:calc(var(--i,0) * 35ms);}
+  @keyframes cv-deal{from{opacity:0;transform:translateX(-14px) scale(0.94);}to{opacity:1;transform:none;}}
 
   .cv-stage{position:relative;z-index:1;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:28px;padding:14px 16px max(16px,env(safe-area-inset-bottom));}
   .cv-arrow{width:52px;height:52px;}
   .cv-arrow svg{width:22px;height:22px;}
   .cv-arrow:disabled{opacity:0.25;cursor:default;}
+  .cv-icon-btn svg,.cv-cta-next svg,.cv-cta-back svg,.cv-stop-go,.cv-review-go svg{transition:transform 0.25s var(--ease-pop);}
+  @media(hover:hover){
+    .cv-prev:not(:disabled):hover svg,.cv-cta-back:not(:disabled):hover svg{transform:translateX(-3px);}
+    .cv-next:not(:disabled):hover svg,.cv-cta-next:not(:disabled):hover svg{transform:translateX(3px);}
+    .cv-top [data-act="close"]:hover svg{transform:rotate(90deg);}
+    .cv-media-actions .cv-icon-btn:hover{transform:scale(1.08);}
+    .cv-stop:hover .cv-stop-go{transform:translateX(3px);}
+    .cv-stop:hover .cv-stop-thumb{transform:scale(1.06);}
+    .cv-review:hover .cv-review-go svg{transform:translate(2px,-2px);}
+  }
   .cv-slot{position:relative;width:min(440px,100%);height:min(100%,840px);}
   .cv-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:2;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:rgba(255,255,255,0.42);white-space:nowrap;pointer-events:none;}
   .cv-hint kbd{font-family:inherit;padding:1px 5px;border-radius:4px;border:1px solid rgba(255,255,255,0.22);margin:0 2px;}
@@ -764,15 +787,38 @@
 
   .cv-media{position:relative;flex:0 0 57%;min-height:0;overflow:hidden;background:#11161c;touch-action:none;}
   .cv-card--day .cv-media{flex-basis:42%;}
-  .cv-media-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
-  .cv-media--fallback .cv-media-img{filter:saturate(0.85) brightness(0.82);transform:scale(1.12);}
+  .cv-media-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;animation:cv-drift 9s cubic-bezier(0.2,0.6,0.3,1) both;}
+  .cv-media--fallback .cv-media-img{filter:saturate(0.85) brightness(0.82);animation-name:cv-drift-fallback;}
+  /* A slow settle on the photo, so a card feels arrived at rather than swapped. */
+  @keyframes cv-drift{from{transform:scale(1.07);}to{transform:scale(1);}}
+  @keyframes cv-drift-fallback{from{transform:scale(1.2);}to{transform:scale(1.12);}}
+  /* Staggered entrance: the photo's words, the thumbnail rail, then the sheet.
+     Only on arriving cards, so a leaving card never replays it. */
+  .cv-card[class*="cv-in-"] .cv-media-text > *,
+  .cv-card[class*="cv-in-"] .cv-media-top,
+  .cv-card[class*="cv-in-"] .cv-sheet-scroll > *,
+  .cv-card[class*="cv-in-"] .cv-timeline li{animation:cv-rise 0.5s cubic-bezier(0.2,0.8,0.2,1) backwards;animation-delay:0.1s;}
+  .cv-card[class*="cv-in-"] .cv-media-top{animation-name:cv-fade;animation-delay:0.05s;}
+  .cv-card[class*="cv-in-"] .cv-media-text > :nth-child(2){animation-delay:0.16s;}
+  .cv-card[class*="cv-in-"] .cv-media-text > :nth-child(3){animation-delay:0.22s;}
+  .cv-card[class*="cv-in-"] .cv-media-text > :nth-child(4){animation-delay:0.28s;}
+  .cv-card[class*="cv-in-"] .cv-sheet-scroll > *{animation-delay:0.22s;}
+  .cv-card[class*="cv-in-"] .cv-sheet-scroll > :nth-child(2){animation-delay:0.28s;}
+  .cv-card[class*="cv-in-"] .cv-sheet-scroll > :nth-child(3){animation-delay:0.34s;}
+  .cv-card[class*="cv-in-"] .cv-sheet-scroll > :nth-child(n+4){animation-delay:0.4s;}
+  .cv-card[class*="cv-in-"] .cv-timeline li{animation-delay:calc(0.3s + min(var(--i,0),10) * 30ms);}
+  .cv-card[class*="cv-in-"] .cv-strip-item{animation:cv-pop 0.45s cubic-bezier(0.34,1.4,0.64,1) backwards;animation-delay:calc(0.25s + var(--i,0) * 60ms);}
+  @keyframes cv-rise{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @keyframes cv-fade{from{opacity:0;}to{opacity:1;}}
+  @keyframes cv-pop{from{opacity:0;transform:translateX(14px) scale(0.7);}to{opacity:1;transform:none;}}
   .cv-media::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,0.38) 0%,rgba(0,0,0,0) 24%,rgba(0,0,0,0) 36%,rgba(0,0,0,0.3) 58%,rgba(0,0,0,0.8) 100%);}
   .cv-media-text .cv-kicker,.cv-media-text .cv-meta,.cv-media-text .cv-subtitle{text-shadow:0 1px 12px rgba(0,0,0,0.55);}
   .cv-progress{position:absolute;top:10px;left:16px;right:16px;z-index:2;display:flex;gap:4px;}
   .cv-seg{flex:1;height:3px;padding:6px 0;border:none;background:none;cursor:pointer;background-clip:content-box;position:relative;}
   .cv-seg::before{content:'';position:absolute;left:0;right:0;top:6px;height:3px;border-radius:2px;background:rgba(255,255,255,0.32);transition:background 0.2s;}
   .cv-seg.is-done::before{background:rgba(255,255,255,0.72);}
-  .cv-seg.is-current::before{background:#fff;box-shadow:0 0 8px rgba(255,255,255,0.6);}
+  .cv-seg.is-current::after{content:'';position:absolute;left:0;right:0;top:6px;height:3px;border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,0.6);transform-origin:left;animation:cv-seg-fill 0.6s 0.12s cubic-bezier(0.2,0.8,0.2,1) both;}
+  @keyframes cv-seg-fill{from{transform:scaleX(0);}to{transform:scaleX(1);}}
   .cv-media-top{position:absolute;top:28px;left:16px;right:16px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;}
   .cv-glass{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(12,16,22,0.34);border:1px solid rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);color:#fff;font-size:12px;font-weight:500;white-space:nowrap;min-width:0;}
   .cv-tag{overflow:hidden;text-overflow:ellipsis;}
@@ -834,7 +880,7 @@
   .cv-timeline li + li{border-top:1px solid var(--border);}
   .cv-stop{display:grid;grid-template-columns:44px 64px 1fr 14px;align-items:center;gap:12px;width:100%;padding:8px 2px;border:none;background:none;text-align:left;color:var(--text);font-family:var(--sans);cursor:pointer;border-radius:10px;}
   .cv-stop:hover .cv-stop-name{color:var(--accent-text);}
-  .cv-stop-thumb{width:44px;height:44px;border-radius:11px;object-fit:cover;background:var(--bg3);display:block;}
+  .cv-stop-thumb{width:44px;height:44px;border-radius:11px;object-fit:cover;background:var(--bg3);display:block;transition:transform 0.25s var(--ease-pop);}
   .cv-stop-thumb.is-empty{display:flex;align-items:center;justify-content:center;color:var(--text3);}
   .cv-stop-thumb.is-empty svg{width:16px;height:16px;}
   .cv-stop-time{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
@@ -920,6 +966,12 @@
   @media (prefers-reduced-motion:reduce){
     .cv,.cv-card.cv-in-next,.cv-card.cv-in-prev,.cv-card.cv-in-fade{animation:cv-in-plain 0.2s ease both;}
     .cv-card.cv-out-next,.cv-card.cv-out-prev,.cv-card.cv-out-fade{animation:cv-out-fade-plain 0.12s ease both;}
+    .cv-media-img,.cv-media--fallback .cv-media-img,.cv-seg.is-current::after,.cv-count.is-tick,.cv-days.is-dealing .cv-day,
+    .cv-card[class*="cv-in-"] .cv-media-text > *,.cv-card[class*="cv-in-"] .cv-media-top,.cv-card[class*="cv-in-"] .cv-sheet-scroll > *,
+    .cv-card[class*="cv-in-"] .cv-timeline li,.cv-card[class*="cv-in-"] .cv-strip-item{animation:none;}
+    .cv-media--fallback .cv-media-img{transform:scale(1.12);}
+    .cv-ind{transition:opacity 0.2s;}
+    .cv-icon-btn svg,.cv-cta-next svg,.cv-cta-back svg,.cv-stop-go,.cv-review-go svg,.cv-phase,.cv-day{transition:none;transform:none !important;}
     @keyframes cv-in-plain{from{opacity:0;}to{opacity:1;}}
     @keyframes cv-out-fade-plain{to{opacity:0;}}
   }
@@ -4080,14 +4132,14 @@
     for (let n = 0; n < count; n++) {
       const idx = day.first + 1 + startAt + n;
       const it = items[idx], info = stopInfo(it);
-      html += '<button type="button" class="cv-strip-item" data-go="' + idx + '" aria-label="' + esc(info.time + ' ' + info.title) + '">'
+      html += '<button type="button" class="cv-strip-item" style="--i:' + n + '" data-go="' + idx + '" aria-label="' + esc(info.time + ' ' + info.title) + '">'
         + (info.img ? '<img src="' + esc(info.img) + '" alt="" decoding="async">' : '<span class="cv-strip-time">' + esc(info.time) + '</span>')
         + '</button>';
     }
     if (showMore) {
       const idx = day.first + 1 + startAt + 2;
       const it = items[idx], img = it.row.querySelector('img.act-thumb');
-      html += '<button type="button" class="cv-strip-item is-more" data-go="' + idx + '" aria-label="' + (remaining - 2) + ' more stops today">'
+      html += '<button type="button" class="cv-strip-item is-more" style="--i:2" data-go="' + idx + '" aria-label="' + (remaining - 2) + ' more stops today">'
         + (img ? '<img src="' + esc(img.src) + '" alt="" loading="lazy" decoding="async">' : '')
         + '<span class="cv-strip-time">+' + (remaining - 2) + '</span></button>';
     }
@@ -4149,7 +4201,7 @@
     let html = '';
     for (let idx = from; idx < to; idx++) {
       const r = stopInfo(items[idx]);
-      html += '<li><button type="button" class="cv-stop" data-go="' + idx + '">'
+      html += '<li style="--i:' + (idx - from) + '"><button type="button" class="cv-stop" data-go="' + idx + '">'
         + (r.img ? '<img class="cv-stop-thumb" src="' + esc(r.img) + '" alt="" loading="lazy" decoding="async">' : '<span class="cv-stop-thumb is-empty">' + ICON.image + '</span>')
         + '<span class="cv-stop-time">' + esc(r.time) + '</span><span class="cv-stop-name">' + esc(r.title) + '</span>'
         + '<svg class="cv-stop-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
@@ -4222,23 +4274,69 @@
     return article;
   }
 
+  /** Slides a switch's pill under its selected button and scrolls that button
+   *  towards the centre. `instant` places both without motion (first paint,
+   *  a freshly built set of days, a resize). */
+  function placeIndicator(bar, instant) {
+    const ind = bar.querySelector('.cv-ind');
+    const sel = bar.querySelector('[aria-selected="true"]');
+    if (!ind || !sel) return;
+    ind.classList.toggle('is-instant', !!instant);
+    ind.style.width = sel.offsetWidth + 'px';
+    ind.style.height = sel.offsetHeight + 'px';
+    ind.style.top = sel.offsetTop + 'px';
+    ind.style.transform = 'translateX(' + sel.offsetLeft + 'px)';
+    if (instant) { void ind.offsetWidth; ind.classList.remove('is-instant'); }
+    if (bar.scrollWidth > bar.clientWidth) {
+      const left = sel.offsetLeft - (bar.clientWidth - sel.offsetWidth) / 2;
+      if (instant || reducedMotion()) bar.scrollLeft = left;
+      else bar.scrollTo({ left, behavior: 'smooth' });
+    }
+  }
+
+  // Both switches keep their buttons between cards and only move the
+  // selection, so the pill has somewhere to slide from. The days are rebuilt
+  // only when the phase changes.
   function renderChrome() {
     const item = items[index];
-    root.querySelector('.cv-phases').innerHTML = legs.map(leg =>
-      '<button type="button" class="cv-phase" role="tab" aria-selected="' + (leg === item.leg) + '" data-go="' + leg.first + '">'
-      + (leg.emoji ? '<span aria-hidden="true">' + esc(leg.emoji) + '</span>' : '') + esc(leg.name) + '</button>').join('');
-    const days = root.querySelector('.cv-days');
-    days.innerHTML = item.leg.days.map(day => {
-      const d = dayInfo(day);
-      return '<button type="button" class="cv-day" role="tab" aria-selected="' + (day === item.day) + '" data-go="' + day.first + '">'
-        + '<span class="cv-day-num">' + esc(d.dayLabel) + '</span><span class="cv-day-date">' + esc(d.dateShort) + '</span></button>';
-    }).join('');
-    const activeDay = days.querySelector('[aria-selected="true"]');
-    if (activeDay) days.scrollLeft = activeDay.offsetLeft - (days.clientWidth - activeDay.offsetWidth) / 2;
-    const phase = root.querySelector('.cv-phases [aria-selected="true"]');
     const phases = root.querySelector('.cv-phases');
-    if (phase && phases.scrollWidth > phases.clientWidth) phases.scrollLeft = phase.offsetLeft - (phases.clientWidth - phase.offsetWidth) / 2;
-    root.querySelector('.cv-count').textContent = item.type === 'day' ? 'Overview' : (item.i + 1) + ' / ' + item.day.rows.length;
+    const firstPaint = !phases.childElementCount;
+    if (firstPaint) {
+      phases.innerHTML = '<span class="cv-ind" aria-hidden="true"></span>' + legs.map(leg =>
+        '<button type="button" class="cv-phase" role="tab" aria-selected="false" data-go="' + leg.first + '">'
+        + (leg.emoji ? '<span aria-hidden="true">' + esc(leg.emoji) + '</span>' : '') + esc(leg.name) + '</button>').join('');
+    }
+    phases.querySelectorAll('.cv-phase').forEach((b, i) => b.setAttribute('aria-selected', String(legs[i] === item.leg)));
+
+    const days = root.querySelector('.cv-days');
+    const rebuiltDays = days.dataset.leg !== item.leg.id;
+    if (rebuiltDays) {
+      days.dataset.leg = item.leg.id;
+      days.innerHTML = '<span class="cv-ind" aria-hidden="true"></span>' + item.leg.days.map((day, i) => {
+        const d = dayInfo(day);
+        return '<button type="button" class="cv-day" role="tab" aria-selected="false" data-go="' + day.first + '" style="--i:' + i + '">'
+          + '<span class="cv-day-num">' + esc(d.dayLabel) + '</span><span class="cv-day-date">' + esc(d.dateShort) + '</span></button>';
+      }).join('');
+      if (!firstPaint) {
+        days.classList.remove('is-dealing');
+        void days.offsetWidth;
+        days.classList.add('is-dealing');
+        clearTimeout(days._dealTimer);
+        days._dealTimer = setTimeout(() => days.classList.remove('is-dealing'), 400 + item.leg.days.length * 35);
+      }
+    }
+    days.querySelectorAll('.cv-day').forEach((b, i) => b.setAttribute('aria-selected', String(item.leg.days[i] === item.day)));
+    placeIndicator(phases, firstPaint);
+    placeIndicator(days, firstPaint || rebuiltDays);
+
+    const count = root.querySelector('.cv-count');
+    const countText = item.type === 'day' ? 'Overview' : (item.i + 1) + ' / ' + item.day.rows.length;
+    if (count.textContent !== countText) {
+      count.textContent = countText;
+      count.classList.remove('is-tick');
+      void count.offsetWidth;
+      count.classList.add('is-tick');
+    }
     root.querySelector('.cv-prev').disabled = index === 0;
     root.querySelector('.cv-next').disabled = index === items.length - 1;
   }
@@ -4504,6 +4602,11 @@
     e.stopPropagation();
     window.openCardBrowser({ row });
   }, true);
+
+  window.addEventListener('resize', () => {
+    if (!root) return;
+    root.querySelectorAll('.cv-phases,.cv-days').forEach(bar => placeIndicator(bar, true));
+  });
 
   window.addEventListener('popstate', () => {
     const inHash = location.hash.indexOf(HASH_PREFIX) === 0;
