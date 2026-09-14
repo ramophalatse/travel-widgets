@@ -273,7 +273,7 @@
   .act-thumb-remove{position:absolute;top:4px;right:6px;z-index:2;display:none;align-items:center;justify-content:center;width:20px;height:20px;padding:0;border:none;background:none;color:#fff;font-family:var(--sans);font-size:18px;line-height:1;cursor:pointer;transition:color 0.15s,transform 0.15s;}
   .act-thumb-remove:hover{color:#fda4af;transform:scale(1.15);}
   /* Top matches .activity-row-delete (top:108px on the row, less the row's 8px padding) so the two controls share a line. */
-  .act-thumb-search{position:absolute;left:6px;top:100px;z-index:2;display:none;align-items:center;gap:4px;height:24px;padding:0 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#c4c9cf;font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
+  .act-thumb-search{position:absolute;left:6px;top:100px;z-index:2;display:none;align-items:center;gap:4px;height:24px;padding:0 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
   .act-thumb-search:hover{background:var(--accent);color:#fff;}
   .act-thumb-search svg{width:11px;height:11px;}
   /* UNSPLASH PICKER */
@@ -2308,7 +2308,7 @@
     return btn;
   }
   /* ── UNSPLASH STOCK PHOTO SEARCH ────────────────────────────────────────
-     Edit mode puts a "Search Unsplash" button on every row image and empty slot.
+     Edit mode puts a "Search" button on every row image and empty slot.
      Searches go through the `unsplash-search` Supabase Edge Function, which
      holds the Unsplash Access Key; the page never sees it. A pick is saved as
      an ordinary `img-src` edit, but as a hotlinked images.unsplash.com URL
@@ -2324,7 +2324,7 @@
     btn.type = 'button';
     btn.className = 'act-thumb-search';
     btn.title = 'Search Unsplash';
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search Unsplash';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search';
     btn.addEventListener('click', onThumbSearchClick);
     return btn;
   }
