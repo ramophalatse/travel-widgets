@@ -4339,7 +4339,7 @@
      photos uploaded through the page, which live inline in the edit store,
      and for stops with no list photo at all. */
   const CARD_DIR = 'https://ramophalatse.github.io/travel-widgets/assets/nyc-miami-2026/';
-  const CARD_BY_THUMB = new Set(['abu-dhabi', 'arlo-soho', 'airbnb-kitchen', 'airbnb-lounge', 'airbnb-dining', 'food-truck']);
+  const CARD_BY_THUMB = new Set(['abu-dhabi', 'arlo-soho', 'airbnb-kitchen', 'airbnb-lounge', 'airbnb-dining', 'food-truck', 'christmas-dinner', 'everglades']);
   const CARD_BY_ROW = {
     'd1:leave-home-drive-to-or-tambo': 'slow-lounge',
     'd1:ey-748-departs-or-tambo-jnb': 'or-tambo',
@@ -4349,6 +4349,7 @@
     'd2:land-at-jfk-etihad-ey-1': 'jfk-airport',
     'd2:grab-coffee-a-bite-airside': 'bklyn-blend',
     'd2:agoda-suv-departs-jfk-terminal-4': 'chevy-suburban',
+    'd2:arrive-arlo-soho-drop-luggage': 'arlo-soho-morning',
     'd2:free-tours-by-foot-meet-at-spring-st': 'tours-by-foot',
     'd2:post-tour-explore-spring-st-prince-st-corridor': 'cafe-gitane',
     'd2:check-in-rooms-ready-rest': 'arlo-wake-up-02',
@@ -4356,6 +4357,7 @@
     'd3:walk-to-canal-st-station': 'canal-st',
     'd3:1-train-canal-st-wtc-cortlandt': 'park-place-subway',
     'd3:breakfast-zucker-s-bagels-smoked-fish-125-fulton': 'zuckers',
+    'd3:fearless-girl-broad-st-facing-the-stock-exchange': 'fearless-girl',
     'd3:walk-to-the-9-11-memorial': 'world-trade-center-hub',
     'd3:9-11-memorial-museum': '911',
     'd3:walk-to-brooklyn-bridge': 'brooklyn-bridge-walk',
@@ -4368,11 +4370,13 @@
     'd3:bryant-park-winter-village-rink-holiday-market': 'bryant-park',
     'd3:walk-up-fifth-ave-rockefeller-center-christmas-t': 'rockefeller-tree',
     'd3:saks-fifth-avenue-light-show-611-fifth-ave': 'saks-fifth-avenue',
+    'd3:dinner-midtown': 'midtown-manhattan',
     'd3:apple-fifth-avenue-the-glass-cube': 'apple-store-fifth-avenue',
     'd3:e-train-fifth-av-53-st-spring-st': 'fifth-ave-53-st',
     'd4:wake-up-final-pack-check-out': 'arlo-wake-up',
     'd4:walk-up-hudson-st-into-the-west-village': 'hudson-st',
     'd4:breakfast-buvette-42-grove-st': 'buvette',
+    'd4:bedford-grove-the-friends-building-grove-court': '90-bedford',
     'd4:stonewall-inn-christopher-park': 'stonewall-inn',
     'd4:washington-square-park': 'washington-square',
     'd4:dominique-ansel-bakery-cronut-coffee': 'dominique-ansel-bakery',
@@ -4381,7 +4385,7 @@
     'd4:arrive-lga-terminal-b-check-in-bag-drop-tsa-secu': 'la-guardia-airport',
     'd4:aa-503-departs-lga-nonstop-to-fort-lauderdale': 'american-airlines-01',
     'd4:land-at-fll-terminal-3-deplane': 'fort-lauderdale-airport',
-    'd4:bags-find-the-turo-handover': 'fll-shuttle-bus',
+    'd4:bags-find-the-turo-handover': 'turo-handover',
     'd4:collect-the-tesla-model-y': 'tesla-model-y',
     'd4:arrive-1601-ne-160th-st-collect-the-amazon-parce': 'airbnb-entrance',
     'd4:wrap-the-secret-santa-gifts-settle-in': 'secret-santa',
@@ -4395,6 +4399,7 @@
     'd12:drive-to-fll-return-the-tesla': 'tesla-model-y',
     'd21:arrive-fll-check-in-domestic-security-breakfast-': 'fort-lauderdale-airport',
     'd21:aa-2896-departs-fll-nonstop-to-lga': 'american-airlines-02',
+    'd24:free-time-last-midtown-wanders': 'midtown-manhattan',
     'd25:early-lunch-chelsea-market-or-chelsea-piers': 'chelsea-market',
     'd25:arrive-jfk-terminal-4-etihad-check-in': 'jfk-airport',
     'd25:ey-4-departs-jfk-overnight-to-abu-dhabi': 'etihad-01',
