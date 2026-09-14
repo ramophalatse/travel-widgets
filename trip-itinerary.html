@@ -272,6 +272,27 @@
   .act-thumb-wrap{position:relative;width:190px;height:132px;}
   .act-thumb-remove{position:absolute;top:4px;right:6px;z-index:2;display:none;align-items:center;justify-content:center;width:20px;height:20px;padding:0;border:none;background:none;color:#fff;font-family:var(--sans);font-size:18px;line-height:1;cursor:pointer;transition:color 0.15s,transform 0.15s;}
   .act-thumb-remove:hover{color:#fda4af;transform:scale(1.15);}
+  .act-thumb-search{position:absolute;left:6px;bottom:6px;z-index:2;display:none;align-items:center;gap:4px;padding:3px 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#fff;font-family:var(--sans);font-size:11px;font-weight:500;line-height:1.3;cursor:pointer;transition:background 0.15s;}
+  .act-thumb-search:hover{background:var(--accent);}
+  .act-thumb-search svg{width:11px;height:11px;}
+  /* UNSPLASH PICKER */
+  .us-box{max-width:760px;max-height:calc(100vh - 2rem);display:flex;flex-direction:column;}
+  .us-form{display:flex;gap:8px;margin:12px 0 8px;}
+  .us-input{flex:1;min-width:0;padding:8px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:var(--sans);font-size:14px;}
+  .us-input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .us-go,.us-more{padding:8px 14px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;}
+  .us-more{display:block;margin:10px auto 0;background:var(--bg3);color:var(--text);}
+  .us-more[hidden]{display:none;}
+  .us-status{min-height:18px;font-size:12px;color:var(--text3);}
+  .us-scroll{overflow-y:auto;margin:0 -4px;padding:0 4px;}
+  .us-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .us-tile{display:flex;flex-direction:column;gap:4px;padding:0;border:none;background:none;text-align:left;cursor:pointer;color:var(--text2);font-family:var(--sans);font-size:11px;}
+  .us-tile img{width:100%;aspect-ratio:7/5;object-fit:cover;border-radius:var(--radius-sm);transition:transform 0.15s,box-shadow 0.15s;}
+  .us-tile:hover img,.us-tile:focus-visible img{transform:scale(1.03);box-shadow:0 0 0 2px var(--accent);}
+  .us-tile span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .us-foot{margin-top:10px;font-size:11px;color:var(--text3);}
+  .us-foot a,.lightbox-caption a{color:inherit;}
+  @media (max-width:560px){.us-grid{grid-template-columns:repeat(2,1fr);}}
 
   /* TRANSFER LINK */
   .transfer-link{color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-size:12px;}
@@ -505,6 +526,8 @@
   :root[data-edit="on"] .act-thumb-slot.drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
   :root[data-edit="on"] .act-thumb-wrap .act-thumb-remove,
   :root[data-edit="on"] .act-thumb-slot.filled .act-thumb-remove{display:flex;}
+  :root[data-edit="on"] .act-thumb-wrap .act-thumb-search,
+  :root[data-edit="on"] .act-thumb-slot .act-thumb-search{display:flex;}
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
   :root[data-edit="on"] .activity-row-delete{display:flex;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
@@ -2046,7 +2069,9 @@
     if (!src) return;
     const lb = document.getElementById('lightbox');
     document.getElementById('lightbox-img').src = src;
-    document.getElementById('lightbox-caption').textContent = caption || '';
+    const cap = document.getElementById('lightbox-caption');
+    cap.textContent = caption || '';
+    appendUnsplashCredit(cap, src);
     lb.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -2242,6 +2267,7 @@
       hint.textContent = '+ Drop image';
       slot.appendChild(hint);
       slot.appendChild(makeThumbRemoveButton());
+      slot.appendChild(makeThumbSearchButton());
       row.appendChild(slot);
       row.classList.add('has-thumb-slot');
     });
@@ -2279,6 +2305,165 @@
     btn.textContent = '×';
     btn.addEventListener('click', onThumbRemoveClick);
     return btn;
+  }
+  /* ── UNSPLASH STOCK PHOTO SEARCH ────────────────────────────────────────
+     Edit mode puts a "Search photos" button on every row image and empty slot.
+     Searches go through the `unsplash-search` Supabase Edge Function, which
+     holds the Unsplash Access Key; the page never sees it. A pick is saved as
+     an ordinary `img-src` edit, but as a hotlinked images.unsplash.com URL
+     rather than a data URL, as Unsplash's API terms require. The photographer
+     credit rides in the URL fragment (never sent to the server), so the
+     credit and the image are one value and can never drift apart. */
+  const UNSPLASH_FN = SUPABASE_URL + '/functions/v1/unsplash-search';
+  const UNSPLASH_UTM = 'utm_source=travel_widgets&utm_medium=referral';
+  const UNSPLASH_SIZE = '&w=1120&h=800&fit=crop&crop=entropy&q=80&auto=format';
+  let unsplashTarget = null, unsplashQuery = '', unsplashPage = 1;
+  function makeThumbSearchButton() {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'act-thumb-search';
+    btn.title = 'Search Unsplash for a photo';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search photos';
+    btn.addEventListener('click', onThumbSearchClick);
+    return btn;
+  }
+  function onThumbSearchClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    const slot = btn.closest('.act-thumb-slot');
+    unsplashTarget = slot || btn.closest('.act-thumb-wrap').querySelector('img.act-thumb');
+    const row = btn.closest('.activity-row');
+    const nameEl = row && row.querySelector('.act-name');
+    const query = nameEl ? nameEl.textContent.replace(/[·→]/g, ' ').replace(/\s+/g, ' ').trim() : '';
+    openUnsplashPicker(query);
+  }
+  function unsplashModal() {
+    let modal = document.getElementById('unsplash-modal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.id = 'unsplash-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'us-title');
+    modal.innerHTML =
+      '<div class="modal-box us-box">' +
+        '<button class="modal-close" type="button" aria-label="Close photo search">✕</button>' +
+        '<div class="modal-title" id="us-title">Search photos</div>' +
+        '<form class="us-form"><input class="us-input" type="search" aria-label="Search Unsplash" placeholder="Search Unsplash"><button class="us-go" type="submit">Search</button></form>' +
+        '<div class="us-status" aria-live="polite"></div>' +
+        '<div class="us-scroll"><div class="us-grid"></div><button class="us-more" type="button" hidden>More photos</button></div>' +
+        '<div class="us-foot">Photos from <a href="https://unsplash.com/?' + UNSPLASH_UTM + '" target="_blank" rel="noopener">Unsplash</a>. Pick one to use it on this row.</div>' +
+      '</div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeUnsplashPicker(); });
+    modal.querySelector('.modal-close').addEventListener('click', closeUnsplashPicker);
+    modal.querySelector('.us-form').addEventListener('submit', e => {
+      e.preventDefault();
+      runUnsplashSearch(modal.querySelector('.us-input').value, 1);
+    });
+    modal.querySelector('.us-more').addEventListener('click', () => runUnsplashSearch(unsplashQuery, unsplashPage + 1));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeUnsplashPicker(); });
+    return modal;
+  }
+  function openUnsplashPicker(query) {
+    const modal = unsplashModal();
+    modal.querySelector('.us-input').value = query;
+    modal.querySelector('.us-grid').innerHTML = '';
+    modal.querySelector('.us-more').hidden = true;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.us-input').focus();
+    if (query) runUnsplashSearch(query, 1);
+  }
+  function closeUnsplashPicker() {
+    const modal = document.getElementById('unsplash-modal');
+    if (modal) modal.classList.remove('open');
+    document.body.style.overflow = '';
+    unsplashTarget = null;
+  }
+  async function runUnsplashSearch(query, page) {
+    query = (query || '').trim();
+    if (!query) return;
+    const modal = unsplashModal();
+    const grid = modal.querySelector('.us-grid'), status = modal.querySelector('.us-status'), more = modal.querySelector('.us-more');
+    if (page === 1) grid.innerHTML = '';
+    more.hidden = true;
+    status.textContent = 'Searching…';
+    unsplashQuery = query;
+    unsplashPage = page;
+    try {
+      const res = await fetch(UNSPLASH_FN + '?q=' + encodeURIComponent(query) + '&page=' + page, {
+        headers: { apikey: SUPABASE_ANON_KEY }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || res.status);
+      if (unsplashQuery !== query || unsplashPage !== page) return;
+      data.results.forEach(photo => grid.appendChild(unsplashTile(photo)));
+      status.textContent = data.total ? data.total.toLocaleString() + ' photos' : 'No photos found. Try fewer words.';
+      more.hidden = page >= data.totalPages;
+    } catch (e) {
+      console.error('[trip-itinerary] unsplash search failed', e);
+      status.textContent = 'Search failed. ' + (String(e.message).indexOf('ACCESS_KEY') >= 0 ? 'The Unsplash key is not set up yet.' : 'Try again in a moment.');
+    }
+  }
+  function unsplashTile(photo) {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'us-tile';
+    const img = document.createElement('img');
+    img.src = photo.thumb;
+    img.alt = photo.alt;
+    img.loading = 'lazy';
+    img.style.background = photo.color || '';
+    const credit = document.createElement('span');
+    credit.textContent = photo.name;
+    tile.append(img, credit);
+    tile.addEventListener('click', () => pickUnsplashPhoto(photo));
+    return tile;
+  }
+  function pickUnsplashPhoto(photo) {
+    const target = unsplashTarget;
+    if (!target || !target.dataset.eid || !/^https:\/\/images\.unsplash\.com\//.test(photo.raw)) return;
+    const credit = { n: photo.name, p: photo.profile, l: photo.link };
+    const src = photo.raw + UNSPLASH_SIZE + '#unsplash=' + encodeURIComponent(JSON.stringify(credit));
+    if (target.classList.contains('act-thumb-slot')) fillThumbSlot(target, src);
+    else target.src = src;
+    saveEdit(target.dataset.eid, 'img-src', src);
+    markUnsplashCredits();
+    // Unsplash counts a download whenever a photo is chosen; its terms require it.
+    fetch(UNSPLASH_FN + '?download=' + encodeURIComponent(photo.download), { headers: { apikey: SUPABASE_ANON_KEY } }).catch(() => {});
+    closeUnsplashPicker();
+  }
+  function unsplashCredit(src) {
+    const m = /#unsplash=([^#]+)$/.exec(src || '');
+    if (!m) return null;
+    try {
+      const c = JSON.parse(decodeURIComponent(m[1]));
+      const safe = u => /^https:\/\/unsplash\.com\//.test(u || '') ? u : 'https://unsplash.com/';
+      return { name: String(c.n || 'Unsplash'), profile: safe(c.p), link: safe(c.l) };
+    } catch (e) { return null; }
+  }
+  function markUnsplashCredits() {
+    document.querySelectorAll('img.act-thumb').forEach(img => {
+      const c = unsplashCredit(img.getAttribute('src'));
+      if (c) img.title = 'Photo by ' + c.name + ' on Unsplash';
+    });
+  }
+  function appendUnsplashCredit(el, src) {
+    const c = unsplashCredit(src);
+    if (!c) return;
+    const link = (href, text) => {
+      const a = document.createElement('a');
+      a.href = href + (href.indexOf('?') >= 0 ? '&' : '?') + UNSPLASH_UTM;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = text;
+      a.addEventListener('click', e => e.stopPropagation());
+      return a;
+    };
+    el.append((el.textContent ? ' · ' : '') + 'Photo by ', link(c.profile, c.name), ' on ', link('https://unsplash.com/', 'Unsplash'));
   }
   function onThumbRemoveClick(e) {
     e.preventDefault();
@@ -2320,6 +2505,7 @@
     hint.textContent = '+ Drop image';
     slot.appendChild(hint);
     slot.appendChild(makeThumbRemoveButton());
+    slot.appendChild(makeThumbSearchButton());
     (img.closest('.act-thumb-wrap') || img).replaceWith(slot);
     if (row) { row.classList.remove('has-thumb'); row.classList.add('has-thumb-slot'); }
     return slot;
@@ -2333,6 +2519,7 @@
       img.replaceWith(wrap);
       wrap.appendChild(img);
       wrap.appendChild(makeThumbRemoveButton());
+      wrap.appendChild(makeThumbSearchButton());
     });
   }
   /* ── REMOVING AN ACTIVITY ───────────────────────────────────────────────
@@ -3338,7 +3525,7 @@
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
-    clone.querySelectorAll('.act-thumb-remove').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,#unsplash-modal').forEach(el => el.remove());
     clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
       const img = wrap.querySelector('img.act-thumb');
@@ -3478,6 +3665,7 @@
     initNavToolbar();
     await applySavedEdits();
     wrapStaticThumbs();
+    markUnsplashCredits();
     decorateActivityRows();
     decorateNotes();
     wireNotes();
