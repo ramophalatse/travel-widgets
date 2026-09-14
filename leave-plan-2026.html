@@ -10,7 +10,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=DM+Mono:wght@400;500&display=swap');
 
   :root {
-    --green: #006341;
+    --green: #03F4A9;
     --green-mid: #004f33;
     --go-green: #00C853;
     --green-pale: #e8f5ee;
@@ -25,14 +25,47 @@
     --amber: #b45309;
     --amber-bg: #fffbeb;
     --amber-border: #fde68a;
-    --taken: #64748b;
-    --taken-bg: #f1f5f9;
-    --trip: #7c3aed;
+    --taken: #EA614D;
+    --taken-bg: #fdece7;
+    --trip: #C55DE8;
     --trip-bg: #f5f3ff;
     --trip-border: #ddd6fe;
+    --ph-bg: #f0fdf4;
+    --ph-border: #86efac;
+    --ph-badge-bg: #bbf7d0;
+    --ph-badge-text: #166534;
+  }
+
+  [data-theme="dark"] {
+    --green: #03F4A9;
+    --green-mid: #34d399;
+    --go-green: #22c55e;
+    --green-pale: #16261f;
+    --green-muted: #24382f;
+    --surface: #182420;
+    --bg: #101814;
+    --border: #2a3a33;
+    --text: #e7f2ec;
+    --text-mid: #b7d0c4;
+    --text-muted: #93ab9f;
+    --text-light: #658073;
+    --amber: #fbbf24;
+    --amber-bg: #2a2312;
+    --amber-border: #4a3c14;
+    --taken: #EA614D;
+    --taken-bg: #2e1f1a;
+    --trip: #C55DE8;
+    --trip-bg: #241f3a;
+    --trip-border: #4c3f7a;
+    --ph-bg: #16261f;
+    --ph-border: #2f7048;
+    --ph-badge-bg: #204a30;
+    --ph-badge-text: #86efac;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { transition: background 0.2s ease, color 0.2s ease; }
 
   body {
     font-family: 'Libre Franklin', sans-serif;
@@ -45,7 +78,7 @@
   /* ─── Header ─── */
   .header {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr;
     align-items: start;
     gap: 24px;
     margin-bottom: 48px;
@@ -87,30 +120,17 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 8px;
+    gap: 10px;
+    width: 100%;
   }
 
-  .budget-ring {
-    position: relative;
-    width: 96px;
-    height: 96px;
-  }
-
-  .budget-ring svg {
-    transform: rotate(-90deg);
-  }
-
-  .budget-ring-text {
-    position: absolute;
-    inset: 0;
+  .budget-bar-head {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    align-items: baseline;
+    gap: 6px;
   }
 
-  .budget-ring-num {
+  .budget-bar-num {
     font-family: 'DM Mono', monospace;
     font-size: 22px;
     font-weight: 500;
@@ -118,20 +138,86 @@
     line-height: 1;
   }
 
-  .budget-ring-label {
-    font-size: 9px;
+  .budget-bar-label {
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-muted);
-    margin-top: 2px;
+  }
+
+  .budget-bar-track {
+    width: 100%;
+    height: 10px;
+    background: var(--border);
+    border-radius: 6px;
+    display: flex;
+  }
+
+  .budget-bar-seg { height: 100%; position: relative; cursor: default; }
+  .budget-bar-seg.taken { background: var(--taken); border-radius: 6px 0 0 6px; }
+  .budget-bar-seg.proposed { background: var(--green); }
+  .budget-bar-seg.trip { background: var(--trip); }
+  .budget-bar-seg.buffer { background: transparent; border-radius: 0 6px 6px 0; }
+
+  .budget-bar-seg[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--text);
+    color: var(--surface);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 20;
+  }
+
+  .budget-bar-seg[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 5px solid transparent;
+    border-top-color: var(--text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 20;
+  }
+
+  .budget-bar-seg[data-tooltip]:hover::after,
+  .budget-bar-seg[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .budget-bar-seg.buffer[data-tooltip]::after,
+  .budget-bar-seg.buffer[data-tooltip]::before {
+    left: auto;
+    right: 0;
+    transform: translateY(4px);
+  }
+
+  .budget-bar-seg.buffer[data-tooltip]:hover::after,
+  .budget-bar-seg.buffer[data-tooltip]:hover::before {
+    transform: translateY(0);
   }
 
   .budget-legend {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    text-align: right;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-end;
   }
 
   .budget-legend-item {
@@ -141,6 +227,7 @@
     align-items: center;
     gap: 6px;
     justify-content: flex-end;
+    white-space: nowrap;
   }
 
   .budget-legend-dot {
@@ -227,8 +314,8 @@
   }
 
   .event.ph {
-    background: #f0fdf4;
-    border-left-color: #86efac;
+    background: var(--ph-bg);
+    border-left-color: var(--ph-border);
   }
 
   .event.trip {
@@ -239,7 +326,6 @@
   .event.taken {
     background: var(--taken-bg);
     border-left-color: var(--taken);
-    opacity: 0.75;
   }
 
   .event-icon {
@@ -301,8 +387,8 @@
   }
 
   .badge-ph {
-    background: #bbf7d0;
-    color: #166534;
+    background: var(--ph-badge-bg);
+    color: var(--ph-badge-text);
   }
 
   .badge-trip {
@@ -417,65 +503,123 @@
     font-style: italic;
   }
 
+  /* Page nav / theme toggle */
+  .page-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .nav-btn {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-btn:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .nav-btn.icon-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+
+  .nav-btn.icon-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  html[data-theme="light"] #theme-toggle .icon-sun,
+  html[data-theme="dark"] #theme-toggle .icon-moon {
+    display: none;
+  }
+
   /* ─── Responsive ─── */
   @media (max-width: 640px) {
     body { padding: 24px 16px 60px; }
     .header { grid-template-columns: 1fr; }
-    .budget-cluster { align-items: flex-start; flex-direction: row; align-items: center; }
+    .budget-cluster { align-items: flex-start; width: 100%; }
     .month-block { grid-template-columns: 72px 1fr; }
     .summary { grid-template-columns: 1fr; }
     h1 { font-size: 22px; }
   }
 </style>
+<script>
+(function(){
+  var t = localStorage.getItem('leave-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', t);
+})();
+function toggleTheme(){
+  var root = document.documentElement;
+  var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('leave-theme', next);
+}
+</script>
 </head>
 <body>
+
+<div class="page-nav">
+  <a class="nav-btn" href="https://ramophalatse.github.io/personal/leave-dashboard.html">📊 Leave Summary</a>
+  <button id="theme-toggle" class="nav-btn icon-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M614-668 508-774l106-106 106 106-106 106Zm200 120-66-66 66-66 66 66-66 66ZM483-80q-84 0-157.5-32t-128-86.5Q143-253 111-326.5T79-484q0-146 93-257.5T409-880q-18 98 11 192.63 29 94.64 100 165.74 71 71.1 165.5 100.14Q780-392.45 879-410.47q-26 144.2-138 237.34Q629-80 483-80Zm0-60q100 0 182-57t132-145q-90-8-173-41.5T477.5-480Q414-543 381-625.5T340-797q-88 48-144.5 130.5T139-484q0 143.33 100.33 243.67Q339.67-140 483-140Zm-6-340Z"/></svg>
+    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M450-810v-110h60v110h-60Zm0 770v-110h60v110h-60Zm360-410v-60h110v60H810Zm-770 0v-60h110v60H40Zm702-250-43-43 66-66 43 43-66 66ZM195-151l-43-43 66-66 43 43-66 66Zm570 0-66-66 43-43 66 66-43 43ZM218-700l-66-66 43-43 66 66-43 43Zm102.5 379.5Q255-386 255-480t65.5-159.5Q386-705 480-705t159.5 65.5Q705-574 705-480t-65.5 159.5Q574-255 480-255t-159.5-65.5ZM597-363q48-48 48-117t-48-117q-48-48-117-48t-117 48q-48 48-48 117t48 117q48 48 117 48t117-48ZM480-480Z"/></svg>
+  </button>
+</div>
 
 <!-- ═══ HEADER ═══ -->
 <div class="header">
   <div>
     <div class="eyebrow">Nedbank Design Studio · Ramo Phalatse</div>
     <h1>2026 Leave Plan <em>forward-looking</em></h1>
-    <p class="header-sub">Proposed schedule · 40-day annual budget · Jan–Dec 2026</p>
+    <p class="header-sub">Proposed schedule · 45-day annual budget · Jan–Dec 2026</p>
   </div>
 
   <div class="budget-cluster">
-    <div class="budget-ring">
-      <svg width="96" height="96" viewBox="0 0 96 96">
-        <circle cx="48" cy="48" r="40" fill="none" stroke="#d0e8da" stroke-width="8"/>
-        <!-- taken: 15/40 = 135° -->
-        <circle cx="48" cy="48" r="40" fill="none" stroke="#64748b" stroke-width="8"
-          stroke-dasharray="251.2" stroke-dashoffset="188.4"
-          stroke-linecap="round" opacity="0.55"/>
-        <!-- proposed: 18/40 -->
-        <circle cx="48" cy="48" r="40" fill="none" stroke="#006341" stroke-width="8"
-          stroke-dasharray="251.2" stroke-dashoffset="75.36"
-          stroke-linecap="round"/>
-        <!-- trip: 6/40 -->
-        <circle cx="48" cy="48" r="40" fill="none" stroke="#7c3aed" stroke-width="8"
-          stroke-dasharray="251.2" stroke-dashoffset="37.68"
-          stroke-linecap="round" opacity="0.8"/>
-      </svg>
-      <div class="budget-ring-text">
-        <div class="budget-ring-num">33</div>
-        <div class="budget-ring-label">/ 40 days</div>
-      </div>
+    <div class="budget-bar-head">
+      <span class="budget-bar-num">42</span>
+      <span class="budget-bar-label">/ 45 days</span>
+    </div>
+    <div class="budget-bar-track">
+      <div class="budget-bar-seg taken" style="width:33.3%" data-tooltip="Taken (Jan–May): 15 days"></div>
+      <div class="budget-bar-seg proposed" style="width:42.2%" data-tooltip="Proposed leave: 19 days"></div>
+      <div class="budget-bar-seg trip" style="width:17.8%" data-tooltip="Family trip (Dec): 8 days"></div>
+      <div class="budget-bar-seg buffer" style="width:6.7%" data-tooltip="Buffer remaining: 3 days"></div>
     </div>
     <div class="budget-legend">
       <div class="budget-legend-item">
         <span>Taken (Jan–May)</span>
-        <div class="budget-legend-dot" style="background:#64748b;opacity:0.55"></div>
+        <div class="budget-legend-dot" style="background:var(--taken)"></div>
       </div>
       <div class="budget-legend-item">
         <span>Proposed leave</span>
-        <div class="budget-legend-dot" style="background:#006341"></div>
+        <div class="budget-legend-dot" style="background:var(--green)"></div>
       </div>
       <div class="budget-legend-item">
         <span>Family trip (Dec)</span>
-        <div class="budget-legend-dot" style="background:#7c3aed"></div>
+        <div class="budget-legend-dot" style="background:var(--trip)"></div>
       </div>
       <div class="budget-legend-item">
         <span>Buffer remaining</span>
-        <div class="budget-legend-dot" style="background:#d0e8da"></div>
+        <div class="budget-legend-dot" style="background:var(--border)"></div>
       </div>
     </div>
   </div>
@@ -490,8 +634,8 @@
       <div class="month-name">Jan–May</div>
       <div class="month-days-badge"><span>15</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:37.5%"></div></div>
-        <div class="running-bar-num">15/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:33.3%"></div></div>
+        <div class="running-bar-num">15/45</div>
       </div>
     </div>
     <div class="month-content">
@@ -511,10 +655,10 @@
   <div class="month-block">
     <div class="month-label">
       <div class="month-name">June</div>
-      <div class="month-days-badge"><span>4</span> days</div>
+      <div class="month-days-badge"><span>8</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:47.5%"></div></div>
-        <div class="running-bar-num">19/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:51.1%"></div></div>
+        <div class="running-bar-num">23/45</div>
       </div>
     </div>
     <div class="month-content">
@@ -530,6 +674,14 @@
       <div class="event confirmed">
         <div class="event-icon">📅</div>
         <div class="event-body">
+          <div class="event-title">Confirmed leave — single day</div>
+          <div class="event-dates">Tuesday 2 June</div>
+        </div>
+        <div class="event-badge badge-confirmed">1 day</div>
+      </div>
+      <div class="event confirmed">
+        <div class="event-icon">📅</div>
+        <div class="event-body">
           <div class="event-title">Confirmed leave — long weekend #1</div>
           <div class="event-dates">Thursday 4 Jun + Friday 5 Jun</div>
           <div class="event-note">Creates a 4-day break: Thu 4 → Sun 7 Jun. Good 3-month reset after Feb.</div>
@@ -539,11 +691,19 @@
       <div class="event confirmed">
         <div class="event-icon">📅</div>
         <div class="event-body">
-          <div class="event-title">Confirmed leave + Youth Day bridge</div>
-          <div class="event-dates">Monday 15 Jun + Wednesday 17 Jun</div>
-          <div class="event-note">15 Jun bridges into Youth Day (Tue 16 Jun). 17 Jun confirmed. Together: Mon–Wed off, giving a 5-day break if combined with the public holiday.</div>
+          <div class="event-title">Confirmed leave — long weekend #2</div>
+          <div class="event-dates">Thursday 11 Jun + Friday 12 Jun</div>
         </div>
         <div class="event-badge badge-confirmed">2 days</div>
+      </div>
+      <div class="event confirmed">
+        <div class="event-icon">📅</div>
+        <div class="event-body">
+          <div class="event-title">Confirmed leave + Youth Day bridge</div>
+          <div class="event-dates">Monday 15 Jun + Thursday 18 Jun + Friday 19 Jun</div>
+          <div class="event-note">15 Jun bridges into Youth Day (Tue 16 Jun). 18–19 Jun confirmed. Together: Mon off + Thu–Fri off, giving two separate long-weekend breaks around the public holiday.</div>
+        </div>
+        <div class="event-badge badge-confirmed">3 days</div>
       </div>
     </div>
   </div>
@@ -552,23 +712,40 @@
   <div class="month-block">
     <div class="month-label">
       <div class="month-name">July</div>
-      <div class="month-days-badge"><span>0</span> days</div>
+      <div class="month-days-badge"><span>3</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:47.5%"></div></div>
-        <div class="running-bar-num">19/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:57.8%"></div></div>
+        <div class="running-bar-num">26/45</div>
       </div>
     </div>
-    <div class="month-empty">No leave planned — recovery month between June and August breaks.</div>
+    <div class="month-content">
+      <div class="event confirmed">
+        <div class="event-icon">📅</div>
+        <div class="event-body">
+          <div class="event-title">Confirmed leave — single day</div>
+          <div class="event-dates">Monday 13 July</div>
+        </div>
+        <div class="event-badge badge-confirmed">1 day</div>
+      </div>
+      <div class="event confirmed">
+        <div class="event-icon">📅</div>
+        <div class="event-body">
+          <div class="event-title">Confirmed leave — long weekend</div>
+          <div class="event-dates">Thursday 30 Jul + Friday 31 Jul</div>
+        </div>
+        <div class="event-badge badge-confirmed">2 days</div>
+      </div>
+    </div>
   </div>
 
   <!-- AUGUST -->
   <div class="month-block">
     <div class="month-label">
       <div class="month-name">August</div>
-      <div class="month-days-badge"><span>5</span> days</div>
+      <div class="month-days-badge"><span>2</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:60%"></div></div>
-        <div class="running-bar-num">24/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:62.2%"></div></div>
+        <div class="running-bar-num">28/45</div>
       </div>
     </div>
     <div class="month-content">
@@ -576,19 +753,19 @@
         <div class="event-icon">🇿🇦</div>
         <div class="event-body">
           <div class="event-title">National Women's Day</div>
-          <div class="event-dates">Sunday, 9 August</div>
-          <div class="event-note">Falls on a Sunday — no working-day bridge benefit this year.</div>
+          <div class="event-dates">Sunday, 9 August · observed Monday, 10 August</div>
+          <div class="event-note">Falls on a Sunday, so it's observed on Monday 10 August — a real working-day bridge benefit this year.</div>
         </div>
         <div class="event-badge badge-ph">PH</div>
       </div>
-      <div class="event leave">
-        <div class="event-icon">🌿</div>
+      <div class="event confirmed">
+        <div class="event-icon">📅</div>
         <div class="event-body">
-          <div class="event-title">Mid-year proper break</div>
-          <div class="event-dates">Monday 10 Aug → Friday 14 Aug</div>
-          <div class="event-note">Full working week off — ~3 months after June and before the December trip. No school holiday clash (Gauteng schools typically reopen mid-July). Gives 9 consecutive days off: Sat 8 → Sun 16 Aug.</div>
+          <div class="event-title">Confirmed leave — short break</div>
+          <div class="event-dates">Thursday 6 Aug + Friday 7 Aug</div>
+          <div class="event-note">The original 10–14 Aug mid-year week was dropped; 6–7 Aug taken instead, giving a 5-day break: Thu 6 → Mon 10 Aug (running into the National Women's Day observed-holiday Monday).</div>
         </div>
-        <div class="event-badge badge-leave">5 days</div>
+        <div class="event-badge badge-confirmed">2 days</div>
       </div>
     </div>
   </div>
@@ -597,13 +774,21 @@
   <div class="month-block">
     <div class="month-label">
       <div class="month-name">September</div>
-      <div class="month-days-badge"><span>3</span> days</div>
+      <div class="month-days-badge"><span>6</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:67.5%"></div></div>
-        <div class="running-bar-num">27/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:75.6%"></div></div>
+        <div class="running-bar-num">34/45</div>
       </div>
     </div>
     <div class="month-content">
+      <div class="event confirmed">
+        <div class="event-icon">📅</div>
+        <div class="event-body">
+          <div class="event-title">Confirmed leave — long weekend</div>
+          <div class="event-dates">Thursday 10 Sep + Friday 11 Sep</div>
+        </div>
+        <div class="event-badge badge-confirmed">2 days</div>
+      </div>
       <div class="event ph">
         <div class="event-icon">🇿🇦</div>
         <div class="event-body">
@@ -631,8 +816,8 @@
       <div class="month-name">October</div>
       <div class="month-days-badge"><span>0</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:67.5%"></div></div>
-        <div class="running-bar-num">27/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:75.6%"></div></div>
+        <div class="running-bar-num">34/45</div>
       </div>
     </div>
     <div class="month-empty">No leave planned — buffer month before year-end and December trip.</div>
@@ -644,8 +829,8 @@
       <div class="month-name">November</div>
       <div class="month-days-badge"><span>0</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:67.5%"></div></div>
-        <div class="running-bar-num">27/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:75.6%"></div></div>
+        <div class="running-bar-num">34/45</div>
       </div>
     </div>
     <div class="month-empty">No leave planned — final sprint before the December trip. Day of Reconciliation (16 Dec) falls on a Wednesday.</div>
@@ -655,10 +840,10 @@
   <div class="month-block">
     <div class="month-label">
       <div class="month-name">December</div>
-      <div class="month-days-badge"><span>6</span> days</div>
+      <div class="month-days-badge"><span>8</span> days</div>
       <div class="running-bar-wrap">
-        <div class="running-bar-track"><div class="running-bar-fill" style="width:82.5%"></div></div>
-        <div class="running-bar-num">33/40</div>
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:93.3%"></div></div>
+        <div class="running-bar-num">42/45</div>
       </div>
     </div>
     <div class="month-content">
@@ -674,10 +859,41 @@
         <div class="event-icon">✈️</div>
         <div class="event-body">
           <div class="event-title">NYC · Miami · Caribbean Family Trip</div>
-          <div class="event-dates">Depart Sun 21 Dec 2026 · Return Fri 15 Jan 2027</div>
-          <div class="event-note">Leave days needed: Mon 22 – Fri 31 Dec (working days only, excluding 25 & 26 Dec PH) = 22, 23, 24, 29, 30, 31 Dec. Jan 2027 falls in the new leave year — no 2026 days consumed for the return leg.</div>
+          <div class="event-dates">Away Mon 21 Dec 2026 → land OR Tambo Fri 15 Jan 2027, 08:20 · 18 leave days in total</div>
+          <div class="event-note">2026 portion: 21, 22, 23, 24, 28, 29, 30, 31 Dec. Christmas (Fri 25 Dec) is a public holiday; Day of Goodwill falls on a Saturday, so it saves no leave. The remaining 10 days come out of the 2027 leave year (see January 2027 below).</div>
         </div>
-        <div class="event-badge badge-trip">6 days</div>
+        <div class="event-badge badge-trip">8 days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JANUARY 2027: TRIP CONTINUES (2027 LEAVE YEAR) -->
+  <div class="month-block">
+    <div class="month-label">
+      <div class="month-name">Jan 2027</div>
+      <div class="month-days-badge"><span>10</span> days</div>
+      <div class="running-bar-wrap">
+        <div class="running-bar-track"><div class="running-bar-fill" style="width:22.2%"></div></div>
+        <div class="running-bar-num">10/45</div>
+      </div>
+    </div>
+    <div class="month-content">
+      <div class="event ph">
+        <div class="event-icon">🇿🇦</div>
+        <div class="event-body">
+          <div class="event-title">New Year's Day</div>
+          <div class="event-dates">Friday, 1 January 2027</div>
+        </div>
+        <div class="event-badge badge-ph">PH</div>
+      </div>
+      <div class="event trip">
+        <div class="event-icon">✈️</div>
+        <div class="event-body">
+          <div class="event-title">Family Trip continues (Miami · Caribbean cruise · NYC · flight home)</div>
+          <div class="event-dates">Mon 4 – Fri 8 Jan + Mon 11 – Fri 15 Jan 2027</div>
+          <div class="event-note">Counts against the 2027 budget, not 2026. 4–8 and 11–14 Jan are 9 days we're physically away. Fri 15 Jan is the landing day (08:20 after two overnight flights), counted as leave here; working that day would bring the trip to 17 days.</div>
+        </div>
+        <div class="event-badge badge-trip">10 days</div>
       </div>
     </div>
   </div>
@@ -690,7 +906,7 @@
     <div class="summary-card-title">Leave Budget Breakdown</div>
     <div class="summary-row">
       <div class="summary-row-label">Annual budget</div>
-      <div class="summary-row-val">40 days</div>
+      <div class="summary-row-val">45 days</div>
     </div>
     <div class="summary-row">
       <div class="summary-row-label">Already taken (Jan–May)</div>
@@ -698,27 +914,39 @@
     </div>
     <div class="summary-row">
       <div class="summary-row-label">June (confirmed + bridge)</div>
-      <div class="summary-row-val">4 days</div>
+      <div class="summary-row-val">8 days</div>
     </div>
     <div class="summary-row">
-      <div class="summary-row-label">August (mid-year break)</div>
-      <div class="summary-row-val">5 days</div>
+      <div class="summary-row-label">July (confirmed)</div>
+      <div class="summary-row-val">3 days</div>
     </div>
     <div class="summary-row">
-      <div class="summary-row-label">September (Heritage Day bridge)</div>
-      <div class="summary-row-val">4 days</div>
+      <div class="summary-row-label">August (confirmed short break)</div>
+      <div class="summary-row-val">2 days</div>
     </div>
     <div class="summary-row">
-      <div class="summary-row-label">December (family trip)</div>
+      <div class="summary-row-label">September (long weekend + Heritage Day bridge)</div>
       <div class="summary-row-val">6 days</div>
     </div>
     <div class="summary-row">
+      <div class="summary-row-label">December (family trip, 2026 portion)</div>
+      <div class="summary-row-val">8 days</div>
+    </div>
+    <div class="summary-row">
       <div class="summary-row-label" style="font-weight:600;color:var(--green)">Total proposed</div>
-      <div class="summary-row-val green">34 days</div>
+      <div class="summary-row-val green">42 days</div>
     </div>
     <div class="summary-row">
       <div class="summary-row-label">Remaining buffer</div>
-      <div class="summary-row-val muted">6 days</div>
+      <div class="summary-row-val muted">3 days</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-row-label">Family trip, 2027 portion (Jan, from next year's budget)</div>
+      <div class="summary-row-val">10 days</div>
+    </div>
+    <div class="summary-row">
+      <div class="summary-row-label" style="font-weight:600;color:var(--trip)">Family trip, total leave needed</div>
+      <div class="summary-row-val" style="font-weight:700;color:var(--trip)">18 days</div>
     </div>
   </div>
 
@@ -726,32 +954,28 @@
     <div class="summary-card-title">Break Rhythm Check</div>
     <div class="summary-row">
       <div class="summary-row-label">Last break taken</div>
-      <div class="summary-row-val">Feb 2026</div>
+      <div class="summary-row-val">Jul 2026 (30–31 Jul)</div>
     </div>
     <div class="summary-row">
-      <div class="summary-row-label">Next break : June</div>
-      <div class="summary-row-val">~4 months ✓</div>
-    </div>
-    <div class="summary-row">
-      <div class="summary-row-label">Break : August</div>
-      <div class="summary-row-val">~2 months ✓</div>
+      <div class="summary-row-label">Next break : August</div>
+      <div class="summary-row-val">this week ✓</div>
     </div>
     <div class="summary-row">
       <div class="summary-row-label">Break : September</div>
-      <div class="summary-row-val">~1.5 months ✓</div>
+      <div class="summary-row-val">~1 month ✓</div>
     </div>
     <div class="summary-row">
       <div class="summary-row-label">Family trip : December</div>
-      <div class="summary-row-val">~2.5 months ✓</div>
+      <div class="summary-row-val">~3 months ✓</div>
     </div>
     <div class="summary-row">
       <div class="summary-row-label" style="font-weight:600;color:var(--green)">Longest gap without a break</div>
-      <div class="summary-row-val green">4 months ✓</div>
+      <div class="summary-row-val green">3 months ✓</div>
     </div>
   </div>
 
   <div class="note-box">
-    <strong>Notes on this plan:</strong> Sep is shown as 4 days rather than 3 — the Heritage Day bridge is too good to waste with just 1 day (Fri 25). Taking Mon–Wed gives you a full 9-day stretch for the price of 4 leave days. The 6-day buffer gives you room for unexpected sick days, family commitments, or a spontaneous long weekend without blowing the budget. The December trip costs only 6 working days because the trip departs on a Sunday, Christmas and Day of Goodwill eat two working days, and the return (15 Jan) falls in the 2027 leave year. If your HR system requires pre-approval for blocks over 5 days, flag August and September early.
+    <strong>Notes on this plan:</strong> Annual budget increased to 45 days. Already-taken figures for June (8 days), July (3 days), and September (6 days, including the 10–11 Sep long weekend) now match the Leave Summary dashboard, which is the source of truth for actual dates. September's Heritage Day bridge alone is 4 days — the extra 2 days come from the 10–11 Sep long weekend added separately. The family trip needs 18 leave days in total, not 6 or 8: we're away from Mon 21 Dec 2026 until landing on Fri 15 Jan 2027. 8 of those days fall in December 2026 (Christmas is the only public holiday that saves a day, since Day of Goodwill is a Saturday), and 10 fall in January 2027 (New Year's Day saves one). The January days don't touch the 2026 buffer, but they use 10 of the 2027 budget in the first fortnight of the year, so apply for the whole block as one request. The original 10–14 Aug mid-year week was replaced with a shorter 6–7 Aug break. With the higher budget, 3 days of buffer remain against the 42 days taken/planned for the year — no longer over budget. If your HR system requires pre-approval for blocks over 5 days, flag September early.
   </div>
 </div>
 
