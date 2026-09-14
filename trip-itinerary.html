@@ -288,6 +288,28 @@
   .act-thumb-search{position:absolute;left:6px;top:100px;z-index:2;display:none;align-items:center;gap:4px;height:24px;padding:0 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
   .act-thumb-search:hover{background:var(--accent);color:#fff;}
   .act-thumb-search svg{width:11px;height:11px;}
+  /* CARD PHOTO CONTROL (edit mode only): the big photo a stop's card opens on,
+     edited from the list the same way as the thumbnail above it. */
+  .card-photo{display:none;}
+  :root[data-edit="on"] .card-photo{grid-column:3;grid-row:2;position:relative;display:flex;align-items:center;gap:8px;min-width:0;height:56px;padding:6px 6px 6px 6px;border-radius:var(--radius-sm);border:1.5px dashed var(--border2);background:var(--bg3);font-family:var(--sans);font-size:11px;color:var(--text2);transition:border-color 0.15s,background 0.15s;}
+  :root[data-edit="on"] .card-photo.has-photo{border-style:solid;border-color:var(--border);}
+  :root[data-edit="on"] .card-photo.drag-over{border-color:var(--accent);background:var(--accent-bg);}
+  .card-photo-preview{flex:none;width:44px;height:44px;border-radius:6px;background:var(--bg2) center/cover no-repeat;cursor:zoom-in;}
+  .card-photo:not(.has-photo) .card-photo-preview{cursor:default;background-image:none !important;}
+  .card-photo-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;line-height:1.2;}
+  .card-photo-label{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card-photo-actions{display:flex;gap:4px;}
+  .card-photo-btn{display:inline-flex;align-items:center;height:20px;padding:0 7px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
+  .card-photo-btn:hover,.card-photo-btn:focus-visible{background:var(--accent);color:#fff;}
+  .card-photo-btn[disabled]{opacity:0.5;cursor:progress;}
+  .card-photo-remove{position:absolute;top:2px;right:4px;display:none;width:20px;height:20px;padding:0;border:none;background:none;color:var(--text3);font-size:16px;line-height:1;cursor:pointer;}
+  .card-photo.has-photo .card-photo-remove{display:block;}
+  .card-photo-remove:hover{color:#e11d48;}
+  .card-photo input[type="file"]{display:none;}
+  .card-photo.is-busy .card-photo-label::after{content:' · uploading…';font-weight:400;color:var(--text3);}
+  @media(max-width:640px){
+    :root[data-edit="on"] .card-photo{grid-column:2;grid-row:auto;margin-right:0;}
+  }
   /* UNSPLASH PICKER */
   .us-box{max-width:760px;max-height:calc(100vh - 2rem);display:flex;flex-direction:column;}
   .us-form{display:flex;gap:8px;margin:12px 0 8px;}
@@ -901,6 +923,8 @@
   .cv-body{font-size:14.5px;line-height:1.65;color:var(--text2);}
   .cv-body + .cv-body{margin-top:10px;}
   .cv-body .transfer-link{color:var(--accent-text);font-weight:500;cursor:pointer;}
+  .cv-credit{margin-top:14px;font-size:11px;color:var(--text3);}
+  .cv-credit a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
   .cv-fine{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:6px;}
   .cv-fine li{display:flex;gap:8px;font-size:13px;color:var(--text2);}
   .cv-fine li::before{content:'';flex:none;width:6px;height:6px;margin-top:7px;border-radius:50%;background:var(--warn);}
@@ -2364,6 +2388,8 @@
   const UNSPLASH_FN = SUPABASE_URL + '/functions/v1/unsplash-search';
   const UNSPLASH_UTM = 'utm_source=travel_widgets&utm_medium=referral';
   const UNSPLASH_SIZE = '&w=1120&h=800&fit=crop&crop=entropy&q=80&auto=format';
+  // Cards crop to whatever shape the screen gives them, so the card size keeps the photo's own shape.
+  const UNSPLASH_CARD_SIZE = '&w=1600&fit=max&q=80&auto=format';
   let unsplashTarget = null, unsplashQuery = '', unsplashPage = 1;
   function makeThumbSearchButton() {
     const btn = document.createElement('button');
@@ -2472,8 +2498,17 @@
   }
   function pickUnsplashPhoto(photo) {
     const target = unsplashTarget;
-    if (!target || !target.dataset.eid || !/^https:\/\/images\.unsplash\.com\//.test(photo.raw)) return;
+    if (!target || !/^https:\/\/images\.unsplash\.com\//.test(photo.raw)) return;
     const credit = { n: photo.name, p: photo.profile, l: photo.link };
+    if (target.classList.contains('card-photo')) {
+      const row = target.closest('.activity-row');
+      const cardSrc = photo.raw + UNSPLASH_CARD_SIZE + '#unsplash=' + encodeURIComponent(JSON.stringify(credit));
+      if (row) { setRowCardPhoto(row, cardSrc); saveEdit(CARD_PHOTO_PREFIX + rowKey(row), 'card-src', cardSrc); }
+      fetch(UNSPLASH_FN + '?download=' + encodeURIComponent(photo.download), { headers: { apikey: SUPABASE_ANON_KEY } }).catch(() => {});
+      closeUnsplashPicker();
+      return;
+    }
+    if (!target.dataset.eid) return;
     const src = photo.raw + UNSPLASH_SIZE + '#unsplash=' + encodeURIComponent(JSON.stringify(credit));
     if (target.classList.contains('act-thumb-slot')) fillThumbSlot(target, src);
     else target.src = src;
@@ -2568,6 +2603,139 @@
       wrap.appendChild(makeThumbRemoveButton());
       wrap.appendChild(makeThumbSearchButton());
     });
+  }
+  /* ── CARD PHOTOS ────────────────────────────────────────────────────────
+     A stop's card opens on a large photo: an authored one (CARD_BY_ROW /
+     CARD_BY_THUMB) or one set here. Edit mode gives every row a control under
+     its thumbnail to upload (drop or pick a file), search Unsplash or remove
+     it. Uploads are resized to 1600 px in the browser and stored in the public
+     `travel-card-photos` bucket by the `card-photo` Edge Function, so the edits
+     table only holds the URL; the ~1.9 MB edits fetch does not grow. Edits are
+     keyed by row (`card:<rowKey>`): `card-src` sets a photo, `card-removed`
+     means no card photo at all, not even the authored one, so the card falls
+     back to the list thumbnail. */
+  const CARD_PHOTO_PREFIX = 'card:';
+  const CARD_PHOTO_FN = SUPABASE_URL + '/functions/v1/card-photo';
+  const CARD_PHOTO_MAX = 1600;
+  function setRowCardPhoto(row, src) {
+    if (src) { row.dataset.cardSrc = src; delete row.dataset.cardRemoved; }
+    else { delete row.dataset.cardSrc; row.dataset.cardRemoved = '1'; }
+    const ctl = row.querySelector('.card-photo');
+    if (ctl) refreshCardPhotoControl(ctl);
+  }
+  function refreshCardPhotoControl(ctl) {
+    const row = ctl.closest('.activity-row');
+    const src = row && typeof window.cardPhotoFor === 'function' ? window.cardPhotoFor(row) : '';
+    ctl.classList.toggle('has-photo', !!src);
+    const preview = ctl.querySelector('.card-photo-preview');
+    preview.style.backgroundImage = src ? 'url("' + src.replace(/#.*$/, '').replace(/"/g, '%22') + '")' : '';
+    const hasThumb = row && row.querySelector('img.act-thumb');
+    ctl.querySelector('.card-photo-label').textContent = src ? 'Card photo'
+      : hasThumb ? 'No card photo · uses list photo' : 'No card photo';
+  }
+  function ensureCardPhotoControls() {
+    document.querySelectorAll('.leg-panel .activity-row').forEach(row => {
+      if (row.querySelector('.card-photo')) return;
+      const ctl = document.createElement('div');
+      ctl.className = 'card-photo';
+      ctl.innerHTML = '<span class="card-photo-preview" role="img" aria-label="Card photo preview"></span>'
+        + '<span class="card-photo-text"><span class="card-photo-label"></span><span class="card-photo-actions">'
+        + '<button type="button" class="card-photo-btn" data-card-act="upload">Upload</button>'
+        + '<button type="button" class="card-photo-btn" data-card-act="search" title="Search Unsplash for a card photo">Search</button>'
+        + '</span></span>'
+        + '<button type="button" class="card-photo-remove" data-card-act="remove" title="Remove card photo" aria-label="Remove card photo">×</button>'
+        + '<input type="file" accept="image/*" tabindex="-1" aria-hidden="true">';
+      row.appendChild(ctl);
+      refreshCardPhotoControl(ctl);
+      ctl.addEventListener('click', onCardPhotoClick);
+      ctl.querySelector('input').addEventListener('change', e => {
+        const file = e.target.files && e.target.files[0];
+        e.target.value = '';
+        if (file) uploadCardPhoto(ctl, file);
+      });
+      ctl.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); ctl.classList.add('drag-over'); });
+      ctl.addEventListener('dragleave', () => ctl.classList.remove('drag-over'));
+      ctl.addEventListener('drop', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        ctl.classList.remove('drag-over');
+        if (document.documentElement.dataset.edit !== 'on') return;
+        const file = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file) uploadCardPhoto(ctl, file);
+      });
+    });
+  }
+  function onCardPhotoClick(e) {
+    e.stopPropagation();
+    if (document.documentElement.dataset.edit !== 'on') return;
+    const ctl = e.currentTarget;
+    const row = ctl.closest('.activity-row');
+    const act = e.target.closest('[data-card-act]');
+    if (!act) {
+      if (e.target.closest('.card-photo-preview') && ctl.classList.contains('has-photo')) {
+        const nameEl = row.querySelector('.act-name');
+        openLightbox(window.cardPhotoFor(row), nameEl ? nameEl.textContent.trim() : '');
+      }
+      return;
+    }
+    e.preventDefault();
+    if (act.dataset.cardAct === 'upload') ctl.querySelector('input').click();
+    else if (act.dataset.cardAct === 'search') {
+      unsplashTarget = ctl;
+      const nameEl = row.querySelector('.act-name');
+      openUnsplashPicker(nameEl ? nameEl.textContent.replace(/[·→]/g, ' ').replace(/\s+/g, ' ').trim() : '');
+    } else if (act.dataset.cardAct === 'remove') {
+      setRowCardPhoto(row, null);
+      saveEdit(CARD_PHOTO_PREFIX + rowKey(row), 'card-removed', '');
+    }
+  }
+  function resizeForCard(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith('image/')) { reject(new Error('Not an image')); return; }
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const scale = Math.min(1, CARD_PHOTO_MAX / Math.max(img.naturalWidth, img.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.naturalWidth * scale);
+        canvas.height = Math.round(img.naturalHeight * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const attempt = q => canvas.toBlob(blob => {
+          if (!blob) reject(new Error('Could not encode'));
+          else if (blob.size > 1900000 && q > 0.6) attempt(q - 0.1);
+          else resolve(blob);
+        }, 'image/jpeg', q);
+        attempt(0.85);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read the image')); };
+      img.src = url;
+    });
+  }
+  async function uploadCardPhoto(ctl, file) {
+    const row = ctl.closest('.activity-row');
+    if (!row || ctl.classList.contains('is-busy')) return;
+    ctl.classList.add('is-busy');
+    ctl.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    showSaveStatus('Uploading', 'busy');
+    try {
+      const blob = await resizeForCard(file);
+      const res = await fetch(CARD_PHOTO_FN + '?page=' + EDIT_PAGE_ID + '&row=' + encodeURIComponent(rowKey(row)), {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'image/jpeg' },
+        body: blob
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.error || res.status);
+      setRowCardPhoto(row, data.url);
+      await saveEdit(CARD_PHOTO_PREFIX + rowKey(row), 'card-src', data.url);
+    } catch (err) {
+      console.error('[trip-itinerary] card photo upload failed', err);
+      showSaveStatus('Upload failed', 'error');
+    } finally {
+      ctl.classList.remove('is-busy');
+      ctl.querySelectorAll('button').forEach(b => { b.disabled = false; });
+    }
   }
   /* ── REMOVING AN ACTIVITY ───────────────────────────────────────────────
      Activity edits use stable row keys, not document positions. A deletion is
@@ -3461,6 +3629,12 @@
         if (table) applyBudgetTable(table, entry.value);
         return;
       }
+      if (eid.indexOf(CARD_PHOTO_PREFIX) === 0) {
+        const key = eid.slice(CARD_PHOTO_PREFIX.length);
+        const row = Array.from(document.querySelectorAll('.activity-row')).find(r => rowKey(r) === key);
+        if (row) setRowCardPhoto(row, entry.type === 'card-src' ? entry.value : null);
+        return;
+      }
       if (eid.indexOf(NOTES_PREFIX) === 0) {
         const key = eid.slice(NOTES_PREFIX.length);
         const row = Array.from(document.querySelectorAll('.activity-row')).find(r => rowKey(r) === key);
@@ -3572,7 +3746,8 @@
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
-    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,#unsplash-modal,.act-stay').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
+    clone.querySelectorAll('[data-card-src],[data-card-removed]').forEach(el => { el.removeAttribute('data-card-src'); el.removeAttribute('data-card-removed'); });
     clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
       const img = wrap.querySelector('img.act-thumb');
@@ -3713,6 +3888,7 @@
     await applySavedEdits();
     renderAirbnbLinks();
     wrapStaticThumbs();
+    ensureCardPhotoControls();
     markUnsplashCredits();
     decorateActivityRows();
     decorateNotes();
@@ -4408,6 +4584,9 @@
   };
 
   function sharpFor(row) {
+    // A card photo set or removed in edit mode beats the authored one.
+    if (row.dataset.cardRemoved === '1') return '';
+    if (row.dataset.cardSrc) return row.dataset.cardSrc;
     const byRow = CARD_BY_ROW[row.dataset.rowKey];
     if (byRow) return CARD_DIR + 'card-' + byRow + '.jpg';
     const img = row.querySelector('img.act-thumb');
@@ -4436,9 +4615,11 @@
   }
   const isWarm = src => !!(warmed.get(src) || {}).ready;
 
+  window.cardPhotoFor = row => sharpFor(row);
+
   function itemImage(item) {
     const row = item.type === 'stop' ? item.row
-      : Array.from(item.day.card.querySelectorAll('.activity-row')).find(r => r.querySelector('img.act-thumb') || CARD_BY_ROW[r.dataset.rowKey]);
+      : Array.from(item.day.card.querySelectorAll('.activity-row')).find(r => r.querySelector('img.act-thumb') || sharpFor(r));
     if (row) {
       const img = row.querySelector('img.act-thumb'), sharp = sharpFor(row);
       if (img) return { src: img.src, sharp, real: true };
@@ -4554,6 +4735,14 @@
     ).join('') + '</div>';
   }
 
+  // Unsplash's terms want the photographer named wherever their photo shows.
+  function creditHtml(src) {
+    const c = typeof unsplashCredit === 'function' ? unsplashCredit(src) : null;
+    if (!c) return '';
+    const utm = (u) => esc(u + (u.indexOf('?') >= 0 ? '&' : '?') + UNSPLASH_UTM);
+    return '<div class="cv-credit">Photo by <a href="' + utm(c.profile) + '" target="_blank" rel="noopener">' + esc(c.name) + '</a> on <a href="' + utm('https://unsplash.com/') + '" target="_blank" rel="noopener">Unsplash</a></div>';
+  }
+
   function stayHtml(stay) {
     if (!stay) return '';
     return '<div class="cv-reviews"><a class="cv-review cv-review--airbnb" href="' + esc(stay.url) + '" target="_blank" rel="noopener noreferrer">'
@@ -4623,6 +4812,7 @@
         + (s.fine.length ? '<ul class="cv-fine">' + s.fine.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>' : '')
         + reviewsHtml(s.ratings)
         + stayHtml(s.stay)
+        + creditHtml(image.sharp || image.src)
         + (s.flight ? '<button type="button" class="cv-action" data-act="flight">' + ICON.plane + 'View flight details</button>' : '')
         // Wide layouts only (CSS): stands in for the photo's thumbnail rail.
         + (item.i + 1 < item.day.rows.length
