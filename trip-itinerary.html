@@ -262,15 +262,10 @@
   .act-note-remove:hover{color:#fda4af;}
   .act-note-add{margin-top:4px;font-size:11px;color:var(--accent);}
   .act-note-add:hover{text-decoration:underline;}
-  .activity-row-delete{display:none;position:absolute;right:6px;bottom:16px;z-index:3;align-items:center;justify-content:center;height:24px;padding:0 8px;border:1px solid rgba(190,24,60,0.5);border-radius:999px;background:var(--card);color:#fb7185;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;}
+  /* Deletes the whole stop, so it sits under the timecode, well clear of the
+     photo column, where every control acts on an image and nothing else. */
+  .activity-row-delete{display:none;position:absolute;left:0;bottom:12px;z-index:3;align-items:center;justify-content:center;height:24px;padding:0 8px;border:1px solid rgba(190,24,60,0.5);border-radius:999px;background:var(--card);color:#fb7185;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;}
   .activity-row-delete:hover{background:#be123c;color:#fff;border-color:#be123c;}
-  /* The control tracks the bottom edge of the thumbnail rather than the foot of
-     the row: the thumb is a fixed 132px box at the top of the row, while the row
-     itself grows with the prose, so a bottom anchor drifts away from the image on
-     any row with more than a couple of lines. 8px row padding + 132px thumb
-     - 8px inset - 24px control height = 108px. */
-  :root[data-edit="on"] .activity-row.has-thumb .activity-row-delete,
-  :root[data-edit="on"] .activity-row.has-thumb-slot .activity-row-delete{top:108px;bottom:auto;}
   .excursion-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--teal-bg);color:var(--teal-text);margin-top:3px;}
   .act-thumb{width:190px;height:132px;object-fit:cover;border-radius:var(--radius-sm);cursor:zoom-in;transition:transform 0.2s ease,box-shadow 0.2s ease;}
   .act-thumb:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(0,0,0,0.18);}
@@ -282,33 +277,26 @@
      runtime to give the remove control something to anchor to. No overflow:hidden
      here: that would clip .act-thumb's hover scale. */
   .act-thumb-wrap{position:relative;width:190px;height:132px;}
-  .act-thumb-remove{position:absolute;top:4px;right:6px;z-index:2;display:none;align-items:center;justify-content:center;width:20px;height:20px;padding:0;border:none;background:none;color:#fff;font-family:var(--sans);font-size:18px;line-height:1;cursor:pointer;transition:color 0.15s,transform 0.15s;}
-  .act-thumb-remove:hover{color:#fda4af;transform:scale(1.15);}
-  /* Top matches .activity-row-delete (top:108px on the row, less the row's 8px padding) so the two controls share a line. */
-  .act-thumb-search{position:absolute;left:6px;top:100px;z-index:2;display:none;align-items:center;gap:4px;height:24px;padding:0 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
-  .act-thumb-search:hover{background:var(--accent);color:#fff;}
+  /* IMAGE DROP ZONES (edit mode). The list thumbnail and the card photo are two
+     zones with one visual language: a tag top-left naming the zone, x top-right
+     to remove the photo (only when there is one), a Search chip bottom-left, and
+     the same dashed empty state and green hover and drag overlays. Photos go in
+     by drag and drop in both. */
+  .act-thumb-remove{position:absolute;top:6px;right:6px;z-index:3;display:none;align-items:center;justify-content:center;width:22px;height:22px;padding:0;border:none;border-radius:50%;background:rgba(0,0,0,0.62);color:#fff;font-family:var(--sans);font-size:15px;line-height:1;cursor:pointer;transition:background 0.15s,transform 0.15s;}
+  .act-thumb-remove:hover,.act-thumb-remove:focus-visible{background:#be123c;transform:scale(1.08);}
+  .act-thumb-search{position:absolute;left:6px;bottom:6px;z-index:3;display:none;align-items:center;gap:4px;height:24px;padding:0 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
+  .act-thumb-search:hover,.act-thumb-search:focus-visible{background:var(--accent);color:#fff;}
   .act-thumb-search svg{width:11px;height:11px;}
-  /* CARD PHOTO CONTROL (edit mode only): the big photo a stop's card opens on,
-     edited from the list the same way as the thumbnail above it. */
+  .zone-tag{position:absolute;left:6px;top:6px;z-index:3;display:none;align-items:center;height:18px;padding:0 7px;border-radius:999px;background:rgba(0,0,0,0.62);color:#e5e7eb;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;line-height:1;pointer-events:none;}
+  .act-thumb-hint small{display:block;margin-top:3px;font-size:10px;font-weight:400;opacity:0.8;}
+  /* The card photo zone: the big photo a stop's card opens on. */
   .card-photo{display:none;}
-  :root[data-edit="on"] .card-photo{grid-column:3;grid-row:2;position:relative;display:flex;align-items:center;gap:8px;min-width:0;height:56px;padding:6px 6px 6px 6px;border-radius:var(--radius-sm);border:1.5px dashed var(--border2);background:var(--bg3);font-family:var(--sans);font-size:11px;color:var(--text2);transition:border-color 0.15s,background 0.15s;}
-  :root[data-edit="on"] .card-photo.has-photo{border-style:solid;border-color:var(--border);}
-  :root[data-edit="on"] .card-photo.drag-over{border-color:var(--accent);background:var(--accent-bg);}
-  .card-photo-preview{flex:none;width:44px;height:44px;border-radius:6px;background:var(--bg2) center/cover no-repeat;cursor:zoom-in;}
-  .card-photo:not(.has-photo) .card-photo-preview{cursor:default;background-image:none !important;}
-  .card-photo-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;line-height:1.2;}
-  .card-photo-label{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .card-photo-actions{display:flex;gap:4px;}
-  .card-photo-btn{display:inline-flex;align-items:center;height:20px;padding:0 7px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
-  .card-photo-btn:hover,.card-photo-btn:focus-visible{background:var(--accent);color:#fff;}
-  .card-photo-btn[disabled]{opacity:0.5;cursor:progress;}
-  .card-photo-remove{position:absolute;top:2px;right:4px;display:none;width:20px;height:20px;padding:0;border:none;background:none;color:var(--text3);font-size:16px;line-height:1;cursor:pointer;}
-  .card-photo.has-photo .card-photo-remove{display:block;}
-  .card-photo-remove:hover{color:#e11d48;}
-  .card-photo input[type="file"]{display:none;}
-  .card-photo.is-busy .card-photo-label::after{content:' · uploading…';font-weight:400;color:var(--text3);}
+  :root[data-edit="on"] .card-photo{grid-column:3;grid-row:2;position:relative;display:block;width:190px;height:96px;border-radius:var(--radius-sm);overflow:hidden;cursor:copy;}
+  .card-photo-img{position:absolute;inset:0;background:var(--bg2) center/cover no-repeat;}
+  .card-photo.has-photo .card-photo-img{cursor:zoom-in;}
+  .card-photo:not(.has-photo) .card-photo-img{display:none;}
   @media(max-width:640px){
-    :root[data-edit="on"] .card-photo{grid-column:2;grid-row:auto;margin-right:0;}
+    :root[data-edit="on"] .card-photo{grid-column:2;grid-row:auto;width:auto;max-width:100%;height:110px;}
   }
   /* UNSPLASH PICKER */
   .us-box{max-width:760px;max-height:calc(100vh - 2rem);display:flex;flex-direction:column;}
@@ -517,8 +505,6 @@
   @media(max-width:640px){
     .activity-row,.activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
     .act-body{padding-right:0;}
-    .activity-row.has-thumb .activity-row-delete,
-    .activity-row.has-thumb-slot .activity-row-delete{top:auto;bottom:16px;}
     .act-thumb,.act-thumb-slot,.act-thumb-wrap{display:none;}
     .leg-hero{height:220px;}
     .restaurant-grid{grid-template-columns:1fr;}
@@ -556,13 +542,20 @@
   :root[data-edit="on"] [data-drop-image]:not(.act-thumb-slot).drag-over::after{opacity:1;background:rgba(5,150,105,0.75);content:'Release to replace image';}
   :root[data-edit="on"] .activity-row.has-thumb-slot{grid-template-columns:56px 1fr 190px;}
   :root[data-edit="on"] .act-thumb-slot{display:block;}
-  :root[data-edit="on"] .act-thumb-slot:not(.filled) .act-thumb-hint{opacity:1;background:var(--bg3);border:1.5px dashed var(--border2);color:var(--text3);}
-  :root[data-edit="on"] .act-thumb-slot:hover .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.55);color:#fff;border-color:transparent;}
-  :root[data-edit="on"] .act-thumb-slot.drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
-  :root[data-edit="on"] .act-thumb-wrap .act-thumb-remove,
-  :root[data-edit="on"] .act-thumb-slot.filled .act-thumb-remove{display:flex;}
-  :root[data-edit="on"] .act-thumb-wrap .act-thumb-search,
-  :root[data-edit="on"] .act-thumb-slot .act-thumb-search{display:flex;}
+  :root[data-edit="on"] :is(.act-thumb-slot:not(.filled),.card-photo:not(.has-photo)) .act-thumb-hint{opacity:1;background:var(--bg3);border:1.5px dashed var(--border2);color:var(--text3);}
+  :root[data-edit="on"] :is(.act-thumb-slot,.card-photo):hover .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.55);color:#fff;border-color:transparent;}
+  :root[data-edit="on"] :is(.act-thumb-slot,.card-photo).drag-over .act-thumb-hint{opacity:1;background:rgba(5,150,105,0.75);color:#fff;border-color:transparent;}
+  :root[data-edit="on"] .card-photo.is-busy .act-thumb-hint{opacity:1;background:rgba(0,0,0,0.6);color:#fff;border-color:transparent;}
+  /* Authored thumbs are bare images, which cannot carry ::after, so their wrap
+     draws the same overlay the slot and card zones get from their hint. */
+  :root[data-edit="on"] .act-thumb-wrap{border-radius:var(--radius-sm);overflow:hidden;}
+  :root[data-edit="on"] .act-thumb-wrap .act-thumb{display:block;}
+  :root[data-edit="on"] .act-thumb-wrap .act-thumb:hover{transform:none;box-shadow:none;}
+  :root[data-edit="on"] .act-thumb-wrap::after{content:'Drop image to replace';position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:8px;background:rgba(5,150,105,0);color:#fff;font-family:var(--sans);font-size:11px;font-weight:500;opacity:0;transition:opacity 0.15s,background 0.15s;pointer-events:none;}
+  :root[data-edit="on"] .act-thumb-wrap:hover::after{opacity:1;background:rgba(5,150,105,0.55);}
+  :root[data-edit="on"] .act-thumb-wrap:has(.drag-over)::after{opacity:1;background:rgba(5,150,105,0.75);content:'Release to replace image';}
+  :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot.filled,.card-photo.has-photo) .act-thumb-remove{display:flex;}
+  :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot,.card-photo) :is(.act-thumb-search,.zone-tag){display:flex;}
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
   :root[data-edit="on"] .activity-row-delete{display:flex;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
@@ -2337,6 +2330,7 @@
       hint.className = 'act-thumb-hint';
       hint.textContent = '+ Drop image';
       slot.appendChild(hint);
+      slot.appendChild(makeZoneTag('List'));
       slot.appendChild(makeThumbRemoveButton());
       slot.appendChild(makeThumbSearchButton());
       row.appendChild(slot);
@@ -2359,7 +2353,7 @@
     img.src = dataUrl;
     slot.classList.add('filled');
     const row = slot.closest('.activity-row');
-    if (row) row.classList.add('has-thumb');
+    if (row) { row.classList.add('has-thumb'); refreshRowCardZone(row); }
   }
   /* ── REMOVING A THUMBNAIL ───────────────────────────────────────────────
      Removal is stored as its own edit type rather than as an empty `img-src`,
@@ -2367,6 +2361,12 @@
      an empty value would be indistinguishable from a failed write. On load,
      `img-removed` puts the element back into the same empty-slot state a click
      on the × produces, so a removed image can be re-dropped under its own eid. */
+  function makeZoneTag(text) {
+    const tag = document.createElement('span');
+    tag.className = 'zone-tag';
+    tag.textContent = text;
+    return tag;
+  }
   function makeThumbRemoveButton() {
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -2569,7 +2569,7 @@
     const hint = slot.querySelector('.act-thumb-hint');
     if (hint) hint.textContent = '+ Drop image';
     const row = slot.closest('.activity-row');
-    if (row) row.classList.remove('has-thumb');
+    if (row) { row.classList.remove('has-thumb'); refreshRowCardZone(row); }
   }
   /** Replaces an authored thumb with the empty slot it would have had if the
    *  page had never carried an image there, carrying the image's eid across so
@@ -2586,10 +2586,11 @@
     hint.className = 'act-thumb-hint';
     hint.textContent = '+ Drop image';
     slot.appendChild(hint);
+    slot.appendChild(makeZoneTag('List'));
     slot.appendChild(makeThumbRemoveButton());
     slot.appendChild(makeThumbSearchButton());
     (img.closest('.act-thumb-wrap') || img).replaceWith(slot);
-    if (row) { row.classList.remove('has-thumb'); row.classList.add('has-thumb-slot'); }
+    if (row) { row.classList.remove('has-thumb'); row.classList.add('has-thumb-slot'); refreshRowCardZone(row); }
     return slot;
   }
   /** Must run after the positional eid pass, and after saved edits are applied
@@ -2600,15 +2601,16 @@
       wrap.className = 'act-thumb-wrap';
       img.replaceWith(wrap);
       wrap.appendChild(img);
+      wrap.appendChild(makeZoneTag('List'));
       wrap.appendChild(makeThumbRemoveButton());
       wrap.appendChild(makeThumbSearchButton());
     });
   }
   /* ── CARD PHOTOS ────────────────────────────────────────────────────────
      A stop's card opens on a large photo: an authored one (CARD_BY_ROW /
-     CARD_BY_THUMB) or one set here. Edit mode gives every row a control under
-     its thumbnail to upload (drop or pick a file), search Unsplash or remove
-     it. Uploads are resized to 1600 px in the browser and stored in the public
+     CARD_BY_THUMB) or one set here. Edit mode gives every row a card zone
+     under its thumbnail: drop a photo on it, search Unsplash, or x to remove.
+     Dropped photos are resized to 1600 px in the browser and stored in the public
      `travel-card-photos` bucket by the `card-photo` Edge Function, so the edits
      table only holds the URL; the ~1.9 MB edits fetch does not grow. Edits are
      keyed by row (`card:<rowKey>`): `card-src` sets a photo, `card-removed`
@@ -2617,6 +2619,11 @@
   const CARD_PHOTO_PREFIX = 'card:';
   const CARD_PHOTO_FN = SUPABASE_URL + '/functions/v1/card-photo';
   const CARD_PHOTO_MAX = 1600;
+  // The card zone's empty hint mentions the list photo, so it follows thumb changes.
+  function refreshRowCardZone(row) {
+    const ctl = row.querySelector('.card-photo');
+    if (ctl) refreshCardPhotoControl(ctl);
+  }
   function setRowCardPhoto(row, src) {
     if (src) { row.dataset.cardSrc = src; delete row.dataset.cardRemoved; }
     else { delete row.dataset.cardSrc; row.dataset.cardRemoved = '1'; }
@@ -2627,32 +2634,25 @@
     const row = ctl.closest('.activity-row');
     const src = row && typeof window.cardPhotoFor === 'function' ? window.cardPhotoFor(row) : '';
     ctl.classList.toggle('has-photo', !!src);
-    const preview = ctl.querySelector('.card-photo-preview');
-    preview.style.backgroundImage = src ? 'url("' + src.replace(/#.*$/, '').replace(/"/g, '%22') + '")' : '';
-    const hasThumb = row && row.querySelector('img.act-thumb');
-    ctl.querySelector('.card-photo-label').textContent = src ? 'Card photo'
-      : hasThumb ? 'No card photo · uses list photo' : 'No card photo';
+    ctl.querySelector('.card-photo-img').style.backgroundImage = src ? 'url("' + src.replace(/#.*$/, '').replace(/"/g, '%22') + '")' : '';
+    const hint = ctl.querySelector('.act-thumb-hint');
+    if (ctl.classList.contains('is-busy')) hint.textContent = 'Uploading…';
+    else if (src) hint.textContent = 'Drop image to replace';
+    else hint.innerHTML = '+ Drop image' + (row && row.querySelector('img.act-thumb') ? '<small>Card uses the list photo</small>' : '');
   }
   function ensureCardPhotoControls() {
     document.querySelectorAll('.leg-panel .activity-row').forEach(row => {
       if (row.querySelector('.card-photo')) return;
       const ctl = document.createElement('div');
       ctl.className = 'card-photo';
-      ctl.innerHTML = '<span class="card-photo-preview" role="img" aria-label="Card photo preview"></span>'
-        + '<span class="card-photo-text"><span class="card-photo-label"></span><span class="card-photo-actions">'
-        + '<button type="button" class="card-photo-btn" data-card-act="upload">Upload</button>'
-        + '<button type="button" class="card-photo-btn" data-card-act="search" title="Search Unsplash for a card photo">Search</button>'
-        + '</span></span>'
-        + '<button type="button" class="card-photo-remove" data-card-act="remove" title="Remove card photo" aria-label="Remove card photo">×</button>'
-        + '<input type="file" accept="image/*" tabindex="-1" aria-hidden="true">';
+      ctl.innerHTML = '<span class="card-photo-img" role="img" aria-label="Card photo"></span>'
+        + '<span class="act-thumb-hint"></span>'
+        + '<span class="zone-tag">Card</span>'
+        + '<button type="button" class="act-thumb-remove" data-card-act="remove" title="Remove card photo" aria-label="Remove card photo">×</button>'
+        + '<button type="button" class="act-thumb-search" data-card-act="search" title="Search Unsplash for a card photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search</button>';
       row.appendChild(ctl);
       refreshCardPhotoControl(ctl);
       ctl.addEventListener('click', onCardPhotoClick);
-      ctl.querySelector('input').addEventListener('change', e => {
-        const file = e.target.files && e.target.files[0];
-        e.target.value = '';
-        if (file) uploadCardPhoto(ctl, file);
-      });
       ctl.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); ctl.classList.add('drag-over'); });
       ctl.addEventListener('dragleave', () => ctl.classList.remove('drag-over'));
       ctl.addEventListener('drop', e => {
@@ -2672,15 +2672,14 @@
     const row = ctl.closest('.activity-row');
     const act = e.target.closest('[data-card-act]');
     if (!act) {
-      if (e.target.closest('.card-photo-preview') && ctl.classList.contains('has-photo')) {
+      if (ctl.classList.contains('has-photo')) {
         const nameEl = row.querySelector('.act-name');
         openLightbox(window.cardPhotoFor(row), nameEl ? nameEl.textContent.trim() : '');
       }
       return;
     }
     e.preventDefault();
-    if (act.dataset.cardAct === 'upload') ctl.querySelector('input').click();
-    else if (act.dataset.cardAct === 'search') {
+    if (act.dataset.cardAct === 'search') {
       unsplashTarget = ctl;
       const nameEl = row.querySelector('.act-name');
       openUnsplashPicker(nameEl ? nameEl.textContent.replace(/[·→]/g, ' ').replace(/\s+/g, ' ').trim() : '');
@@ -2716,6 +2715,7 @@
     const row = ctl.closest('.activity-row');
     if (!row || ctl.classList.contains('is-busy')) return;
     ctl.classList.add('is-busy');
+    refreshCardPhotoControl(ctl);
     ctl.querySelectorAll('button').forEach(b => { b.disabled = true; });
     showSaveStatus('Uploading', 'busy');
     try {
@@ -2734,6 +2734,7 @@
       showSaveStatus('Upload failed', 'error');
     } finally {
       ctl.classList.remove('is-busy');
+      refreshCardPhotoControl(ctl);
       ctl.querySelectorAll('button').forEach(b => { b.disabled = false; });
     }
   }
@@ -3746,7 +3747,7 @@
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
-    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,.zone-tag,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
     clone.querySelectorAll('[data-card-src],[data-card-removed]').forEach(el => { el.removeAttribute('data-card-src'); el.removeAttribute('data-card-removed'); });
     clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
