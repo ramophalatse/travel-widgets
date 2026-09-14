@@ -4353,6 +4353,27 @@
     return m && CARD_BY_THUMB.has(m[1]) ? CARD_DIR + 'card-' + m[1] + '.jpg' : '';
   }
 
+  /* Sharp photos are fetched and decoded ahead of use: on hovering or pressing
+     a list row, and for the cards either side of the current one. The Image
+     objects are kept so the browser holds on to the decoded pictures. */
+  const warmed = new Map();
+  function warm(src) {
+    if (!src) return Promise.resolve(false);
+    let entry = warmed.get(src);
+    if (!entry) {
+      const img = new Image();
+      img.decoding = 'async';
+      entry = { img, ready: false };
+      img.src = src;
+      entry.done = (img.decode ? img.decode() : new Promise((ok, fail) => { img.onload = ok; img.onerror = fail; }))
+        .catch(() => { if (!(img.complete && img.naturalWidth)) throw new Error('no image'); })
+        .then(() => { entry.ready = true; return true; }, () => false);
+      warmed.set(src, entry);
+    }
+    return entry.done;
+  }
+  const isWarm = src => !!(warmed.get(src) || {}).ready;
+
   function itemImage(item) {
     const row = item.type === 'stop' ? item.row
       : Array.from(item.day.card.querySelectorAll('.activity-row')).find(r => r.querySelector('img.act-thumb') || CARD_BY_ROW[r.dataset.rowKey]);
@@ -4497,10 +4518,17 @@
     const image = itemImage(item);
     const place = item.leg.place || item.leg.name;
     let media, sheet, cls;
-    const mediaImg = (image.src
-      ? '<img class="cv-media-img" src="' + esc(image.src) + '" alt="" decoding="async"' + (image.real ? '' : ' style="object-position:' + ((item.type === 'stop' ? item.i * 29 : 50) % 100) + '% 50%"') + '>'
+    // When the sharp photo is already decoded it goes in as the only image, so
+    // the card never shows the list thumbnail first and swaps. Otherwise the
+    // thumbnail paints and the sharp photo fades over it once decoded. No
+    // decoding="async" on the first image: that lets a frame paint with an
+    // empty photo box, which reads as a flash even when the file is cached.
+    const sharpReady = image.sharp && isWarm(image.sharp);
+    const firstSrc = sharpReady ? image.sharp : image.src;
+    const mediaImg = (firstSrc
+      ? '<img class="cv-media-img" src="' + esc(firstSrc) + '" alt=""' + (image.real ? '' : ' style="object-position:' + ((item.type === 'stop' ? item.i * 29 : 50) % 100) + '% 50%"') + '>'
       : '')
-      + (image.sharp ? '<img class="cv-media-img cv-media-sharp" data-src="' + esc(image.sharp) + '" alt="" decoding="async">' : '');
+      + (image.sharp && !sharpReady ? '<img class="cv-media-img cv-media-sharp" data-src="' + esc(image.sharp) + '" alt="" decoding="async">' : '');
     if (item.type === 'stop') {
       const s = stopInfo(item);
       cls = 'cv-card cv-card--stop';
@@ -4655,13 +4683,17 @@
     card.classList.add('cv-in-' + motion);
     slot.appendChild(card);
     card.querySelectorAll('.cv-media-sharp').forEach(img => {
-      img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
-      img.addEventListener('error', () => img.remove(), { once: true });
-      img.src = img.dataset.src;
+      // Fade only once decoded, so the fade runs on a finished picture rather
+      // than one that pops in partway through.
+      warm(img.dataset.src).then(ok => {
+        if (!ok) { img.remove(); return; }
+        img.src = img.dataset.src;
+        (img.decode ? img.decode() : Promise.resolve()).catch(() => {}).then(() => img.classList.add('is-loaded'));
+      });
     });
-    // Warm the next card's sharp photo so stepping forward rarely waits.
-    const ahead = items[index + 1] && itemImage(items[index + 1]).sharp;
-    if (ahead) new Image().src = ahead;
+    // Decode the neighbouring cards' sharp photos so stepping either way
+    // lands on a finished picture.
+    [index + 1, index - 1].forEach(n => { if (items[n]) warm(itemImage(items[n]).sharp); });
     setBackdrop(itemImage(item).src);
     renderChrome();
     const key = keyOf(item);
@@ -4725,12 +4757,27 @@
     document.querySelectorAll(INERT_SELECTOR).forEach(el => { el.inert = true; });
   }
 
+  // Opening waits briefly for the card's sharp photo, so the card arrives
+  // with it rather than showing the list thumbnail and swapping. Hovering or
+  // pressing the row has usually started the download already; past the
+  // budget the card opens anyway and the photo fades in when ready.
+  const OPEN_WAIT_MS = 280;
+  let pendingOpen = null;
   window.openCardBrowser = function (target, opts) {
     if (document.documentElement.dataset.edit === 'on') return;
     buildModel();
     if (!items.length) return;
     const at = resolve(target);
     if (at < 0) return;
+    const sharp = !root && itemImage(items[at]).sharp;
+    if (sharp && !isWarm(sharp) && !(opts && opts.waited)) {
+      const token = pendingOpen = {};
+      Promise.race([warm(sharp), new Promise(r => setTimeout(r, OPEN_WAIT_MS))]).then(() => {
+        if (pendingOpen === token) { pendingOpen = null; window.openCardBrowser(target, Object.assign({}, opts, { waited: true })); }
+      });
+      return;
+    }
+    pendingOpen = null;
     index = at;
     if (!root) {
       opener = document.activeElement;
@@ -4954,6 +5001,21 @@
     e.preventDefault();
     e.stopPropagation();
     openWhenReady({ row }, row);
+  }, true);
+
+  // Start fetching a row's sharp photo on intent: pressing it, or resting the
+  // mouse on it briefly (a short delay so sweeping past rows costs nothing).
+  let hoverTimer = 0;
+  const warmRow = row => { if (editsLoaded && !root && row.isConnected) warm(sharpFor(row)); };
+  document.addEventListener('pointerdown', e => {
+    const row = e.target.closest && e.target.closest('.leg-panel .activity-row');
+    if (row) warmRow(row);
+  }, true);
+  document.addEventListener('pointerover', e => {
+    if (e.pointerType !== 'mouse') return;
+    const row = e.target.closest && e.target.closest('.leg-panel .activity-row');
+    clearTimeout(hoverTimer);
+    if (row) hoverTimer = setTimeout(() => warmRow(row), 90);
   }, true);
 
   window.addEventListener('resize', () => {
