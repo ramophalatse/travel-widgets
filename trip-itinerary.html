@@ -165,6 +165,18 @@
   .ta-rank{opacity:0.78;}
   .ta-name{font-weight:600;color:var(--text);}
   .ta-name::after{content:'·';margin-left:7px;opacity:0.45;font-weight:400;}
+  /* Our Airbnb listing, in Airbnb's Rausch. The text uses a deeper tone in
+     light mode because Rausch itself is too light for small text on white. */
+  :root{--airbnb:#FF385C;--airbnb-text:#D70F45;}
+  [data-theme="dark"]{--airbnb-text:#FF5C7C;}
+  .act-stay{display:flex;margin-top:7px;font-size:11px;}
+  .stay-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--airbnb) 38%,transparent);background:color-mix(in srgb,var(--airbnb) 7%,transparent);color:var(--airbnb-text);text-decoration:none;font-weight:600;transition:background 0.15s,border-color 0.15s;}
+  .stay-pill:hover,.stay-pill:focus-visible{background:color-mix(in srgb,var(--airbnb) 14%,transparent);border-color:var(--airbnb);}
+  .stay-pill svg{width:12px;height:12px;flex:none;fill:var(--airbnb);}
+  .stay-pill .stay-meta{font-weight:400;color:var(--text2);font-variant-numeric:tabular-nums;}
+  .cv-review--airbnb .cv-review-score{color:var(--airbnb);}
+  .cv-review--airbnb .cv-review-name,.cv-review--airbnb .cv-review-meta{display:block;}
+  .cv-review--airbnb .cv-review-score svg{width:20px;height:20px;fill:var(--airbnb);display:block;}
 
   /* LEG INTRO */
   .leg-intro{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:var(--text2);line-height:1.7;}
@@ -2185,6 +2197,33 @@
   }
   renderRatings();
 
+  /* OUR AIRBNB: every stop that names the house links to the listing. Matched
+     on the row's current name, so renamed stops pick it up, and rebuilt each
+     time so a saved rename that drops the Airbnb drops the link too. */
+  const AIRBNB_STAY = {
+    name: 'House of Flair: Modern Art Haven', score: 4.58, reviews: 26,
+    url: 'https://www.airbnb.co.za/rooms/1311927368086791074'
+  };
+  const AIRBNB_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.001 18.275c-1.353-1.697-2.148-3.184-2.413-4.457-.263-1.027-.16-1.848.291-2.465.477-.71 1.188-1.056 2.121-1.056s1.643.345 2.12 1.063c.446.61.558 1.432.286 2.465-.291 1.298-1.085 2.785-2.412 4.458zm9.601 1.14c-.185 1.246-1.034 2.28-2.2 2.783-2.253.98-4.483-.583-6.392-2.704 3.157-3.951 3.74-7.028 2.385-9.018-.795-1.14-1.933-1.695-3.394-1.695-2.944 0-4.563 2.49-3.927 5.382.37 1.565 1.352 3.343 2.917 5.332-.98 1.085-1.91 1.856-2.732 2.333-.636.344-1.245.558-1.828.609-2.679.399-4.778-2.2-3.825-4.88.132-.345.395-.98.845-1.961l.025-.053c1.464-3.178 3.242-6.79 5.285-10.795l.053-.132.58-1.116c.45-.822.635-1.19 1.351-1.643.346-.21.77-.315 1.246-.315.954 0 1.698.558 2.016 1.007.158.239.345.557.582.953l.558 1.089.08.159c2.041 4.004 3.821 7.608 5.279 10.794l.026.025.533 1.22.318.764c.243.613.294 1.222.213 1.858zm1.22-2.39c-.186-.583-.505-1.271-.9-2.094v-.03c-1.889-4.006-3.642-7.608-5.307-10.844l-.111-.163C15.317 1.461 14.468 0 12.001 0c-2.44 0-3.476 1.695-4.535 3.898l-.081.16c-1.669 3.236-3.421 6.843-5.303 10.847v.053l-.559 1.22c-.21.504-.317.768-.345.847C-.172 20.74 2.611 24 5.98 24c.027 0 .132 0 .265-.027h.372c1.75-.213 3.554-1.325 5.384-3.317 1.829 1.989 3.635 3.104 5.382 3.317h.372c.133.027.239.027.265.027 3.37.003 6.152-3.261 4.802-6.975z"/></svg>';
+  const AIRBNB_ROW = /\bAirbnb\b|1601 NE 160th/i;
+  function renderAirbnbLinks() {
+    document.querySelectorAll('.leg-panel .activity-row').forEach(row => {
+      const nameEl = row.querySelector('.act-name');
+      const body = row.querySelector('.act-body');
+      const had = row.querySelector('.act-stay');
+      const wants = !!(nameEl && body && AIRBNB_ROW.test(nameEl.textContent));
+      if (had && !wants) had.remove();
+      if (!wants || had) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'act-stay';
+      wrap.innerHTML = '<a class="stay-pill" href="' + AIRBNB_STAY.url + '" target="_blank" rel="noopener noreferrer" title="' + AIRBNB_STAY.name + ' on Airbnb">'
+        + AIRBNB_ICON + '<span>Our Airbnb</span><span class="stay-meta">★ ' + AIRBNB_STAY.score.toFixed(2) + ' · ' + AIRBNB_STAY.reviews + ' reviews</span></a>';
+      body.appendChild(wrap);
+    });
+  }
+  renderAirbnbLinks();
+  window.renderAirbnbLinks = renderAirbnbLinks;
+
   /* EDIT MODE */
   const EDIT_MODE_KEY = 'trip-itinerary-edit-mode';
   const TEXT_SELECTOR = '.header-eyebrow,.header-title,.header-sub,.leg-hero-title,.leg-hero-sub,.leg-intro,.birthday-banner,.day-title,.day-label,.time-col,.act-name,.act-note,.act-cost,.notice,.notice-warn,.notice-info,.notice-accent,.summary-title,.modal-title,.modal-subtitle,.modal-note,.rest-name,.rest-desc,.rest-cost,.excursion-tag';
@@ -3533,7 +3572,7 @@
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
-    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,#unsplash-modal').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,#unsplash-modal,.act-stay').forEach(el => el.remove());
     clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
       const img = wrap.querySelector('img.act-thumb');
@@ -3672,12 +3711,14 @@
     // toolbar until every saved image had come down the wire.
     initNavToolbar();
     await applySavedEdits();
+    renderAirbnbLinks();
     wrapStaticThumbs();
     markUnsplashCredits();
     decorateActivityRows();
     decorateNotes();
     wireNotes();
     document.addEventListener('blur', handleEditableBlur, true);
+    document.addEventListener('blur', e => { if (e.target.closest && e.target.closest('.act-name')) renderAirbnbLinks(); }, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
     addDurationLabels();
@@ -4284,6 +4325,7 @@
       notes: Array.from(row.querySelectorAll('.act-note')),
       fine: Array.from(row.querySelectorAll('.act-note-text'), txt).filter(Boolean),
       ratings,
+      stay: row.querySelector('.act-stay') && typeof AIRBNB_STAY !== 'undefined' ? AIRBNB_STAY : null,
       flight: row.querySelector('.flight-trigger')
     };
   }
@@ -4507,6 +4549,15 @@
     ).join('') + '</div>';
   }
 
+  function stayHtml(stay) {
+    if (!stay) return '';
+    return '<div class="cv-reviews"><a class="cv-review cv-review--airbnb" href="' + esc(stay.url) + '" target="_blank" rel="noopener noreferrer">'
+      + '<span class="cv-review-score">' + AIRBNB_ICON + '</span>'
+      + '<span class="cv-review-body"><span class="cv-review-name">Our Airbnb · ' + esc(stay.name) + '</span>'
+      + '<span class="cv-review-meta">★ ' + stay.score.toFixed(2) + ' · ' + stay.reviews + ' Airbnb reviews · North Miami Beach</span></span>'
+      + '<span class="cv-review-go">' + ICON.ext + '</span></a></div>';
+  }
+
   /** Note markup comes across so inline links (the transfer comparison) keep
    *  working, minus every attribute the edit layer owns. */
   function noteHtml(noteEl) {
@@ -4566,6 +4617,7 @@
         + (s.notes.length ? '<div class="cv-section-label">The plan</div>' + s.notes.map(noteHtml).join('') : '')
         + (s.fine.length ? '<ul class="cv-fine">' + s.fine.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>' : '')
         + reviewsHtml(s.ratings)
+        + stayHtml(s.stay)
         + (s.flight ? '<button type="button" class="cv-action" data-act="flight">' + ICON.plane + 'View flight details</button>' : '')
         // Wide layouts only (CSS): stands in for the photo's thumbnail rail.
         + (item.i + 1 < item.day.rows.length
