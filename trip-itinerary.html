@@ -278,7 +278,7 @@
      here: that would clip .act-thumb's hover scale. */
   .act-thumb-wrap{position:relative;width:190px;height:132px;}
   /* IMAGE DROP ZONES (edit mode). The list thumbnail and the card photo are two
-     zones with one visual language: a tag top-left naming the zone, x top-right
+     zones with one visual language: an icon top-right naming the zone, x in the corner
      to remove the photo (only when there is one), a Search chip bottom-left, and
      the same dashed empty state and green hover and drag overlays. Photos go in
      by drag and drop in both. */
@@ -287,7 +287,17 @@
   .act-thumb-search{position:absolute;left:6px;bottom:6px;z-index:3;display:none;align-items:center;gap:4px;height:24px;padding:0 8px;border:none;border-radius:999px;background:rgba(0,0,0,0.62);color:#9ca3af;font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.04em;line-height:1;cursor:pointer;transition:background 0.15s,color 0.15s;}
   .act-thumb-search:hover,.act-thumb-search:focus-visible{background:var(--accent);color:#fff;}
   .act-thumb-search svg{width:11px;height:11px;}
-  .zone-tag{position:absolute;left:6px;top:6px;z-index:3;display:none;align-items:center;height:18px;padding:0 7px;border-radius:999px;background:rgba(0,0,0,0.62);color:#e5e7eb;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;line-height:1;pointer-events:none;}
+  /* Zone icons, top-right: which image this zone sets. They sit just left of
+     the x when there is a photo to remove, and in the corner when there is not. */
+  .zone-icon{position:absolute;top:6px;right:6px;z-index:3;display:none;align-items:center;justify-content:center;width:22px;height:22px;color:var(--text3);pointer-events:none;transition:color 0.15s;}
+  .zone-icon svg{width:15px;height:15px;}
+  :is(.act-thumb-wrap,.act-thumb-slot.filled,.card-photo.has-photo) .zone-icon{right:32px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.7));}
+  :is(.act-thumb-slot,.card-photo):hover .zone-icon,.act-thumb-wrap:hover .zone-icon{color:#fff;}
+  /* Icon chips: icon only at rest, the label slides out on hover or keyboard focus. */
+  .icon-chip{gap:0 !important;padding:0 6px !important;min-width:24px;justify-content:center;}
+  .icon-chip svg{width:12px !important;height:12px !important;flex:none;}
+  .icon-chip .chip-label{display:inline-block;max-width:0;overflow:hidden;white-space:nowrap;opacity:0;margin-left:0;transition:max-width 0.2s ease,opacity 0.15s ease,margin-left 0.2s ease;}
+  .icon-chip:hover .chip-label,.icon-chip:focus-visible .chip-label{max-width:70px;opacity:1;margin-left:5px;}
   .act-thumb-hint small{display:block;margin-top:3px;font-size:10px;font-weight:400;opacity:0.8;}
   /* The card photo zone: the big photo a stop's card opens on. */
   .card-photo{display:none;}
@@ -555,7 +565,7 @@
   :root[data-edit="on"] .act-thumb-wrap:hover::after{opacity:1;background:rgba(5,150,105,0.55);}
   :root[data-edit="on"] .act-thumb-wrap:has(.drag-over)::after{opacity:1;background:rgba(5,150,105,0.75);content:'Release to replace image';}
   :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot.filled,.card-photo.has-photo) .act-thumb-remove{display:flex;}
-  :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot,.card-photo) :is(.act-thumb-search,.zone-tag){display:flex;}
+  :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot,.card-photo) :is(.act-thumb-search,.zone-icon){display:flex;}
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
   :root[data-edit="on"] .activity-row-delete{display:flex;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
@@ -2330,7 +2340,7 @@
       hint.className = 'act-thumb-hint';
       hint.textContent = '+ Drop image';
       slot.appendChild(hint);
-      slot.appendChild(makeZoneTag('List'));
+      slot.appendChild(makeZoneIcon('list'));
       slot.appendChild(makeThumbRemoveButton());
       slot.appendChild(makeThumbSearchButton());
       row.appendChild(slot);
@@ -2361,11 +2371,20 @@
      an empty value would be indistinguishable from a failed write. On load,
      `img-removed` puts the element back into the same empty-slot state a click
      on the × produces, so a removed image can be re-dropped under its own eid. */
-  function makeZoneTag(text) {
-    const tag = document.createElement('span');
-    tag.className = 'zone-tag';
-    tag.textContent = text;
-    return tag;
+  const ZONE_ICONS = {
+    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    card: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M5 14h14"/></svg>'
+  };
+  const CHIP_ICONS = {
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>'
+  };
+  function makeZoneIcon(kind) {
+    const icon = document.createElement('span');
+    icon.className = 'zone-icon';
+    icon.title = kind === 'card' ? 'Card photo' : 'List photo';
+    icon.innerHTML = ZONE_ICONS[kind];
+    return icon;
   }
   function makeThumbRemoveButton() {
     const btn = document.createElement('button');
@@ -2394,9 +2413,10 @@
   function makeThumbSearchButton() {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'act-thumb-search';
+    btn.className = 'act-thumb-search icon-chip';
     btn.title = 'Search Unsplash';
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search';
+    btn.setAttribute('aria-label', 'Search Unsplash');
+    btn.innerHTML = CHIP_ICONS.search + '<span class="chip-label">Search</span>';
     btn.addEventListener('click', onThumbSearchClick);
     return btn;
   }
@@ -2586,7 +2606,7 @@
     hint.className = 'act-thumb-hint';
     hint.textContent = '+ Drop image';
     slot.appendChild(hint);
-    slot.appendChild(makeZoneTag('List'));
+    slot.appendChild(makeZoneIcon('list'));
     slot.appendChild(makeThumbRemoveButton());
     slot.appendChild(makeThumbSearchButton());
     (img.closest('.act-thumb-wrap') || img).replaceWith(slot);
@@ -2601,7 +2621,7 @@
       wrap.className = 'act-thumb-wrap';
       img.replaceWith(wrap);
       wrap.appendChild(img);
-      wrap.appendChild(makeZoneTag('List'));
+      wrap.appendChild(makeZoneIcon('list'));
       wrap.appendChild(makeThumbRemoveButton());
       wrap.appendChild(makeThumbSearchButton());
     });
@@ -2647,9 +2667,9 @@
       ctl.className = 'card-photo';
       ctl.innerHTML = '<span class="card-photo-img" role="img" aria-label="Card photo"></span>'
         + '<span class="act-thumb-hint"></span>'
-        + '<span class="zone-tag">Card</span>'
+        + '<span class="zone-icon" title="Card photo">' + ZONE_ICONS.card + '</span>'
         + '<button type="button" class="act-thumb-remove" data-card-act="remove" title="Remove card photo" aria-label="Remove card photo">×</button>'
-        + '<button type="button" class="act-thumb-search" data-card-act="search" title="Search Unsplash for a card photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search</button>';
+        + '<button type="button" class="act-thumb-search icon-chip" data-card-act="search" title="Search Unsplash for a card photo" aria-label="Search Unsplash for a card photo">' + CHIP_ICONS.search + '<span class="chip-label">Search</span></button>';
       row.appendChild(ctl);
       refreshCardPhotoControl(ctl);
       ctl.addEventListener('click', onCardPhotoClick);
@@ -2768,10 +2788,10 @@
       if (row.querySelector(':scope > .activity-row-delete')) return;
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'activity-row-delete';
+      button.className = 'activity-row-delete icon-chip';
       button.title = 'Delete activity row';
       button.setAttribute('aria-label', 'Delete activity row');
-      button.textContent = 'Delete';
+      button.innerHTML = CHIP_ICONS.trash + '<span class="chip-label">Delete</span>';
       button.addEventListener('click', onActivityRowDeleteClick);
       row.appendChild(button);
     });
@@ -3747,7 +3767,7 @@
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
-    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,.zone-tag,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,.zone-icon,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
     clone.querySelectorAll('[data-card-src],[data-card-removed]').forEach(el => { el.removeAttribute('data-card-src'); el.removeAttribute('data-card-removed'); });
     clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
