@@ -587,6 +587,12 @@
   #save-status{position:fixed;bottom:3.5rem;left:1.25rem;z-index:201;opacity:0;pointer-events:none;transition:opacity 0.2s ease;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 12px;box-shadow:var(--shadow);}
   #save-status[data-show="1"]{opacity:1;}
   #save-status[data-tone="error"]{color:#fda4af;border-color:rgba(190,18,60,0.55);}
+  #save-status{display:inline-flex;align-items:center;gap:7px;}
+  #save-status loop-loader{width:16px;height:16px;margin-block:-4px;color:var(--accent);}
+  loop-loader{display:inline-block;width:1.25em;height:1.25em;flex:none;}
+  loop-loader svg{display:block;width:100%;height:100%;overflow:visible;}
+  .card-photo.is-busy .act-thumb-hint{flex-direction:column;gap:6px;}
+  .act-thumb-hint loop-loader{width:30px;height:30px;}
   .edit-badge{position:fixed;bottom:1.25rem;left:1.25rem;z-index:200;display:none;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow);}
   /* Editable day budget table. The spend rows deliberately sit OUTSIDE
      TEXT_SELECTOR and keep their own storage key per day card: the text
@@ -1883,6 +1889,91 @@
   <div class="footer-tagline">Phalatse family travel</div>
 </footer>
 <script>
+/* <loop-loader>: busy indicator. A fixed-length cord ties a loop that slides
+   along it, easing to a near-pause on the centred loop. Defaults are the
+   tuned "tie" settings; variant/surge/tempo/stroke attributes override. */
+class LoopLoader extends HTMLElement {
+  static N = 96;
+  static SIGMA = 0.18;
+  static scales = {};
+  static kappa(variant, s, p) {
+    const sg = LoopLoader.SIGMA, g = x => Math.exp(-x * x / (2 * sg * sg)) / (sg * Math.sqrt(2 * Math.PI));
+    const c = p - Math.floor(p), T = 2 * Math.PI;
+    let k = 0;
+    if (variant === 'breathe') {
+      const amt = 0.35 + 0.65 * (0.5 - 0.5 * Math.cos(T * p));
+      return T * amt * g(s - 0.5) + 1.4 * (1 - amt);
+    }
+    for (let j = -1; j <= 1; j++) {
+      if (variant === 'wave') k += T * 0.6 * (g(s - c - j) - g(s - c - 0.5 - j));
+      else k += T * g(s - c - j);
+    }
+    return variant === 'wave' ? k : k + 1.0;
+  }
+  static points(variant, p) {
+    const N = LoopLoader.N, ds = 1 / N, pts = [];
+    let a = 0, x = 0, y = 0;
+    for (let i = 0; i <= N; i++) {
+      pts.push([x, y]);
+      a += LoopLoader.kappa(variant, (i + 0.5) * ds, p) * ds;
+      x += Math.cos(a) * ds; y += Math.sin(a) * ds;
+    }
+    const [ex, ey] = pts[N], rot = -Math.atan2(ey, ex), cr = Math.cos(rot), sr = Math.sin(rot);
+    let mx = 0, my = 0;
+    const out = pts.map(([px, py]) => { const q = [px * cr - py * sr, -(px * sr + py * cr)]; mx += q[0]; my += q[1]; return q; });
+    mx /= out.length; my /= out.length;
+    const S = LoopLoader.scale(variant);
+    return out.map(([px, py]) => [12 + (px - mx) * S, 12 + (py - my) * S]);
+  }
+  static scale(variant) {
+    if (LoopLoader.scales[variant]) return LoopLoader.scales[variant];
+    LoopLoader.scales[variant] = 1;
+    let ext = 0;
+    for (let i = 0; i < 24; i++) {
+      for (const [px, py] of LoopLoader.points(variant, i / 24)) ext = Math.max(ext, Math.abs(px - 12), Math.abs(py - 12));
+    }
+    return (LoopLoader.scales[variant] = 9.5 / ext);
+  }
+  static path(variant, p) {
+    const pts = LoopLoader.points(variant, p), r = v => v.toFixed(2);
+    let d = 'M' + r(pts[0][0]) + ' ' + r(pts[0][1]);
+    for (let i = 1; i < pts.length - 1; i++) {
+      d += 'Q' + r(pts[i][0]) + ' ' + r(pts[i][1]) + ' ' + r((pts[i][0] + pts[i + 1][0]) / 2) + ' ' + r((pts[i][1] + pts[i + 1][1]) / 2);
+    }
+    return d + 'L' + r(pts[pts.length - 1][0]) + ' ' + r(pts[pts.length - 1][1]);
+  }
+  static progress(t, tempo, surge) {
+    const u = t / tempo;
+    return u + (surge / (2 * Math.PI)) * Math.sin(2 * Math.PI * u);
+  }
+  static live = new Set();
+  static running = false;
+  static tick = now => {
+    if (!LoopLoader.live.size) { LoopLoader.running = false; return; }
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    for (const el of LoopLoader.live) {
+      const num = (name, def) => { const v = parseFloat(el.getAttribute(name)); return Number.isFinite(v) ? v : def; };
+      const p = still ? 0.5 : LoopLoader.progress(now / 1000, num('tempo', 1.4), Math.min(num('surge', 0.8), 0.95));
+      el.path.setAttribute('d', LoopLoader.path(el.getAttribute('variant') || 'tie', p));
+      el.path.style.strokeWidth = num('stroke', 1.9);
+    }
+    requestAnimationFrame(LoopLoader.tick);
+  };
+  connectedCallback() {
+    if (!this.path) {
+      this.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      this.path = this.querySelector('path');
+      if (!this.hasAttribute('role')) this.setAttribute('role', 'status');
+      if (!this.hasAttribute('aria-label')) this.setAttribute('aria-label', 'Loading');
+    }
+    LoopLoader.live.add(this);
+    if (!LoopLoader.running) { LoopLoader.running = true; requestAnimationFrame(LoopLoader.tick); }
+  }
+  disconnectedCallback() { LoopLoader.live.delete(this); }
+}
+customElements.define('loop-loader', LoopLoader);
+</script>
+<script>
   const TRAVELLERS = [
     {name:'Ramo',seats:{EY748:'23K',EY1:'25A',EY4:'18K',EY747:'23A'}},
     {name:'Fez',seats:{EY748:'23J',EY1:'25B',EY4:'18J',EY747:'23B'}},
@@ -2309,10 +2400,19 @@
       document.body.appendChild(el);
     }
     el.textContent = text;
+    if (tone === 'busy') el.prepend(busyLoader());
     el.dataset.tone = tone;
     el.dataset.show = '1';
     clearTimeout(saveStatusTimer);
-    saveStatusTimer = setTimeout(() => { el.dataset.show = '0'; }, tone === 'error' ? 5000 : 1400);
+    // A busy pill stays up until its Saved/failed follow-up replaces it.
+    if (tone !== 'busy') saveStatusTimer = setTimeout(() => { el.dataset.show = '0'; }, tone === 'error' ? 5000 : 1400);
+  }
+  // The surrounding pill or hint already announces the state.
+  function busyLoader() {
+    const l = document.createElement('loop-loader');
+    l.setAttribute('role', 'presentation');
+    l.setAttribute('aria-hidden', 'true');
+    return l;
   }
   async function saveEdit(eid, type, value) {
     const body = JSON.stringify({ page: EDIT_PAGE_ID, eid, type, value });
@@ -2673,7 +2773,7 @@
     ctl.classList.toggle('has-photo', !!src);
     ctl.querySelector('.card-photo-img').style.backgroundImage = src ? 'url("' + src.replace(/#.*$/, '').replace(/"/g, '%22') + '")' : '';
     const hint = ctl.querySelector('.act-thumb-hint');
-    if (ctl.classList.contains('is-busy')) hint.textContent = 'Uploading…';
+    if (ctl.classList.contains('is-busy')) { hint.textContent = 'Uploading…'; hint.prepend(busyLoader()); }
     else if (src) hint.textContent = 'Drop image to replace';
     else hint.innerHTML = '+ Drop image' + (row && row.querySelector('img.act-thumb') ? '<small>Card uses the list photo</small>' : '');
   }
