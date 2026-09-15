@@ -1955,7 +1955,7 @@ class LoopLoader extends HTMLElement {
       const num = (name, def) => { const v = parseFloat(el.getAttribute(name)); return Number.isFinite(v) ? v : def; };
       const p = still ? 0.5 : LoopLoader.progress(now / 1000, num('tempo', 1.4), Math.min(num('surge', 0.8), 0.95));
       el.path.setAttribute('d', LoopLoader.path(el.getAttribute('variant') || 'tie', p));
-      el.path.style.strokeWidth = num('stroke', 1.9);
+      el.path.style.strokeWidth = num('stroke', 1.0);
     }
     requestAnimationFrame(LoopLoader.tick);
   };
