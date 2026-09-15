@@ -6,6 +6,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New York · Miami · Caribbean · 2026–27</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/brand/favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Hanken+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -101,6 +103,15 @@
   .to-top[data-show="1"]{opacity:1;visibility:visible;transform:none;
     transition:opacity 0.26s ease,transform 0.26s var(--ease-pop),visibility 0s,padding 0.2s ease-out,color 0.2s ease-out,border-color 0.2s ease-out,background 0.2s ease-out;}
   :root[data-edit="on"] .to-top{bottom:4.75rem;}
+
+  /* SITE FOOTER — the mark is a single white-on-transparent PNG; light mode
+     inverts it to near-black rather than shipping a second file. */
+  .site-footer{display:flex;flex-direction:column;align-items:center;gap:0.6rem;
+    padding:2.5rem 1.5rem 3rem;text-align:center;color:var(--text3);font-size:0.8rem;}
+  .footer-mark{width:26px;height:26px;object-fit:contain;opacity:0.9;filter:invert(1);}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .footer-mark{filter:none;}}
+  :root[data-theme="dark"] .footer-mark{filter:none;}
+  .footer-tagline{font-family:var(--mono);letter-spacing:0.04em;}
 
   /* THEME TOGGLE */
   .theme-toggle{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;}
@@ -1865,6 +1876,10 @@
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
   <span class="chip-label">Back to top</span>
 </button>
+<footer class="site-footer">
+  <img class="footer-mark" src="assets/brand/phalatse-mark.png" alt="Phalatse family travel mark">
+  <div class="footer-tagline">Phalatse family travel</div>
+</footer>
 <script>
   const TRAVELLERS = [
     {name:'Ramo',seats:{EY748:'23K',EY1:'25A',EY4:'18K',EY747:'23A'}},
