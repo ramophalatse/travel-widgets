@@ -4100,12 +4100,20 @@ customElements.define('loop-loader', LoopLoader);
       const costEl = row.querySelector('.act-cost');
       if (costEl) costEl.textContent = cost;
     };
+    const shopping = rowAt('1:30pm');
+    setRow(shopping, '1:30pm', 'Dolphin Mall · two-hour shopping stop', 'Keep this focused: two hours for the shops, then we head back to the Airbnb to drop the kids before the game.', 'Shopping budget');
     const depart = rowAt('4:30pm');
-    setRow(depart, '4:30pm', 'Leave Dolphin Mall · Drive to Kaseya Center', 'Allow ~35–45 min to Downtown Miami, including game-day traffic and parking.', 'Parking · game night');
+    setRow(depart, '3:30pm', 'Leave Dolphin Mall · Drive back to the Airbnb', 'Allow ~35–40 min to North Miami Beach for the kids’ drop-off, with a little slack for Sunday traffic.', 'Tesla');
     const arrival = rowAt('5:30pm');
-    setRow(arrival, '5:15pm', 'Arrive Kaseya Center · Entry and settle in', '601 Biscayne Blvd. We’ll get inside early, find our seats and take in the build-up before tip-off.', 'Tickets booked · 101 lifetime goal');
+    setRow(arrival, '4:15pm', 'Drop the kids at the Airbnb · Continue to Miami', 'Quick hand-off, then head south again for the game. Keep the tickets and phones with us.', 'Tesla');
     const dinner = rowAt('7:00pm');
     setRow(dinner, '8:45pm', 'Post-game date night · Downtown Miami', 'Heat–Hornets first, then a relaxed dinner for the two of us nearby. We can choose somewhere casual when we see what we fancy.', '~R600');
+    if (arrival && dinner && !rowAt('5:00pm')) {
+      const parking = document.createElement('div');
+      parking.className = 'activity-row';
+      parking.innerHTML = '<div class="time-col">5:00pm</div><div class="act-body"><div class="act-name">Park · Miami Worldcenter Garage</div><div class="act-note">Primary plan: 644 NE 2nd Ave, then walk about 7–10 minutes to Kaseya Center. It keeps us away from the arena-side Biscayne Boulevard pinch and gives us a cleaner northbound exit after the game. Reserve ahead if an event pass is available.</div><div class="act-cost">Parking · event rate</div></div>';
+      arrival.after(parking);
+    }
     if (arrival && dinner && !rowAt('6:00pm')) {
       const game = document.createElement('div');
       game.className = 'activity-row';
@@ -4117,7 +4125,7 @@ customElements.define('loop-loader', LoopLoader);
     const pill = day.querySelector('.pill-day');
     if (pill) pill.textContent = '101 lifetime goal';
     const notice = day.querySelector('.notice');
-    if (notice) notice.textContent = 'Tonight is the main event: allow plenty of time to get from Dolphin Mall to Kaseya Center, park and be inside before the 6:00pm tip-off.';
+    if (notice) notice.textContent = 'Tonight is the main event: two hours at Dolphin Mall, then drop the kids at the Airbnb before driving south again. Primary parking is Miami Worldcenter Garage (644 NE 2nd Ave), about a 7–10 minute walk from Kaseya Center; Bayside Marketplace Garage is the closer backup, but expect more arena-side traffic.';
   }
   // Exposed so a deep link into the card browser waits for saved edits rather
   // than showing the authored file for a moment.
