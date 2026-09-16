@@ -4111,7 +4111,7 @@ customElements.define('loop-loader', LoopLoader);
     if (arrival && dinner && !rowAt('5:00pm')) {
       const parking = document.createElement('div');
       parking.className = 'activity-row';
-      parking.innerHTML = '<div class="time-col">5:00pm</div><div class="act-body"><div class="act-name">Park · Miami Worldcenter Garage</div><div class="act-note">Primary plan: 644 NE 2nd Ave, then walk about 7–10 minutes to Kaseya Center. It keeps us away from the arena-side Biscayne Boulevard pinch and gives us a cleaner northbound exit after the game. Reserve ahead if an event pass is available.</div><div class="act-cost">Parking · event rate</div></div>';
+      parking.innerHTML = '<div class="time-col">5:00pm</div><div class="act-body"><div class="act-name">Park · Gesu Parking Lot</div><div class="act-note">145 NE 2nd St, about a 9-minute walk to Kaseya Center. It keeps us away from the arena-side Biscayne Boulevard pinch and gives us a cleaner northbound exit after the game. Parking is booked in advance.</div><div class="act-cost">$17.55 incl. service fee</div></div>';
       arrival.after(parking);
     }
     if (arrival && dinner && !rowAt('6:00pm')) {
@@ -4125,7 +4125,16 @@ customElements.define('loop-loader', LoopLoader);
     const pill = day.querySelector('.pill-day');
     if (pill) pill.textContent = '101 lifetime goal';
     const notice = day.querySelector('.notice');
-    if (notice) notice.textContent = 'Tonight is the main event: two hours at Dolphin Mall, then drop the kids at the Airbnb before driving south again. Primary parking is Miami Worldcenter Garage (644 NE 2nd Ave), about a 7–10 minute walk from Kaseya Center; Bayside Marketplace Garage is the closer backup, but expect more arena-side traffic.';
+    if (notice) notice.textContent = 'Tonight is the main event: two hours at Dolphin Mall, then drop the kids at the Airbnb before driving south again. Parking is booked at Gesu Parking Lot, 145 NE 2nd St, about a 9-minute walk from Kaseya Center.';
+    const spendTable = day.querySelector('.spend-table');
+    if (spendTable && !Array.from(spendTable.querySelectorAll('.spend-row')).some(item => item.textContent.includes('Gesu Parking Lot'))) {
+      const parkingSpend = makeSpendRow('Parking · Gesu Parking Lot · 145 NE 2nd St', '$17.55 incl. service fee');
+      spendTable.querySelector('.spend-row.total')?.before(parkingSpend);
+      const total = spendTable.querySelector('.spend-row.total span:last-child');
+      if (total) total.textContent = '~R1,250 + $17.55 parking';
+    }
+    const totalAmount = day.querySelector('.total-amount');
+    if (totalAmount) totalAmount.textContent = '~R1,250 + $17.55 parking';
   }
   // Exposed so a deep link into the card browser waits for saved edits rather
   // than showing the authored file for a moment.
