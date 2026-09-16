@@ -2845,6 +2845,14 @@ customElements.define('loop-loader', LoopLoader);
       });
     });
   }
+  // Dynamic itinerary rows are added after the initial edit pass. Keep the
+  // image lifecycle in one place so every new activity receives both image
+  // zones, stable edit keys and the matching drop handlers.
+  function hydrateActivityImageControls() {
+    ensureImageDropZones();
+    tagEditableElements();
+    ensureCardPhotoControls();
+  }
   function onCardPhotoClick(e) {
     e.stopPropagation();
     if (document.documentElement.dataset.edit !== 'on') return;
@@ -4135,6 +4143,7 @@ customElements.define('loop-loader', LoopLoader);
     }
     const totalAmount = day.querySelector('.total-amount');
     if (totalAmount) totalAmount.textContent = '~R1,250 + $17.55 parking';
+    hydrateActivityImageControls();
   }
   // Exposed so a deep link into the card browser waits for saved edits rather
   // than showing the authored file for a moment.
