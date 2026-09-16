@@ -4069,6 +4069,23 @@ customElements.define('loop-loader', LoopLoader);
       });
     });
   }
+  function applyDesignDistrictUpdate() {
+    const day = document.querySelector('.day-card[data-day-key="d6"]');
+    if (!day) return;
+    const row = Array.from(day.querySelectorAll('.activity-row')).find(row => row.querySelector('.time-col')?.textContent.trim() === '12:15pm');
+    if (row) {
+      row.querySelector('.act-name').innerHTML = 'Miami Design District · galleries, architecture &amp; browsing';
+      row.querySelector('.act-note').textContent = "We'll wander the public art, galleries, showrooms and design shops at our own pace. We can find something casual to eat as we go, rather than booking a fixed lunch.";
+      row.querySelector('.act-cost').textContent = 'Free · casual dining as we go';
+    }
+    const spendTable = day.querySelector('.spend-table');
+    const lunch = spendTable && Array.from(spendTable.querySelectorAll('.spend-row')).find(item => item.textContent.includes('Sanguich de Miami'));
+    if (lunch) lunch.remove();
+    const total = spendTable && spendTable.querySelector('.spend-row.total span:last-child');
+    if (total) total.textContent = '~R7,215';
+    const totalAmount = day.querySelector('.total-amount');
+    if (totalAmount) totalAmount.textContent = '~R7,215';
+  }
   // Exposed so a deep link into the card browser waits for saved edits rather
   // than showing the authored file for a moment.
   window.editsReady = (async function initEditSystem() {
@@ -4092,6 +4109,8 @@ customElements.define('loop-loader', LoopLoader);
     renderAirbnbLinks();
     wrapStaticThumbs();
     ensureCardPhotoControls();
+    applyDesignDistrictUpdate();
+    renderBudgetMeters();
     markUnsplashCredits();
     decorateActivityRows();
     decorateNotes();
