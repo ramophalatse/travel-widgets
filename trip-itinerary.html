@@ -535,9 +535,21 @@
 
   /* RESPONSIVE */
   @media(max-width:640px){
+    /* Two columns on a phone: the timecode, then everything else. A 190px photo
+       column doesn't fit beside prose at this width, so the photo stacks under
+       the note inside column 2 and runs the full width of it, in edit mode too,
+       where the card-photo zone already stacks the same way. The edit-mode
+       selectors are repeated here because they carry more specificity than a
+       bare class: a media query adds none of its own. */
     .activity-row,.activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
     .act-body{padding-right:0;}
-    .act-thumb,.act-thumb-slot,.act-thumb-wrap{display:none;}
+    .act-thumb,.act-thumb-wrap,.act-thumb-slot.filled,
+    :root[data-edit="on"] .act-thumb-slot{grid-column:2;width:100%;max-width:100%;height:auto;aspect-ratio:16/10;margin-top:8px;object-fit:cover;}
+    .act-thumb-wrap,.act-thumb-slot.filled,:root[data-edit="on"] .act-thumb-slot{display:block;}
+    /* A wrapped or slotted thumb fills its container instead of sizing itself. */
+    :is(.act-thumb-wrap,.act-thumb-slot) .act-thumb{width:100%;height:100%;margin-top:0;aspect-ratio:auto;}
+    /* Nothing hovers on a phone, and the scale would spill past the card edge. */
+    .act-thumb:hover{transform:none;box-shadow:none;}
     .leg-hero{height:220px;}
     .restaurant-grid{grid-template-columns:1fr;}
     .nav-tab{padding:12px 12px;font-size:12px;}
@@ -588,6 +600,14 @@
   :root[data-edit="on"] .act-thumb-wrap:has(.drag-over)::after{opacity:1;background:rgba(5,150,105,0.75);content:'Release to replace image';}
   :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot.filled,.card-photo.has-photo) .act-thumb-remove{display:flex;}
   :root[data-edit="on"] :is(.act-thumb-wrap,.act-thumb-slot,.card-photo) :is(.act-thumb-search,.zone-icon){display:flex;}
+  /* Edit mode keeps the phone's two-column row: the empty drop slot stacks under
+     the prose the same way a filled photo does in read mode. This sits after the
+     edit rules above rather than in the responsive block, because it has to win
+     on order, not specificity. */
+  @media(max-width:640px){
+    :root[data-edit="on"] .activity-row.has-thumb-slot{grid-template-columns:48px 1fr;}
+    :root[data-edit="on"] :is(.act-thumb-slot,.act-thumb-wrap){grid-column:2;width:100%;max-width:100%;height:auto;aspect-ratio:16/10;margin-top:8px;}
+  }
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
   :root[data-edit="on"] .activity-row-delete{display:flex;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
