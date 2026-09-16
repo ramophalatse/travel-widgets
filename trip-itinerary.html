@@ -2911,8 +2911,9 @@ customElements.define('loop-loader', LoopLoader);
       const blob = await resizeForCard(file);
       const data = await uploadCardPhotoBlob(ctl, row, blob);
       if (!data.url) throw new Error(data.error || 'Upload returned no URL');
+      const saved = await saveEdit(CARD_PHOTO_PREFIX + rowKey(row), 'card-src', data.url);
+      if (!saved) return;
       setRowCardPhoto(row, data.url);
-      await saveEdit(CARD_PHOTO_PREFIX + rowKey(row), 'card-src', data.url);
     } catch (err) {
       console.error('[trip-itinerary] card photo upload failed', err);
       showSaveStatus('Upload failed', 'error');
@@ -4164,12 +4165,15 @@ customElements.define('loop-loader', LoopLoader);
     // store, and waiting on that fetch would leave an early scroll with no
     // toolbar until every saved image had come down the wire.
     initNavToolbar();
+    // Create the Miami activities before restoring their saved images/edits.
+    // Existing row keys were sealed above from the authored names, preserving
+    // uploads made before those activities were renamed.
+    applyDesignDistrictUpdate();
+    applyHeatGameUpdate();
     await applySavedEdits();
     renderAirbnbLinks();
     wrapStaticThumbs();
     ensureCardPhotoControls();
-    applyDesignDistrictUpdate();
-    applyHeatGameUpdate();
     renderBudgetMeters();
     markUnsplashCredits();
     decorateActivityRows();
