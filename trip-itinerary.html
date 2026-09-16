@@ -622,6 +622,8 @@
   loop-loader svg{display:block;width:100%;height:100%;overflow:visible;}
   .card-photo.is-busy .act-thumb-hint{flex-direction:column;gap:6px;}
   .act-thumb-hint loop-loader{width:30px;height:30px;}
+  .card-photo-upload-progress{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;font-variant-numeric:tabular-nums;letter-spacing:0.04em;}
+  .card-photo-upload-progress-value{min-width:3ch;text-align:right;}
   .edit-badge{position:fixed;bottom:1.25rem;left:1.25rem;z-index:200;display:none;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow);}
   /* Editable day budget table. The spend rows deliberately sit OUTSIDE
      TEXT_SELECTOR and keep their own storage key per day card: the text
@@ -2802,7 +2804,19 @@ customElements.define('loop-loader', LoopLoader);
     ctl.classList.toggle('has-photo', !!src);
     ctl.querySelector('.card-photo-img').style.backgroundImage = src ? 'url("' + src.replace(/#.*$/, '').replace(/"/g, '%22') + '")' : '';
     const hint = ctl.querySelector('.act-thumb-hint');
-    if (ctl.classList.contains('is-busy')) { hint.textContent = 'Uploading…'; hint.prepend(busyLoader()); }
+    if (ctl.classList.contains('is-busy')) {
+      const progress = Number.isFinite(ctl._uploadProgress) ? ctl._uploadProgress : 0;
+      hint.innerHTML = '';
+      hint.appendChild(busyLoader());
+      const progressLabel = document.createElement('span');
+      progressLabel.className = 'card-photo-upload-progress';
+      progressLabel.textContent = 'Uploading ';
+      const progressValue = document.createElement('span');
+      progressValue.className = 'card-photo-upload-progress-value';
+      progressValue.textContent = Math.round(progress * 100) + '%';
+      progressLabel.appendChild(progressValue);
+      hint.appendChild(progressLabel);
+    }
     else if (src) hint.textContent = 'Drop image to replace';
     else hint.innerHTML = '+ Drop image';
   }
@@ -2880,19 +2894,15 @@ customElements.define('loop-loader', LoopLoader);
   async function uploadCardPhoto(ctl, file) {
     const row = ctl.closest('.activity-row');
     if (!row || ctl.classList.contains('is-busy')) return;
+    ctl._uploadProgress = 0;
     ctl.classList.add('is-busy');
     refreshCardPhotoControl(ctl);
     ctl.querySelectorAll('button').forEach(b => { b.disabled = true; });
     showSaveStatus('Uploading', 'busy');
     try {
       const blob = await resizeForCard(file);
-      const res = await fetch(CARD_PHOTO_FN + '?page=' + EDIT_PAGE_ID + '&row=' + encodeURIComponent(rowKey(row)), {
-        method: 'POST',
-        headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'image/jpeg' },
-        body: blob
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) throw new Error(data.error || res.status);
+      const data = await uploadCardPhotoBlob(ctl, row, blob);
+      if (!data.url) throw new Error(data.error || 'Upload returned no URL');
       setRowCardPhoto(row, data.url);
       await saveEdit(CARD_PHOTO_PREFIX + rowKey(row), 'card-src', data.url);
     } catch (err) {
@@ -2900,9 +2910,35 @@ customElements.define('loop-loader', LoopLoader);
       showSaveStatus('Upload failed', 'error');
     } finally {
       ctl.classList.remove('is-busy');
+      delete ctl._uploadProgress;
       refreshCardPhotoControl(ctl);
       ctl.querySelectorAll('button').forEach(b => { b.disabled = false; });
     }
+  }
+  function uploadCardPhotoBlob(ctl, row, blob) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', CARD_PHOTO_FN + '?page=' + EDIT_PAGE_ID + '&row=' + encodeURIComponent(rowKey(row)));
+      xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+      xhr.setRequestHeader('Content-Type', 'image/jpeg');
+      xhr.upload.addEventListener('progress', e => {
+        if (!e.lengthComputable) return;
+        ctl._uploadProgress = Math.max(0, Math.min(1, e.loaded / e.total));
+        refreshCardPhotoControl(ctl);
+      });
+      xhr.addEventListener('load', () => {
+        let data = {};
+        try { data = JSON.parse(xhr.responseText || '{}'); } catch (_) {}
+        if (xhr.status >= 200 && xhr.status < 300) {
+          ctl._uploadProgress = 1;
+          refreshCardPhotoControl(ctl);
+          resolve(data);
+        } else reject(new Error(data.error || xhr.status));
+      });
+      xhr.addEventListener('error', () => reject(new Error('Network error')));
+      xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
+      xhr.send(blob);
+    });
   }
   /* ── REMOVING AN ACTIVITY ───────────────────────────────────────────────
      Activity edits use stable row keys, not document positions. A deletion is
