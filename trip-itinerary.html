@@ -2777,7 +2777,7 @@ customElements.define('loop-loader', LoopLoader);
     const hint = ctl.querySelector('.act-thumb-hint');
     if (ctl.classList.contains('is-busy')) { hint.textContent = 'Uploading…'; hint.prepend(busyLoader()); }
     else if (src) hint.textContent = 'Drop image to replace';
-    else hint.innerHTML = '+ Drop image' + (row && row.querySelector('img.act-thumb') ? '<small>Card uses the list photo</small>' : '');
+    else hint.innerHTML = '+ Drop image';
   }
   function ensureCardPhotoControls() {
     document.querySelectorAll('.leg-panel .activity-row').forEach(row => {
