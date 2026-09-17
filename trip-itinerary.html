@@ -970,6 +970,11 @@
   .cv-strip-item.is-more .cv-strip-time{font-family:var(--serif);font-size:15px;font-weight:700;background:rgba(10,14,20,0.58);}
   .cv-media-text{position:absolute;left:22px;right:84px;bottom:40px;z-index:2;color:#fff;}
   .cv-card--day .cv-media-text{right:22px;}
+  /* Overview watermark: the same fixed-size editorial ghost treatment as the
+     page masthead, kept grey and softly faded so it gives the day a quick
+     visual identity without competing with the title. */
+  .cv-day-ghost{position:absolute;top:72px;left:24px;z-index:1;font-family:var(--serif);font-weight:800;font-style:italic;font-size:56px;line-height:1;letter-spacing:-0.03em;opacity:0.46;white-space:nowrap;pointer-events:none;user-select:none;
+    background-image:linear-gradient(135deg,rgba(156,163,175,0) 0%,#9ca3af 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
   .cv-score{padding:5px 11px 5px 9px;font-family:var(--serif);font-size:14px;font-weight:700;margin-bottom:10px;}
   .cv-score svg{width:14px;height:14px;color:#34d399;}
   .cv-kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.78);margin-bottom:6px;}
@@ -5259,6 +5264,7 @@ customElements.define('loop-loader', LoopLoader);
       const first = rows.find(r => r.time), last = rows.slice().reverse().find(r => r.time);
       media = '<div class="cv-media' + (image.real ? '' : ' cv-media--fallback') + '">' + mediaImg + progressHtml(item)
         + '<div class="cv-media-top"><span class="cv-glass cv-tag">' + esc(item.leg.emoji ? item.leg.emoji + ' ' : '') + esc(item.leg.name) + (d.kind ? ' · ' + esc(d.kind) : '') + '</span></div>'
+        + '<div class="cv-day-ghost" aria-hidden="true">' + esc(d.dayLabel.toUpperCase()) + '</div>'
         + '<div class="cv-media-text">'
         + '<div class="cv-kicker">' + esc(d.dayLabel) + ' · ' + esc(d.dateLong) + '</div>'
         + '<h2 class="cv-title' + (d.title.length > 38 ? ' is-long' : '') + '">' + esc(d.title) + '</h2>'
