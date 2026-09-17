@@ -4168,6 +4168,40 @@ customElements.define('loop-loader', LoopLoader);
     if (totalAmount) totalAmount.textContent = '~R1,250 + $17.55 parking';
     hydrateActivityImageControls();
   }
+  function moveAventuraChargeToRecoveryMorning() {
+    const shoppingDay = document.querySelector('.day-card[data-day-key="d7"]');
+    const recoveryDay = document.querySelector('.day-card[data-day-key="d26"]');
+    if (!shoppingDay || !recoveryDay) return;
+
+    const chargeRow = Array.from(shoppingDay.querySelectorAll('.activity-row')).find(row => row.querySelector('.act-name')?.textContent.includes('Charge to 90%'));
+    if (chargeRow) chargeRow.remove();
+
+    const chargeSpend = Array.from(shoppingDay.querySelectorAll('.spend-row')).find(row => row.textContent.includes('Supercharging'));
+    if (chargeSpend) chargeSpend.remove();
+    const shoppingTotal = shoppingDay.querySelector('.spend-row.total span:last-child');
+    if (shoppingTotal) shoppingTotal.textContent = '~R1,090';
+    const shoppingAmount = shoppingDay.querySelector('.total-amount');
+    if (shoppingAmount) shoppingAmount.textContent = '~R1,090';
+
+    const recoveryActivities = recoveryDay.querySelector('.activities');
+    if (recoveryActivities && !Array.from(recoveryActivities.querySelectorAll('.act-name')).some(name => name.textContent.includes('Charge to 90%'))) {
+      const morningCharge = document.createElement('div');
+      morningCharge.className = 'activity-row';
+      morningCharge.dataset.editDayKey = 'd7';
+      morningCharge.innerHTML = '<div class="time-col">6:15am</div><div class="act-body"><div class="act-name">Charge to 90% · Aventura Mall Supercharger</div><div class="act-note">An early solo run while everyone else sleeps. The current off-peak window is 10pm–10am ($0.20/kWh), so 6:15am keeps it cheap and leaves the day free. The Keys round trip tomorrow is ~175 miles; allow ~40 min and move the car as soon as charging finishes to avoid idle fees. Confirm the live tariff in the Tesla before plugging in, as it can change.</div><div class="act-cost">~R160 (~$9)</div></div>';
+      recoveryActivities.prepend(morningCharge);
+    }
+
+    const recoverySpend = recoveryDay.querySelector('.spend-table');
+    if (recoverySpend && !Array.from(recoverySpend.querySelectorAll('.spend-row')).some(row => row.textContent.includes('Supercharging'))) {
+      recoverySpend.querySelector('.spend-row.total')?.before(makeSpendRow('Supercharging · off-peak, to 90%', '~R160'));
+    }
+    const recoveryTotal = recoveryDay.querySelector('.spend-row.total span:last-child');
+    if (recoveryTotal) recoveryTotal.textContent = '~R460';
+    const recoveryAmount = recoveryDay.querySelector('.total-amount');
+    if (recoveryAmount) recoveryAmount.textContent = '~R460';
+    tagEditableElements();
+  }
   // Exposed so a deep link into the card browser waits for saved edits rather
   // than showing the authored file for a moment.
   window.editsReady = (async function initEditSystem() {
@@ -4192,6 +4226,7 @@ customElements.define('loop-loader', LoopLoader);
     // uploads made before those activities were renamed.
     applyDesignDistrictUpdate();
     applyHeatGameUpdate();
+    moveAventuraChargeToRecoveryMorning();
     await applySavedEdits();
     renderAirbnbLinks();
     wrapStaticThumbs();
