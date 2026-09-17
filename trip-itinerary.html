@@ -277,6 +277,7 @@
   .tesla-trip-meta img:first-child{width:20px;height:20px;}
   .tesla-trip-meta .soc-icon{margin-left:2px;}
   .tesla-trip-meta strong{color:var(--text);font-weight:600;}
+  .act-turo .tesla-trip-meta{margin-top:0;margin-left:8px;}
   /* Note rows are stored per activity row as one JSON value, the way the day
      budget tables are, so adding or deleting one touches nothing else. */
   .act-fineprint{display:block;margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--text3);}
@@ -4253,7 +4254,8 @@ customElements.define('loop-loader', LoopLoader);
       meta.className = 'tesla-trip-meta';
       meta.setAttribute('aria-label', kilometres == null ? `Tesla handover baseline: estimated battery ${soc}%` : `Estimated Tesla travel: ${kilometres} kilometres; estimated remaining battery ${soc}%`);
       meta.innerHTML = kilometres == null ? `<img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>Baseline ~${soc}% SoC</strong>` : `<img src="${teslaIcon}" alt="Tesla"><strong>${kilometres} km</strong><span>·</span><img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>~${soc}% SoC</strong>${phase ? `<span>· ${phase}</span>` : ''}`;
-      row.querySelector('.act-body')?.appendChild(meta);
+      const target = kilometres == null ? row.querySelector('.act-turo') : row.querySelector('.act-body');
+      target?.appendChild(meta);
     });
   }
   // Exposed so a deep link into the card browser waits for saved edits rather
