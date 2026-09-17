@@ -272,6 +272,10 @@
   .act-name{font-size:16px;font-weight:500;color:var(--text);margin-bottom:2px;}
   .act-note{font-size:14px;color:var(--text2);line-height:1.55;margin-bottom:3px;}
   .act-cost{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
+  .tesla-trip-meta{display:inline-flex;align-items:center;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .tesla-trip-meta img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
+  .tesla-trip-meta .soc-icon{margin-left:2px;}
+  .tesla-trip-meta strong{color:var(--text);font-weight:600;}
   /* Note rows are stored per activity row as one JSON value, the way the day
      budget tables are, so adding or deleting one touches nothing else. */
   .act-fineprint{display:block;margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--text3);}
@@ -4202,6 +4206,52 @@ customElements.define('loop-loader', LoopLoader);
     if (recoveryAmount) recoveryAmount.textContent = '~R460';
     tagEditableElements();
   }
+  function renderTeslaTravelReferences() {
+    const teslaIcon = 'assets/nyc-miami-2026/icons/tesla.svg';
+    const batteryIcon = 'assets/nyc-miami-2026/icons/battery.svg';
+    const legs = [
+      ['Drive south to North Miami Beach', 21, 74],
+      ['Load up the Tesla · Drive to South Beach', 18, 69],
+      ['Drive back to North Miami Beach', 18, 65],
+      ['Load up the Tesla · Drive west to the Everglades', 35, 56],
+      ['Tamiami Trail east · Into Little Havana', 27, 49],
+      ['Scenic drive · Coral Gables · Coconut Grove · Brickell', 16, 45],
+      ['Drive to Wynwood', 5, 44],
+      ['Drive back to Airbnb', 12, 41],
+      ['Depart Airbnb · Drive south on the Turnpike', 25, 35],
+      ['Drive or walk 5 min to Dolphin Mall', 5, 34],
+      ['Head back toward North Miami Beach', 25, 28],
+      ['Leave Dolphin Mall · Drive back to the Airbnb', 25, 28],
+      ['Charge to 90% · Aventura Mall Supercharger', 0, 90],
+      ['Bal Harbour Beach', 3, 89],
+      ['Depart Airbnb · Drive south on US-1 toward Key Largo', 88, 67],
+      ['Dive ends · Regroup · Drive south to Islamorada', 20, 62],
+      ['Begin drive back to Miami', 67, 44],
+      ['Depart Airbnb · Drive to Tropical Park', 20, 60],
+      ['Park closes · Drive back to Airbnb', 20, 55],
+      ['Drive to FLL · Return the Tesla', 17, 51]
+    ];
+    const miamiStart = document.querySelector('.day-card[data-day-key="d4"] .day-card-body');
+    if (miamiStart && !miamiStart.querySelector('[data-tesla-reference]')) {
+      const note = document.createElement('div');
+      note.className = 'notice notice-info';
+      note.dataset.teslaReference = '1';
+      note.innerHTML = '<strong>Tesla travel quick reference.</strong> Badges show estimated leg distance and remaining SoC after each drive. Planning basis: Model Y Long Range RWD, ~74.5 kWh usable battery, rounded ~3.8 mi per percentage point from the linked highway test. Starting SoC is ~80% at pickup; Aventura brings it to 90%; Tuesday night top-up brings it to ~65%. Weather, traffic, speed and the host\'s handover level can move the real figure.';
+      miamiStart.prepend(note);
+    }
+    document.querySelectorAll('.activity-row').forEach(row => {
+      if (row.querySelector('.tesla-trip-meta')) return;
+      const name = row.querySelector('.act-name')?.textContent.trim();
+      const leg = legs.find(([label]) => name?.includes(label));
+      if (!leg) return;
+      const [, miles, soc] = leg;
+      const meta = document.createElement('div');
+      meta.className = 'tesla-trip-meta';
+      meta.setAttribute('aria-label', `Estimated Tesla travel: ${miles} miles; estimated remaining battery ${soc}%`);
+      meta.innerHTML = `<img src="${teslaIcon}" alt="Tesla"><strong>${miles} mi</strong><span>·</span><img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>~${soc}% SoC</strong>`;
+      row.querySelector('.act-body')?.appendChild(meta);
+    });
+  }
   // Exposed so a deep link into the card browser waits for saved edits rather
   // than showing the authored file for a moment.
   window.editsReady = (async function initEditSystem() {
@@ -4227,6 +4277,7 @@ customElements.define('loop-loader', LoopLoader);
     applyDesignDistrictUpdate();
     applyHeatGameUpdate();
     moveAventuraChargeToRecoveryMorning();
+    renderTeslaTravelReferences();
     await applySavedEdits();
     renderAirbnbLinks();
     wrapStaticThumbs();
