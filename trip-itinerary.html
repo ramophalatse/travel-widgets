@@ -625,6 +625,10 @@
   }
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
   :root[data-edit="on"] .activity-row-delete{display:flex;}
+  /* Edit mode adds a second image drop zone to each stop. The longest day can
+     therefore exceed the normal expanded-body transition cap. Leave ample
+     room for the added controls so the page itself remains scrollable. */
+  :root[data-edit="on"] .day-card.open .day-card-body{max-height:100000px;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
   :root[data-edit="on"] [data-note-edit]:hover{background:var(--accent-bg);}
   :root[data-edit="on"] [data-note-edit]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
