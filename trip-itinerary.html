@@ -196,7 +196,11 @@
   .cv-review--turo .cv-review-name,.cv-review--turo .cv-review-meta{display:block;}
   .cv-review--turo .cv-review-score svg{width:20px;height:20px;fill:var(--turo);display:block;}
   .cv-card-tesla{margin:12px 0 2px;}
-  .cv-card-tesla .tesla-trip-meta{margin-top:0;}
+  .cv-card-tesla .tesla-trip-meta{display:flex;margin-top:0;padding:10px 12px;gap:10px;border-radius:14px;font-size:13px;line-height:1.2;}
+  .cv-card-tesla .tesla-trip-meta img{width:20px;height:20px;}
+  .cv-card-tesla .tesla-trip-meta img:first-child{width:28px;height:28px;}
+  .cv-card-tesla .tesla-trip-meta img.soc-icon:first-child{width:22px;height:22px;}
+  .cv-card-tesla .tesla-trip-meta strong{font-size:13px;}
   /* Our Turo car, in Turo's key blue/purple (the same tone their own star
      ratings use). Same deeper-tone-for-light-mode treatment as Airbnb above. */
   :root{--turo:#593CFB;--turo-text:#4B32D9;}
