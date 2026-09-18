@@ -141,10 +141,11 @@
     transition:opacity 0.26s ease,transform 0.26s ease,visibility 0s linear 0.26s;}
   .nav-toolbar[data-show="1"]{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(-50%);
     transition:opacity 0.26s ease,transform 0.26s ease,visibility 0s;}
-  /* Narrow windows have no gutter to sit in, and coarse pointers reach these
-     same actions through the edge drawer, which is why .header-toolbar hides
-     there too. */
-  @media (max-width:75rem){.nav-toolbar{display:none;}}
+  /* Whether there is a gutter to sit in is measured at runtime, not assumed
+     from the window width: a 1190px window with five short tabs has ~600px of
+     free nav, and the 75rem query that used to live here hid the dock in
+     exactly that case. Coarse pointers reach these actions through the edge
+     drawer instead, which is why .header-toolbar hides there too. */
   .nav-tabs::-webkit-scrollbar{display:none;}
   .nav-tab{flex-shrink:0;padding:14px 18px;font-size:13px;font-weight:500;font-family:var(--sans);color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color 0.2s,border-color 0.2s;white-space:nowrap;}
   .nav-tab:hover{color:var(--text);}
@@ -2235,7 +2236,35 @@ customElements.define('loop-loader', LoopLoader);
     if (!header || !home || !dock) return;
     const controls = Array.from(home.querySelectorAll('.chip-btn,.theme-toggle'));
     if (!controls.length) return;
-    let docked = false, settle = null;
+    // The edge drawer owns these actions on touch, where both toolbars are
+    // display:none — measuring them there would only ever read zero.
+    if (matchMedia('(pointer:coarse)').matches) return;
+    let docked = false, settle = null, mastheadGone = false;
+
+    const GAP = 12;               // .nav-toolbar's gap
+    const RIGHT_INSET = 20;       // .nav-toolbar's right:1.25rem
+    const BREATHING = 24;         // never let a chip touch the last tab
+    // Measured once, while the controls are still laid out in the masthead.
+    const needed = controls.reduce((w, c) => w + c.getBoundingClientRect().width, 0)
+      + GAP * (controls.length - 1);
+
+    /* Is there room beside the tabs? .nav-tabs is a full-width scroller whose
+       box tells us nothing about its contents, and scrollWidth clamps to that
+       box, so the tabs are summed directly. That also keeps the answer stable
+       whatever the tab strip is scrolled to. */
+    function dockFits() {
+      const tabs = document.querySelector('.nav-tabs');
+      const wrap = document.querySelector('.nav-wrapper');
+      if (!tabs || !wrap) return false;
+      const tabsWidth = Array.from(tabs.children)
+        .reduce((w, t) => w + t.getBoundingClientRect().width, 0);
+      const gutter = wrap.getBoundingClientRect().right - RIGHT_INSET
+        - (tabs.getBoundingClientRect().left + tabsWidth);
+      return gutter >= needed + BREATHING;
+    }
+    function syncDock() {
+      mastheadGone && dockFits() ? dockControls() : undockControls();
+    }
 
     function dockControls() {
       if (docked) return;
@@ -2259,10 +2288,20 @@ customElements.define('loop-loader', LoopLoader);
     }
 
     new IntersectionObserver(entries => {
-      entries[0].isIntersecting ? undockControls() : dockControls();
       // The masthead counts as gone once it is behind the sticky nav, not once
       // it clears the viewport, so the handover happens where the eye expects.
+      mastheadGone = !entries[0].isIntersecting;
+      syncDock();
     }, { rootMargin: '-48px 0px 0px 0px' }).observe(header);
+
+    // A window resized across the point where the chips stop fitting has to
+    // hand them back, or they would sit on top of the last tab.
+    let pending = false;
+    addEventListener('resize', () => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => { pending = false; syncDock(); });
+    }, { passive: true });
   }
   /* Appears once the masthead is well out of the way, so it never sits over the
      first screen. Scroll reads are rAF-throttled: this fires on every scroll. */
