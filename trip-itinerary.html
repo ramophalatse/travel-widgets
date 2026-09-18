@@ -309,6 +309,17 @@
   .act-note-remove:hover{color:#fda4af;}
   .act-note-add{margin-top:4px;font-size:11px;color:var(--accent);}
   .act-note-add:hover{text-decoration:underline;}
+  /* An added subtext is the same line an authored .act-note is, and is styled
+     to match exactly. It is a separate class on purpose: see the SUBTEXT block
+     in the script for why it must never be matched by TEXT_SELECTOR. */
+  .act-subtext-row{display:flex;align-items:baseline;gap:6px;margin-bottom:3px;}
+  .act-subtext{flex:0 1 auto;min-width:0;font-size:14px;color:var(--text2);line-height:1.55;}
+  .act-subtext:empty::before{content:'Subtext…';color:var(--text3);opacity:0.6;}
+  .act-subtext-remove,.act-subtext-add{display:none;border:none;background:none;padding:0;cursor:pointer;font-family:var(--mono);line-height:1;}
+  .act-subtext-remove{flex:0 0 auto;font-size:14px;color:var(--text3);}
+  .act-subtext-remove:hover{color:#fda4af;}
+  .act-subtext-add{margin-bottom:3px;font-size:11px;color:var(--accent);}
+  .act-subtext-add:hover{text-decoration:underline;}
   /* Deletes the whole stop, so it sits under the timecode, well clear of the
      photo column, where every control acts on an image and nothing else. */
   .activity-row-delete{display:none;position:absolute;left:0;bottom:12px;z-index:3;align-items:center;justify-content:center;height:24px;padding:0 8px;border:1px solid rgba(190,24,60,0.5);border-radius:999px;background:var(--card);color:#fb7185;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;}
@@ -634,6 +645,7 @@
     :root[data-edit="on"] :is(.act-thumb-slot,.act-thumb-wrap){grid-column:2;width:100%;max-width:100%;height:auto;aspect-ratio:16/10;margin-top:8px;}
   }
   :root[data-edit="on"] .act-note-remove,:root[data-edit="on"] .act-note-add{display:inline-block;}
+  :root[data-edit="on"] .act-subtext-remove,:root[data-edit="on"] .act-subtext-add{display:inline-block;}
   :root[data-edit="on"] .activity-row-delete{display:flex;}
   /* Edit mode adds a second image drop zone to each stop. The longest day can
      therefore exceed the normal expanded-body transition cap. Leave ample
@@ -4058,6 +4070,96 @@ customElements.define('loop-loader', LoopLoader);
       }
     });
   }
+  /* ── PER-ROW SUBTEXT ────────────────────────────────────────────────────
+     The descriptive line under an activity's name. A row authored with one
+     carries an .act-note and edits in place through the keyed scheme, like
+     any other text. A row authored WITHOUT one has no element for a keyed
+     edit to land on when the page reloads, so an added subtext is stored
+     whole under `subtext:<rowKey>` and rebuilt from the store, exactly as
+     notes are.
+
+     The added element is .act-subtext and deliberately not .act-note:
+     TEXT_SELECTOR matches .act-note, so reusing that class would have
+     tagEditableElements() hand it a data-eid as well, and the same words
+     would then save down two paths that can disagree. "+ Add subtext" only
+     ever appears on a row that has neither, so any row holds its subtext
+     through exactly one of the two paths. */
+  const SUBTEXT_PREFIX = 'subtext:';
+  function makeSubtextRow(html) {
+    const wrap = document.createElement('div');
+    wrap.className = 'act-subtext-row';
+    const text = document.createElement('div');
+    text.className = 'act-subtext';
+    text.dataset.subtextEdit = '1';
+    text.innerHTML = html;
+    wrap.appendChild(text);
+    return wrap;
+  }
+  function renderSubtext(row, html) {
+    const existing = row.querySelector('.act-subtext-row');
+    // An emptied subtext is a deleted subtext, the way an emptied note is.
+    if (!String(html == null ? '' : html).trim()) { if (existing) existing.remove(); return; }
+    if (existing) { existing.querySelector('.act-subtext').innerHTML = html; return; }
+    const name = row.querySelector('.act-name');
+    if (name) name.after(makeSubtextRow(html));
+  }
+  function saveSubtext(row) {
+    const el = row.querySelector('.act-subtext');
+    saveEdit(SUBTEXT_PREFIX + rowKey(row), 'subtext', el ? el.innerHTML.trim() : '');
+  }
+  /** Owns all subtext chrome, so there is one place that decides which rows
+   *  may gain a subtext and what one looks like in edit mode. */
+  function decorateSubtext() {
+    document.querySelectorAll('.activity-row').forEach(row => {
+      const wrap = row.querySelector('.act-subtext-row');
+      if (wrap) {
+        if (!wrap.querySelector('.act-subtext-remove')) {
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'act-subtext-remove';
+          del.title = 'Delete subtext';
+          del.setAttribute('aria-label', 'Delete subtext');
+          del.textContent = '×';
+          wrap.appendChild(del);
+        }
+        const text = wrap.querySelector('.act-subtext');
+        if (text) text.dataset.subtextEdit = '1';
+        row.querySelectorAll('.act-subtext-add').forEach(b => b.remove());
+        return;
+      }
+      // A row authored with a description already has its subtext.
+      if (row.querySelector('.act-note') || row.querySelector('.act-subtext-add')) return;
+      const name = row.querySelector('.act-name');
+      if (!name) return;
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'act-subtext-add';
+      add.textContent = '+ Add subtext';
+      name.after(add);
+    });
+  }
+  function wireSubtext() {
+    document.addEventListener('click', e => {
+      const del = e.target.closest && e.target.closest('.act-subtext-remove');
+      if (del) {
+        const row = del.closest('.activity-row');
+        del.closest('.act-subtext-row').remove();
+        if (row) saveSubtext(row);
+        decorateSubtext();
+        return;
+      }
+      const add = e.target.closest && e.target.closest('.act-subtext-add');
+      if (!add) return;
+      const row = add.closest('.activity-row');
+      const name = row && row.querySelector('.act-name');
+      if (!name) return;
+      name.after(makeSubtextRow(''));
+      decorateSubtext();
+      const text = row.querySelector('.act-subtext');
+      text.setAttribute('contenteditable', 'true');
+      text.focus();
+    });
+  }
   function wireNotes() {
     document.addEventListener('click', e => {
       const del = e.target.closest && e.target.closest('.act-note-remove');
@@ -4214,6 +4316,12 @@ customElements.define('loop-loader', LoopLoader);
         if (row) renderNotes(row, entry.value);
         return;
       }
+      if (eid.indexOf(SUBTEXT_PREFIX) === 0) {
+        const key = eid.slice(SUBTEXT_PREFIX.length);
+        const row = Array.from(document.querySelectorAll('.activity-row')).find(r => rowKey(r) === key);
+        if (row) renderSubtext(row, entry.value);
+        return;
+      }
       const el = document.querySelector('[data-eid="' + eid + '"]');
       if (!el) return;
       if (entry.type === 'text') el.innerHTML = entry.value;
@@ -4227,7 +4335,7 @@ customElements.define('loop-loader', LoopLoader);
   }
   function setEditMode(on) {
     document.documentElement.dataset.edit = on ? 'on' : 'off';
-    document.querySelectorAll('[data-editable],[data-spend-edit],[data-budget-edit],[data-note-edit]').forEach(el => {
+    document.querySelectorAll('[data-editable],[data-spend-edit],[data-budget-edit],[data-note-edit],[data-subtext-edit]').forEach(el => {
       el.setAttribute('contenteditable', on ? 'true' : 'false');
     });
     const editBtn = document.getElementById('edit-toggle-btn');
@@ -4255,6 +4363,15 @@ customElements.define('loop-loader', LoopLoader);
       // An emptied note is a deleted note; serializeNotes drops it either way.
       if (!el.textContent.trim()) el.closest('.act-note-row').remove();
       if (row) saveNotes(row);
+      return;
+    }
+    if (el.matches('[data-subtext-edit]')) {
+      const row = el.closest('.activity-row');
+      // Emptied and blurred is how a subtext is deleted without reaching for
+      // the ×, so the row gets its "+ Add subtext" back on the next decorate.
+      if (!el.textContent.trim()) el.closest('.act-subtext-row').remove();
+      if (row) saveSubtext(row);
+      decorateSubtext();
       return;
     }
     if (!el.matches('[data-editable]')) return;
@@ -4339,6 +4456,14 @@ customElements.define('loop-loader', LoopLoader);
     clone.querySelectorAll('.act-note-remove,.act-note-add').forEach(el => el.remove());
     clone.querySelectorAll('[data-note-edit]').forEach(el => el.removeAttribute('data-note-edit'));
     clone.querySelectorAll('.act-notes').forEach(c => { if (!c.querySelector('.act-note-row')) c.remove(); });
+    // Subtext is content and ships; an exported one stays on the subtext path
+    // on reload, since .act-subtext is outside TEXT_SELECTOR by design.
+    clone.querySelectorAll('.act-subtext-remove,.act-subtext-add').forEach(el => el.remove());
+    clone.querySelectorAll('[data-subtext-edit]').forEach(el => el.removeAttribute('data-subtext-edit'));
+    clone.querySelectorAll('.act-subtext-row').forEach(w => {
+      const text = w.querySelector('.act-subtext');
+      if (!text || !text.textContent.trim()) w.remove();
+    });
     clone.querySelectorAll('[data-row-key]').forEach(el => el.removeAttribute('data-row-key'));
     clone.querySelectorAll('[data-authored-name]').forEach(el => el.removeAttribute('data-authored-name'));
     const status = clone.querySelector('#save-status');
@@ -4627,6 +4752,8 @@ customElements.define('loop-loader', LoopLoader);
     decorateActivityRows();
     decorateNotes();
     wireNotes();
+    decorateSubtext();
+    wireSubtext();
     document.addEventListener('blur', handleEditableBlur, true);
     document.addEventListener('blur', e => { if (e.target.closest && e.target.closest('.act-name')) renderAirbnbLinks(); }, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
