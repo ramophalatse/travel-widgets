@@ -184,7 +184,13 @@
      light mode because Rausch itself is too light for small text on white. */
   :root{--airbnb:#FF385C;--airbnb-text:#D70F45;}
   [data-theme="dark"]{--airbnb-text:#FF5C7C;}
-  .act-stay,.act-turo{display:flex;margin-top:7px;font-size:11px;}
+  /* Badges sit inline so a row carrying two of them (our Airbnb pill plus a
+     Tesla km/SoC badge, say) lays them out side by side and only wraps to a
+     second line when the row is genuinely too narrow. */
+  .act-stay,.act-turo{display:inline-flex;align-items:center;vertical-align:middle;margin-top:7px;font-size:11px;}
+  /* Trailing rather than leading gap, so a badge pushed onto a second line on
+     a narrow screen still starts flush with the one above it. */
+  .act-body>.act-stay,.act-body>.act-turo,.act-body>.tesla-trip-meta{margin-right:8px;}
   .stay-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--airbnb) 38%,transparent);background:color-mix(in srgb,var(--airbnb) 7%,transparent);color:var(--airbnb-text);text-decoration:none;font-weight:600;transition:background 0.15s,border-color 0.15s;}
   .stay-pill:hover,.stay-pill:focus-visible{background:color-mix(in srgb,var(--airbnb) 14%,transparent);border-color:var(--airbnb);}
   .stay-pill svg{width:12px;height:12px;flex:none;fill:var(--airbnb);}
@@ -281,7 +287,7 @@
   .act-name{font-size:16px;font-weight:500;color:var(--text);margin-bottom:2px;}
   .act-note{font-size:14px;color:var(--text2);line-height:1.55;margin-bottom:3px;}
   .act-cost{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
-  .tesla-trip-meta{display:inline-flex;align-items:center;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .tesla-trip-meta{display:inline-flex;align-items:center;vertical-align:middle;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
   .tesla-trip-meta img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
   .tesla-trip-meta img:first-child{width:20px;height:20px;}
   .tesla-trip-meta .soc-icon{margin-left:2px;}
