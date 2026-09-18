@@ -4231,7 +4231,10 @@ customElements.define('loop-loader', LoopLoader);
     if (recoveryTotal) recoveryTotal.textContent = '~R460';
     const recoveryAmount = recoveryDay.querySelector('.total-amount');
     if (recoveryAmount) recoveryAmount.textContent = '~R460';
-    tagEditableElements();
+    // The charge row is rebuilt here, after the initial pass, so it needs the
+    // full image hydration and not just the text pass: tagging alone left it
+    // with a card zone but no list-view drop slot.
+    hydrateActivityImageControls();
   }
   function renderTeslaTravelReferences() {
     const teslaIcon = 'assets/nyc-miami-2026/icons/tesla.svg';
