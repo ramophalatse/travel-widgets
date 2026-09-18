@@ -654,12 +654,6 @@
   #pending-chip[data-offline="1"]{color:#fcd34d;border-color:rgba(180,120,10,0.55);}
   #pending-chip[data-offline="1"]::before{background:#fcd34d;animation:pending-pulse 1.8s ease-in-out infinite;}
   @keyframes pending-pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
-  /* Offline saving lives in the edit toolbar, so it is only in the way when
-     you are already in the mode that makes the trip worth keeping a copy of. */
-  #offline-save{display:inline-flex;align-items:center;gap:7px;}
-  #offline-save[data-state="saved"]{color:var(--accent);}
-  #offline-save .offline-bar{display:block;width:44px;height:3px;border-radius:999px;background:var(--border2);overflow:hidden;}
-  #offline-save .offline-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width 0.2s ease;}
   loop-loader{display:inline-block;width:1.25em;height:1.25em;flex:none;}
   loop-loader svg{display:block;width:100%;height:100%;overflow:visible;}
   .card-photo.is-busy .act-thumb-hint{flex-direction:column;gap:6px;}
@@ -1166,10 +1160,6 @@
   <button class="chip-btn" id="collapse-all-btn" onclick="collapseAllCards()" aria-label="Collapse all days" title="Collapse all">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 5 12 9 16 5"/><polyline points="8 19 12 15 16 19"/></svg>
     <span class="chip-label">Collapse all</span>
-  </button>
-  <button class="chip-btn" id="offline-save" onclick="saveForOffline()" aria-label="Save the trip for offline use" title="Save for offline">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><polyline points="7 11 12 16 17 11"/><path d="M4 18v1.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V18"/></svg>
-    <span class="chip-label">Save offline</span>
   </button>
   <button class="chip-btn" id="edit-toggle-btn" onclick="toggleEditMode()" aria-label="Toggle edit mode" title="Edit mode">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
@@ -2757,6 +2747,10 @@ customElements.define('loop-loader', LoopLoader);
     });
     swReady.then(reg => {
       if (!reg) return;
+      // A worker that finished installing before this listener existed is
+      // already parked in `waiting` and would sit there until every tab
+      // closed, which on a page people leave open means never.
+      if (reg.waiting && navigator.serviceWorker.controller) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       reg.addEventListener('updatefound', () => {
         const fresh = reg.installing;
         if (!fresh) return;
@@ -2770,38 +2764,27 @@ customElements.define('loop-loader', LoopLoader);
   function askWorker(msg) {
     if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage(msg);
   }
+  /* The download runs itself, so this is a readout rather than a control. It
+     only speaks up while there is genuinely something happening, and says
+     nothing at all on the common case of an already complete copy. */
   function onWorkerMessage(e) {
     const m = e.data || {};
-    if (m.type === 'MEDIA_STATUS') return paintOfflineButton(m.have, m.total);
-    if (m.type === 'MEDIA_PROGRESS') return paintOfflineButton(m.done, m.total, true);
-    if (m.type === 'MEDIA_DONE') {
-      paintOfflineButton(m.done, m.total);
-      showSaveStatus(m.failed ? m.failed + ' photos could not be saved' : 'Trip saved for offline', m.failed ? 'error' : 'ok');
-    }
-  }
-  function paintOfflineButton(have, total, busy) {
-    const btn = document.getElementById('offline-save');
-    if (!btn || !total) return;
-    const label = btn.querySelector('.chip-label');
-    const complete = have >= total;
-    btn.dataset.state = complete ? 'saved' : busy ? 'busy' : 'idle';
-    if (!label) return;
-    if (busy && !complete) {
-      label.innerHTML = 'Saving ' + Math.round((have / total) * 100) + '%<span class="offline-bar"><i style="width:' + ((have / total) * 100) + '%"></i></span>';
-    } else {
-      label.textContent = complete ? 'Saved offline' : 'Save offline';
-    }
-    btn.title = complete ? 'The whole trip is available offline. Tap to refresh it.' : 'Download the trip so it works with no signal.';
-  }
-  window.saveForOffline = function () {
-    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
-      showSaveStatus('Offline saving not ready yet', 'error');
+    if (m.type === 'MEDIA_STATUS') {
+      // Incomplete and online: nudge the worker to pick up where it stopped.
+      if (m.have < m.total && !isOffline()) askWorker({ type: 'SAVE_MEDIA' });
       return;
     }
-    if (isOffline()) { showSaveStatus('Need a connection to save', 'error'); return; }
-    showSaveStatus('Saving the trip for offline', 'busy');
-    askWorker({ type: 'SAVE_MEDIA' });
-  };
+    if (m.type === 'MEDIA_PROGRESS') {
+      if (m.done >= m.total) return;
+      offlineState.sawProgress = true;
+      return showSaveStatus('Saving for offline · ' + Math.round((m.done / m.total) * 100) + '%', 'busy');
+    }
+    if (m.type === 'MEDIA_DONE') {
+      if (!offlineState.sawProgress) return; // Nothing to do, so nothing to say.
+      offlineState.sawProgress = false;
+      showSaveStatus(m.failed ? m.failed + ' files could not be saved' : 'Saved for offline', m.failed ? 'error' : 'ok');
+    }
+  }
   initServiceWorker();
   function ensureImageDropZones() {
     document.querySelectorAll('.activity-row').forEach(row => {

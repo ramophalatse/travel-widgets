@@ -1,19 +1,21 @@
-/* Offline support for the trip itinerary.
+/* Offline support for the travel widgets.
    ─────────────────────────────────────────────────────────────────────────
    Two caches, deliberately separate:
 
-   SHELL is the page itself plus fonts and icons, a megabyte or so. It is
-   precached on install so the itinerary opens with no signal at all.
+   SHELL is the pages themselves plus fonts and icons, a megabyte or so. It
+   is precached on install, so a widget opens with no signal at all.
 
-   MEDIA is the 42MB of trip photos. It is filled only when the page asks,
-   so a first visit on cellular does not quietly pull down 42MB. Photos also
-   land here as they are viewed online, so a partial save is still useful.
+   MEDIA is the rest: every photo across every widget, about 56MB. It fills
+   itself in the background once the worker is running, and picks up where it
+   left off on the next load, so there is nothing to remember and a download
+   cut short by a closed tab is not lost work. Photos also land here as they
+   are viewed, so a partial copy is still useful.
 
    Supabase is never cached here. Saved edits are the page's own business and
    it keeps its own snapshot in IndexedDB, where it can be read and merged
    rather than replayed blindly out of an HTTP cache. */
 
-const VERSION = 'v3';
+const VERSION = 'v6';
 const SHELL = 'ti-shell-' + VERSION;
 const MEDIA = 'ti-media-' + VERSION;
 const SCOPE = new URL(self.registration.scope);
@@ -21,6 +23,7 @@ const SCOPE = new URL(self.registration.scope);
 const SHELL_URLS = [
   'trip-itinerary.html',
   'offline-manifest.json',
+  'manifest.webmanifest',
   'assets/nyc-miami-2026/icons/tesla.svg',
   'assets/nyc-miami-2026/icons/battery.svg',
   'https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Hanken+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap'
@@ -34,6 +37,13 @@ const SHELL_URLS = [
 const MEDIA_PATH = /\/assets\//;
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
+/* Background download pacing. Two at a time leaves room for the page's own
+   requests inside the browser's per-origin connection limit, which four did
+   not: a burst on activate left the tab unresponsive while it caught up. */
+const CONCURRENCY = 2;
+const START_DELAY_MS = 5000;
+const BETWEEN_FILES_MS = 120;
+
 self.addEventListener('install', event => {
   // The shell is small and every entry matters, so a single failure should not
   // leave a half-built cache claiming to be complete: addAll is all-or-nothing.
@@ -45,13 +55,22 @@ self.addEventListener('activate', event => {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => k !== SHELL && k !== MEDIA && k.startsWith('ti-')).map(k => caches.delete(k)));
     await self.clients.claim();
+    // Fill the media cache without being asked, but not immediately: starting
+    // 57MB while the page is still loading competes for the six connections
+    // the browser allows per origin and makes first paint crawl. A short head
+    // start costs nothing and keeps the download genuinely in the background.
+    // saveMedia skips what it already holds, so this doubles as the resume for
+    // anything an earlier visit did not finish.
+    setTimeout(() => saveMedia(), START_DELAY_MS);
   })());
 });
 
 self.addEventListener('message', event => {
   const msg = event.data || {};
   if (msg.type === 'SKIP_WAITING') return self.skipWaiting();
-  if (msg.type === 'SAVE_MEDIA') event.waitUntil(saveMedia(event.source));
+  // Kept so a page that loads while a download is incomplete can nudge it
+  // along, which is how a run cut short by a closed tab gets picked back up.
+  if (msg.type === 'SAVE_MEDIA') event.waitUntil(saveMedia(true));
   if (msg.type === 'MEDIA_STATUS') event.waitUntil(reportStatus(event.source));
   if (msg.type === 'FORGET_MEDIA') event.waitUntil(caches.delete(MEDIA).then(() => reportStatus(event.source)));
 });
@@ -74,18 +93,22 @@ async function reportStatus(client) {
   client.postMessage({ type: 'MEDIA_STATUS', have, total: files.length, bytes });
 }
 
+async function broadcast(msg) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  clients.forEach(c => c.postMessage(msg));
+}
+
 let saving = false;
-async function saveMedia(client) {
+async function saveMedia(force) {
   if (saving) return;
+  // Data Saver is an explicit "do not spend my bandwidth", so the automatic
+  // run respects it. An explicit request from the page still goes ahead.
+  if (!force && self.navigator.connection && self.navigator.connection.saveData) return;
   saving = true;
   try {
     const { files, bytes } = await manifest();
     const cache = await caches.open(MEDIA);
     let done = 0, failed = 0, next = 0;
-    // A few at a time. One at a time is latency-bound and takes minutes; a
-    // burst of 161 tends to time out in clumps on weak wifi and makes the
-    // progress bar meaningless. Four keeps the pipe busy and the count honest.
-    const CONCURRENCY = 4;
     async function worker() {
       while (next < files.length) {
         const url = new URL(files[next++], SCOPE).href;
@@ -94,16 +117,23 @@ async function saveMedia(client) {
             const res = await fetch(url, { cache: 'no-cache' });
             if (!res.ok) throw new Error(res.status);
             await cache.put(url, res);
+            // Breathe between files. This is background work and should never
+            // be the reason a page feels slow.
+            await new Promise(r => setTimeout(r, BETWEEN_FILES_MS));
           }
         } catch (e) {
           failed++;
         }
         done++;
-        if (client) client.postMessage({ type: 'MEDIA_PROGRESS', done, total: files.length, failed, bytes });
+        // Throttled: one message per file across 190 files is noise, and the
+        // page only needs enough to move a progress readout.
+        if (done % 5 === 0 || done === files.length) {
+          broadcast({ type: 'MEDIA_PROGRESS', done, total: files.length, failed, bytes });
+        }
       }
     }
     await Promise.all(Array.from({ length: Math.min(CONCURRENCY, files.length) }, worker));
-    if (client) client.postMessage({ type: 'MEDIA_DONE', done, total: files.length, failed });
+    broadcast({ type: 'MEDIA_DONE', done, total: files.length, failed });
   } finally {
     saving = false;
   }
@@ -127,18 +157,32 @@ self.addEventListener('fetch', event => {
   if (url.origin === SCOPE.origin) return event.respondWith(cacheFirst(req, SHELL));
 });
 
-/* Network first, so an online visit always gets the current itinerary rather
-   than yesterday's copy, with the cache as the offline floor. */
+/* Network first, so an online visit always gets the current page rather than
+   yesterday's copy, with the cache as the offline floor. */
 async function navigateFirst(req) {
-  const cache = await caches.open(SHELL);
   try {
     const res = await fetch(req);
-    if (res && res.ok) cache.put(req, res.clone());
+    if (res && res.ok) (await caches.open(SHELL)).put(req, res.clone());
     return res;
   } catch (e) {
-    return (await cache.match(req)) ||
-      (await cache.match(new URL('trip-itinerary.html', SCOPE).href)) ||
-      new Response('Offline and this page was never saved.', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+    // Searched across both caches: pages arrive in SHELL when precached on
+    // install and in MEDIA when pulled in by the manifest, and a lookup in
+    // only one of them silently misses half the widgets.
+    //
+    // No cross-page fallback. An earlier version answered any miss with the
+    // trip itinerary, so asking for the Cape Town page offline returned New
+    // York under the Cape Town URL. Handing back the wrong trip is worse than
+    // admitting the page was never saved.
+    const hit = (await caches.match(req)) || (await caches.match(req.url, { ignoreSearch: true }));
+    if (hit) return hit;
+    return new Response(
+      '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<title>Not saved for offline</title>' +
+      '<style>body{font-family:system-ui,sans-serif;background:#0a0f14;color:#e6edf3;display:grid;place-items:center;min-height:100vh;margin:0;padding:24px;text-align:center;line-height:1.6}a{color:#4ade80}</style>' +
+      '<div><h1>Not saved for offline</h1><p>This page was never downloaded, and there is no connection to fetch it.</p>' +
+      '<p><a href="trip-itinerary.html">Open the trip itinerary</a></p></div>',
+      { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+    );
   }
 }
 

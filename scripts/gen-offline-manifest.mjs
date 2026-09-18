@@ -11,7 +11,8 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), '..');
-const MEDIA_DIRS = ['assets/nyc-miami-2026'];
+// Every widget is kept offline, so the whole assets tree is in scope.
+const MEDIA_DIRS = ['assets'];
 const OUT = join(root, 'offline-manifest.json');
 
 function walk(dir) {
@@ -24,11 +25,16 @@ function walk(dir) {
   return out;
 }
 
-const files = MEDIA_DIRS.flatMap(d => walk(join(root, d)))
+const media = MEDIA_DIRS.flatMap(d => walk(join(root, d)))
   .map(f => relative(root, f).split('\\').join('/'))
   .filter(f => !f.endsWith('.DS_Store'))
   .sort();
 
+// Every widget page, so any of them opens with no signal rather than only the
+// one that happened to register the worker.
+const pages = readdirSync(root).filter(f => f.endsWith('.html')).sort();
+
+const files = [...pages, ...media];
 const bytes = files.reduce((n, f) => n + statSync(join(root, f)).size, 0);
 
 // Bump whenever the list changes, so the worker can tell a stale saved copy

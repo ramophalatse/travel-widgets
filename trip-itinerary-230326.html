@@ -1019,5 +1019,12 @@
     card.classList.toggle('open');
   }
 </script>
+<script>
+/* Registers the shared offline worker. The itinerary owns the full offline
+   system; this is only so landing on any widget first still installs it. */
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
 </body>
 </html>
