@@ -296,6 +296,8 @@
   .tesla-trip-meta img:first-child{width:20px;height:20px;}
   .tesla-trip-meta .soc-icon{margin-left:2px;}
   .tesla-trip-meta strong{color:var(--text);font-weight:600;}
+  .tesla-trip-meta.is-charging{flex-wrap:wrap;}
+  .tesla-trip-meta .charge-soc{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
   .act-turo .tesla-trip-meta{margin-top:0;margin-left:8px;}
   /* Note rows are stored per activity row as one JSON value, the way the day
      budget tables are, so adding or deleting one touches nothing else. */
@@ -4686,7 +4688,9 @@ customElements.define('loop-loader', LoopLoader);
       ['Leave Dolphin Mall · Drive back to the Airbnb', 40, 28],
       ['Leave Airbnb · Drive to Kaseya Center', 31, 23, 'to Kaseya'],
       ['Post-game date night · Downtown Miami', 31, 18, 'return home'],
-      ['Charge to 90% · Aventura Mall Supercharger', 0, 90],
+      // ~6 km one way from NE 160th St to Aventura Mall; ~18% leaving home
+      // minus 6 / 6.1 percentage points gives ~17% on arrival, before charging.
+      ['Charge to 90% · Aventura Mall Supercharger', 6, 17, null, 90],
       ['Bal Harbour Beach', 5, 89],
       ['Depart Airbnb · Drive south on US-1 toward Key Largo', 142, 67],
       ['Dive ends · Regroup · Drive south to Islamorada', 32, 62],
@@ -4708,11 +4712,16 @@ customElements.define('loop-loader', LoopLoader);
       const name = row.querySelector('.act-name')?.textContent.trim();
       const leg = legs.find(([label]) => name?.includes(label));
       if (!leg) return;
-      const [, kilometres, soc, phase] = leg;
+      const [, kilometres, soc, phase, targetSoc] = leg;
       const meta = document.createElement('div');
       meta.className = 'tesla-trip-meta';
       meta.setAttribute('aria-label', kilometres == null ? `Tesla handover baseline: estimated battery ${soc}%` : `Estimated Tesla travel: ${kilometres} kilometres; estimated remaining battery ${soc}%`);
       meta.innerHTML = kilometres == null ? `<img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>Baseline ~${soc}% SoC</strong>` : `<img src="${teslaIcon}" alt="Tesla"><strong>${kilometres} km</strong><span>·</span><img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>~${soc}% SoC</strong>${phase ? `<span>· ${phase}</span>` : ''}`;
+      if (targetSoc != null) {
+        meta.classList.add('is-charging');
+        meta.setAttribute('aria-label', `Estimated drive from Airbnb: ${kilometres} kilometres; arrival battery approximately ${soc}%; target charge ${targetSoc}%`);
+        meta.innerHTML = `<img src="${teslaIcon}" alt="Tesla"><strong>~${kilometres} km</strong><span>·</span><span class="charge-soc"><img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>Arrive ~${soc}%</strong><span>→</span><strong>Target ${targetSoc}%</strong></span>`;
+      }
       const target = kilometres == null ? row.querySelector('.act-turo') : row.querySelector('.act-body');
       target?.appendChild(meta);
     });
