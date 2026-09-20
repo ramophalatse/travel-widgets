@@ -1845,7 +1845,7 @@
     <tr><td>✈️ Flights (4 passengers · all legs)</td><td>R104,333</td></tr>
     <tr><td>🏨 Accommodation (all stays)</td><td>R244,142</td></tr>
     <tr><td>🚢 NCL Free at Sea Plus (incl. gratuities)</td><td>R24,051</td></tr>
-    <tr><td>💵 Daily spending (17 days)</td><td>R51,000</td></tr>
+    <tr><td>💵 Daily spending (17 days · R5,000/day)</td><td>R85,000</td></tr>
     <tr><td>🚗 Transport (Turo Tesla + transfers)</td><td>R22,934</td></tr>
     <tr><td>🛍️ Shopping budget</td><td>R50,000</td></tr>
     <tr><td>📶 Prepaid data eSIM · Holafly 8 days</td><td>R540</td></tr>
@@ -3376,11 +3376,11 @@ customElements.define('loop-loader', LoopLoader);
      every id after it and silently repoint saved edits. A table is therefore
      saved whole, as one JSON value under `spend:<data-day-key>`. */
   const SPEND_PREFIX = 'spend:';
-  /** Stated in every leg-intro on the page ("Budget R3,000/day"). Only a
+  /** Daily fallback allowance, kept in step with the editable budget. Only a
    *  fallback: the meters derive the per-day figure from the Budget tab's
    *  "Daily spending" line divided by the budget days, so editing that line
    *  moves every meter. */
-  const DAILY_BUDGET = 3000;
+  const DAILY_BUDGET = 5000;
   const BUDGET_WARN_FRACTION = 0.9;
 
   /** Every Rand figure in a cell, so a range ("~R800–R1,000") contributes its
@@ -4799,6 +4799,7 @@ customElements.define('loop-loader', LoopLoader);
     };
 
     replace(document.querySelector('.header-sub'), '25 days', '26 calendar days · 25 nights');
+    document.querySelectorAll('.leg-intro').forEach(intro => replace(intro, 'Budget R3,000/day', 'Budget R5,000/day'));
     replace(document.querySelector('#panel-nyc1 .leg-hero'), '4 Days / 3 Nights', '3 NYC days / 2 hotel nights');
     replace(document.querySelector('#panel-nyc1 .leg-hero'), 'Monday 21 – Thursday 24 December', 'Arrive Tuesday 22 – Thursday 24 December');
     field('d1', 'EY 748 departs', '.act-note', 'Premium Economy', 'Economy Deluxe');
@@ -4940,7 +4941,7 @@ customElements.define('loop-loader', LoopLoader);
     });
     const section = summary.closest('.summary-section');
     if (!section.querySelector('[data-qa-budget]')) {
-      const n = el('div', 'notice notice-warn', 'Budget reconciliation: this is the base allocation, not a fully reconciled trip quote. Day-by-day plans exceed the R51,000 spending allowance. Airport transfers appear both in day plans and the transport allocation; do not add the two totals together. The transport allocation now matches the listed Turo + JFK/LGA transfers (R24,203). Cruise excursion figures are gross USD conversions at R18.20/USD, not proof of the paid balance after NCL credits. Verify invoices before adding any excursion balance. Restaurant tax/tips, some parking, port taxis and optional outings may be additional.');
+      const n = el('div', 'notice notice-warn', 'Budget reconciliation: this is the base allocation, not a fully reconciled trip quote. The daily spending allowance is R85,000 across 17 days at R5,000/day. Airport transfers appear both in day plans and the transport allocation; do not add the two totals together. The transport allocation now matches the listed Turo + JFK/LGA transfers (R24,203). Cruise excursion figures are gross USD conversions at R18.20/USD, not proof of the paid balance after NCL credits. Verify invoices before adding any excursion balance. Restaurant tax/tips, some parking, port taxis and optional outings may be additional.');
       n.dataset.qaBudget = '1';
       section.appendChild(n);
     }
