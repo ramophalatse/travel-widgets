@@ -203,7 +203,7 @@
   .act-stay,.act-turo{display:inline-flex;align-items:center;vertical-align:middle;margin-top:7px;font-size:11px;}
   /* Trailing rather than leading gap, so a badge pushed onto a second line on
      a narrow screen still starts flush with the one above it. */
-  .act-body>.act-stay,.act-body>.act-turo,.act-body>.tesla-trip-meta{margin-right:8px;}
+  .act-body>.act-stay,.act-body>.act-turo,.act-body>:is(.tesla-trip-meta,.walk-trip-meta){margin-right:8px;}
   .stay-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--airbnb) 38%,transparent);background:color-mix(in srgb,var(--airbnb) 7%,transparent);color:var(--airbnb-text);text-decoration:none;font-weight:600;transition:background 0.15s,border-color 0.15s;}
   .stay-pill:hover,.stay-pill:focus-visible{background:color-mix(in srgb,var(--airbnb) 14%,transparent);border-color:var(--airbnb);}
   .stay-pill svg{width:12px;height:12px;flex:none;fill:var(--airbnb);}
@@ -215,11 +215,14 @@
   .cv-review--turo .cv-review-name,.cv-review--turo .cv-review-meta{display:block;}
   .cv-review--turo .cv-review-score svg{width:20px;height:20px;fill:var(--turo);display:block;}
   .cv-card-tesla{margin:12px 0 2px;}
-  .cv-card-tesla .tesla-trip-meta{display:flex;margin-top:0;padding:10px 12px;gap:10px;border-radius:14px;font-size:13px;line-height:1.2;}
-  .cv-card-tesla .tesla-trip-meta img{width:20px;height:20px;}
-  .cv-card-tesla .tesla-trip-meta img:first-child{width:28px;height:28px;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta){display:flex;margin-top:0;padding:10px 12px;gap:10px;border-radius:14px;font-size:13px;line-height:1.2;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta) img{width:20px;height:20px;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta) img:first-child{width:28px;height:28px;}
   .cv-card-tesla .tesla-trip-meta img.soc-icon:first-child{width:22px;height:22px;}
-  .cv-card-tesla .tesla-trip-meta strong{font-size:13px;}
+  /* The walking figure is tall and narrow, so it reads small at the shared
+     first-child size. Give it its own height and let the width follow. */
+  .cv-card-tesla .walk-trip-meta img:first-child{width:auto;height:26px;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta) strong{font-size:13px;}
   /* Our Turo car, in Turo's key blue/purple (the same tone their own star
      ratings use). Same deeper-tone-for-light-mode treatment as Airbnb above. */
   :root{--turo:#593CFB;--turo-text:#4B32D9;}
@@ -300,11 +303,14 @@
   .act-name{font-size:16px;font-weight:500;color:var(--text);margin-bottom:2px;}
   .act-note{font-size:14px;color:var(--text2);line-height:1.55;margin-bottom:3px;}
   .act-cost{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
-  .tesla-trip-meta{display:inline-flex;align-items:center;vertical-align:middle;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .tesla-trip-meta img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
-  .tesla-trip-meta img:first-child{width:20px;height:20px;}
+  /* The walk badge is the Tesla badge's pedestrian twin: same pill, same
+     accent, so a day that mixes driving and walking legs reads as one scale. */
+  :is(.tesla-trip-meta,.walk-trip-meta){display:inline-flex;align-items:center;vertical-align:middle;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  :is(.tesla-trip-meta,.walk-trip-meta) img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
+  :is(.tesla-trip-meta,.walk-trip-meta) img:first-child{width:20px;height:20px;}
+  .walk-trip-meta img:first-child{width:auto;height:17px;}
   .tesla-trip-meta .soc-icon{margin-left:2px;}
-  .tesla-trip-meta strong{color:var(--text);font-weight:600;}
+  :is(.tesla-trip-meta,.walk-trip-meta) strong{color:var(--text);font-weight:600;}
   .tesla-trip-meta.is-charging{flex-wrap:wrap;}
   .tesla-trip-meta .charge-soc{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
   .act-turo .tesla-trip-meta{margin-top:0;margin-left:8px;}
@@ -4790,6 +4796,66 @@ customElements.define('loop-loader', LoopLoader);
       recalcSpendTable(targetTable);
     }
   }
+  /* Walking legs get the pedestrian twin of the Tesla badge. Only legs that
+     go from one place to another are listed: a stroll around a pedestrian
+     mall or a promenade is the activity itself, not transit, and hops of
+     three minutes or less are noise. Minutes are the itinerary's own mapped
+     walking estimates, already stated in the notes; the distance beside them
+     is derived from those at an easy ~4.8 km/h (80 m a minute) with four of
+     us, so the two figures can never drift apart. */
+  const WALK_METRES_PER_MINUTE = 80;
+  function renderWalkReferences() {
+    const walkIcon = 'assets/nyc-miami-2026/icons/walk.svg';
+    const legs = [
+      ['Walk to Union Square', 20],
+      ['Birthday dinner · Shanghai 21', 20],
+      ['Walk to Canal St station', 5],
+      ["Breakfast · Zucker's Bagels", 6],
+      ['Fearless Girl', 8],
+      ['Walk to the 9/11 Memorial', 10],
+      ['Walk to Brooklyn Bridge', 20],
+      ['Little Island · Pier 55', 10],
+      // The High Line itself: Gansevoort St up to 30th St, walked slowly.
+      ['High Line · Gansevoort St entrance', 30],
+      ['Walk up Fifth Ave · Rockefeller Center Christmas tree', 10],
+      ['Apple Fifth Avenue · The glass cube', 9],
+      ['Walk up Hudson St into the West Village', 12],
+      ['Stonewall Inn · Christopher Park', 4],
+      ['Washington Square Park', 15],
+      ['Dominique Ansel Bakery', 10],
+      ['Walk back to Arlo SoHo · Collect bags', 5],
+      ['New York Public Library', 10],
+      ['Apple Grand Central', 6],
+      ['Walk back to Row NYC · Drop shopping bags', 15],
+      ['Walk out through the park · Exit at 59th St', 18],
+      ['Walk to Nobu 57', 10],
+      ['Walk back to Row NYC through Midtown at night', 10],
+      ['Collect luggage · Walk to Penn Station', 10]
+    ];
+    const walkStart = document.querySelector('.day-card[data-day-key="d2"] .day-card-body');
+    if (walkStart && !walkStart.querySelector('[data-walk-reference]')) {
+      const note = document.createElement('div');
+      note.className = 'notice notice-info';
+      note.dataset.walkReference = '1';
+      note.innerHTML = '<strong>Walking quick reference.</strong> Badges mark the legs we cover on foot and show the walk itself, not the slot it sits in: the grey duration chips between rows are the scheduled gap, which also holds however long we linger at the stop before setting off. Minutes are the mapped estimates already given in the notes; distance is derived from them at an easy ~4.8 km/h, the pace four of us actually keep on a pavement in winter. Legs of three minutes or less, and strolls that are the activity rather than the transit (Lincoln Road, the Brooklyn Heights Promenade), are left unbadged.';
+      walkStart.prepend(note);
+    }
+    document.querySelectorAll('.activity-row').forEach(row => {
+      if (row.querySelector('.walk-trip-meta')) return;
+      // A row already carrying a drive badge is a drive, whatever its name says.
+      if (row.querySelector('.tesla-trip-meta')) return;
+      const name = row.querySelector('.act-name')?.textContent.trim();
+      const leg = legs.filter(([label]) => name?.includes(label)).sort((a, b) => b[0].length - a[0].length)[0];
+      if (!leg) return;
+      const minutes = leg[1];
+      const kilometres = (minutes * WALK_METRES_PER_MINUTE / 1000).toFixed(1);
+      const meta = document.createElement('div');
+      meta.className = 'walk-trip-meta';
+      meta.setAttribute('aria-label', `On foot: about ${kilometres} kilometres, roughly ${minutes} minutes' walk`);
+      meta.innerHTML = `<img src="${walkIcon}" alt="On foot"><strong>${kilometres} km</strong><span>·</span><strong>~${minutes} min</strong>`;
+      row.querySelector('.act-body')?.appendChild(meta);
+    });
+  }
   function renderTeslaTravelReferences() {
     const teslaIcon = 'assets/nyc-miami-2026/icons/tesla.svg';
     const batteryIcon = 'assets/nyc-miami-2026/icons/battery.svg';
@@ -5064,6 +5130,7 @@ customElements.define('loop-loader', LoopLoader);
     moveAventuraChargeToRecoveryMorning();
     moveFinalTopUpToDayTenMorning();
     renderTeslaTravelReferences();
+    renderWalkReferences();
     await applySavedEdits();
     applySeptemberQA();
     renderAirbnbLinks();
@@ -5684,6 +5751,7 @@ customElements.define('loop-loader', LoopLoader);
     const ratings = taEl && typeof TRIPADVISOR !== 'undefined'
       ? taEl.dataset.ta.split(',').map(k => TRIPADVISOR[k.trim()]).filter(d => d && d.score != null) : [];
     const teslaMeta = row.querySelector('.tesla-trip-meta');
+    const walkMeta = row.querySelector('.walk-trip-meta');
     return {
       name, title: parts[0], subtitle: parts.slice(1).join(' · ').replace(/^\p{Ll}/u, c => c.toUpperCase()),
       time: txt(row.querySelector('.time-col')),
@@ -5696,6 +5764,7 @@ customElements.define('loop-loader', LoopLoader);
       stay: row.querySelector('.act-stay') && typeof AIRBNB_STAY !== 'undefined' ? AIRBNB_STAY : null,
       turo: row.querySelector('.act-turo') && typeof TURO_RATING !== 'undefined' ? TURO_RATING : null,
       teslaMeta: teslaMeta ? teslaMeta.outerHTML : '',
+      walkMeta: walkMeta ? walkMeta.outerHTML : '',
       flight: row.querySelector('.flight-trigger')
     };
   }
@@ -6023,6 +6092,7 @@ customElements.define('loop-loader', LoopLoader);
         + stayHtml(s.stay)
         + turoHtml(s.turo)
         + teslaMetaHtml(s.teslaMeta)
+        + teslaMetaHtml(s.walkMeta)
         + creditHtml(image.sharp || image.src)
         + (s.flight ? '<button type="button" class="cv-action" data-act="flight">' + ICON.plane + 'View flight details</button>' : '')
         // Wide layouts only (CSS): stands in for the photo's thumbnail rail.
