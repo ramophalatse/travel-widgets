@@ -3187,6 +3187,15 @@ customElements.define('loop-loader', LoopLoader);
     else if (src) hint.textContent = 'Drop image to replace';
     else hint.innerHTML = '+ Drop image';
   }
+  /* The card zones are built from `window.cardPhotoFor`, which a later script
+     block defines. When the saved-edits fetch resolves from cache the init pass
+     can finish before that block has run, and every zone is then built reading
+     an empty photo, so a row with a card image still shows "+ Drop image".
+     That block calls this once it is ready; before then it is a no-op. */
+  function refreshAllCardPhotoControls() {
+    document.querySelectorAll('.card-photo').forEach(refreshCardPhotoControl);
+  }
+  window.refreshAllCardPhotoControls = refreshAllCardPhotoControls;
   function ensureCardPhotoControls() {
     document.querySelectorAll('.leg-panel .activity-row').forEach(row => {
       if (row.querySelector('.card-photo')) return;
@@ -5719,6 +5728,8 @@ customElements.define('loop-loader', LoopLoader);
   const isWarm = src => !!(warmed.get(src) || {}).ready;
 
   window.cardPhotoFor = row => sharpFor(row);
+  // Card zones built before this block existed read as empty; refresh them now.
+  if (typeof window.refreshAllCardPhotoControls === 'function') window.refreshAllCardPhotoControls();
 
   function itemImage(item) {
     const row = item.type === 'stop' ? item.row
