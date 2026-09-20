@@ -183,7 +183,7 @@
   .leg-hero-sub{display:flex;flex-wrap:wrap;align-items:center;gap:5px 18px;font-size:13px;opacity:0.85;margin-top:7px;font-weight:300;}
   .leg-hero-sub .meta-item{display:inline-flex;align-items:center;gap:7px;}
   .leg-hero-sub .meta-ico{width:16px;height:16px;flex:none;fill:currentColor;opacity:0.72;}
-  .act-rating{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:7px;font-size:11px;color:var(--text2);}
+  .act-rating{display:inline-flex;vertical-align:middle;max-width:100%;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:7px;font-size:11px;color:var(--text2);}
   .act-rating:empty{display:none;}
   .ta-pill{display:inline-flex;align-items:center;gap:7px;padding:3px 9px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);}
   .ta-score{font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:0.01em;color:var(--text);}
@@ -203,7 +203,7 @@
   .act-stay,.act-turo{display:inline-flex;align-items:center;vertical-align:middle;margin-top:7px;font-size:11px;}
   /* Trailing rather than leading gap, so a badge pushed onto a second line on
      a narrow screen still starts flush with the one above it. */
-  .act-body>.act-stay,.act-body>.act-turo,.act-body>:is(.tesla-trip-meta,.walk-trip-meta){margin-right:8px;}
+  .act-body>.act-stay,.act-body>.act-turo,.act-body>.act-rating,.act-body>:is(.tesla-trip-meta,.walk-trip-meta){margin-right:8px;}
   .stay-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--airbnb) 38%,transparent);background:color-mix(in srgb,var(--airbnb) 7%,transparent);color:var(--airbnb-text);text-decoration:none;font-weight:600;transition:background 0.15s,border-color 0.15s;}
   .stay-pill:hover,.stay-pill:focus-visible{background:color-mix(in srgb,var(--airbnb) 14%,transparent);border-color:var(--airbnb);}
   .stay-pill svg{width:12px;height:12px;flex:none;fill:var(--airbnb);}
@@ -309,7 +309,7 @@
   :is(.tesla-trip-meta,.walk-trip-meta) img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
   :is(.tesla-trip-meta,.walk-trip-meta) img:first-child{width:20px;height:20px;}
   .walk-trip-meta img:first-child{width:auto;height:17px;}
-  .tesla-trip-meta .soc-icon{margin-left:2px;}
+  :is(.tesla-trip-meta .soc-icon,.walk-trip-meta .walk-time-icon){margin-left:2px;}
   :is(.tesla-trip-meta,.walk-trip-meta) strong{color:var(--text);font-weight:600;}
   .tesla-trip-meta.is-charging{flex-wrap:wrap;}
   .tesla-trip-meta .charge-soc{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
@@ -4806,6 +4806,7 @@ customElements.define('loop-loader', LoopLoader);
   const WALK_METRES_PER_MINUTE = 80;
   function renderWalkReferences() {
     const walkIcon = 'assets/nyc-miami-2026/icons/walk.svg';
+    const timerIcon = 'assets/nyc-miami-2026/icons/timer.svg';
     const legs = [
       ['Walk to Union Square', 20],
       ['Birthday dinner · Shanghai 21', 20],
@@ -4852,8 +4853,11 @@ customElements.define('loop-loader', LoopLoader);
       const meta = document.createElement('div');
       meta.className = 'walk-trip-meta';
       meta.setAttribute('aria-label', `On foot: about ${kilometres} kilometres, roughly ${minutes} minutes' walk`);
-      meta.innerHTML = `<img src="${walkIcon}" alt="On foot"><strong>${kilometres} km</strong><span>·</span><strong>~${minutes} min</strong>`;
-      row.querySelector('.act-body')?.appendChild(meta);
+      meta.innerHTML = `<img src="${walkIcon}" alt="On foot"><strong>${kilometres} km</strong><span>·</span><img class="walk-time-icon" src="${timerIcon}" alt="walking time"><strong>~${minutes} min</strong>`;
+      const body = row.querySelector('.act-body');
+      // Above any rating, and inline with it: the leg comes before the verdict.
+      const rating = body?.querySelector('.act-rating');
+      if (rating) rating.before(meta); else body?.appendChild(meta);
     });
   }
   function renderTeslaTravelReferences() {

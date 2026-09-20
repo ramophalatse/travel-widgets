@@ -1,6 +1,6 @@
 {
-  "revision": "2026-09-20-192",
-  "bytes": 60408747,
+  "revision": "2026-09-20-193",
+  "bytes": 60409689,
   "files": [
     "cape-town-itinerary.html",
     "europe-itinerary.html",
@@ -109,6 +109,7 @@
     "assets/nyc-miami-2026/hero-nyc2.jpg",
     "assets/nyc-miami-2026/icons/battery.svg",
     "assets/nyc-miami-2026/icons/tesla.svg",
+    "assets/nyc-miami-2026/icons/timer.svg",
     "assets/nyc-miami-2026/icons/walk.svg",
     "assets/nyc-miami-2026/new-york.jpg",
     "assets/nyc-miami-2026/thumb-911.jpg",

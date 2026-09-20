@@ -15,7 +15,7 @@
    it keeps its own snapshot in IndexedDB, where it can be read and merged
    rather than replayed blindly out of an HTTP cache. */
 
-const VERSION = 'v7';
+const VERSION = 'v8';
 const SHELL = 'ti-shell-' + VERSION;
 const MEDIA = 'ti-media-' + VERSION;
 const SCOPE = new URL(self.registration.scope);
@@ -27,6 +27,7 @@ const SHELL_URLS = [
   'assets/nyc-miami-2026/icons/tesla.svg',
   'assets/nyc-miami-2026/icons/battery.svg',
   'assets/nyc-miami-2026/icons/walk.svg',
+  'assets/nyc-miami-2026/icons/timer.svg',
   'https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Hanken+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap'
 ].map(u => new URL(u, SCOPE).href);
 
