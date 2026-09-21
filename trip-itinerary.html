@@ -313,7 +313,7 @@
   :is(.tesla-trip-meta,.walk-trip-meta) strong{color:var(--text);font-weight:600;}
   .tesla-trip-meta.is-charging{flex-wrap:wrap;}
   .tesla-trip-meta .charge-soc{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
-  .act-turo .tesla-trip-meta{margin-top:0;margin-left:8px;}
+  .act-turo .tesla-trip-meta{margin-top:0;margin-right:8px;}
   /* Note rows are stored per activity row as one JSON value, the way the day
      budget tables are, so adding or deleting one touches nothing else. */
   .act-fineprint{display:block;margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--text3);}
@@ -4855,11 +4855,14 @@ customElements.define('loop-loader', LoopLoader);
       meta.className = 'walk-trip-meta';
       meta.setAttribute('aria-label', `On foot: about ${kilometres} kilometres, roughly ${minutes} minutes' walk`);
       meta.innerHTML = `<img src="${walkIcon}" alt="On foot"><strong>${kilometres} km</strong><span>·</span><img class="walk-time-icon" src="${timerIcon}" alt="walking time"><strong>~${minutes} min</strong>`;
-      const body = row.querySelector('.act-body');
-      // Above any rating, and inline with it: the leg comes before the verdict.
-      const rating = body?.querySelector('.act-rating');
-      if (rating) rating.before(meta); else body?.appendChild(meta);
+      placeTravelBadge(row.querySelector('.act-body'), meta);
     });
+  }
+  /* The leg comes before the verdict: a distance badge sits ahead of any
+     Tripadvisor, Airbnb or Turo rating in the same row, and inline with it. */
+  function placeTravelBadge(host, meta) {
+    const rating = host && Array.from(host.children).find(c => c.matches('.act-rating,.act-stay,.act-turo,.stay-pill'));
+    if (rating) rating.before(meta); else host?.appendChild(meta);
   }
   function renderTeslaTravelReferences() {
     const teslaIcon = 'assets/nyc-miami-2026/icons/tesla.svg';
@@ -4922,7 +4925,7 @@ customElements.define('loop-loader', LoopLoader);
         meta.innerHTML = `<img src="${teslaIcon}" alt="Tesla"><strong>~${kilometres} km</strong><span>·</span><span class="charge-soc"><img class="soc-icon" src="${batteryIcon}" alt="battery"><strong>Arrive ~${soc}%</strong><span>→</span><strong>Target ${targetSoc}%</strong></span>`;
       }
       const target = kilometres == null ? row.querySelector('.act-turo') : row.querySelector('.act-body');
-      target?.appendChild(meta);
+      placeTravelBadge(target, meta);
     });
   }
   // Correct known stale copy after hydration without writing to the edit store.
@@ -6094,11 +6097,11 @@ customElements.define('loop-loader', LoopLoader);
       sheet = (facts ? '<div class="cv-facts">' + facts + '</div>' : '')
         + (s.notes.length ? '<div class="cv-section-label">The plan</div>' + s.notes.map(noteHtml).join('') : '')
         + (s.fine.length ? '<ul class="cv-fine">' + s.fine.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>' : '')
+        + teslaMetaHtml(s.teslaMeta)
+        + teslaMetaHtml(s.walkMeta)
         + reviewsHtml(s.ratings)
         + stayHtml(s.stay)
         + turoHtml(s.turo)
-        + teslaMetaHtml(s.teslaMeta)
-        + teslaMetaHtml(s.walkMeta)
         + creditHtml(image.sharp || image.src)
         + (s.flight ? '<button type="button" class="cv-action" data-act="flight">' + ICON.plane + 'View flight details</button>' : '')
         // Wide layouts only (CSS): stands in for the photo's thumbnail rail.
