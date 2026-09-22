@@ -1224,7 +1224,7 @@
     <div class="meta-pill"><span class="dot"></span>Dec 21, 2026 – Jan 15, 2027</div>
     <div class="meta-pill"><span class="dot"></span>Etihad via Abu Dhabi</div>
     <div class="meta-pill"><span class="dot"></span>Norwegian Aqua · 7 nights</div>
-    <div class="meta-pill"><span class="dot"></span>R487,591 total</div>
+    <div class="meta-pill"><span class="dot"></span>R498,258 total</div>
   </div>
 </header>
 
@@ -1871,7 +1871,7 @@
     </div></div><div class="leg-panel" id="panel-budget"><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Trip Cost Summary</div></div>
   <table class="summary-table" data-budget-key="summary">
-    <tr><td>✈️ Flights (4 passengers · all legs)</td><td>R104,333</td></tr>
+    <tr><td>✈️ Flights (4 passengers · all legs)</td><td>R115,000</td></tr>
     <tr><td>🏨 Accommodation (all stays)</td><td>R244,142</td></tr>
     <tr><td>🚢 NCL Free at Sea Plus (incl. gratuities)</td><td>R24,051</td></tr>
     <tr><td>💵 Daily spending (17 days · R5,000/day)</td><td>R85,000</td></tr>
@@ -1880,7 +1880,7 @@
     <tr><td>📶 Prepaid data eSIM · Holafly 8 days</td><td>R540</td></tr>
     <tr><td>🎓 Unam's allowance</td><td>R5,000</td></tr>
     <tr class="deduction"><td>↩️ Tshiamo's contribution (flight)</td><td>−R15,000</td></tr>
-    <tr class="total"><td>Total</td><td>R487,591</td></tr>
+    <tr class="total"><td>Total</td><td>R498,258</td></tr>
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Accommodation Breakdown</div></div>
@@ -1903,7 +1903,7 @@
     <tr><td>Agoda SUV · JFK T4 → Arlo SoHo · Dec 22</td><td>R2,398 (~$132)</td></tr>
     <tr><td>Blacklane · Arlo SoHo → LGA · Dec 24</td><td>R1,819 (~$99.97)</td></tr>
     <tr><td>Turo Tesla Model Y · Dec 24 – Jan 2 (9 days, standard protection, prepaid EV recharge)</td><td>R19,986 (~$1,098)</td></tr>
-    <tr class="total"><td>Total flights & key transport</td><td>R104,333 + R18,989</td></tr>
+    <tr class="total"><td>Total flights & key transport</td><td>R115,000 + R18,989</td></tr>
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Cruise Excursions (pre-paid via NCL)</div></div>
@@ -5100,7 +5100,7 @@ customElements.define('loop-loader', LoopLoader);
     const flights = document.querySelector('[data-budget-key="flights-transfers"]');
     if (budgetRows(flights).filter(r => r.cells[1].textContent === 'R15,349 (R3,837pp)').length === 4) {
       budgetRows(flights).filter(r => /^EY /.test(r.cells[0].textContent)).forEach(r => { r.cells[1].textContent = 'Included in flights'; });
-      flights.querySelector('tr.total').before(makeBudgetRow('All six flight sectors · four passengers · budget allocation', 'R104,333', false, false));
+      flights.querySelector('tr.total').before(makeBudgetRow('All six flight sectors · four passengers · budget allocation', 'R115,000', false, false));
     }
     const excursions = document.querySelector('[data-budget-key="excursions"]');
     const excRows = budgetRows(excursions);
