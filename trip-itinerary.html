@@ -5041,12 +5041,11 @@ customElements.define('loop-loader', LoopLoader);
 
     replace(day('d10'), 'VIP Open Bar tickets', 'Family-friendly tickets · price to confirm');
     replace(day('d10'), 'Family-friendly tickets · price to confirm x4 (~$175pp est.)', 'Family NYE tickets · provisional allowance, price unconfirmed');
-    replace(day('d10'), 'VIP Open Bar is the premium experience.', 'The advertised VIP Open Bar area is 21+, so it is unsuitable for the whole family. Confirm an all-ages or Family VIP option for 31 December 2026.');
     field('d10', 'Live performances', '.act-note', "Marshmello, Nicky Jam, Flo Rida, Gente de Zona, Toño Rosario: one of the strongest NYE lineups in the country.", 'Line-up and show times for 31 December 2026 are still to be confirmed. The advertised Countdown Miami 2026 line-up belongs to the previous New Year celebration.');
     replace(day('d10'), 'Agree a midnight pickup time and location now.', 'Agree a 12:30am pickup on 1 January, after the fireworks, outside the road-closure zone.');
     replace(day('d10'), 'Doors open at 5pm: arriving at 7:30pm gives you a great position without standing for hours.', '7:30pm is a planning target. Confirm the 2026/27 event, entry rules, opening time and road closures before booking.');
     replace(day('d10'), 'VIP Open Bar tickets x4 (~$175pp est.)', 'Family NYE tickets · provisional allowance, price unconfirmed');
-    note('d10', 'Keep the existing R12,740 ticket allowance as a placeholder only; it is not a family-ticket quote. Do not buy four 21+ Open Bar tickets.');
+    day('d10').querySelectorAll('.notice').forEach((notice) => notice.remove());
     replace(day('d11'), 'Haulover Beach is 5 minutes away and requires zero effort: a short walk if energy allows.', 'Haulover Beach requires a drive across the Intracoastal and parking. Check the route before leaving; it is not a five-minute walk from the Airbnb.');
 
     replace(day('d13'), 'to skip the queue.', 'and follow the assigned terminal arrival time.');
