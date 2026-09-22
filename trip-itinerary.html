@@ -1224,7 +1224,7 @@
     <div class="meta-pill"><span class="dot"></span>Dec 21, 2026 – Jan 15, 2027</div>
     <div class="meta-pill"><span class="dot"></span>Etihad via Abu Dhabi</div>
     <div class="meta-pill"><span class="dot"></span>Norwegian Aqua · 7 nights</div>
-    <div class="meta-pill"><span class="dot"></span>R498,258 total</div>
+    <div class="meta-pill"><span class="dot"></span>R501,600 total</div>
   </div>
 </header>
 
@@ -1872,7 +1872,7 @@
   <div class="summary-header"><div class="summary-title">Trip Cost Summary</div></div>
   <table class="summary-table" data-budget-key="summary">
     <tr><td>✈️ Flights (4 passengers · all legs)</td><td>R115,000</td></tr>
-    <tr><td>🏨 Accommodation (all stays)</td><td>R244,142</td></tr>
+    <tr><td>🏨 Accommodation (all stays)</td><td>R247,484</td></tr>
     <tr><td>🚢 NCL Free at Sea Plus (incl. gratuities)</td><td>R24,051</td></tr>
     <tr><td>💵 Daily spending (17 days · R5,000/day)</td><td>R85,000</td></tr>
     <tr><td>🚗 Transport (Turo Tesla + transfers)</td><td>R22,934</td></tr>
@@ -1880,7 +1880,7 @@
     <tr><td>📶 Prepaid data eSIM · Holafly 8 days</td><td>R540</td></tr>
     <tr><td>🎓 Unam's allowance</td><td>R5,000</td></tr>
     <tr class="deduction"><td>↩️ Tshiamo's contribution (flight)</td><td>−R15,000</td></tr>
-    <tr class="total"><td>Total</td><td>R498,258</td></tr>
+    <tr class="total"><td>Total</td><td>R501,600</td></tr>
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Accommodation Breakdown</div></div>
@@ -1888,8 +1888,8 @@
     <tr><td>Arlo SoHo · Dec 22–24 (3 rooms, 2 nights)</td><td>R36,553</td></tr>
     <tr><td>Airbnb North Miami Beach · Dec 24 – Jan 3 (10 nights)</td><td>R55,817</td></tr>
     <tr><td>Norwegian Aqua · Jan 3–10 (3 cabins, 7 nights)</td><td>R113,752</td></tr>
-    <tr><td>Row NYC Hotel · Jan 10–13 (3 rooms, 3 nights, B&B)</td><td>R38,019</td></tr>
-    <tr class="total"><td>Total accommodation</td><td>R244,142</td></tr>
+    <tr><td>Row NYC Hotel · Jan 10–13 (3 rooms, 3 nights, B&B)</td><td>R41,362</td></tr>
+    <tr class="total"><td>Total accommodation</td><td>R247,484</td></tr>
   </table>
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Flights & Transfers</div></div>
@@ -5092,9 +5092,6 @@ customElements.define('loop-loader', LoopLoader);
 
     // Preserve quoted/paid figures, but remove false arithmetic precision.
     const summary = document.querySelector('[data-budget-key="summary"]');
-    const accommodation = document.querySelector('[data-budget-key="accommodation"]');
-    const accRow = budgetRows(summary).find(r => /Accommodation/.test(r.cells[0].textContent));
-    if (accRow?.cells[1].textContent === 'R244,142' && accommodation.querySelector('tr.total td:last-child')?.textContent === 'R244,141') accRow.cells[1].textContent = 'R244,141';
     const transportRow = budgetRows(summary).find(r => /Transport \(Turo/.test(r.cells[0].textContent));
     if (transportRow?.cells[1].textContent === 'R22,934') transportRow.cells[1].textContent = 'R24,203';
     const flights = document.querySelector('[data-budget-key="flights-transfers"]');
