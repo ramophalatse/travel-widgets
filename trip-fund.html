@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Trip fund</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Sora:ital,wght@0,700;0,800;1,800&display=swap" rel="stylesheet">
+<script>
+  /* Set the theme before first paint so the page never flashes the wrong one. */
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('ramo-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
+  /* Ramo brand CORE tokens (ramo-colour.json v1.0). */
+  :root {
+    color-scheme: light;
+    --bg: #f7f6f1; --bg-deep: #edebe5; --surface: #fdfcf9; --card: #ffffff; --elevated: #f1efeb;
+    --text: #1f232a; --muted: #5f646b; --faint: #8b8f97;
+    --border: rgba(20,22,28,0.10); --border-strong: rgba(20,22,28,0.20);
+    --accent: #059669; --accent-fg: #ffffff; --accent-soft: #0596691a;
+    --warn: #d97706; --warn-soft: #d977061f;
+    --shadow: 0 1px 2px rgba(20,22,28,.05), 0 12px 40px -16px rgba(20,22,28,.22);
+    --radius: 18px;
+    --ease: cubic-bezier(.34, 1.56, .64, 1);
+    --display: 'Sora', system-ui, sans-serif;
+    --sans: 'Hanken Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0a0f14; --bg-deep: #05080c; --surface: #11151b; --card: #151a20; --elevated: #20262c;
+    --text: #f1f4f7; --muted: #a1a9b1; --faint: #697179;
+    --border: rgba(255,255,255,0.085); --border-strong: rgba(255,255,255,0.17);
+    --accent: #10b981; --accent-fg: #06281d; --accent-soft: #10b98122;
+    --warn: #fbbf24; --warn-soft: #fbbf2422;
+    --shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,0,0,.7);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 400 15px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 16px 64px; }
+
+  /* Masthead */
+  .masthead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+  .eyebrow {
+    font: 500 11px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  }
+  h1 { font: 800 clamp(34px, 6vw, 52px)/1.05 var(--display); letter-spacing: -.03em; margin: 8px 0 10px; text-wrap: balance; }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0; }
+  .theme-toggle {
+    flex: none; width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border-strong); background: var(--card); color: var(--text);
+    display: grid; place-items: center; cursor: pointer;
+    transition: transform .25s var(--ease);
+  }
+  .theme-toggle:hover { transform: scale(1.08); }
+  .theme-toggle:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .theme-toggle svg { width: 16px; height: 16px; }
+  .icon-moon { display: none; }
+  :root[data-theme="dark"] .icon-sun { display: none; }
+  :root[data-theme="dark"] .icon-moon { display: block; }
+
+  /* Cards, with the ghost-text watermark behind the content */
+  .card {
+    position: relative; overflow: hidden;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 22px; margin-bottom: 18px;
+    animation: rise .5s var(--ease) both;
+  }
+  .card > * { position: relative; z-index: 1; }
+  .card > .ghost, .card > .ghost-glow { position: absolute; z-index: 0; pointer-events: none; user-select: none; }
+  .ghost {
+    top: -6px; right: 14px; font: italic 800 clamp(40px, 9vw, 84px)/1 var(--display); letter-spacing: -.04em;
+    white-space: nowrap; color: transparent; opacity: .5;
+    background-image: linear-gradient(90deg, transparent 0%, var(--faint) 78%);
+    -webkit-background-clip: text; background-clip: text;
+  }
+  .ghost-glow {
+    top: -60px; right: -60px; width: 150px; height: 150px; border-radius: 50%; filter: blur(10px);
+    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 18%, transparent), transparent 70%);
+  }
+  h2 { font: 800 21px/1.2 var(--display); letter-spacing: -.02em; margin: 0 0 4px; }
+  .card-sub { color: var(--muted); margin: 0 0 16px; max-width: 66ch; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* Headline figures */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+  .stat { margin: 0; padding: 18px 20px; }
+  .stat-value { font: 600 clamp(22px, 3.4vw, 30px)/1.15 var(--mono); font-variant-numeric: tabular-nums; margin-top: 6px; }
+  .stat-note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .meter { height: 6px; border-radius: 99px; background: var(--warn-soft); overflow: hidden; margin-top: 14px; }
+  .meter > i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font: 500 11px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+    text-align: left; padding: 0 12px 10px 0; border-bottom: 1px solid var(--border-strong); white-space: nowrap;
+  }
+  td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th.num, td.num { text-align: right; }
+  td.num { font: 500 14px/1.6 var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.item { font-weight: 600; min-width: 190px; }
+  td.item small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+  td.when { color: var(--muted); white-space: nowrap; }
+  td.notes, th.notes { padding-right: 0; width: 26%; min-width: 200px; }
+  .gap-pill { display: inline-block; padding: 1px 8px; border-radius: 99px; background: var(--warn-soft); }
+  .zero { color: var(--faint); }
+  :root[data-theme="light"] .zero { color: var(--muted); }
+  tfoot td { border-bottom: 0; border-top: 1px solid var(--border-strong); font-weight: 700; padding-top: 14px; }
+  tfoot td.num { font-weight: 600; }
+
+  textarea {
+    display: block; width: 100%; min-height: 40px; resize: none; overflow: hidden;
+    font: 400 14px/1.5 var(--sans); color: var(--text);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px;
+    transition: border-color .2s;
+  }
+  textarea::placeholder { color: var(--muted); opacity: .75; }
+  textarea:hover { border-color: var(--border-strong); }
+
+  .footnotes { margin: 16px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; max-width: 78ch; }
+  .footnotes li { margin-bottom: 6px; }
+  .footnotes b { color: var(--text); font-weight: 600; }
+  .page-note { color: var(--muted); font-size: 13px; margin-top: 22px; max-width: 78ch; }
+
+  /* Save feedback is a passive pill, never a dialog. */
+  #save-status {
+    position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 16px); opacity: 0;
+    font: 500 12px/1 var(--mono); letter-spacing: .06em; padding: 10px 14px; border-radius: 99px;
+    background: var(--text); color: var(--bg); pointer-events: none;
+    transition: opacity .2s, transform .3s var(--ease);
+  }
+  #save-status[data-show="1"] { opacity: 1; transform: translate(-50%, 0); }
+  #save-status[data-tone="error"] { background: #dc2626; color: #fff; }
+
+  /* Phone: each row becomes a labelled block so nothing scrolls sideways. */
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: 1fr; }
+    .card { padding: 18px 16px; }
+    thead { display: none; }
+    table, tbody, tfoot, tr, td { display: block; width: 100%; }
+    tr { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    tfoot tr { border-bottom: 0; border-top: 1px solid var(--border-strong); }
+    td, tfoot td { border: 0; padding: 2px 0; min-width: 0; }
+    td.num, td.when { display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+    td.num::before, td.when::before {
+      content: attr(data-label); font: 500 11px/2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    }
+    td.notes { width: 100%; padding-top: 8px; }
+    td:empty { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">NYC, Miami and Norwegian Aqua · 21 Dec 2026 to 15 Jan 2027</div>
+      <h1>Trip fund</h1>
+      <p class="lede">What is still to pay for the trip, what the fund covers, and what is not yet funded. Figures as at 8 October 2026, at a planning rate of R16.50 to the dollar.</p>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch between light and dark theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+
+  <section class="stats" aria-label="Headline figures">
+    <div class="card stat">
+      <div class="ghost-glow"></div>
+      <div class="eyebrow">Still to pay</div>
+      <div class="stat-value" id="stat-due"></div>
+      <div class="stat-note">Cruise and flights are already paid</div>
+    </div>
+    <div class="card stat">
+      <div class="ghost-glow"></div>
+      <div class="eyebrow">Trip fund</div>
+      <div class="stat-value" id="stat-fund"></div>
+      <div class="stat-note">Covers the fixed bookings</div>
+    </div>
+    <div class="card stat">
+      <div class="ghost-glow"></div>
+      <div class="eyebrow">Not yet funded</div>
+      <div class="stat-value" id="stat-gap"></div>
+      <div class="meter" role="img" id="meter" aria-label=""><i id="meter-fill"></i></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="ghost" aria-hidden="true">Allocation</div><div class="ghost-glow"></div>
+    <h2>Where the trip fund goes</h2>
+    <p class="card-sub">Fixed bookings come first. The fund runs out partway through the excursions.</p>
+    <table id="alloc">
+      <thead><tr>
+        <th>Item</th><th class="num">Still to pay</th><th class="num">From trip fund</th><th class="num">Not yet funded</th><th>When</th><th class="notes">Notes</th>
+      </tr></thead>
+      <tbody></tbody>
+      <tfoot></tfoot>
+    </table>
+    <ul class="footnotes">
+      <li><b>Hotel fees and FX buffer:</b> the Arlo urban fee and the Row destination fee are paid at the property. This row also reprices both hotels at R16.50.</li>
+      <li><b>Excursions:</b> Damajagua at $190 x 4, Tortola at $90 x 4, and the Wave Runner at $219.</li>
+      <li><b>Daily spend:</b> R5,000 a day for the 15 days on land.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="ghost" aria-hidden="true">Gap</div><div class="ghost-glow"></div>
+    <h2>Closing the gap</h2>
+    <p class="card-sub">Shopping is the flexible line. R50,000 is the wish, not a commitment.</p>
+    <table id="gap">
+      <thead><tr>
+        <th>Source</th><th class="num">Amount</th><th class="notes">Notes</th>
+      </tr></thead>
+      <tbody></tbody>
+      <tfoot></tfoot>
+    </table>
+  </section>
+
+  <section class="card">
+    <div class="ghost" aria-hidden="true">Notes</div><div class="ghost-glow"></div>
+    <h2>Overall notes</h2>
+    <p class="card-sub">Context for the whole plan.</p>
+    <textarea data-note="overall" rows="3" placeholder="Add a note" aria-label="Overall notes"></textarea>
+  </section>
+
+  <p class="page-note">Notes save automatically and show for anyone who opens this page.</p>
+</div>
+
+<div id="save-status" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Figures ─────────────────────────────────────────────────────────── */
+  const ALLOCATION = [
+    { id: 'airbnb',     item: 'Miami Airbnb',                 sub: '24 Dec to 3 Jan',                     due: 55817, fund: 55817, when: '11 Dec' },
+    { id: 'arlo',       item: 'Arlo SoHo',                    sub: '3 rooms, 2 nights',                   due: 23598, fund: 23598, when: '15 Dec' },
+    { id: 'row',        item: 'Row NYC',                      sub: '3 rooms, 3 nights',                   due: 40598, fund: 40598, when: '5 and 10 Jan' },
+    { id: 'fees',       item: 'Hotel fees and FX buffer',     sub: 'Paid at check-in',                    due: 4527,  fund: 4527,  when: '22 Dec, 10 Jan' },
+    { id: 'transport',  item: 'Transport',                    sub: 'Turo Tesla, extension and charging',  due: 20182, fund: 20182, when: '17 Dec' },
+    { id: 'excursions', item: 'NCL excursions',               sub: '$1,339 across three ports',           due: 22094, fund: 5824,  when: 'October' },
+    { id: 'daily',      item: 'Daily spend',                  sub: '15 days at R5,000',                   due: 75000, fund: 0,     when: 'During the trip' },
+    { id: 'shopping',   item: 'Shopping',                     sub: 'Desirable, not firm',                 due: 50000, fund: 0,     when: 'During the trip' },
+    { id: 'allowance',  item: 'Unam’s allowance',        sub: '',                                    due: 5000,  fund: 0,     when: 'During the trip' },
+    { id: 'data',       item: 'Prepaid data',                 sub: '',                                    due: 540,   fund: 0,     when: 'December' }
+  ];
+  const GAP_SOURCES = [
+    { id: 'gap-variable', item: 'Normal variable budget, 19 Dec to 18 Jan', sub: 'Largely unspent at home while we are away', amount: 60000, approx: true },
+    { id: 'gap-tshiamo',  item: 'Tshiamo’s flight contribution',       sub: 'Not yet paid over',                          amount: 15000 }
+  ];
+
+  const sum = (rows, key) => rows.reduce((t, r) => t + r[key], 0);
+  const rand = n => 'R' + Math.round(n).toLocaleString('en-ZA').replace(/[  \s]/g, ',');
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+  const numCell = (label, value, opts = {}) => {
+    const td = el('td', 'num');
+    td.dataset.label = label;
+    const span = el('span', value === 0 ? 'zero' : (opts.pill ? 'gap-pill' : ''), (opts.approx ? 'about ' : '') + rand(value));
+    td.appendChild(span);
+    return td;
+  };
+  const itemCell = row => {
+    const td = el('td', 'item', row.item);
+    if (row.sub) td.appendChild(el('small', '', row.sub));
+    return td;
+  };
+  const noteCell = (id, label) => {
+    const td = el('td', 'notes');
+    const ta = el('textarea');
+    ta.rows = 1;
+    ta.dataset.note = id;
+    ta.placeholder = 'Add a note';
+    ta.setAttribute('aria-label', 'Note for ' + label);
+    td.appendChild(ta);
+    return td;
+  };
+
+  const totalDue = sum(ALLOCATION, 'due');
+  const totalFund = sum(ALLOCATION, 'fund');
+  const totalGap = totalDue - totalFund;
+
+  const allocBody = document.querySelector('#alloc tbody');
+  ALLOCATION.forEach(row => {
+    const tr = el('tr');
+    const when = el('td', 'when', row.when);
+    when.dataset.label = 'When';
+    tr.append(itemCell(row), numCell('Still to pay', row.due), numCell('From trip fund', row.fund),
+      numCell('Not yet funded', row.due - row.fund, { pill: true }), when, noteCell(row.id, row.item));
+    allocBody.appendChild(tr);
+  });
+  const allocFoot = el('tr');
+  allocFoot.append(el('td', 'item', 'Total'), numCell('Still to pay', totalDue), numCell('From trip fund', totalFund),
+    numCell('Not yet funded', totalGap, { pill: true }), el('td'), el('td'));
+  document.querySelector('#alloc tfoot').appendChild(allocFoot);
+
+  const gapBody = document.querySelector('#gap tbody');
+  const opening = el('tr');
+  opening.append(itemCell({ item: 'Not yet funded', sub: 'From the table above' }), numCell('Amount', totalGap), el('td'));
+  gapBody.appendChild(opening);
+  GAP_SOURCES.forEach(row => {
+    const tr = el('tr');
+    const cell = numCell('Amount', row.amount, { approx: row.approx });
+    cell.firstChild.textContent = '− ' + cell.firstChild.textContent;
+    tr.append(itemCell(row), cell, noteCell(row.id, row.item));
+    gapBody.appendChild(tr);
+  });
+  const uncovered = totalGap - sum(GAP_SOURCES, 'amount');
+  const gapFoot = el('tr');
+  gapFoot.append(el('td', 'item', 'Still uncovered'), numCell('Amount', uncovered, { pill: true, approx: true }), noteCell('gap-uncovered', 'Still uncovered'));
+  document.querySelector('#gap tfoot').appendChild(gapFoot);
+
+  document.getElementById('stat-due').textContent = rand(totalDue);
+  document.getElementById('stat-fund').textContent = rand(totalFund);
+  document.getElementById('stat-gap').textContent = rand(totalGap);
+  const pct = Math.round(totalFund / totalDue * 100);
+  document.getElementById('meter-fill').style.width = pct + '%';
+  document.getElementById('meter').setAttribute('aria-label', pct + '% of what is still to pay is funded');
+
+  /* ── Theme toggle (shared "ramo-theme" key across this origin) ───────── */
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('ramo-theme', next); } catch (e) {}
+  });
+
+  /* ── Notes: saved to the same Supabase edits table the itinerary uses ── */
+  const SUPABASE_URL = 'https://cwnlofcrstwxoemzyazm.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_YR2yvumMz2KJdYWv8-YmWw_twduUCXn';
+  const EDITS_TABLE = SUPABASE_URL + '/rest/v1/travel_itinerary_edits';
+  const EDIT_PAGE_ID = 'trip-fund';
+  const CACHE_KEY = 'trip-fund-notes';
+  const HEADERS = { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY };
+
+  const fields = [...document.querySelectorAll('textarea[data-note]')];
+  const autosize = ta => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 2 + 'px'; };
+  const readCache = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } catch (e) { return {}; } };
+  const writeCache = (id, value) => {
+    try { const c = readCache(); c[id] = value; localStorage.setItem(CACHE_KEY, JSON.stringify(c)); } catch (e) {}
+  };
+  const fill = notes => fields.forEach(ta => {
+    // Never overwrite a field the reader is typing in.
+    if (document.activeElement === ta || !(ta.dataset.note in notes)) return;
+    ta.value = notes[ta.dataset.note];
+    autosize(ta);
+  });
+
+  let statusTimer = null;
+  function showStatus(text, tone) {
+    const pill = document.getElementById('save-status');
+    pill.textContent = text;
+    pill.dataset.tone = tone;
+    pill.dataset.show = '1';
+    clearTimeout(statusTimer);
+    if (tone !== 'busy') statusTimer = setTimeout(() => { pill.dataset.show = '0'; }, tone === 'error' ? 5000 : 1400);
+  }
+
+  async function loadNotes() {
+    fill(readCache());
+    try {
+      const res = await fetch(EDITS_TABLE + '?page=eq.' + EDIT_PAGE_ID + '&select=eid,value', { headers: HEADERS });
+      if (!res.ok) throw new Error(await res.text());
+      const notes = {};
+      (await res.json()).forEach(r => { notes[r.eid] = r.value; });
+      fill(notes);
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(Object.assign(readCache(), notes))); } catch (e) {}
+    } catch (e) {
+      console.warn('[trip-fund] showing notes saved on this device', e);
+      showStatus('Offline: showing notes saved on this device', 'error');
+    }
+  }
+
+  async function saveNote(ta) {
+    const eid = ta.dataset.note, value = ta.value;
+    if (ta.dataset.saved === value) return;
+    writeCache(eid, value);
+    showStatus('Saving', 'busy');
+    try {
+      const res = await fetch(EDITS_TABLE + '?on_conflict=page,eid', {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' }, HEADERS),
+        body: JSON.stringify({ page: EDIT_PAGE_ID, eid, type: 'notes', value })
+      });
+      if (!res.ok) throw new Error(res.status + ' ' + await res.text());
+      ta.dataset.saved = value;
+      showStatus('Saved', 'ok');
+    } catch (e) {
+      console.error('[trip-fund] note not saved', eid, e);
+      showStatus('Not saved. Kept on this device, try again', 'error');
+    }
+  }
+
+  fields.forEach(ta => {
+    let timer = null;
+    ta.addEventListener('input', () => {
+      autosize(ta);
+      clearTimeout(timer);
+      timer = setTimeout(() => saveNote(ta), 900);
+    });
+    ta.addEventListener('blur', () => { clearTimeout(timer); saveNote(ta); });
+  });
+  window.addEventListener('resize', () => fields.forEach(autosize));
+  loadNotes().then(() => fields.forEach(ta => { ta.dataset.saved = ta.value; }));
+})();
+</script>
+</body>
+</html>
