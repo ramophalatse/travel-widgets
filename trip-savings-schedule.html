@@ -5,7 +5,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NYC & Miami — Trip Savings Schedule</title>
+<title>NYC &amp; Miami: Trip Savings Schedule</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&display=swap" rel="stylesheet">
 <style>
@@ -469,6 +469,16 @@
     .verdict.bad { background: #FFF0F0; }
   }
 
+  .context-note {
+    margin-top: 1rem;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+  }
+
+  .context-note a { color: var(--accent); }
+
   footer {
     margin-top: 2.5rem;
     padding-top: 1rem;
@@ -502,42 +512,42 @@
   <header>
     <div class="header-label">Family trip · Dec 2026 → Jan 2027</div>
     <h1>NYC &amp; Miami <em>savings schedule</em></h1>
-    <div class="header-meta">R77,983.20 flights paid · R8,500 NCL deposit paid · Starting April 2026</div>
+    <div class="header-meta">Flights paid · NCL Aqua cruise paid in full (balance R127,674 on 1 Oct) · R150,546 held in the trip fund · Restarted October 2026</div>
   </header>
 
   <div class="metrics">
     <div class="metric metric-editable" id="total-metric" title="Click to edit">
-      <div class="metric-label">Total budget</div>
+      <div class="metric-label">Still to pay</div>
       <div class="metric-value" id="total-display">
-        <span class="display-val" id="total-display-val">—</span>
+        <span class="display-val" id="total-display-val">·</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="total-input" value="379689" min="0" step="500" style="display:none">
+      <input type="number" id="total-input" value="297356" min="0" step="500" style="display:none">
       <div class="input-hint" id="total-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric metric-editable" id="paid-metric" title="Click to edit">
-      <div class="metric-label">Already paid/saved</div>
+      <div class="metric-label">Trip fund set aside</div>
       <div class="metric-value" id="paid-display">
-        <span class="display-val" id="paid-display-val">R73,500</span>
+        <span class="display-val" id="paid-display-val">R150,546</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="paid-input" value="73500" min="0" step="500" style="display:none">
+      <input type="number" id="paid-input" value="150546" min="0" step="500" style="display:none">
       <div class="input-hint" id="paid-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric">
       <div class="metric-label">Still to save</div>
-      <div class="metric-value accent" id="s-still">—</div>
+      <div class="metric-value accent" id="s-still">·</div>
     </div>
     <div class="metric">
       <div class="metric-label">Months to fly-out</div>
-      <div class="metric-value" id="s-months">—</div>
+      <div class="metric-value" id="s-months">·</div>
     </div>
   </div>
 
   <div class="control-row">
     <span class="control-label">Monthly savings</span>
-    <input type="range" id="monthly" min="5000" max="60000" step="1000" value="25000">
-    <span class="control-value" id="monthly-out">R25,000</span>
+    <input type="range" id="monthly" min="5000" max="60000" step="1000" value="37000">
+    <span class="control-value" id="monthly-out">R37,000</span>
   </div>
 
   <div class="table-wrap">
@@ -558,24 +568,32 @@
 
   <div class="verdict ok" id="verdict"></div>
 
+  <p class="context-note">Cruise and flights are already paid, so they no longer appear here. Daily spend, shopping and Unam&rsquo;s allowance are shown at fly-out because the money has to be ready before we leave; about R60,000 of it should come from the normal variable budget while we are away, plus R15,000 from Tshiamo. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
+
   <footer>
-    <span>Figures in ZAR · Based on trip budget as at March 2026</span>
-    <span id="footer-rate">—</span>
+    <span>Figures in ZAR · Remaining costs as at 13 October 2026 · Dollar items at R16.50</span>
+    <span id="footer-rate">·</span>
   </footer>
 
 </div>
 
 <script>
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
-const START = new Date(2026, 3, 1);
-const LS = 'nyc-miami-savings-v1';
+const START = new Date(2026, 9, 1);
+const FLYOUT = new Date(2026, 11, 21);
+const LS = 'nyc-miami-savings-v2';
 
 const PAYMENTS = [
-  { label: 'NCL cruise balance', amount: 129300, due: new Date(2026, 9, 5) },
+  { label: 'NCL shore excursions', amount: 22094, due: new Date(2026, 9, 31) },
   { label: 'Miami Airbnb', amount: 55817, due: new Date(2026, 11, 11) },
-  { label: 'NYC Leg 1 hotel', amount: 36553, due: new Date(2026, 11, 15) },
-  { label: 'NYC Leg 2 hotel', amount: 38019, due: new Date(2027, 0, 5) },
-  { label: 'Discretionary fund', amount: 120000, due: new Date(2027, 0, 31) },
+  { label: 'Arlo SoHo', amount: 23598, due: new Date(2026, 11, 15) },
+  { label: 'Turo Tesla, extension and charging', amount: 20182, due: new Date(2026, 11, 17) },
+  { label: 'Prepaid data', amount: 540, due: new Date(2026, 11, 18) },
+  { label: 'Daily spend, 15 days at R5,000', amount: 75000, due: new Date(2026, 11, 21) },
+  { label: 'Shopping', amount: 50000, due: new Date(2026, 11, 21) },
+  { label: 'Unam\u2019s allowance', amount: 5000, due: new Date(2026, 11, 21) },
+  { label: 'Hotel fees and FX buffer', amount: 4527, due: new Date(2026, 11, 22) },
+  { label: 'Row NYC', amount: 40598, due: new Date(2027, 0, 5) },
 ];
 
 const PAYMENTS_DEFAULT_TOTAL = PAYMENTS.reduce((s, p) => s + p.amount, 0);
@@ -645,14 +663,17 @@ function render() {
   if (document.getElementById('total-input').style.display === 'none') {
     document.getElementById('total-display-val').textContent = FMT(totalNeeded);
   }
+  if (document.getElementById('paid-input').style.display === 'none') {
+    document.getElementById('paid-display-val').textContent = FMT(already);
+  }
   document.getElementById('s-still').textContent = FMT(Math.max(0, totalNeeded - already));
-  document.getElementById('s-months').textContent = monthsBetween(START, new Date(2026, 11, 22));
+  document.getElementById('s-months').textContent = Math.max(0, monthsBetween(new Date(), FLYOUT));
   document.getElementById('footer-rate').textContent =
     'Monthly target: ' + FMT(monthly) + ' · ' + Math.round(monthly / 30).toLocaleString('en-ZA') + ' per day';
 
   const months = [];
   let cur = new Date(START);
-  const end = new Date(2027, 1, 1);
+  const end = new Date(2027, 0, 1);
   while (cur <= end) { months.push(new Date(cur)); cur.setMonth(cur.getMonth() + 1); }
 
   let balance = already;
@@ -705,7 +726,7 @@ function render() {
         <td>${monthLabel(m)}</td>
         <td class="r">${FMT(monthly)}</td>
         <td class="r">${FMT(balance)}</td>
-        <td class="r muted">—</td>
+        <td class="r muted">·</td>
         <td class="r">${FMT(balance)}</td>
         <td class="bar-cell">
           <div class="bar-wrap">
@@ -720,7 +741,7 @@ function render() {
   const verdict = document.getElementById('verdict');
   if (minBalance < 0) {
     verdict.className = 'verdict bad';
-    verdict.textContent = `⚠ Shortfall of ${FMT(Math.abs(minBalance))} — increase monthly savings or make a lump-sum top-up before the NCL deadline in October.`;
+    verdict.textContent = `⚠ Shortfall of ${FMT(Math.abs(minBalance))} : increase monthly savings or make a lump-sum top-up before the December payments.`;
   } else {
     verdict.className = 'verdict ok';
     verdict.textContent = `✓ At ${FMT(monthly)}/month all payments are fully covered. Tightest point leaves a buffer of ${FMT(minBalance)}.`;
