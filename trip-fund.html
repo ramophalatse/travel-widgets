@@ -216,7 +216,7 @@
     <ul class="footnotes">
       <li><b>Hotel fees and FX buffer:</b> the Arlo urban fee and the Row destination fee are paid at the property. This row also reprices both hotels at R16.50.</li>
       <li><b>Excursions:</b> Damajagua Falls and the Wave Runner remain options. The R22,094 allowance still includes Tortola pending a choice and verification of NCL prices, credits and the unpaid balance. It is not a confirmed invoice.</li>
-      <li><b>Daily spend:</b> the R75,000 allowance is unchanged for now. The itinerary counts 17 spending days rather than 15; meals, transport and activities still need reconciliation to avoid omissions and double counting.</li>
+      <li><b>Daily spend:</b> agreed at R75,000: 15 land days at R5,000, covering 22 December to 2 January (12 days) and 11 to 13 January (3 days). Onboard NCL Aqua spending is prepaid and budgeted at zero. No full daily allowance is added for embarkation on 3 January or disembarkation on 10 January; check their actual meals and transfers against existing allowances.</li>
       <li><b>Phones:</b> Pro Max 512GB R26,500.50 plus Duo 256GB R35,339.89, rounded to R61,840. Saved Miami tax-inclusive estimates at R16.52/USD, before bank fees, accessories and any SA customs charges. Buying in NYC changes the tax.</li>
       <li><b>Other discretionary spending:</b> R50,000 on top of the phones, separate from daily spend. The iPad mini and Watch Ultra are excluded from this trip fund estimate.</li>
     </ul>
@@ -233,6 +233,22 @@
       <tbody></tbody>
       <tfoot></tfoot>
     </table>
+  </section>
+
+  <section class="card">
+    <div class="ghost" aria-hidden="true">December</div><div class="ghost-glow"></div>
+    <h2>Funding before departure</h2>
+    <p class="card-sub">Three proposed funding dates remain: 19 October, 19 November and 19 December. Reserve the entire remaining trip estimate by 21 December, including January bookings. These are required contributions, not verified household surpluses.</p>
+    <table id="funding-targets">
+      <thead><tr><th>Scenario</th><th class="num">Additional funding</th><th class="num">Each of three dates</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <ul class="footnotes">
+      <li>The R60,000 offset is counted once, on 19 December, only in that scenario. It is not additional saving in October or November. Tshiamo's expected R15,000 is excluded from both scenarios.</li>
+      <li>The existing fund covers the provisional R22,094 excursions plus R100,137 of bookings and data due by 18 December, leaving R28,315. Keep the remaining hotel costs reserved for the trip.</li>
+      <li>If everything must be funded before 19 December, the R60,000 offset cannot help that earlier deadline: the two October and November contributions would need to total R208,650.</li>
+    </ul>
+    <p class="card-sub"><a href="trip-savings-schedule.html">Explore the dated savings schedule</a>. Final FX, bank fees, customs and any uncovered transition-day costs still need checking.</p>
   </section>
 
   <section class="card">
@@ -259,7 +275,7 @@
     { id: 'fees',       item: 'Hotel fees and FX buffer',     sub: 'Paid at check-in',                    due: 4527,  fund: 4527,  when: '22 Dec, 10 Jan' },
     { id: 'transport',  item: 'Transport',                    sub: 'Turo Tesla, extension and charging',  due: 20182, fund: 20182, when: '17 Dec' },
     { id: 'excursions', item: 'NCL excursions',               sub: 'Provisional allowance; options and credits to verify', due: 22094, fund: 5824, when: 'Before booking' },
-    { id: 'daily',      item: 'Daily spend',                  sub: 'Allowance pending day-by-day reconciliation', due: 75000, fund: 0, when: 'During the trip' },
+    { id: 'daily',      item: 'Daily spend',                  sub: '15 land days at R5,000; onboard spending prepaid', due: 75000, fund: 0, when: 'During the trip' },
     { id: 'phones',     item: 'Two iPhones',                  sub: 'Pro Max 512GB and Duo 256GB',         due: 61840, fund: 0,     when: 'During the trip' },
     { id: 'discretionary', item: 'Other discretionary spending', sub: 'In addition to phones; daily spend separate', due: 50000, fund: 0, when: 'During the trip' },
     { id: 'allowance',  item: 'Unam’s allowance',        sub: '',                                    due: 5000,  fund: 0,     when: 'During the trip' },
@@ -304,6 +320,16 @@
   const totalDue = sum(ALLOCATION, 'due');
   const totalFund = sum(ALLOCATION, 'fund');
   const totalGap = totalDue - totalFund;
+
+  const fundingTargets = document.querySelector('#funding-targets tbody');
+  [
+    { item: 'Fund the gap without assumed offsets', amount: totalGap },
+    { item: 'If R60,000 is available on 19 December', amount: Math.max(0, totalGap - 60000) }
+  ].forEach(row => {
+    const tr = el('tr');
+    tr.append(itemCell(row), numCell('Additional funding', row.amount), numCell('Each of three dates', Math.ceil(row.amount / 3)));
+    fundingTargets.appendChild(tr);
+  });
 
   const allocBody = document.querySelector('#alloc tbody');
   ALLOCATION.forEach(row => {

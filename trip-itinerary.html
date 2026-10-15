@@ -1578,7 +1578,7 @@
         </div>
       </div>
     </div>
-    <div class="day-card" data-day-key="d13" data-date="2027-01-03">
+    <div class="day-card" data-day-key="d13" data-date="2027-01-03" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 3 · Day 14 : Embarkation</div>
@@ -1795,7 +1795,7 @@
         <div class="leg-hero-sub"><span class="meta-item"><svg class="meta-ico"><use href="#ico-period"></use></svg>Sunday 10 – Wednesday 13 January</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-hotel"></use></svg>Row NYC · Midtown Manhattan</span><span class="meta-item"><svg class="meta-ico"><use href="#ico-days"></use></svg>4 Days / 3 Nights</span></div>
       </div>
     </div><div class="leg-intro">Jan 10–13 · Row NYC Hotel (4-star, B&B) · Midtown Manhattan · Post-cruise · Party of 4 · Budget R3,000/day</div>
-    <div class="day-card" data-day-key="d22" data-date="2027-01-10">
+    <div class="day-card" data-day-key="d22" data-date="2027-01-10" data-allowance="0">
       <div class="day-card-header" onclick="toggleCard(this)">
         <div class="day-card-header-left">
           <div class="day-label">Sun, Jan 10 · Day 21 : Arrival</div>
@@ -1892,7 +1892,7 @@
     <tr><td>✈️ Flights (4 passengers · all legs)</td><td>R115,000</td></tr>
     <tr><td>🏨 Accommodation (all stays)</td><td>R238,292</td></tr>
     <tr><td>🚢 NCL Free at Sea Plus (incl. gratuities)</td><td>R24,051</td></tr>
-    <tr><td>💵 Daily spending (17 days · R5,000/day)</td><td>R85,000</td></tr>
+    <tr><td>💵 Daily spending (15 land days · R5,000/day)</td><td>R75,000</td></tr>
     <tr><td>🚗 Transport (Turo Tesla + transfers)</td><td>R22,934</td></tr>
     <tr><td>🛍️ Shopping budget</td><td>R50,000</td></tr>
     <tr><td>📶 Prepaid data eSIM · Holafly 8 days</td><td>R540</td></tr>
@@ -5154,7 +5154,7 @@ customElements.define('loop-loader', LoopLoader);
     });
     const section = summary.closest('.summary-section');
     if (!section.querySelector('[data-qa-budget]')) {
-      const n = el('div', 'notice notice-warn', 'Budget reconciliation: this is the base allocation, not a fully reconciled trip quote. The daily spending allowance is R85,000 across 17 days at R5,000/day. Airport transfers appear both in day plans and the transport allocation; do not add the two totals together. The transport allocation now matches the listed Turo + JFK/LGA transfers (R24,203). Cruise excursion figures are gross USD conversions at R18.20/USD, not proof of the paid balance after NCL credits. Verify invoices before adding any excursion balance. Restaurant tax/tips, some parking, port taxis and optional outings may be additional.');
+      const n = el('div', 'notice notice-warn', 'Budget reconciliation: this is the base allocation, not a fully reconciled trip quote. The agreed daily allowance is R75,000 for 15 land days: 22 Dec to 2 Jan and 11 to 13 Jan. Onboard NCL Aqua spending is prepaid and budgeted at zero. No full daily allowance is added for 3 Jan or 10 Jan; check their actual meals and transfers against existing allowances. Airport transfers appear both in day plans and the transport allocation; do not add the two totals together. The transport allocation matches the listed Turo + JFK/LGA transfers (R24,203). Cruise excursion figures are gross USD conversions at R18.20/USD, not proof of the paid balance after NCL credits. Verify invoices before adding any excursion balance. Restaurant tax/tips, some parking, port taxis and optional outings may be additional.');
       n.dataset.qaBudget = '1';
       section.appendChild(n);
     }

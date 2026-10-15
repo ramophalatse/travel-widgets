@@ -396,9 +396,10 @@
   tr.payment-row:last-of-type td { border-bottom: 1px solid var(--border); }
 
   .month-cell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: block;
+    min-width: 145px;
+    max-width: 230px;
+    white-space: normal;
   }
 
   .pill {
@@ -539,26 +540,28 @@
       <div class="metric-value accent" id="s-still">·</div>
     </div>
     <div class="metric">
-      <div class="metric-label">Months to fly-out</div>
+      <div class="metric-label">Funding dates before fly-out</div>
       <div class="metric-value" id="s-months">·</div>
     </div>
   </div>
 
   <div class="control-row">
-    <span class="control-label">Monthly savings</span>
-    <input type="range" id="monthly" min="5000" max="60000" step="1000" value="37000">
-    <span class="control-value" id="monthly-out">R37,000</span>
+    <span class="control-label">Contribution on each funding date</span>
+    <input type="range" id="monthly" min="0" max="120000" step="50" value="69550" aria-label="Contribution on each funding date">
+    <span class="control-value" id="monthly-out">R69,550</span>
   </div>
+
+  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R49,550 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Month</th>
-          <th class="r">Save</th>
-          <th class="r">Cumulative</th>
-          <th class="r">Payment due</th>
-          <th class="r">Balance after</th>
+          <th>Date</th>
+          <th class="r">Add to fund</th>
+          <th class="r">Available</th>
+          <th class="r">Payment / reserve</th>
+          <th class="r">Fund left</th>
           <th class="bar-cell"></th>
         </tr>
       </thead>
@@ -568,7 +571,7 @@
 
   <div class="verdict ok" id="verdict"></div>
 
-  <p class="context-note">Working estimate: phones R61,840 plus R50,000 other discretionary spending; daily spend is separate and still needs reconciliation. The iPad mini and Watch Ultra are excluded. Cruise and flights are paid. Daily spend, phones, discretionary spending and Unam&rsquo;s allowance are shown at fly-out because the funds must be ready before departure. About R60,000 may come from the normal variable budget, subject to confirmation. Tshiamo&rsquo;s R15,000 has not arrived and is not counted as available. The slider is a scenario, not an agreed savings commitment. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
+  <p class="context-note">Agreed daily allowance: 15 land days at R5,000 = R75,000 (22 Dec to 2 Jan; 11 to 13 Jan). Onboard NCL Aqua spending is prepaid and budgeted at zero. Check actual meals and transfers on 3 and 10 January against existing allowances; no full daily allowance is added. Phones are R61,840 plus R50,000 other discretionary spending. The iPad mini and Watch Ultra are excluded. Cruise and flights are paid. Daily spend, phones, discretionary spending and Unam&rsquo;s allowance are reserved at fly-out, rather than treated as actual payments on that date. No new January savings are counted: January bookings must be funded before departure. The slider is a scenario, not an agreed or verified affordable savings commitment. Excursion and hotel payment dates remain planning placeholders where unconfirmed. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
 
   <footer>
     <span>Figures in ZAR · Working estimate 15 October 2026 · Bookings R16.50/USD; phones R16.52/USD · Fees and final excursion costs to verify</span>
@@ -579,9 +582,9 @@
 
 <script>
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
-const START = new Date(2026, 9, 1);
+const FUNDING_DATES = [new Date(2026, 9, 19), new Date(2026, 10, 19), new Date(2026, 11, 19)];
 const FLYOUT = new Date(2026, 11, 21);
-const LS = 'nyc-miami-savings-v3';
+const LS = 'nyc-miami-savings-v4';
 
 const PAYMENTS = [
   { label: 'NCL excursions, provisional allowance and booking date', amount: 22094, due: new Date(2026, 9, 31) },
@@ -589,7 +592,7 @@ const PAYMENTS = [
   { label: 'Arlo SoHo', amount: 23598, due: new Date(2026, 11, 15) },
   { label: 'Turo Tesla, extension and charging', amount: 20182, due: new Date(2026, 11, 17) },
   { label: 'Prepaid data', amount: 540, due: new Date(2026, 11, 18) },
-  { label: 'Daily spend, allowance to reconcile', amount: 75000, due: new Date(2026, 11, 21) },
+  { label: 'Reserve daily spend, 15 land days at R5,000', amount: 75000, due: new Date(2026, 11, 21) },
   { label: 'Two iPhones, Pro Max 512GB and Duo 256GB', amount: 61840, due: new Date(2026, 11, 21) },
   { label: 'Other discretionary spending, excluding phones', amount: 50000, due: new Date(2026, 11, 21) },
   { label: 'Unam\u2019s allowance', amount: 5000, due: new Date(2026, 11, 21) },
@@ -605,6 +608,7 @@ function saveState() {
       total: document.getElementById('total-input').value,
       paid: document.getElementById('paid-input').value,
       monthly: document.getElementById('monthly').value,
+      variableOffset: document.getElementById('variable-offset').checked,
       theme: document.documentElement.getAttribute('data-theme'),
     }));
   } catch(e) {}
@@ -616,6 +620,7 @@ function loadState() {
     if (s.total) document.getElementById('total-input').value = s.total;
     if (s.paid)  document.getElementById('paid-input').value  = s.paid;
     if (s.monthly) document.getElementById('monthly').value = s.monthly;
+    document.getElementById('variable-offset').checked = s.variableOffset === true;
     if (s.theme) applyTheme(s.theme, false);
   } catch(e) {}
 }
@@ -668,84 +673,50 @@ function render() {
     document.getElementById('paid-display-val').textContent = FMT(already);
   }
   document.getElementById('s-still').textContent = FMT(Math.max(0, totalNeeded - already));
-  document.getElementById('s-months').textContent = Math.max(0, monthsBetween(new Date(), FLYOUT));
+  document.getElementById('s-months').textContent = FUNDING_DATES.length;
   document.getElementById('footer-rate').textContent =
-    'Monthly target: ' + FMT(monthly) + ' · ' + Math.round(monthly / 30).toLocaleString('en-ZA') + ' per day';
+    'Scenario: ' + FMT(monthly) + ' on 19 Oct, 19 Nov and 19 Dec';
 
-  const months = [];
-  let cur = new Date(START);
-  const end = new Date(2027, 0, 1);
-  while (cur <= end) { months.push(new Date(cur)); cur.setMonth(cur.getMonth() + 1); }
+  const events = PAYMENTS.map(p => ({ date: p.due, payment: p.amount, label: p.label }));
+  FUNDING_DATES.forEach(date => events.push({ date, credit: monthly, label: 'Planned trip contribution' }));
+  const offset = document.getElementById('variable-offset').checked ? 60000 : 0;
+  if (offset) events.push({ date: new Date(2026, 11, 19), credit: offset, label: 'Assumed variable-budget offset, counted once' });
+  const adjustment = totalNeeded - PAYMENTS_DEFAULT_TOTAL;
+  if (adjustment) events.push({ date: FLYOUT, payment: adjustment, label: 'Scenario adjustment to trip reserve' });
+  events.sort((a, b) => a.date - b.date || (a.payment != null) - (b.payment != null));
 
   let balance = already;
-  let minBalance = Infinity;
+  let minBalance = already;
+  let tightestDate = null;
   const tbody = document.getElementById('sched-body');
   tbody.innerHTML = '';
-
-  months.forEach(m => {
-    balance += monthly;
-    const due = PAYMENTS.filter(p =>
-      p.due.getFullYear() === m.getFullYear() && p.due.getMonth() === m.getMonth()
-    );
-    const totalDue = due.reduce((s, p) => s + p.amount, 0);
-    const cumulative = balance;
-    balance -= totalDue;
-    if (balance < minBalance) minBalance = balance;
-
-    const finalPct = Math.min(100, Math.max(0, (balance / totalNeeded) * 100));
-    const barClass = balance < 0 ? 'danger' : balance < 20000 ? 'warn' : '';
-
-    if (due.length > 0) {
-      let running = cumulative;
-      due.forEach((p, i) => {
-        running -= p.amount;
-        const tr = document.createElement('tr');
-        tr.className = 'payment-row';
-        const balColor = running < 0 ? 'text-danger' : '';
-        tr.innerHTML = `
-          <td>${i === 0
-            ? `<div class="month-cell">${monthLabel(m)}<span class="pill">due</span></div>`
-            : '<span style="color:var(--text-faint);font-size:11px">↳</span>'
-          }</td>
-          <td class="r">${i === 0 ? FMT(monthly) : ''}</td>
-          <td class="r">${i === 0 ? FMT(cumulative) : ''}</td>
-          <td class="r">
-            <span style="font-weight:500">−${FMT(p.amount)}</span>
-            <span class="payment-label">${p.label}</span>
-          </td>
-          <td class="r ${balColor}" style="font-weight:500">${FMT(running)}</td>
-          <td class="bar-cell">${i === 0
-            ? `<div class="bar-wrap"><div class="bar-fill ${barClass}" style="width:${finalPct}%"></div></div>`
-            : ''
-          }</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } else {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${monthLabel(m)}</td>
-        <td class="r">${FMT(monthly)}</td>
-        <td class="r">${FMT(balance)}</td>
-        <td class="r muted">·</td>
-        <td class="r">${FMT(balance)}</td>
-        <td class="bar-cell">
-          <div class="bar-wrap">
-            <div class="bar-fill ${barClass}" style="width:${finalPct}%"></div>
-          </div>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    }
+  events.forEach(event => {
+    const before = balance + (event.credit || 0);
+    balance = before - (event.payment || 0);
+    if (balance < minBalance) { minBalance = balance; tightestDate = event.date; }
+    const pct = Math.min(100, Math.max(0, balance / Math.max(1, totalNeeded) * 100));
+    const tone = balance < 0 ? 'danger' : balance < 20000 ? 'warn' : '';
+    const dateLabel = event.date.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+    const tr = document.createElement('tr');
+    tr.className = event.payment != null ? 'payment-row' : '';
+    tr.innerHTML = `
+      <td><div class="month-cell">${dateLabel}<span class="payment-label">${event.label}</span></div></td>
+      <td class="r">${event.credit != null ? FMT(event.credit) : '·'}</td>
+      <td class="r">${FMT(before)}</td>
+      <td class="r">${event.payment != null ? FMT(event.payment) : '·'}</td>
+      <td class="r ${balance < 0 ? 'text-danger' : ''}">${FMT(balance)}</td>
+      <td class="bar-cell"><div class="bar-wrap"><div class="bar-fill ${tone}" style="width:${pct}%"></div></div></td>`;
+    tbody.appendChild(tr);
   });
 
   const verdict = document.getElementById('verdict');
   if (minBalance < 0) {
     verdict.className = 'verdict bad';
-    verdict.textContent = `⚠ Shortfall of ${FMT(Math.abs(minBalance))} : increase monthly savings or make a lump-sum top-up before the December payments.`;
+    const when = tightestDate.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' });
+    verdict.textContent = `Shortfall reaches ${FMT(-minBalance)} on ${when}. Bring funding forward, increase contributions or reduce the estimate. January income is not counted.`;
   } else {
     verdict.className = 'verdict ok';
-    verdict.textContent = `✓ At ${FMT(monthly)}/month all payments are fully covered. Tightest point leaves a buffer of ${FMT(minBalance)}.`;
+    verdict.textContent = `At ${FMT(monthly)} on each of the three funding dates${offset ? ', plus the assumed R60,000 on 19 December,' : ''} the listed payments and reserves are covered. Remaining buffer ${FMT(balance)}. This confirms the arithmetic, not affordability.`;
   }
 
   saveState();
@@ -819,6 +790,7 @@ document.getElementById('paid-input').addEventListener('keydown', function(e) {
 document.getElementById('paid-input').addEventListener('blur', commitPaid);
 document.getElementById('paid-input').addEventListener('input', render);
 document.getElementById('monthly').addEventListener('input', render);
+document.getElementById('variable-offset').addEventListener('change', render);
 
 loadState();
 applyTheme(document.documentElement.getAttribute('data-theme'), false);
