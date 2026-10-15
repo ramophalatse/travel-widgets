@@ -522,7 +522,7 @@
         <span class="display-val" id="total-display-val">·</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="total-input" value="297356" min="0" step="500" style="display:none">
+      <input type="number" id="total-input" value="359196" min="0" step="500" style="display:none">
       <div class="input-hint" id="total-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric metric-editable" id="paid-metric" title="Click to edit">
@@ -568,10 +568,10 @@
 
   <div class="verdict ok" id="verdict"></div>
 
-  <p class="context-note">Cruise and flights are already paid, so they no longer appear here. Daily spend, shopping and Unam&rsquo;s allowance are shown at fly-out because the money has to be ready before we leave; about R60,000 of it should come from the normal variable budget while we are away, plus R15,000 from Tshiamo. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
+  <p class="context-note">Working estimate: phones R61,840 plus R50,000 other discretionary spending; daily spend is separate and still needs reconciliation. The iPad mini and Watch Ultra are excluded. Cruise and flights are paid. Daily spend, phones, discretionary spending and Unam&rsquo;s allowance are shown at fly-out because the funds must be ready before departure. About R60,000 may come from the normal variable budget, subject to confirmation. Tshiamo&rsquo;s R15,000 has not arrived and is not counted as available. The slider is a scenario, not an agreed savings commitment. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
 
   <footer>
-    <span>Figures in ZAR · Remaining costs as at 13 October 2026 · Dollar items at R16.50</span>
+    <span>Figures in ZAR · Working estimate 15 October 2026 · Bookings R16.50/USD; phones R16.52/USD · Fees and final excursion costs to verify</span>
     <span id="footer-rate">·</span>
   </footer>
 
@@ -581,16 +581,17 @@
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
 const START = new Date(2026, 9, 1);
 const FLYOUT = new Date(2026, 11, 21);
-const LS = 'nyc-miami-savings-v2';
+const LS = 'nyc-miami-savings-v3';
 
 const PAYMENTS = [
-  { label: 'NCL shore excursions', amount: 22094, due: new Date(2026, 9, 31) },
+  { label: 'NCL excursions, provisional allowance and booking date', amount: 22094, due: new Date(2026, 9, 31) },
   { label: 'Miami Airbnb', amount: 55817, due: new Date(2026, 11, 11) },
   { label: 'Arlo SoHo', amount: 23598, due: new Date(2026, 11, 15) },
   { label: 'Turo Tesla, extension and charging', amount: 20182, due: new Date(2026, 11, 17) },
   { label: 'Prepaid data', amount: 540, due: new Date(2026, 11, 18) },
-  { label: 'Daily spend, 15 days at R5,000', amount: 75000, due: new Date(2026, 11, 21) },
-  { label: 'Shopping', amount: 50000, due: new Date(2026, 11, 21) },
+  { label: 'Daily spend, allowance to reconcile', amount: 75000, due: new Date(2026, 11, 21) },
+  { label: 'Two iPhones, Pro Max 512GB and Duo 256GB', amount: 61840, due: new Date(2026, 11, 21) },
+  { label: 'Other discretionary spending, excluding phones', amount: 50000, due: new Date(2026, 11, 21) },
   { label: 'Unam\u2019s allowance', amount: 5000, due: new Date(2026, 11, 21) },
   { label: 'Hotel fees and FX buffer', amount: 4527, due: new Date(2026, 11, 22) },
   { label: 'Row NYC', amount: 40598, due: new Date(2027, 0, 5) },
