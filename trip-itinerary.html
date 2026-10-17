@@ -440,8 +440,10 @@
      .total-amount is only read once, for days with no spend table. */
   .day-total-bar{display:flex;flex-direction:column;gap:14px;padding:12px 1.25rem 14px;background:var(--bg2);border-top:1px solid var(--border);}
   .total-amount{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text2);white-space:nowrap;font-variant-numeric:tabular-nums;}
-  .meter{--meter-tint:var(--accent);display:flex;flex-direction:column;gap:6px;min-width:0;}
-  .meter.is-warn{--meter-tint:var(--warn);}
+  /* Meter tones match the header .budget-chip: teal at budget (within the
+     R500-per-budget-day band), blue under, red over. */
+  .meter{--meter-tint:var(--teal);display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .meter.is-under{--meter-tint:var(--blue);}
   .meter.is-over{--meter-tint:var(--red);}
   .meter-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 12px;}
   .meter-label{font-size:12px;color:var(--text2);}
@@ -458,7 +460,8 @@
   .budget-pace .meter-pace{box-shadow:0 0 0 1.5px var(--card);}
   .meter-foot{font-family:var(--mono);font-size:10px;line-height:1.5;color:var(--text3);font-variant-numeric:tabular-nums;}
   .meter-word{color:var(--text2);font-weight:500;}
-  .meter.is-warn .meter-word{color:var(--warn-text);}
+  .meter.is-at .meter-word{color:var(--teal-text);}
+  .meter.is-under .meter-word{color:var(--blue-text);}
   .meter.is-over .meter-word{color:var(--red-text);}
   .meter.is-idle .meter-track{display:none;}
   .meter.is-idle .meter-value{color:var(--text2);}
@@ -3507,7 +3510,6 @@ customElements.define('loop-loader', LoopLoader);
    *  "Daily spending" line divided by the budget days, so editing that line
    *  moves every meter. */
   const DAILY_BUDGET = 5000;
-  const BUDGET_WARN_FRACTION = 0.9;
 
   /** Every Rand figure in a cell, so a range ("~R800–R1,000") contributes its
    *  own low and high to the day's low and high. Text with no figure at all
@@ -3703,7 +3705,15 @@ customElements.define('loop-loader', LoopLoader);
      Lines marked "pre-paid" are skipped: they are paid from their own budget
      table, so counting them here would count them twice. */
   const PREPAID_RE = /pre-?paid/i;
-  const PACE_DEAD_BAND = 0.02;
+  /** Ramo's tolerance for "at budget": R500 either side per budget day. The
+   *  header chip and every meter share it, so a multi-day span (the two-day
+   *  card, the trip to date) gets the per-day bands summed. */
+  const CHIP_AT_BAND = 500;
+  /** Teal within the band, red above it, blue below: one scheme for the
+   *  chip and the meters. */
+  function budgetTone(gap, band) {
+    return Math.abs(gap) <= band ? 'at' : (gap > 0 ? 'over' : 'under');
+  }
   let budgetMetersQueued = false;
   function scheduleBudgetMeters() {
     if (budgetMetersQueued) return;
@@ -3790,11 +3800,12 @@ customElements.define('loop-loader', LoopLoader);
   /**
    * @param o.lo, o.hi  fractions of the limit (may exceed 1)
    * @param o.pace      marker position 0..1, or null for none
-   * @param o.tone      'ok' | 'warn' | 'over'
+   * @param o.tone      'at' | 'under' | 'over' (see budgetTone)
    * @param o.foot      array of [text, isWord] parts, or null
    */
   function updateMeter(meter, o) {
-    meter.classList.toggle('is-warn', o.tone === 'warn');
+    meter.classList.toggle('is-at', o.tone === 'at');
+    meter.classList.toggle('is-under', o.tone === 'under');
     meter.classList.toggle('is-over', o.tone === 'over');
     meter.classList.toggle('is-idle', !!o.idle);
     meter.querySelector('.meter-label').textContent = o.label;
@@ -3820,19 +3831,22 @@ customElements.define('loop-loader', LoopLoader);
     });
   }
   /** Spend against pace, collapsed to a word plus the Rand gap, the same
-   *  reading AI Dash gives its quota bars. The word follows the high figure. */
-  function paceReading(spentLo, spentHi, paceAmount, pot) {
+   *  reading AI Dash gives its quota bars. The word follows the high figure.
+   *  "On" is the chip's at-budget band summed over the budget days counted;
+   *  spend past the whole pot is never "On", whatever the band. */
+  function paceReading(spentLo, spentHi, paceAmount, band, pot) {
     const dLo = spentLo - paceAmount, dHi = spentHi - paceAmount;
-    if (dHi / pot > PACE_DEAD_BAND) {
+    const tone = spentHi > pot ? 'over' : budgetTone(dHi, band);
+    if (tone === 'over') {
       const gap = dLo > 0 && Math.round(dLo) < Math.round(dHi) ? formatRand(dLo) + '–' + formatRand(dHi)
         : (dLo > 0 ? formatRand(dHi) : 'up to ' + formatRand(dHi));
-      return { word: 'Ahead', gap: gap + ' over pace', tone: 'warn' };
+      return { word: 'Ahead', gap: gap + ' over pace', tone };
     }
-    if (dHi / pot < -PACE_DEAD_BAND) {
+    if (tone === 'under') {
       const gap = Math.round(-dHi) < Math.round(-dLo) ? formatRand(-dHi) + '–' + formatRand(-dLo) : formatRand(-dHi);
-      return { word: 'Under', gap: gap + ' in hand', tone: 'ok' };
+      return { word: 'Under', gap: gap + ' in hand', tone };
     }
-    return { word: 'On', gap: 'on pace', tone: 'ok' };
+    return { word: 'On', gap: 'on pace', tone };
   }
   function budgetDayLabel(done, total) {
     return done <= 0 ? 'budget days not started' : 'budget day ' + done + ' of ' + total;
@@ -3873,12 +3887,12 @@ customElements.define('loop-loader', LoopLoader);
           value: amountText + ' / ' + formatRand(limit),
           pct: s.counted ? formatPct(s.min / limit, hi) : null,
           lo: s.min / limit, hi, pace: null,
-          tone: hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : 'ok'),
+          tone: budgetTone(Math.round(s.max - limit), CHIP_AT_BAND * d.allowance),
           foot: s.prepaid ? [['Pre-paid lines excluded']] : null
         });
       } else {
         updateMeter(dayMeter, {
-          label: 'Day spend', value: amountText, lo: 0, hi: 0, pace: null, tone: 'ok', idle: true,
+          label: 'Day spend', value: amountText, lo: 0, hi: 0, pace: null, tone: null, idle: true,
           foot: [['No daily allowance' + (s.counted ? ', spend still counts to date' : '')]]
         });
       }
@@ -3886,14 +3900,14 @@ customElements.define('loop-loader', LoopLoader);
       renderBudgetChip(d.card, d.allowance > 0 && s.counted ? { spend: s, limit: d.allowance * perDay, days: d.allowance } : null);
 
       const tripMeter = ensureMeter(d.bar, 'trip', totalDays);
-      const reading = paceReading(cumLo, cumHi, cumDays * perDay, pot);
+      const reading = paceReading(cumLo, cumHi, cumDays * perDay, CHIP_AT_BAND * cumDays, pot);
       const hi = cumHi / pot;
       updateMeter(tripMeter, {
         label: 'Trip to date',
         value: formatSpendTotal(cumLo, cumHi) + ' / ' + formatRand(pot),
         pct: formatPct(cumLo / pot, hi),
         lo: cumLo / pot, hi, pace: cumDays / totalDays,
-        tone: hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : reading.tone),
+        tone: reading.tone,
         foot: [[reading.word, true], [reading.gap], [budgetDayLabel(cumDays, totalDays)]]
       });
     });
@@ -3901,12 +3915,10 @@ customElements.define('loop-loader', LoopLoader);
   }
   /** The day's budget status in its header, so a collapsed card still shows
    *  it: the Rand gap between planned spend and the day's allowance, signed,
-   *  so it reads as how the budget is tracking rather than a ratio. Green
-   *  when within CHIP_AT_BAND Rand either side per budget day (Ramo's
-   *  tolerance for "at budget"), blue under, red over. Judged
-   *  on the high figure, like the meters; the full range is in the title.
-   *  No chip on days without an allowance. */
-  const CHIP_AT_BAND = 500;
+   *  so it reads as how the budget is tracking rather than a ratio. Toned by
+   *  budgetTone with CHIP_AT_BAND per budget day, like the Day spend meter.
+   *  Judged on the high figure, like the meters; the full range is in the
+   *  title. No chip on days without an allowance. */
   function renderBudgetChip(card, o) {
     const right = card.querySelector('.day-card-header-right');
     if (!right) return;
@@ -3917,7 +3929,7 @@ customElements.define('loop-loader', LoopLoader);
       right.insertBefore(chip, right.querySelector('.chevron'));
     }
     const gap = Math.round(o.spend.max - o.limit);
-    const tone = Math.abs(gap) <= CHIP_AT_BAND * o.days ? 'at' : (gap > 0 ? 'over' : 'under');
+    const tone = budgetTone(gap, CHIP_AT_BAND * o.days);
     chip.classList.toggle('is-at', tone === 'at');
     chip.classList.toggle('is-under', tone === 'under');
     chip.classList.toggle('is-over', tone === 'over');
@@ -3961,8 +3973,9 @@ customElements.define('loop-loader', LoopLoader);
     const elapsed = budgetDaysElapsed(days, now);
     const first = dated.length ? new Date(Math.min.apply(null, dated)) : null;
     const hi = t.cumHi / t.pot;
-    let foot;
+    let foot, tone;
     if (elapsed <= 0 || elapsed >= t.totalDays) {
+      tone = t.cumHi > t.pot ? 'over' : budgetTone(Math.round(t.cumHi - t.pot), CHIP_AT_BAND * t.totalDays);
       const daysOut = first ? Math.ceil((first - now) / 86400000) : null;
       const gapHi = t.cumHi - t.pot, gapLo = t.cumLo - t.pot;
       const gap = gapHi > 0
@@ -3980,8 +3993,9 @@ customElements.define('loop-loader', LoopLoader);
         const start = new Date(d.card.dataset.date + 'T00:00:00');
         if (start <= now) { doneLo += d.spend.min; doneHi += d.spend.max; }
       });
-      const reading = paceReading(doneLo, doneHi, elapsed * t.perDay, t.pot);
+      const reading = paceReading(doneLo, doneHi, elapsed * t.perDay, CHIP_AT_BAND * elapsed, t.pot);
       foot = [[reading.word, true], [reading.gap], [budgetDayLabel(elapsed, t.totalDays)]];
+      tone = reading.tone;
     }
     updateMeter(meter, {
       label: 'Planned spend, whole trip',
@@ -3989,13 +4003,15 @@ customElements.define('loop-loader', LoopLoader);
       pct: formatPct(t.cumLo / t.pot, hi),
       lo: t.cumLo / t.pot, hi,
       pace: elapsed > 0 ? Math.min(1, elapsed / t.totalDays) : null,
-      tone: hi > 1 ? 'over' : (hi >= BUDGET_WARN_FRACTION ? 'warn' : 'ok'),
+      tone,
       foot
     });
     let stats = body.querySelector('.budget-pace-stats');
     if (!stats) { stats = el('div', 'budget-pace-stats'); body.appendChild(stats); }
-    // Counted in budget days, not cards: one card can cover two days.
-    const overDays = days.filter(d => d.allowance > 0 && d.spend.max > d.allowance * t.perDay)
+    // Counted in budget days, not cards: one card can cover two days. Over
+    // means a red chip, so the band applies here too.
+    const overDays = days.filter(d => d.allowance > 0 && d.spend.counted
+      && budgetTone(Math.round(d.spend.max - d.allowance * t.perDay), CHIP_AT_BAND * d.allowance) === 'over')
       .reduce((n, d) => n + d.allowance, 0);
     const avgLo = t.cumLo / t.totalDays, avgHi = t.cumHi / t.totalDays;
     stats.textContent = '';
