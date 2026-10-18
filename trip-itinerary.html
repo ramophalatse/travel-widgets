@@ -510,17 +510,51 @@
   .pack-meter-track{position:relative;height:8px;border-radius:4px;overflow:hidden;background:color-mix(in oklab,var(--accent) 16%,transparent);}
   .pack-meter-fill{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:4px;background:var(--accent);transition:width .5s cubic-bezier(.2,.8,.2,1);}
   @media (prefers-reduced-motion:reduce){.pack-meter-fill{transition:none;}}
-  .pack-list{list-style:none;margin:0;padding:0;}
-  .pack-item{border-bottom:1px solid var(--border);}
-  .pack-item:last-child{border-bottom:none;}
-  .pack-item label{display:flex;align-items:center;gap:12px;padding:12px 1.25rem;cursor:pointer;font-size:14px;color:var(--text);}
+  .pack-header-tools{display:flex;align-items:center;gap:6px;}
+  .pack-list,.pack-children{list-style:none;margin:0;padding:0;}
+  .pack-children{padding-left:30px;}
+  .pack-list > .pack-item{border-bottom:1px solid var(--border);}
+  .pack-list > .pack-item:last-child{border-bottom:none;}
+  .pack-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;padding:9px 1.25rem;min-height:44px;}
+  .pack-children .pack-row{padding-left:0;}
+  .pack-toggle{flex-shrink:0;width:22px;height:22px;margin:0 -4px 0 -6px;padding:0;border:0;border-radius:6px;background:none;color:var(--text3);cursor:pointer;display:grid;place-content:center;}
+  .pack-toggle svg{width:12px;height:12px;transition:transform 0.15s;}
+  .pack-item.is-collapsed > .pack-row .pack-toggle svg{transform:rotate(-90deg);}
+  .pack-item.is-collapsed > .pack-children{display:none;}
+  .pack-toggle-spacer{flex-shrink:0;width:12px;margin:0 -4px 0 -6px;}
   .pack-check{appearance:none;-webkit-appearance:none;flex-shrink:0;width:22px;height:22px;margin:0;border:2px solid var(--border2);border-radius:50%;background:var(--card);display:grid;place-content:center;cursor:pointer;transition:background 0.15s,border-color 0.15s;}
   .pack-check::after{content:'';width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg) scale(0);transition:transform 0.15s;}
   .pack-check:checked{background:var(--accent);border-color:var(--accent);}
   .pack-check:checked::after{transform:translateY(-1px) rotate(45deg) scale(1);}
+  /* Part-packed group: an accent ring with a dash, so it reads as started. */
+  .pack-check:indeterminate{border-color:var(--accent);}
+  .pack-check:indeterminate::after{width:10px;height:0;border-width:0 0 2px 0;border-color:var(--accent);transform:none;}
   .pack-check:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
-  .pack-check:checked + .pack-label{color:var(--text3);text-decoration:line-through;}
-  .pack-qty{font-family:var(--mono);font-size:12px;color:var(--text3);margin-left:4px;}
+  .pack-text{flex:1 1 180px;min-width:0;display:flex;align-items:baseline;gap:6px;font-size:14px;color:var(--text);cursor:pointer;}
+  .pack-item.is-group > .pack-row .pack-text{font-weight:600;}
+  .pack-list > .pack-item.is-group > .pack-row .pack-text{font-family:var(--serif);font-size:15px;letter-spacing:-0.01em;}
+  .pack-item.is-done > .pack-row .pack-label{color:var(--text3);text-decoration:line-through;}
+  .pack-label[contenteditable="true"],.pack-qty[contenteditable="true"]{cursor:text;outline:1px solid var(--accent);outline-offset:3px;border-radius:3px;background:var(--accent-bg);text-decoration:none;}
+  .pack-qty{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--text3);}
+  .pack-qty:empty{display:none;}
+  .pack-qty[contenteditable="true"]:empty{display:inline-block;min-width:3ch;}
+  .pack-qty[contenteditable="true"]:empty::before{content:'qty';opacity:0.5;}
+  .pack-count{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--text3);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  /* Labelled chips, the activity-row delete chip's language: mono, pill, 24px. */
+  .pack-tools{display:none;flex-wrap:wrap;gap:4px;}
+  :root[data-edit="on"] .pack-tools{display:flex;}
+  .pack-chip{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 9px;border:1px solid var(--border2);border-radius:999px;background:var(--card);color:var(--text2);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;line-height:1;white-space:nowrap;transition:background 0.15s,color 0.15s,border-color 0.15s;}
+  .pack-chip:hover,.pack-chip:focus-visible{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-text);}
+  .pack-chip:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .pack-chip[disabled]{opacity:0.35;cursor:default;pointer-events:none;}
+  .pack-chip.is-active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent-text);}
+  .pack-chip--danger{border-color:rgba(190,24,60,0.5);color:#fb7185;}
+  .pack-chip--danger:hover,.pack-chip--danger:focus-visible{background:#be123c;border-color:#be123c;color:#fff;}
+  .pack-chip svg{width:11px;height:11px;flex:none;}
+  .pack-add-row{display:none;padding:10px 1.25rem 14px;}
+  :root[data-edit="on"] .pack-add-row{display:block;}
+  .pack-undo[hidden]{display:none;}
+  @media (max-width:560px){.pack-tools{flex-basis:100%;padding-left:32px;}}
 
   /* BUDGET TAB */
   .summary-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.25rem;}
@@ -1984,14 +2018,14 @@
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Download MTA TrainTime app · buy LIRR tickets for Jan 13 departure (Penn → Jamaica)</span></li>
   </ul>
 </div></div><div class="leg-panel" id="panel-packing"><div class="summary-section">
-  <div class="pack-header"><div class="pack-heading">Packing List</div></div>
+  <div class="pack-header"><div class="pack-heading">Packing List</div><div class="pack-header-tools"><button type="button" class="pack-chip pack-undo" id="pack-undo" hidden>Undo delete</button><button type="button" class="pack-chip" id="pack-edit-chip" aria-pressed="false">Edit list</button></div></div>
   <div class="pack-meter">
     <div class="pack-meter-head"><div><span class="pack-pct" id="pack-pct">0%</span><span class="pack-pct-label">packed</span></div><div class="pack-progress" id="pack-progress"></div></div>
     <div class="pack-meter-track" id="pack-meter" role="progressbar" aria-label="Items packed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="pack-meter-fill" id="pack-meter-fill"></span></div>
   </div>
-  <ul class="pack-list">
-    <li class="pack-item"><label><input type="checkbox" class="pack-check" data-pack-key="face-bandana-snood"><span class="pack-label">Face bandana/Snood<span class="pack-qty">×4</span></span></label></li>
-  </ul>
+  <!-- Rendered from PACK_DEFAULT, or the saved list, by renderPacking(). -->
+  <ul class="pack-list" id="pack-list"></ul>
+  <div class="pack-add-row"><button type="button" class="pack-chip" id="pack-add-top">+ Add item</button></div>
 </div></div></main>
 <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -4479,13 +4513,276 @@ customElements.define('loop-loader', LoopLoader);
     if (dupes.length) console.error('[trip-itinerary] duplicate edit keys:', dupes);
     return dupes;
   }
-  /* Packing list ticks: one row per item, keyed by its data-pack-key, so
-     adding or reordering items never moves a tick to a different item. */
+  /* PACKING LIST. The structure (items, names, quantities, nesting) is one
+     row, packlist:main, saved whole like the Budget tables. Ticks stay one row
+     per item, pack:<id>, so two phones ticking at once never overwrite each
+     other or the list. Only leaf items carry ticks; a group is packed when
+     every item under it is. Both are stored as 'text' because the table's type
+     check has no packing type; the prefixes route them in applySavedEdits. */
   const PACK_PREFIX = 'pack:';
+  const PACK_LIST_EID = 'packlist:main';
+  const PACK_COLLAPSE_KEY = 'trip-pack-collapsed-v1';
+  const packNode = (id, label, qty, children) => ({ id, label, qty: qty || '', children: children || [] });
+  const PACK_DEFAULT = [
+    packNode('g-docs', 'Documents and money', '', [
+      packNode('passports', 'Passports, with the US visas inside', '4'),
+      packNode('flight-tickets', 'Etihad e-tickets and booking references'),
+      packNode('ncl-edocs', 'NCL eDocs and printed luggage tags'),
+      packNode('travel-insurance', 'Travel insurance policy and emergency numbers'),
+      packNode('drivers-licence', 'Driving licence and International Driving Permit (Turo Tesla)'),
+      packNode('dive-cert', 'Dive certification card and logbook (Key Largo, 29 Dec)'),
+      packNode('bank-cards', 'Contactless bank cards, one each (subway and AirTrain)', '4'),
+      packNode('usd-cash', 'US dollars in small notes (tips, tour photos, Puerto Plata)'),
+      packNode('doc-copies', 'Copies of passports and bookings, printed and offline')
+    ]),
+    packNode('g-tech', 'Tech', '', [
+      packNode('phones', 'Phones and chargers', '4'),
+      packNode('adapters', 'US plug adapters (Type A/B)', '4'),
+      packNode('power-banks', 'Power banks'),
+      packNode('power-strip', 'Travel power strip, no surge protector (NCL rule)'),
+      packNode('camera', 'Waterproof camera or GoPro (reef, buggy, Wave Runner)'),
+      packNode('phone-pouches', 'Waterproof phone pouches', '4'),
+      packNode('headphones', 'Headphones for the long-haul flights', '4'),
+      packNode('apps', 'Apps installed and signed in', '', [
+        packNode('app-turo', 'Turo'),
+        packNode('app-ncl', 'NCL'),
+        packNode('app-viator', 'Viator'),
+        packNode('app-tkts', 'TKTS'),
+        packNode('app-traintime', 'MTA TrainTime (LIRR, 13 Jan)'),
+        packNode('app-uber', 'Uber'),
+        packNode('app-resy', 'Resy and OpenTable'),
+        packNode('app-agoda', 'Agoda')
+      ])
+    ]),
+    packNode('g-nyc', 'New York winter (21 to 24 Dec, 10 to 13 Jan)', '', [
+      packNode('winter-coats', 'Warm winter coats', '4'),
+      packNode('thermals', 'Thermal base layers'),
+      packNode('jumpers', 'Jumpers and knitwear'),
+      packNode('gloves', 'Gloves', '4'),
+      packNode('beanies', 'Beanies', '4'),
+      packNode('scarves', 'Scarves', '4'),
+      packNode('face-bandana-snood', 'Face bandana/Snood', '4'),
+      packNode('walking-shoes', 'Comfortable waterproof walking shoes', '4'),
+      packNode('warm-socks', 'Thick socks'),
+      packNode('umbrella', 'Compact umbrella'),
+      packNode('lip-balm', 'Lip balm and hand cream'),
+      packNode('nyc-evenings', 'Evening outfits', '', [
+        packNode('outfit-rockettes', 'Rockettes night, 22 Dec'),
+        packNode('outfit-birthday', "Nammies' 18th birthday outfit, 22 Dec"),
+        packNode('outfit-nobu', 'Smart casual for Nobu 57')
+      ])
+    ]),
+    packNode('g-miami', 'Miami and the beaches (24 Dec to 3 Jan)', '', [
+      packNode('swimwear', 'Swimwear, two sets each'),
+      packNode('beach-towels', 'Beach towels (check what the Airbnb provides)'),
+      packNode('reef-sunscreen', 'Reef-safe sunscreen'),
+      packNode('sunglasses', 'Sunglasses', '4'),
+      packNode('sun-hats', 'Sun hats or caps', '4'),
+      packNode('sandals', 'Sandals or flip-flops', '4'),
+      packNode('summer-clothes', 'Shorts, T-shirts and light summer clothes'),
+      packNode('beach-bag', 'Beach bag and cooler bag'),
+      packNode('insect-repellent', 'Insect repellent (Everglades)'),
+      packNode('rash-vests', 'Rash vests for snorkelling'),
+      packNode('heat-colours', 'Heat colours for the Miami Heat game'),
+      packNode('nye-outfits', "New Year's Eve outfits and comfortable shoes (Bayfront Park)")
+    ]),
+    packNode('g-cruise', 'Norwegian Aqua (3 to 10 Jan)', '', [
+      packNode('embark-bag', 'Embarkation day bag (porters take the big cases)', '', [
+        packNode('embark-docs', 'Passports and NCL eDocs'),
+        packNode('embark-meds', 'Medicines'),
+        packNode('embark-swim', 'Swimwear and sunscreen'),
+        packNode('embark-chargers', 'Phone chargers')
+      ]),
+      packNode('lanyards', 'Lanyards for the key cards', '4'),
+      packNode('dressy-outfits', 'Dressy outfits for specialty dining'),
+      packNode('seasickness', 'Seasickness tablets'),
+      packNode('magnet-hooks', 'Magnetic hooks for the cabin walls'),
+      packNode('day-backpack', 'Day backpack for port days'),
+      packNode('snorkel-masks', 'Snorkel masks (optional, rentals ashore)'),
+      packNode('puerto-plata', 'Puerto Plata buggy day (5 Jan)', '', [
+        packNode('mud-clothes', 'Old clothes for the mud', '4'),
+        packNode('water-shoes', 'Water shoes', '4'),
+        packNode('change-clothes', 'Change of clothes', '4'),
+        packNode('quick-dry-towels', 'Quick-dry towels', '4'),
+        packNode('wet-bags', 'Plastic bags for the wet kit'),
+        packNode('buggy-cash', 'Cash for tour photos and tips')
+      ])
+    ]),
+    packNode('g-health', 'Toiletries and health', '', [
+      packNode('prescriptions', 'Prescription medicines, in hand luggage'),
+      packNode('first-aid', 'First aid kit', '', [
+        packNode('plasters', 'Plasters'),
+        packNode('painkillers', 'Painkillers'),
+        packNode('antihistamines', 'Antihistamines'),
+        packNode('rehydration', 'Rehydration sachets')
+      ]),
+      packNode('toothbrushes', 'Toothbrushes and toothpaste'),
+      packNode('deodorant', 'Deodorant'),
+      packNode('skincare', 'Skincare and moisturiser'),
+      packNode('hair-care', 'Hair care'),
+      packNode('razors', 'Razors'),
+      packNode('sanitiser', 'Hand sanitiser')
+    ]),
+    packNode('g-flights', 'Flights (Etihad via Abu Dhabi)', '', [
+      packNode('neck-pillows', 'Neck pillows', '4'),
+      packNode('eye-masks', 'Eye masks and earplugs', '4'),
+      packNode('flight-change', 'Change of clothes in hand luggage', '4'),
+      packNode('water-bottles', 'Refillable water bottles', '4'),
+      packNode('pens', 'Pens for arrival forms'),
+      packNode('flight-snacks', 'Snacks for the flights')
+    ]),
+    packNode('g-bags', 'Bags and luggage', '', [
+      packNode('suitcases', 'Suitcases'),
+      packNode('luggage-tags', 'Luggage tags and AirTags'),
+      packNode('packing-cubes', 'Packing cubes'),
+      packNode('laundry-bag', 'Laundry bag'),
+      packNode('fold-bag', 'Foldable spare bag for the shopping haul'),
+      packNode('luggage-scale', 'Luggage scale')
+    ])
+  ];
+  const packState = { list: null, saved: null, ticks: {}, ready: false, editing: null, undo: null, undoTimer: null, focusAfter: null };
+
+  function packLoadList() {
+    if (packState.saved) {
+      try { const list = JSON.parse(packState.saved); if (Array.isArray(list)) return list; }
+      catch (e) { console.warn('[packing] saved list unreadable, using the default', e); }
+    }
+    return JSON.parse(JSON.stringify(PACK_DEFAULT));
+  }
+  function packWalk(list, fn, parent) {
+    list.forEach((item, index) => { fn(item, list, index, parent || null); packWalk(item.children || [], fn, item); });
+  }
+  function packFind(id) {
+    let hit = null;
+    packWalk(packState.list, (item, arr, index, parent) => { if (item.id === id) hit = { item, arr, index, parent }; });
+    return hit;
+  }
+  function packLeaves(item) {
+    return item.children && item.children.length ? item.children.flatMap(packLeaves) : [item];
+  }
+  function packNewId() { return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function packCollapsed() {
+    try { return new Set(JSON.parse(localStorage.getItem(PACK_COLLAPSE_KEY) || '[]')); } catch (e) { return new Set(); }
+  }
+  function packSetCollapsed(id, collapsed) {
+    const set = packCollapsed();
+    if (collapsed) set.add(id); else set.delete(id);
+    try { localStorage.setItem(PACK_COLLAPSE_KEY, JSON.stringify(Array.from(set))); } catch (e) {}
+  }
+  function packSaveList() {
+    saveEdit(PACK_LIST_EID, 'text', JSON.stringify(packState.list));
+  }
+
+  function packChip(act, text, label, opts) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pack-chip' + (opts && opts.danger ? ' pack-chip--danger' : '');
+    b.dataset.act = act;
+    b.textContent = text;
+    if (label) { b.setAttribute('aria-label', label); b.title = label; }
+    if (opts && opts.disabled) b.disabled = true;
+    return b;
+  }
+  function packRenderItem(item, arr, index, parent, collapsed) {
+    const isGroup = item.children && item.children.length > 0;
+    const leaves = packLeaves(item);
+    const done = leaves.filter(l => packState.ticks[l.id]).length;
+    const li = document.createElement('li');
+    li.className = 'pack-item' + (isGroup ? ' is-group' : '') + (done === leaves.length ? ' is-done' : '')
+      + (isGroup && collapsed.has(item.id) ? ' is-collapsed' : '');
+    li.dataset.packId = item.id;
+
+    const row = document.createElement('div');
+    row.className = 'pack-row';
+    if (isGroup) {
+      const t = document.createElement('button');
+      t.type = 'button';
+      t.className = 'pack-toggle';
+      t.setAttribute('aria-label', (collapsed.has(item.id) ? 'Expand ' : 'Collapse ') + item.label);
+      t.setAttribute('aria-expanded', collapsed.has(item.id) ? 'false' : 'true');
+      t.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      row.appendChild(t);
+    } else {
+      const sp = document.createElement('span');
+      sp.className = 'pack-toggle-spacer';
+      row.appendChild(sp);
+    }
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.className = 'pack-check';
+    box.id = 'pack-cb-' + item.id;
+    box.checked = done === leaves.length;
+    box.indeterminate = isGroup && done > 0 && done < leaves.length;
+    row.appendChild(box);
+
+    const text = document.createElement('label');
+    text.className = 'pack-text';
+    text.htmlFor = box.id;
+    const name = document.createElement('span');
+    name.className = 'pack-label';
+    name.textContent = item.label;
+    const qty = document.createElement('span');
+    qty.className = 'pack-qty';
+    qty.textContent = item.qty ? '×' + item.qty : '';
+    text.append(name, qty);
+    if (isGroup) {
+      const count = document.createElement('span');
+      count.className = 'pack-count';
+      count.textContent = done + '/' + leaves.length;
+      text.appendChild(count);
+    }
+    row.appendChild(text);
+
+    const tools = document.createElement('div');
+    tools.className = 'pack-tools';
+    tools.append(
+      packChip('rename', 'Rename', 'Rename ' + item.label),
+      packChip('qty', 'Qty', 'Edit the quantity of ' + item.label),
+      packChip('add-child', '+ Sub-item', 'Add an item under ' + item.label),
+      packChip('nest', 'Nest', 'Nest under the item above', { disabled: index === 0 })
+    );
+    if (parent) tools.appendChild(packChip('unnest', 'Un-nest', 'Move out one level'));
+    tools.append(
+      packChip('up', '↑', 'Move up', { disabled: index === 0 }),
+      packChip('down', '↓', 'Move down', { disabled: index === arr.length - 1 }),
+      packChip('delete', 'Delete', 'Delete ' + item.label + (isGroup ? ' and everything under it' : ''), { danger: true })
+    );
+    row.appendChild(tools);
+    li.appendChild(row);
+
+    if (isGroup) {
+      const ul = document.createElement('ul');
+      ul.className = 'pack-children';
+      item.children.forEach((child, i, a) => ul.appendChild(packRenderItem(child, a, i, item, collapsed)));
+      li.appendChild(ul);
+    }
+    return li;
+  }
+  function renderPacking() {
+    const root = document.getElementById('pack-list');
+    if (!root || !packState.list) return;
+    const collapsed = packCollapsed();
+    root.replaceChildren(...packState.list.map((item, i, a) => packRenderItem(item, a, i, null, collapsed)));
+    const editing = document.documentElement.dataset.edit === 'on';
+    const editChip = document.getElementById('pack-edit-chip');
+    if (editChip) {
+      editChip.textContent = editing ? 'Done' : 'Edit list';
+      editChip.classList.toggle('is-active', editing);
+      editChip.setAttribute('aria-pressed', editing ? 'true' : 'false');
+    }
+    updatePackProgress();
+    if (packState.focusAfter) {
+      const f = packState.focusAfter;
+      packState.focusAfter = null;
+      const target = root.querySelector('[data-pack-id="' + f.id + '"] > .pack-row [data-act="' + f.act + '"]:not([disabled])')
+        || root.querySelector('[data-pack-id="' + f.id + '"] > .pack-row .pack-check');
+      if (target) target.focus();
+    }
+  }
   function updatePackProgress() {
-    const boxes = document.querySelectorAll('.pack-check');
-    const done = Array.from(boxes).filter(b => b.checked).length;
-    const total = boxes.length, left = total - done;
+    const leaves = (packState.list || []).flatMap(packLeaves);
+    const done = leaves.filter(l => packState.ticks[l.id]).length;
+    const total = leaves.length, left = total - done;
     const pct = total ? Math.round(done / total * 100) : 0;
     const summary = done + ' of ' + total + ' packed · ' + (left ? left + ' to pack' : 'all packed');
     const label = document.getElementById('pack-progress');
@@ -4501,16 +4798,172 @@ customElements.define('loop-loader', LoopLoader);
     const fill = document.getElementById('pack-meter-fill');
     if (fill) fill.style.width = pct + '%';
   }
+
+  /* Ticking a group ticks (or clears) everything under it. Only the leaves
+     whose state actually changes are written, one after another. */
+  async function packSetTicks(item, on) {
+    const changed = packLeaves(item).filter(l => !!packState.ticks[l.id] !== on);
+    changed.forEach(l => { packState.ticks[l.id] = on; });
+    renderPacking();
+    for (const l of changed) await saveEdit(PACK_PREFIX + l.id, 'text', on ? '1' : '0');
+  }
+
+  function packStartEdit(id, field, isNew) {
+    const li = document.querySelector('#pack-list [data-pack-id="' + id + '"]');
+    const hit = packFind(id);
+    if (!li || !hit) return;
+    const el = li.querySelector(':scope > .pack-row .' + (field === 'qty' ? 'pack-qty' : 'pack-label'));
+    if (field === 'qty') el.textContent = hit.item.qty;
+    packState.editing = { id, field, isNew: !!isNew, cancel: false };
+    el.contentEditable = 'true';
+    el.focus();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  function packCommitEdit(el) {
+    const ed = packState.editing;
+    packState.editing = null;
+    el.contentEditable = 'false';
+    const hit = ed && packFind(ed.id);
+    if (!hit) { renderPacking(); return; }
+    const value = el.textContent.replace(/\s+/g, ' ').trim();
+    let changed = false;
+    if (ed.field === 'label') {
+      if (ed.cancel || !value) {
+        // A brand-new item left blank or cancelled is simply not kept. It was
+        // never saved, so dropping it needs no write either.
+        if (ed.isNew) hit.arr.splice(hit.index, 1);
+      } else if (value !== hit.item.label || ed.isNew) {
+        hit.item.label = value; changed = true;
+      }
+    } else if (!ed.cancel) {
+      const q = value.replace(/^[×x]\s*/i, '');
+      if (q !== hit.item.qty) { hit.item.qty = q; changed = true; }
+    }
+    if (changed) packSaveList();
+    packState.focusAfter = { id: ed.id, act: ed.field === 'qty' ? 'qty' : 'rename' };
+    renderPacking();
+  }
+
+  function packShowUndo(on) {
+    const btn = document.getElementById('pack-undo');
+    if (!btn) return;
+    btn.hidden = !on;
+    clearTimeout(packState.undoTimer);
+    if (on) packState.undoTimer = setTimeout(() => { btn.hidden = true; packState.undo = null; }, 12000);
+  }
+
+  function packAction(act, id) {
+    const hit = packFind(id);
+    if (!hit) return;
+    const { item, arr, index, parent } = hit;
+    if (act === 'rename') { packStartEdit(id, 'label'); return; }
+    if (act === 'qty') { packStartEdit(id, 'qty'); return; }
+    if (act === 'add-child') {
+      const child = packNode(packNewId(), 'New item');
+      item.children = item.children || [];
+      item.children.push(child);
+      packSetCollapsed(item.id, false);
+      renderPacking();
+      packStartEdit(child.id, 'label', true);
+      return;
+    }
+    if (act === 'nest' && index > 0) {
+      const target = arr[index - 1];
+      arr.splice(index, 1);
+      target.children = target.children || [];
+      target.children.push(item);
+      packSetCollapsed(target.id, false);
+      packState.focusAfter = { id, act: 'unnest' };
+    } else if (act === 'unnest' && parent) {
+      const p = packFind(parent.id);
+      arr.splice(index, 1);
+      p.arr.splice(p.index + 1, 0, item);
+      packState.focusAfter = { id, act: 'nest' };
+    } else if (act === 'up' && index > 0) {
+      arr.splice(index - 1, 0, arr.splice(index, 1)[0]);
+      packState.focusAfter = { id, act: 'up' };
+    } else if (act === 'down' && index < arr.length - 1) {
+      arr.splice(index + 1, 0, arr.splice(index, 1)[0]);
+      packState.focusAfter = { id, act: 'down' };
+    } else if (act === 'delete') {
+      arr.splice(index, 1);
+      packState.undo = { item, parentId: parent ? parent.id : null, index };
+      packShowUndo(true);
+      showSaveStatus('Deleted', 'ok');
+    } else {
+      return;
+    }
+    packSaveList();
+    renderPacking();
+  }
+
   function wirePacking() {
-    document.querySelectorAll('.pack-check').forEach(box => {
-      box.addEventListener('change', () => {
-        updatePackProgress();
-        // Stored as 'text': the table's type check has no packing type, and the
-        // pack: prefix routes it in applySavedEdits before any text handling.
-        saveEdit(PACK_PREFIX + box.dataset.packKey, 'text', box.checked ? '1' : '0');
-      });
+    packState.list = packLoadList();
+    packState.ready = true;
+    const root = document.getElementById('pack-list');
+    if (!root) return;
+    root.addEventListener('change', e => {
+      const box = e.target.closest('.pack-check');
+      if (!box) return;
+      const hit = packFind(box.closest('.pack-item').dataset.packId);
+      if (hit) packSetTicks(hit.item, box.checked);
     });
-    updatePackProgress();
+    root.addEventListener('click', e => {
+      // While a name is being edited, a click inside it places the caret; it
+      // must not reach the <label> and tick the box.
+      if (e.target.closest('[contenteditable="true"]')) { e.preventDefault(); return; }
+      const toggle = e.target.closest('.pack-toggle');
+      if (toggle) {
+        const li = toggle.closest('.pack-item');
+        const collapsed = !li.classList.contains('is-collapsed');
+        li.classList.toggle('is-collapsed', collapsed);
+        toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        packSetCollapsed(li.dataset.packId, collapsed);
+        return;
+      }
+      const chip = e.target.closest('.pack-chip[data-act]');
+      if (chip) packAction(chip.dataset.act, chip.closest('.pack-item').dataset.packId);
+    });
+    root.addEventListener('keydown', e => {
+      if (!e.target.matches('[contenteditable="true"]')) return;
+      if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (packState.editing) packState.editing.cancel = true; e.target.blur(); }
+    });
+    root.addEventListener('paste', e => {
+      if (!e.target.closest('[contenteditable="true"]')) return;
+      e.preventDefault();
+      document.execCommand('insertText', false, (e.clipboardData.getData('text/plain') || '').replace(/\s+/g, ' '));
+    });
+    root.addEventListener('focusout', e => {
+      if (e.target.matches('[contenteditable="true"]') && packState.editing) packCommitEdit(e.target);
+    });
+    const addTop = document.getElementById('pack-add-top');
+    if (addTop) addTop.addEventListener('click', () => {
+      const item = packNode(packNewId(), 'New item');
+      packState.list.push(item);
+      renderPacking();
+      packStartEdit(item.id, 'label', true);
+    });
+    const undo = document.getElementById('pack-undo');
+    if (undo) undo.addEventListener('click', () => {
+      const u = packState.undo;
+      if (!u) return;
+      const p = u.parentId && packFind(u.parentId);
+      const arr = p ? (p.item.children = p.item.children || []) : packState.list;
+      arr.splice(Math.min(u.index, arr.length), 0, u.item);
+      packState.undo = null;
+      packShowUndo(false);
+      packSaveList();
+      packState.focusAfter = { id: u.item.id, act: 'delete' };
+      renderPacking();
+    });
+    const editChip = document.getElementById('pack-edit-chip');
+    if (editChip) editChip.addEventListener('click', () => toggleEditMode());
+    renderPacking();
   }
   async function applySavedEdits() {
     const store = await fetchEditStore();
@@ -4556,11 +5009,9 @@ customElements.define('loop-loader', LoopLoader);
         if (row) renderSubtext(row, entry.value);
         return;
       }
-      if (eid.indexOf(PACK_PREFIX) === 0) {
-        const box = document.querySelector('.pack-check[data-pack-key="' + eid.slice(PACK_PREFIX.length) + '"]');
-        if (box) box.checked = entry.value === '1';
-        return;
-      }
+      // Packing list: the structure is one row, ticks are one row per item.
+      if (eid === PACK_LIST_EID) { packState.saved = entry.value; return; }
+      if (eid.indexOf(PACK_PREFIX) === 0) { packState.ticks[eid.slice(PACK_PREFIX.length)] = entry.value === '1'; return; }
       const el = document.querySelector('[data-eid="' + eid + '"]');
       if (!el) return;
       if (entry.type === 'text') el.innerHTML = entry.value;
@@ -4580,6 +5031,7 @@ customElements.define('loop-loader', LoopLoader);
     const editBtn = document.getElementById('edit-toggle-btn');
     if (editBtn) editBtn.classList.toggle('active', on);
     localStorage.setItem(EDIT_MODE_KEY, on ? '1' : '0');
+    if (packState.ready) renderPacking();
   }
   function toggleEditMode() {
     setEditMode(document.documentElement.dataset.edit !== 'on');
