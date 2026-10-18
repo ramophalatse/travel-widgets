@@ -501,6 +501,15 @@
   .pack-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:1rem 1.25rem 0.75rem;border-bottom:1px solid var(--border);}
   .pack-heading{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-0.03em;color:var(--text);}
   .pack-progress{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  /* Same meter language as the budget meters: accent fill on a lighter step
+     of the same hue, so packed and still-to-pack read across the whole bar. */
+  .pack-meter{padding:0.9rem 1.25rem 1rem;border-bottom:1px solid var(--border);}
+  .pack-meter-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px;}
+  .pack-pct{font-family:var(--sans);font-size:24px;font-weight:600;letter-spacing:-0.02em;color:var(--text);}
+  .pack-pct-label{font-size:13px;color:var(--text2);margin-left:6px;}
+  .pack-meter-track{position:relative;height:8px;border-radius:4px;overflow:hidden;background:color-mix(in oklab,var(--accent) 16%,transparent);}
+  .pack-meter-fill{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:4px;background:var(--accent);transition:width .5s cubic-bezier(.2,.8,.2,1);}
+  @media (prefers-reduced-motion:reduce){.pack-meter-fill{transition:none;}}
   .pack-list{list-style:none;margin:0;padding:0;}
   .pack-item{border-bottom:1px solid var(--border);}
   .pack-item:last-child{border-bottom:none;}
@@ -1975,7 +1984,11 @@
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Download MTA TrainTime app · buy LIRR tickets for Jan 13 departure (Penn → Jamaica)</span></li>
   </ul>
 </div></div><div class="leg-panel" id="panel-packing"><div class="summary-section">
-  <div class="pack-header"><div class="pack-heading">Packing List</div><div class="pack-progress" id="pack-progress"></div></div>
+  <div class="pack-header"><div class="pack-heading">Packing List</div></div>
+  <div class="pack-meter">
+    <div class="pack-meter-head"><div><span class="pack-pct" id="pack-pct">0%</span><span class="pack-pct-label">packed</span></div><div class="pack-progress" id="pack-progress"></div></div>
+    <div class="pack-meter-track" id="pack-meter" role="progressbar" aria-label="Items packed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="pack-meter-fill" id="pack-meter-fill"></span></div>
+  </div>
   <ul class="pack-list">
     <li class="pack-item"><label><input type="checkbox" class="pack-check" data-pack-key="face-bandana-snood"><span class="pack-label">Face bandana/Snood<span class="pack-qty">×4</span></span></label></li>
   </ul>
@@ -4472,8 +4485,21 @@ customElements.define('loop-loader', LoopLoader);
   function updatePackProgress() {
     const boxes = document.querySelectorAll('.pack-check');
     const done = Array.from(boxes).filter(b => b.checked).length;
-    const el = document.getElementById('pack-progress');
-    if (el) el.textContent = done + ' of ' + boxes.length + ' packed';
+    const total = boxes.length, left = total - done;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const summary = done + ' of ' + total + ' packed · ' + (left ? left + ' to pack' : 'all packed');
+    const label = document.getElementById('pack-progress');
+    if (label) label.textContent = summary;
+    const pctEl = document.getElementById('pack-pct');
+    if (pctEl) pctEl.textContent = pct + '%';
+    const meter = document.getElementById('pack-meter');
+    if (meter) {
+      meter.setAttribute('aria-valuenow', String(pct));
+      meter.setAttribute('aria-valuetext', pct + '% packed, ' + summary);
+      meter.title = pct + '% packed (' + summary + ')';
+    }
+    const fill = document.getElementById('pack-meter-fill');
+    if (fill) fill.style.width = pct + '%';
   }
   function wirePacking() {
     document.querySelectorAll('.pack-check').forEach(box => {
