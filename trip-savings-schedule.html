@@ -523,7 +523,7 @@
         <span class="display-val" id="total-display-val">·</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="total-input" value="358199" min="0" step="500" style="display:none">
+      <input type="number" id="total-input" value="357739" min="0" step="500" style="display:none">
       <div class="input-hint" id="total-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric metric-editable" id="paid-metric" title="Click to edit">
@@ -547,11 +547,11 @@
 
   <div class="control-row">
     <span class="control-label">Contribution on each funding date</span>
-    <input type="range" id="monthly" min="0" max="120000" step="50" value="69250" aria-label="Contribution on each funding date">
-    <span class="control-value" id="monthly-out">R69,250</span>
+    <input type="range" id="monthly" min="0" max="120000" step="50" value="69100" aria-label="Contribution on each funding date">
+    <span class="control-value" id="monthly-out">R69,100</span>
   </div>
 
-  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R49,250 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
+  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R49,100 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
 
   <div class="table-wrap">
     <table>
@@ -584,7 +584,7 @@
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
 const FUNDING_DATES = [new Date(2026, 9, 19), new Date(2026, 10, 19), new Date(2026, 11, 19)];
 const FLYOUT = new Date(2026, 11, 21);
-const LS = 'nyc-miami-savings-v6';
+const LS = 'nyc-miami-savings-v7';
 
 const PAYMENTS = [
   { label: 'NCL excursions (Tortola, Wave Runner), provisional allowance and booking date', amount: 9554, due: new Date(2026, 9, 31) },
@@ -598,7 +598,7 @@ const PAYMENTS = [
   { label: 'Unam\u2019s allowance', amount: 5000, due: new Date(2026, 11, 21) },
   { label: 'Hotel fees and FX buffer', amount: 4527, due: new Date(2026, 11, 22) },
   { label: 'Viator Puerto Plata buggy tour, 2 bookings charged automatically', amount: 3658, due: new Date(2027, 0, 3) },
-  { label: 'St. Thomas buggy day (GetYourGuide), to book', amount: 7885, due: new Date(2027, 0, 4) },
+  { label: 'St. Thomas buggy day (GetYourGuide, R460 promo applied), to book', amount: 7425, due: new Date(2027, 0, 4) },
   { label: 'Row NYC', amount: 40598, due: new Date(2027, 0, 5) },
 ];
 
