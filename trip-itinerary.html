@@ -3853,9 +3853,23 @@ customElements.define('loop-loader', LoopLoader);
     const amount = row && row.cells[1] ? parseBudgetAmount(row.cells[1].textContent) : null;
     return amount > 0 ? amount : null;
   }
-  function formatPct(lo, hi) {
-    const a = Math.round(lo * 100), b = Math.round(hi * 100);
-    return (b > a ? a + '–' + b : String(b)) + '%';
+  /** Abbreviated Rand: R650, R2.4K, R32K. */
+  function formatRandShort(n) {
+    const v = Math.abs(n);
+    if (v < 1000) return 'R' + Math.round(v / 10) * 10;
+    const k = v / 1000;
+    return 'R' + (k < 10 ? String(Math.round(k * 10) / 10) : String(Math.round(k))) + 'K';
+  }
+  /** Spend against a limit as an abbreviated over/under, from the low and
+   *  high ends of the spend range. */
+  function formatGap(spendLo, spendHi, limit) {
+    const lo = spendLo - limit, hi = spendHi - limit;
+    const side = n => formatRandShort(n) + (n > 0 ? ' over' : ' under');
+    if (lo < 0 && hi > 0) return formatRandShort(lo) + ' under to ' + side(hi);
+    const a = formatRandShort(Math.min(Math.abs(lo), Math.abs(hi)));
+    const b = formatRandShort(Math.max(Math.abs(lo), Math.abs(hi)));
+    if (a === 'R0' && b === 'R0') return 'on budget';
+    return (a === b ? a : a + '–' + b) + (hi > 0 ? ' over' : ' under');
   }
   function clamp01(n) { return Math.min(1, Math.max(0, n)); }
   function el(tag, cls, text) {
@@ -3981,7 +3995,7 @@ customElements.define('loop-loader', LoopLoader);
         updateMeter(dayMeter, {
           label: d.allowance > 1 ? 'Spend · ' + d.allowance + ' days' : 'Day spend',
           value: amountText + ' / ' + formatRand(limit),
-          pct: s.counted ? formatPct(s.min / limit, hi) : null,
+          pct: s.counted ? formatGap(s.min, s.max, limit) : null,
           lo: s.min / limit, hi, pace: null,
           tone: budgetTone(Math.round(s.max - limit), CHIP_AT_BAND * d.allowance),
           foot: s.prepaid ? [['Pre-paid lines excluded']] : null
@@ -4001,7 +4015,7 @@ customElements.define('loop-loader', LoopLoader);
       updateMeter(tripMeter, {
         label: 'Trip to date',
         value: formatSpendTotal(cumLo, cumHi) + ' / ' + formatRand(pot),
-        pct: formatPct(cumLo / pot, hi),
+        pct: formatGap(cumLo, cumHi, pot),
         lo: cumLo / pot, hi, pace: cumDays / totalDays,
         tone: reading.tone,
         foot: [[reading.word, true], [reading.gap], [budgetDayLabel(cumDays, totalDays)]]
@@ -4096,7 +4110,7 @@ customElements.define('loop-loader', LoopLoader);
     updateMeter(meter, {
       label: 'Planned spend, whole trip',
       value: formatSpendTotal(t.cumLo, t.cumHi) + ' / ' + formatRand(t.pot),
-      pct: formatPct(t.cumLo / t.pot, hi),
+      pct: formatGap(t.cumLo, t.cumHi, t.pot),
       lo: t.cumLo / t.pot, hi,
       pace: elapsed > 0 ? Math.min(1, elapsed / t.totalDays) : null,
       tone,
