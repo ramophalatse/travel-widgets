@@ -523,7 +523,7 @@
         <span class="display-val" id="total-display-val">·</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="total-input" value="350314" min="0" step="500" style="display:none">
+      <input type="number" id="total-input" value="358199" min="0" step="500" style="display:none">
       <div class="input-hint" id="total-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric metric-editable" id="paid-metric" title="Click to edit">
@@ -547,11 +547,11 @@
 
   <div class="control-row">
     <span class="control-label">Contribution on each funding date</span>
-    <input type="range" id="monthly" min="0" max="120000" step="50" value="66600" aria-label="Contribution on each funding date">
-    <span class="control-value" id="monthly-out">R66,600</span>
+    <input type="range" id="monthly" min="0" max="120000" step="50" value="69250" aria-label="Contribution on each funding date">
+    <span class="control-value" id="monthly-out">R69,250</span>
   </div>
 
-  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R46,600 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
+  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R49,250 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
 
   <div class="table-wrap">
     <table>
@@ -574,7 +574,7 @@
   <p class="context-note">Agreed daily allowance: 15 land days at R5,000 = R75,000 (22 Dec to 2 Jan; 11 to 13 Jan). Onboard NCL Aqua spending is prepaid and budgeted at zero. Check actual meals and transfers on 3 and 10 January against existing allowances; no full daily allowance is added. Phones are R61,840 plus R50,000 other discretionary spending. The iPad mini and Watch Ultra are excluded. Cruise and flights are paid. Daily spend, phones, discretionary spending and Unam&rsquo;s allowance are reserved at fly-out, rather than treated as actual payments on that date. No new January savings are counted: January bookings must be funded before departure. The slider is a scenario, not an agreed or verified affordable savings commitment. Excursion and hotel payment dates remain planning placeholders where unconfirmed. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
 
   <footer>
-    <span>Figures in ZAR · Working estimate 18 October 2026 · Bookings R16.50/USD; phones R16.52/USD · Fees and final excursion costs to verify</span>
+    <span>Figures in ZAR · Working estimate 20 October 2026 · Bookings R16.50/USD; phones R16.52/USD · Fees and final excursion costs to verify</span>
     <span id="footer-rate">·</span>
   </footer>
 
@@ -584,7 +584,7 @@
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
 const FUNDING_DATES = [new Date(2026, 9, 19), new Date(2026, 10, 19), new Date(2026, 11, 19)];
 const FLYOUT = new Date(2026, 11, 21);
-const LS = 'nyc-miami-savings-v5';
+const LS = 'nyc-miami-savings-v6';
 
 const PAYMENTS = [
   { label: 'NCL excursions (Tortola, Wave Runner), provisional allowance and booking date', amount: 9554, due: new Date(2026, 9, 31) },
@@ -598,6 +598,7 @@ const PAYMENTS = [
   { label: 'Unam\u2019s allowance', amount: 5000, due: new Date(2026, 11, 21) },
   { label: 'Hotel fees and FX buffer', amount: 4527, due: new Date(2026, 11, 22) },
   { label: 'Viator Puerto Plata buggy tour, 2 bookings charged automatically', amount: 3658, due: new Date(2027, 0, 3) },
+  { label: 'St. Thomas buggy day (GetYourGuide), to book', amount: 7885, due: new Date(2027, 0, 4) },
   { label: 'Row NYC', amount: 40598, due: new Date(2027, 0, 5) },
 ];
 
