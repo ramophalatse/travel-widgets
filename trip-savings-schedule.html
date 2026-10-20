@@ -523,7 +523,7 @@
         <span class="display-val" id="total-display-val">·</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="total-input" value="351799" min="0" step="500" style="display:none">
+      <input type="number" id="total-input" value="348185" min="0" step="500" style="display:none">
       <div class="input-hint" id="total-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric metric-editable" id="paid-metric" title="Click to edit">
@@ -547,11 +547,11 @@
 
   <div class="control-row">
     <span class="control-label">Contribution on each funding date</span>
-    <input type="range" id="monthly" min="0" max="120000" step="50" value="67100" aria-label="Contribution on each funding date">
-    <span class="control-value" id="monthly-out">R67,100</span>
+    <input type="range" id="monthly" min="0" max="120000" step="50" value="65900" aria-label="Contribution on each funding date">
+    <span class="control-value" id="monthly-out">R65,900</span>
   </div>
 
-  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R47,100 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
+  <p class="context-note"><label><input type="checkbox" id="variable-offset"> Include the assumed R60,000 variable-budget offset on 19 December</label><br>Unchecked by default because availability is not yet confirmed. With this offset, R45,900 on each of the three funding dates covers the current estimate. Tshiamo's expected contribution is excluded.</p>
 
   <div class="table-wrap">
     <table>
@@ -584,10 +584,9 @@
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
 const FUNDING_DATES = [new Date(2026, 9, 19), new Date(2026, 10, 19), new Date(2026, 11, 19)];
 const FLYOUT = new Date(2026, 11, 21);
-const LS = 'nyc-miami-savings-v8';
+const LS = 'nyc-miami-savings-v9';
 
 const PAYMENTS = [
-  { label: 'NCL Wave Runner, Great Stirrup Cay, provisional allowance and booking date', amount: 3614, due: new Date(2026, 9, 31) },
   { label: 'Miami Airbnb', amount: 55817, due: new Date(2026, 11, 11) },
   { label: 'Arlo SoHo', amount: 23598, due: new Date(2026, 11, 15) },
   { label: 'Turo Tesla, extension and charging', amount: 20182, due: new Date(2026, 11, 17) },
