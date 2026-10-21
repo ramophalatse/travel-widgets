@@ -5572,6 +5572,26 @@ customElements.define('loop-loader', LoopLoader);
       placeTravelBadge(target, meta);
     });
   }
+  // Build both show-night journeys before editable keys and saved photos hydrate.
+  // The existing R437 return-subway spend line already covers these two rides.
+  function ensureRockettesSubwayLegs() {
+    const card = document.querySelector('.day-card[data-day-key="d2"]');
+    const show = Array.from(card?.querySelectorAll('.activity-row') || [])
+      .find(r => authoredRowName(r).startsWith('Christmas Spectacular'));
+    if (!show) return;
+    const addLeg = (key, time, name, description, after) => {
+      if (card.querySelector(`[data-rockettes-leg="${key}"]`)) return;
+      const leg = document.createElement('div');
+      leg.className = 'activity-row';
+      leg.dataset.rockettesLeg = key;
+      leg.dataset.editDayKey = 'd2';
+      leg.innerHTML = `<div class="time-col">${time}</div><div class="act-body"><div class="act-name">${name}</div><div class="act-note">${description}</div><div class="act-cost">$3pp · $12 / ~R218 for 4</div></div>`;
+      if (after) show.after(leg);
+      else show.before(leg);
+    };
+    addLeg('outbound', '6:00pm', 'Subway · Chinatown → Radio City · Uptown B / D', 'Leave Shanghai 21 on Mott St by 6pm. Walk about 10 min to Grand St station at Chrystie St, then take an uptown B or D five stops to 47–50 Sts–Rockefeller Center. Follow the 50th St exit and walk a few minutes north to Radio City Music Hall at Sixth Ave and 50th St. Allow 40–50 min including walking, the wait and the train; aim to arrive by 7pm for the 8pm show. <a href="https://www.mta.info/maps/subway-line-maps/d-line" target="_blank" rel="noopener">MTA route map →</a> Check planned service before setting out.', false);
+    addLeg('return', '9:45pm', 'Subway · Radio City → Arlo SoHo · Downtown 1', 'The show should finish around 9:30pm; allow about 15 min to leave with the crowd. Walk west along 50th St to the 1 station at Broadway, about 5–10 min. Take a downtown / South Ferry-bound 1 to Canal St at Varick St, then walk west along Canal St and north on Hudson St to Arlo SoHo. Allow 35–45 min overall, reaching the hotel around 10:30pm. <a href="https://www.mta.info/maps/subway-line-maps/1-line" target="_blank" rel="noopener">MTA route map →</a> Recheck the live service before boarding.', true);
+  }
   // Keep the arrival row's original edit/photo namespace while changing the plan.
   // Run before hydration and again afterwards to migrate known saved SUV copy.
   function applyAirportRailTransfer() {
@@ -5715,6 +5735,8 @@ customElements.define('loop-loader', LoopLoader);
     }
     field('d2', 'Land at JFK', '.act-note', 'Clear immigration and collect our bags.', 'Clear immigration and collect our bags. Etihad currently reports Abu Dhabi US preclearance temporarily closed, so allow for JFK processing; recheck before departure.');
     field('d2', 'Check in · Rooms ready', '.act-note', 'Two to three hours of downtime before dinner. Check out Arlo Soho and chill. Afternoon at leisure.', 'Rest until about 4:30pm, then leave for an early birthday dinner before Radio City.');
+    field('d2', 'Check in · Rooms ready', '.act-note', "Two to three hours of downtime before dinner. We've been travelling since Dec 21 via Abu Dhabi: the rest is earned.", 'A short rest after the afternoon walk. Get ready at 4:30pm, then leave for the 5pm birthday dinner in Chinatown.');
+    field('d2', 'Get ready for dinner', '.time-col', '5:30pm', '4:30pm');
     field('d2', 'Birthday dinner', '.time-col', '6:00pm', '5:00pm');
     field('d2', 'Birthday dinner', '.act-note', 'where we’ll settle for a proper sit-down.', 'where we’ll settle for an early sit-down. Leave by 6:00pm: allow about an hour for the walk to Grand St, the uptown B/D to 47–50 Sts–Rockefeller Center and the walk to Radio City. If the restaurant queue is long, eat casually nearby.');
     field('d2', 'Christmas Spectacular', '.act-note', 'allow time for security and the walk in from dinner.', 'aim to arrive at 7:00pm, one hour before curtain, for security. Tickets are purchased; keep the booking confirmation ready.');
@@ -5842,6 +5864,7 @@ customElements.define('loop-loader', LoopLoader);
   window.editsReady = (async function initEditSystem() {
     restoreItineraryView();
     initFlightDetails();
+    ensureRockettesSubwayLegs();
     ensureImageDropZones();
     tagEditableElements();
     // After tagging, so the rows and controls these add can never be caught by
