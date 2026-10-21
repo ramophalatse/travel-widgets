@@ -128,6 +128,8 @@
   @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .footer-mark{filter:none;}}
   :root[data-theme="dark"] .footer-mark{filter:none;}
   .footer-tagline{font-family:var(--mono);letter-spacing:0.04em;}
+  .footer-sun-source{font-size:11px;}
+  .footer-sun-source a:any-link{color:var(--accent-text);text-underline-offset:2px;}
 
   /* THEME TOGGLE */
   .theme-toggle{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;}
@@ -178,11 +180,15 @@
      56px per IX-2 — never computed from label length. */
   .ghost-title{position:absolute;top:-8px;right:0;z-index:1;font-family:var(--serif);font-weight:800;font-style:italic;font-size:56px;line-height:1;letter-spacing:-0.03em;opacity:0.42;white-space:nowrap;pointer-events:none;user-select:none;
     background-image:linear-gradient(135deg,rgba(255,255,255,0) 0%,#fff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .leg-hero-text{position:absolute;bottom:1.5rem;left:1.5rem;z-index:2;color:#fff;}
+  .leg-hero-text{position:absolute;bottom:1.5rem;left:1.5rem;right:13.5rem;z-index:2;color:#fff;}
   .leg-hero-title{font-family:var(--serif);font-size:clamp(1.4rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.03em;}
   .leg-hero-sub{display:flex;flex-wrap:wrap;align-items:center;gap:5px 18px;font-size:13px;opacity:0.85;margin-top:7px;font-weight:300;}
   .leg-hero-sub .meta-item{display:inline-flex;align-items:center;gap:7px;}
   .leg-hero-sub .meta-ico{width:16px;height:16px;flex:none;fill:currentColor;opacity:0.72;}
+  .leg-hero-sub .sun-time-ico{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .leg-hero-sub [data-sun-time]{white-space:nowrap;}
+  @media(max-width:640px){.leg-hero-text{right:1.5rem;}}
+  @media(max-width:360px){.leg-hero.has-sun-times{height:260px;}}
   .act-rating{display:inline-flex;vertical-align:middle;max-width:100%;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:7px;font-size:11px;color:var(--text2);}
   .act-rating:empty{display:none;}
   .ta-pill{display:inline-flex;align-items:center;gap:7px;padding:3px 9px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);}
@@ -1382,10 +1388,10 @@
 <div class="activity-row"><div class="time-col">6:00pm</div><div class="act-body"><div class="act-name">Birthday dinner · Shanghai 21 · Chinatown</div><div class="act-note">~20 min east from the Arlo along Canal St, then down Mott St. First stop is Mei Lai Wah (41 Mott St), a Chinatown bakery since 1968: a pineapple BBQ pork bun each, eaten on the pavement. It closes at 7:30pm, and the cash queue is usually the shorter one. Then a few doors down to Shanghai 21 (21 Mott St) for a proper sit-down: soup dumplings (about $10 to $12 for six), the spicy-sweet Szechuan wontons and whatever else the table fancies. Walk-in only, no reservations, and it closes at 8:30pm, so aim to be seated by 6:30 and leave enough time to reach Radio City. If everyone would rather eat fast and get to bed, Xi'an Famous Foods (45 Bayard St, round the corner, open till 9pm) does hand-pulled spicy cumin lamb noodles at the counter.</div><div class="act-cost">~R1,300–R1,800 for 4 (~$70–$100)</div><div class="act-rating" data-ta="shanghai-21" data-ta-name></div></div></div><div class="activity-row"><div class="time-col">8:00pm</div><div class="act-body"><div class="act-name">Christmas Spectacular Starring the Radio City Rockettes · Radio City Music Hall</div><div class="act-note">A birthday-night curtain call at Radio City, 1260 Avenue of the Americas between 50th and 51st Streets. The 8:00pm performance is listed for Tue 22 Dec 2026; allow time for security and the walk in from dinner. The show runs about 90 minutes. Four tickets purchased on 21 October 2026: $540 total ($135 per person), paid at R8,909.68.</div><div class="act-cost">Paid · R8,909.68 ($540 total · 4 tickets)</div><div class="act-rating" data-ta="rockettes" data-ta-name></div></div></div>
         </div>
 <div class="notice notice-accent">Dinner is how we like to eat anywhere. Local, casual and good. Then the Rockettes: a proper birthday-night finale at Radio City. Tickets are purchased. Leave Chinatown in time for the 8pm curtain.</div>
-<div class="spend-table"><div class="spend-row"><span>Agoda SUV · JFK Terminal 4 → Arlo SoHo</span><span>~R2,398</span></div><div class="spend-row"><span>Free Tours by Foot · $80 tip</span><span>~R1,456</span></div><div class="spend-row"><span>Union Square lunch &amp; market bites</span><span>~R400</span></div><div class="spend-row"><span>Birthday dinner · Mei Lai Wah &amp; Shanghai 21</span><span>~R1,300–R1,800</span></div><div class="spend-row"><span>Christmas Spectacular · Rockettes x4</span><span>Paid · R8,909.68 ($540 total · 4 tickets)</span></div><div class="spend-row total"><span>Total</span><span>~R14,464–R14,964</span></div></div>
+<div class="spend-table"><div class="spend-row"><span>Agoda SUV · JFK Terminal 4 → Arlo SoHo</span><span>~R2,398</span></div><div class="spend-row"><span>Free Tours by Foot · $80 tip</span><span>~R1,456</span></div><div class="spend-row"><span>Union Square lunch &amp; market bites</span><span>~R400</span></div><div class="spend-row"><span>Birthday dinner · Mei Lai Wah &amp; Shanghai 21</span><span>~R1,300–R1,800</span></div><div class="spend-row total"><span>Total</span><span>~R5,554–R6,054</span></div></div>
         <div class="day-total-bar">
           <div class="budget-track"><div class="budget-fill over" style="width:100%"></div></div>
-          <div class="total-amount">~R14,464–R14,964</div>
+          <div class="total-amount">~R5,554–R6,054</div>
         </div>
       </div>
     </div>
@@ -2124,6 +2130,7 @@
 <footer class="site-footer">
   <img class="footer-mark" src="assets/brand/phalatse-mark.png" alt="Phalatse family travel mark">
   <div class="footer-tagline">Phalatse family travel</div>
+  <div class="footer-sun-source">Sunrise/sunset averages: <a href="https://sunrise-sunset.org/" target="_blank" rel="noopener">sunrise-sunset.org</a> · local time</div>
 </footer>
 <script>
 /* <loop-loader>: busy indicator. A fixed-length cord ties a loop that slides
@@ -5572,6 +5579,33 @@ customElements.define('loop-loader', LoopLoader);
       placeTravelBadge(target, meta);
     });
   }
+  // Trip-date arithmetic means of local sunrise/sunset, rounded to the minute.
+  // Source: sunrise-sunset.org API v2, retrieved 21 Oct 2026. Static so offline
+  // copies retain the same reference; no weather/API request is needed on load.
+  // NYC uses the hotel coordinates; Miami uses North Miami Beach.
+  function renderHeroSunTimes() {
+    const times = {
+      nyc1: { sunrise: '7:18am', sunset: '4:33pm', dates: '22–24 December 2026', lat: 40.7244, lng: -74.0084 },
+      miami: { sunrise: '7:07am', sunset: '5:39pm', dates: '24 December 2026–3 January 2027', lat: 25.9331, lng: -80.1625 },
+      nyc2: { sunrise: '7:19am', sunset: '4:49pm', dates: '10–13 January 2027', lat: 40.7591, lng: -73.9887 }
+    };
+    const horizon = 'M3 18h18M6 14a6 6 0 0 1 12 0M2 12h2M20 12h2';
+    Object.entries(times).forEach(([key, data]) => {
+      const host = document.querySelector(`#panel-${key} .leg-hero-sub`);
+      if (!host) return;
+      host.closest('.leg-hero').classList.add('has-sun-times');
+      host.querySelectorAll('[data-sun-time]').forEach(item => item.remove());
+      ['sunrise', 'sunset'].forEach(event => {
+        const item = document.createElement('span');
+        item.className = 'meta-item';
+        item.dataset.sunTime = event;
+        item.title = `Average ${event}, ${data.dates} · local time (EST, UTC−5)`;
+        const arrow = event === 'sunrise' ? 'M12 2v6M9 5l3-3 3 3' : 'M12 2v6M9 5l3 3 3-3';
+        item.innerHTML = `<svg class="meta-ico sun-time-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${horizon}${arrow}"></path></svg><span>Avg ${event} ${data[event]}</span>`;
+        host.appendChild(item);
+      });
+    });
+  }
   // Build both show-night journeys before editable keys and saved photos hydrate.
   // The existing R437 return-subway spend line already covers these two rides.
   function ensureRockettesSubwayLegs() {
@@ -5722,21 +5756,13 @@ customElements.define('loop-loader', LoopLoader);
     replace(day('d25'), '25 days. An extraordinary journey.', '26 calendar days. An extraordinary journey.');
     replace(day('d24'), '25-day bucket list trip', '26-day bucket list trip');
 
-    // A saved 12 September birthday table predates the Rockettes addition.
+    // Rockettes are paid: keep the receipt amount on the activity, while the
+    // Day spend table and meters show only costs still to pay during the trip.
+    // Also remove the old estimate if an earlier saved table restores it.
     const birthdayTable = day('d2')?.querySelector('.spend-table');
-    if (row('d2', 'Christmas Spectacular') && birthdayTable &&
-        !spendRows(birthdayTable).some(r => /Rockettes|Christmas Spectacular/i.test(r.textContent))) {
-      addSpend('d2', 'Rockettes · four tickets · paid', 'R8,909.68 ($540 total)');
-    }
-    // This purchase belongs to the daily allocation even though it is paid.
-    // "Pre-paid" is reserved for costs funded in separate budget categories.
-    (birthdayTable ? spendRows(birthdayTable) : []).filter(r => /Rockettes|Christmas Spectacular/i.test(r.querySelector('.spend-label')?.textContent || '')).forEach(r => {
-      const amount = r.querySelector('.spend-amount');
-      if (/8,?372|115pp|\$460/.test(amount?.textContent || '')) {
-        amount.textContent = 'R8,909.68 ($540 total)';
-      }
-      r.querySelector('.spend-label').textContent = 'Rockettes · four tickets · paid';
-    });
+    (birthdayTable ? spendRows(birthdayTable) : [])
+      .filter(r => /Rockettes|Christmas Spectacular/i.test(r.querySelector('.spend-label')?.textContent || ''))
+      .forEach(r => r.remove());
     field('d2', 'Grab coffee', '.act-name', 'airside', 'in the arrivals hall');
     const tourThumb = row('d2', 'Free Tours by Foot')?.querySelector('.act-thumb');
     if (tourThumb?.alt === 'Dominique Ansel Bakery') {
@@ -5906,6 +5932,7 @@ customElements.define('loop-loader', LoopLoader);
     applyAirportRailTransfer();
     applySelfGuidedSohoWalk();
     applySeptemberQA();
+    renderHeroSunTimes();
     renderAirbnbLinks();
     wrapStaticThumbs();
     ensureCardPhotoControls();
