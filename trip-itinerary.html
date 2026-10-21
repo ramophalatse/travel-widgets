@@ -5435,7 +5435,7 @@ customElements.define('loop-loader', LoopLoader);
     const walkIcon = 'assets/nyc-miami-2026/icons/walk.svg';
     const timerIcon = 'assets/nyc-miami-2026/icons/timer.svg';
     const legs = [
-      ['Walk to Union Square', 20],
+      ['Walk to Union Square', 30],
       ['Birthday dinner · Shanghai 21', 20],
       ['Walk to Canal St station', 5],
       ["Breakfast · Zucker's Bagels", 6],
@@ -5594,7 +5594,7 @@ customElements.define('loop-loader', LoopLoader);
     const coffee = Array.from(card?.querySelectorAll('.activity-row') || [])
       .find(r => authoredRowName(r).startsWith('Grab coffee'))?.querySelector('.act-note');
     if (coffee?.textContent.trim() === 'Fuel up before we move. The car is at 11:30am.') {
-      coffee.textContent = 'Fuel up in the arrivals hall before taking the AirTrain. Aim to leave by 11:00am; keep the walking tour flexible if bags take longer.';
+      coffee.textContent = 'Fuel up in the arrivals hall before taking the AirTrain. Aim to leave by 11:00am; keep the self-guided walk flexible if bags take longer.';
     }
     const spend = Array.from(card?.querySelectorAll('.spend-row:not(.total)') || [])
       .find(r => r.querySelector('.spend-label')?.textContent.trim() === 'Agoda SUV · JFK Terminal 4 → Arlo SoHo');
@@ -5608,6 +5608,44 @@ customElements.define('loop-loader', LoopLoader);
     if (summary) {
       summary.cells[0].textContent = 'AirTrain + LIRR + subway x4 · JFK → Arlo SoHo · Dec 22';
       if (summary.cells[1]?.textContent.trim() === 'R2,398 (~$132)') summary.cells[1].textContent = 'R1,006 ($55.25)';
+    }
+    card?.querySelectorAll('.spend-table').forEach(recalcSpendTable);
+  }
+  // Public-street alternative to the tip-based tour. Retain the original row
+  // keys and migrate the old saved spend table without writing over the store.
+  function applySelfGuidedSohoWalk() {
+    const card = document.querySelector('.day-card[data-day-key="d2"]');
+    const find = name => Array.from(card?.querySelectorAll('.activity-row') || [])
+      .find(r => authoredRowName(r).startsWith(name));
+    const walk = find('Free Tours by Foot');
+    const name = walk?.querySelector('.act-name');
+    if (name?.textContent.trim() === 'Free Tours by Foot · Meet at Spring St') {
+      name.textContent = 'SoHo & Nolita · Free self-guided walk';
+    }
+    const description = walk?.querySelector('.act-note');
+    if (description?.textContent.includes('SoHo & Nolita walking tour with a local guide.')) {
+      description.innerHTML = 'An easy 60–90 min wander at our own pace, starting from Arlo SoHo around 1pm. Follow Spring St east to Greene St, turn south to Broome St and look up at the cast-iron façades. Head east along Broome to the Haughwout Building (488 Broadway), then north on Broadway and west onto Spring for Donald Judd’s former home and studio at 101 Spring St (exterior only). Continue north via Mercer to Prince St, then east to Mott St for St. Patrick’s Old Cathedral (exterior). Finish with a browse along Prince and Elizabeth Streets in Nolita.<br><br>All stops are viewed from public pavements, with no booking or guide tip. Shopping, food and any paid interiors are optional extras. Shorten the walk if we are tired or the weather turns; leave Nolita around 2:30pm for Union Square. <a href="https://www.google.com/maps/dir/?api=1&amp;origin=Arlo+SoHo+231+Hudson+Street+New+York&amp;destination=St+Patricks+Old+Cathedral+Mott+Street+New+York&amp;travelmode=walking&amp;waypoints=Greene+Street+and+Broome+Street+New+York%7C488+Broadway+New+York%7C101+Spring+Street+New+York" target="_blank" rel="noopener">Open walking route →</a><br><br>Landmark notes: <a href="https://s-media.nyc.gov/agencies/lpc/lp/0017.pdf" target="_blank" rel="noopener">Haughwout Building</a> · <a href="https://juddfoundation.org/spaces/101-spring-street/" target="_blank" rel="noopener">101 Spring Street</a> · <a href="https://oldcathedral.org/map-and-directions" target="_blank" rel="noopener">Old Cathedral</a>.';
+    }
+    const cost = walk?.querySelector('.act-cost');
+    if (cost?.textContent.trim() === 'Free tour · $80 / ~R1,456 tip for 4') {
+      cost.textContent = 'Free · R0 for 4 · saves R1,456 in guide tips';
+    }
+    // A tour-operator rating would describe a service we are no longer taking.
+    walk?.querySelector('[data-ta="tours-by-foot"]')?.remove();
+    const onwards = find('Walk to Union Square');
+    const onwardsName = onwards?.querySelector('.act-name');
+    if (onwardsName?.textContent.trim() === 'Walk to Union Square · ~20 min from Spring St') {
+      onwardsName.textContent = 'Walk to Union Square · ~25–30 min from Nolita';
+    }
+    const onwardsNote = onwards?.querySelector('.act-note');
+    if (onwardsNote?.textContent.includes('after the SoHo & Nolita tour')) {
+      onwardsNote.textContent = 'From Nolita, head north to Houston St, west to Lafayette St, then follow Lafayette and Fourth Avenue up to Union Square. Allow 25–30 min at a relaxed family pace to reach the holiday market around 3pm.';
+    }
+    const spend = Array.from(card?.querySelectorAll('.spend-row:not(.total)') || [])
+      .find(r => /^Free Tours by Foot · (\$80 tip|tip)$/.test(r.querySelector('.spend-label')?.textContent.trim()));
+    if (spend) {
+      spend.querySelector('.spend-label').textContent = 'SoHo & Nolita · self-guided walk';
+      spend.querySelector('.spend-amount').textContent = 'Free';
     }
     card?.querySelectorAll('.spend-table').forEach(recalcSpendTable);
   }
@@ -5670,7 +5708,7 @@ customElements.define('loop-loader', LoopLoader);
     field('d2', 'Birthday dinner', '.time-col', '6:00pm', '5:00pm');
     field('d2', 'Birthday dinner', '.act-note', 'where we’ll settle for a proper sit-down.', 'where we’ll settle for an early sit-down. Leave by 6:00pm: allow about an hour for the walk to Grand St, the uptown B/D to 47–50 Sts–Rockefeller Center and the walk to Radio City. If the restaurant queue is long, eat casually nearby.');
     field('d2', 'Christmas Spectacular', '.act-note', 'allow time for security and the walk in from dinner.', 'aim to arrive at 7:00pm, one hour before curtain, for security. Confirm the selected performance and final fees before paying.');
-    note('d2', 'Arrival-day timing is tight: keep the 1pm walking tour flexible if bags or the airport transfer run late. Radio City recommends arriving one hour early. Subway travel to the show and back is now included below.');
+    note('d2', 'Arrival-day timing is tight: start or shorten the self-guided walk to suit our arrival and energy, leaving time for the afternoon rest. Radio City recommends arriving one hour early. Subway travel to the show and back is now included below.');
     addSpend('d2', 'Subway · Radio City and return · four people', '~R437');
 
     replace(day('d3'), 'the 7 runs one stop to 5 Av–Bryant Park', 'the 7 runs two stops, via Times Sq, to 5 Av–Bryant Park');
@@ -5819,9 +5857,11 @@ customElements.define('loop-loader', LoopLoader);
     renderTeslaTravelReferences();
     renderWalkReferences();
     applyAirportRailTransfer();
+    applySelfGuidedSohoWalk();
     await applySavedEdits();
     wirePacking();
     applyAirportRailTransfer();
+    applySelfGuidedSohoWalk();
     applySeptemberQA();
     renderAirbnbLinks();
     wrapStaticThumbs();
