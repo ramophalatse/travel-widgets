@@ -433,6 +433,8 @@
   /* TRANSFER LINK */
   .transfer-link{color:var(--accent);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;font-size:12px;}
   .transfer-link:hover{opacity:0.8;}
+  :is(.act-note,.act-subtext,.act-note-text,.modal-note,.cv-body) a:any-link{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px;}
+  :is(.act-note,.act-subtext,.act-note-text,.modal-note,.cv-body) a:focus-visible{outline:2px solid var(--accent-text);outline-offset:3px;border-radius:2px;}
 
   /* BUDGET METERS. Modelled on AI Dash's UsageMeter: one track carrying the
      spend fill, and (for the trip-wide meter) a pace marker on the same track
