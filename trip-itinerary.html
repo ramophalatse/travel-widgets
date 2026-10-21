@@ -2023,9 +2023,9 @@
 <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>NCL online check-in · all 3 cabins · opens ~Dec 13 (~21 days before sailing)</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>NCL specialty dining · opens ~September 2026 · browse Norwegian Aqua restaurants in app</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Broadway show · TKTS app · check availability Jan 10 (Sun) and Jan 12 (Tue)</span></li>
-    <li class="booking-item"><span class="booking-urgency urgency-now">Book now</span><span>Agoda · Business SUV · JFK T4 → Arlo SoHo · Dec 22 11:30am · free cancellation up to 12 hours before · confirm the JFK terminal with Etihad first</span></li>
+    <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Dec 22 arrival · AirTrain to Jamaica, LIRR to Penn Station, downtown 1 to Canal St · check service and terminal before travel; buy and activate four off-peak CityTickets in TrainTime on the day · use one card/device for all four AirTrain taps within five minutes for the group fare</span></li>
 <li class="booking-item"><span class="booking-urgency urgency-now">Book now</span><span>Blacklane · Arlo SoHo → LGA · Dec 24 12:10pm</span></li>
-    <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Download MTA TrainTime app · buy LIRR tickets for Jan 13 departure (Penn → Jamaica)</span></li>
+    <li class="booking-item"><span class="booking-urgency urgency-later">Before trip</span><span>Download MTA TrainTime app · buy LIRR tickets on each travel day: Dec 22 arrival (Jamaica → Penn) and Jan 13 departure (Penn → Jamaica)</span></li>
   </ul>
 </div></div><div class="leg-panel" id="panel-packing"><div class="summary-section">
   <div class="pack-header"><div class="pack-heading">Packing List</div><div class="pack-header-tools"><button type="button" class="pack-chip pack-undo" id="pack-undo" hidden>Undo delete</button><button type="button" class="pack-chip" id="pack-edit-chip" aria-pressed="false">Edit list</button></div></div>
@@ -2051,16 +2051,16 @@
     <table class="modal-table">
       <thead><tr><th>Option</th><th>Cost x4</th><th>ZAR</th><th>Notes</th></tr></thead>
       <tbody>
-        <tr class="highlight"><td>Agoda Business SUV · our pick</td><td>~$132</td><td>~R2,398</td><td>Chevy Suburban or similar · 6 seats, 6 bags · driver waits 60 min free · free cancellation up to 12 hours before · no meet &amp; greet listed</td></tr>
+        <tr><td>Agoda Business SUV · previous allowance</td><td>~$132</td><td>~R2,398</td><td>Previous unbooked option · Chevy Suburban or similar · confirm any new quote, tolls and tip if reconsidered</td></tr>
         <tr><td>Agoda Standard Private Van</td><td>~$86</td><td>~R1,557</td><td>Chrysler Pacifica or similar · 5 seats, 5 bags · tight for four with full holiday luggage</td></tr>
         <tr><td>Blacklane SUV</td><td>$200</td><td>~R3,640</td><td>Fixed fare · meet &amp; greet in arrivals hall · flight tracking · all-in pricing</td></tr>
         <tr><td>Yellow cab × 2</td><td>~$235</td><td>~R4,280</td><td>Two vehicles needed · metered + tolls · no tracking</td></tr>
         <tr><td>Uber XL</td><td>$80–130</td><td>~R1,460–R2,370</td><td>Dynamic pricing · surge risk on Dec 22 · unpredictable</td></tr>
-        <tr><td>AirTrain + LIRR + subway</td><td>$75.60</td><td>~R1,376</td><td>Fastest public-transport route · 2 transfers and bags to manage, but practical with adult-sized travellers</td></tr>
-        <tr><td>AirTrain + subway</td><td>$46.60</td><td>~R848</td><td>Lowest-cost option · more stops, stairs and luggage handling after a 20-hour flight</td></tr>
+        <tr class="highlight"><td>AirTrain + LIRR + subway · our pick</td><td>$55.25</td><td>~R1,006</td><td>Jamaica → Penn → downtown 1 to Canal St → walk to Arlo · $22.25 AirTrain group fare + $21 LIRR off-peak + $12 subway · allow 75–90 min with bags · saves ~R1,392 against the SUV allowance</td></tr>
+        <tr><td>AirTrain + subway</td><td>$34.25</td><td>~R623</td><td>$22.25 AirTrain group fare + $12 subway · cheaper, with more subway stops and luggage handling</td></tr>
       </tbody>
     </table>
-    <div class="modal-note">Not booked yet · our pick, not a reservation · Terminal 4 pickup ~10:30am once Etihad confirms the terminal</div>
+    <div class="modal-note">Rail plan for four adults · current fares checked 21 Oct 2026 at R18.20/USD · AirTrain group fare needs all four taps on the same card/device within five minutes; LIRR needs four tickets · recheck fares and service before travel. Sources: <a href="https://www.jfkairport.com/transportation/airtrain" target="_blank" rel="noopener">JFK AirTrain</a> and <a href="https://www.mta.info/guides/airports/jfk" target="_blank" rel="noopener">MTA airport guide</a>. Car prices are earlier estimates.</div>
   </div>
 </div>
 
@@ -4583,7 +4583,7 @@ customElements.define('loop-loader', LoopLoader);
         packNode('app-ncl', 'NCL'),
         packNode('app-viator', 'Viator'),
         packNode('app-tkts', 'TKTS'),
-        packNode('app-traintime', 'MTA TrainTime (LIRR, 13 Jan)'),
+        packNode('app-traintime', 'MTA TrainTime (LIRR, 22 Dec and 13 Jan)'),
         packNode('app-uber', 'Uber'),
         packNode('app-resy', 'Resy and OpenTable'),
         packNode('app-agoda', 'Agoda')
@@ -5571,6 +5571,46 @@ customElements.define('loop-loader', LoopLoader);
       placeTravelBadge(target, meta);
     });
   }
+  // Keep the arrival row's original edit/photo namespace while changing the plan.
+  // Run before hydration and again afterwards to migrate known saved SUV copy.
+  function applyAirportRailTransfer() {
+    const card = document.querySelector('.day-card[data-day-key="d2"]');
+    const transfer = Array.from(card?.querySelectorAll('.activity-row') || [])
+      .find(r => authoredRowName(r) === 'Agoda SUV departs JFK Terminal 4');
+    const name = transfer?.querySelector('.act-name');
+    if (name && /^(Agoda SUV departs JFK Terminal 4|Transfer SUV departs JFK Terminal 4)$/.test(name.textContent.trim())) {
+      name.textContent = 'AirTrain · LIRR · Subway → Arlo SoHo';
+    }
+    const note = transfer?.querySelector('.act-note');
+    if (note?.textContent.includes('A Chevy Suburban or similar')) {
+      note.innerHTML = 'From Terminal 4, take the Jamaica-bound AirTrain, then LIRR to Penn Station. Follow signs for the downtown 1 subway to Canal St, then walk about 5–10 min to Arlo SoHo. Allow 75–90 min with bags; aim to leave by 11:00am for the 12:30pm hotel stop. At Jamaica, tap the same card/device for all four AirTrain riders within five minutes ($22.25 group fare). Buy four $5.25 off-peak CityTickets in TrainTime and activate before boarding; the subway is $3 each, paid separately. Expect stairs at Canal St and recheck service before travel. <span class="transfer-link" onclick="document.getElementById(\'transfer-modal\').classList.add(\'open\')">View transfer options comparison →</span>';
+    }
+    const cost = transfer?.querySelector('.act-cost');
+    if (cost?.textContent.trim() === '~R2,398 (~$132) · check tolls and tip at booking') {
+      cost.textContent = '~R1,006 for 4 ($55.25 total) · saves ~R1,392 vs SUV';
+    }
+    const time = transfer?.querySelector('.time-col');
+    if (time?.textContent.trim() === '11:30am') time.textContent = '11:00am';
+    const coffee = Array.from(card?.querySelectorAll('.activity-row') || [])
+      .find(r => authoredRowName(r).startsWith('Grab coffee'))?.querySelector('.act-note');
+    if (coffee?.textContent.trim() === 'Fuel up before we move. The car is at 11:30am.') {
+      coffee.textContent = 'Fuel up in the arrivals hall before taking the AirTrain. Aim to leave by 11:00am; keep the walking tour flexible if bags take longer.';
+    }
+    const spend = Array.from(card?.querySelectorAll('.spend-row:not(.total)') || [])
+      .find(r => r.querySelector('.spend-label')?.textContent.trim() === 'Agoda SUV · JFK Terminal 4 → Arlo SoHo');
+    if (spend) {
+      spend.querySelector('.spend-label').textContent = 'AirTrain + LIRR + subway x4 · JFK → Arlo SoHo';
+      const amount = spend.querySelector('.spend-amount');
+      if (amount?.textContent.trim() === '~R2,398') amount.textContent = '~R1,006';
+    }
+    const summary = Array.from(document.querySelectorAll('[data-budget-key="flights-transfers"] tr'))
+      .find(r => r.cells[0]?.textContent.trim() === 'Agoda SUV · JFK T4 → Arlo SoHo · Dec 22');
+    if (summary) {
+      summary.cells[0].textContent = 'AirTrain + LIRR + subway x4 · JFK → Arlo SoHo · Dec 22';
+      if (summary.cells[1]?.textContent.trim() === 'R2,398 (~$132)') summary.cells[1].textContent = 'R1,006 ($55.25)';
+    }
+    card?.querySelectorAll('.spend-table').forEach(recalcSpendTable);
+  }
   // Correct known stale copy after hydration without writing to the edit store.
   // Exact old-value guards preserve subsequent user edits and stable photo keys.
   function applySeptemberQA() {
@@ -5778,8 +5818,10 @@ customElements.define('loop-loader', LoopLoader);
     moveFinalTopUpToDayTenMorning();
     renderTeslaTravelReferences();
     renderWalkReferences();
+    applyAirportRailTransfer();
     await applySavedEdits();
     wirePacking();
+    applyAirportRailTransfer();
     applySeptemberQA();
     renderAirbnbLinks();
     wrapStaticThumbs();
