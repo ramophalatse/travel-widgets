@@ -5645,11 +5645,21 @@ customElements.define('loop-loader', LoopLoader);
     }
     const description = walk?.querySelector('.act-note');
     if (description?.textContent.includes('SoHo & Nolita walking tour with a local guide.')) {
-      description.innerHTML = 'An easy 60–90 min wander at our own pace, starting from Arlo SoHo around 1pm. Follow Spring St east to Greene St, turn south to Broome St and look up at the cast-iron façades. Head east along Broome to the Haughwout Building (488 Broadway), then north on Broadway and west onto Spring for Donald Judd’s former home and studio at 101 Spring St (exterior only). Continue north via Mercer to Prince St, then east to Mott St for St. Patrick’s Old Cathedral (exterior). Finish with a browse along Prince and Elizabeth Streets in Nolita.<br><br>All stops are viewed from public pavements, with no booking or guide tip. Shopping, food and any paid interiors are optional extras. Shorten the walk if we are tired or the weather turns; leave Nolita around 2:30pm for Union Square. <a href="https://www.google.com/maps/dir/?api=1&amp;origin=Arlo+SoHo+231+Hudson+Street+New+York&amp;destination=St+Patricks+Old+Cathedral+Mott+Street+New+York&amp;travelmode=walking&amp;waypoints=Greene+Street+and+Broome+Street+New+York%7C488+Broadway+New+York%7C101+Spring+Street+New+York" target="_blank" rel="noopener">Open walking route →</a><br><br>Landmark notes: <a href="https://s-media.nyc.gov/agencies/lpc/lp/0017.pdf" target="_blank" rel="noopener">Haughwout Building</a> · <a href="https://juddfoundation.org/spaces/101-spring-street/" target="_blank" rel="noopener">101 Spring Street</a> · <a href="https://oldcathedral.org/map-and-directions" target="_blank" rel="noopener">Old Cathedral</a>.';
+      description.innerHTML = 'About 2 km from Arlo SoHo through SoHo to Nolita: roughly 30 min of walking, with 60–90 min allowed for architecture, browsing and photos. Start around 1pm. Follow Spring St east to Greene St, turn south to Broome St and look up at the cast-iron façades. Head east along Broome to the Haughwout Building (488 Broadway), then north on Broadway and west onto Spring for Donald Judd’s former home and studio at 101 Spring St (exterior only). Continue north via Mercer to Prince St, then east to Mott St for St. Patrick’s Old Cathedral (exterior). Finish with a browse along Prince and Elizabeth Streets in Nolita.<br><br>All stops are viewed from public pavements, with no booking or guide tip. Shopping, food and any paid interiors are optional extras. Shorten the walk if we are tired or the weather turns; leave Nolita around 2:30pm for Union Square.<br><a href="https://www.google.com/maps/dir/?api=1&amp;origin=Arlo+SoHo+231+Hudson+Street+New+York&amp;destination=St+Patricks+Old+Cathedral+Mott+Street+New+York&amp;travelmode=walking&amp;waypoints=Greene+Street+and+Broome+Street+New+York%7C488+Broadway+New+York%7C101+Spring+Street+New+York" target="_blank" rel="noopener">Open walking route →</a><br><br>Landmark notes: <a href="https://s-media.nyc.gov/agencies/lpc/lp/0017.pdf" target="_blank" rel="noopener">Haughwout Building</a> · <a href="https://juddfoundation.org/spaces/101-spring-street/" target="_blank" rel="noopener">101 Spring Street</a> · <a href="https://oldcathedral.org/map-and-directions" target="_blank" rel="noopener">Old Cathedral</a>.';
     }
     const cost = walk?.querySelector('.act-cost');
     if (cost?.textContent.trim() === 'Free tour · $80 / ~R1,456 tip for 4') {
       cost.textContent = 'Free · R0 for 4 · saves R1,456 in guide tips';
+    }
+    // OSM foot routing between the landmarks is about 1.94 km; round the
+    // route to ~2 km / ~30 min, allowing for the Prince St detour and crossings.
+    // The 60–90 min activity slot includes sightseeing stops, not extra distance.
+    if (walk && !walk.querySelector('.walk-trip-meta')) {
+      const meta = document.createElement('div');
+      meta.className = 'walk-trip-meta';
+      meta.setAttribute('aria-label', 'Self-guided route: about 2 kilometres, roughly 30 minutes of walking; allow 60 to 90 minutes with stops');
+      meta.innerHTML = '<img src="assets/nyc-miami-2026/icons/walk.svg" alt="On foot"><strong>~2 km</strong><span>·</span><img class="walk-time-icon" src="assets/nyc-miami-2026/icons/timer.svg" alt="walking time"><strong>~30 min</strong>';
+      placeTravelBadge(walk.querySelector('.act-body'), meta);
     }
     // A tour-operator rating would describe a service we are no longer taking.
     walk?.querySelector('[data-ta="tours-by-foot"]')?.remove();
