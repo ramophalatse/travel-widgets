@@ -1,13 +1,17 @@
-// Card photo uploads for the travel-widgets itinerary pages (ramophalatse.github.io).
-// The page resizes a photo to at most 1600 px and posts the JPEG bytes here; the
-// function stores it in the public `travel-card-photos` bucket with the service
-// role and returns its public URL. The page then saves that URL as an ordinary
-// edit, so the edits table carries a short URL rather than the image itself.
+// Photo uploads for the travel-widgets itinerary pages (ramophalatse.github.io).
+// The page resizes a photo and posts the JPEG bytes here; the function stores
+// it in the public `travel-card-photos` bucket with the service role and returns
+// its public URL. The page then saves that URL as an ordinary edit, so the edits
+// table carries a short URL rather than the image itself.
+// Card photos (the default kind) are keyed by row. List thumbnails and other
+// dropped images (`kind=thumb` / `kind=image`) are keyed by their edit id and
+// land under `<page>/thumbs/` and `<page>/images/`.
 // The bucket has no storage policies, so nothing but this function can write it.
 // verify_jwt is off because the pages call with a publishable key, which is not
 // a JWT. Requests from other origins are refused, and only JPEGs up to 2 MB for
-// a well-formed row key are accepted.
-//   POST ?page=<page id>&row=<row key>   body: image/jpeg bytes  ->  { url }
+// a well-formed key are accepted.
+//   POST ?page=<page id>&row=<row key>              body: image/jpeg  ->  { url }
+//   POST ?page=<page id>&kind=thumb&row=<edit id>   body: image/jpeg  ->  { url }
 // Deployed to project cwnlofcrstwxoemzyazm as `card-photo` (verify_jwt: false).
 
 const ALLOWED_ORIGINS = ['https://ramophalatse.github.io', 'http://localhost:8731'];
@@ -40,8 +44,15 @@ Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
   const page = url.searchParams.get('page') || '';
   const row = url.searchParams.get('row') || '';
+  const kind = url.searchParams.get('kind') || 'card';
   if (!/^[a-z0-9-]{1,40}$/.test(page)) return json({ error: 'bad page' }, 400, origin);
-  if (!/^d\d{1,2}:[a-z0-9-]{1,48}(~\d{1,2})?$/.test(row)) return json({ error: 'bad row key' }, 400, origin);
+  if (kind === 'card') {
+    if (!/^d\d{1,2}:[a-z0-9-]{1,48}(~\d{1,2})?$/.test(row)) return json({ error: 'bad row key' }, 400, origin);
+  } else if (kind === 'thumb' || kind === 'image') {
+    if (!/^[a-z0-9][a-z0-9:.~-]{0,90}$/.test(row)) return json({ error: 'bad edit id' }, 400, origin);
+  } else {
+    return json({ error: 'bad kind' }, 400, origin);
+  }
   if ((req.headers.get('content-type') || '') !== 'image/jpeg') return json({ error: 'jpeg only' }, 415, origin);
 
   const bytes = new Uint8Array(await req.arrayBuffer());
@@ -53,7 +64,8 @@ Deno.serve(async (req: Request) => {
   if (!base || !service) return json({ error: 'storage not configured' }, 503, origin);
 
   // A fresh name per upload, so a replaced photo never serves from a stale cache.
-  const path = page + '/' + row.replace(/[:~]/g, '_') + '-' + Date.now().toString(36) + '.jpg';
+  const folder = kind === 'card' ? '' : kind === 'thumb' ? 'thumbs/' : 'images/';
+  const path = page + '/' + folder + row.replace(/[:~.]/g, '_') + '-' + Date.now().toString(36) + '.jpg';
   const put = await fetch(base + '/storage/v1/object/' + BUCKET + '/' + path, {
     method: 'POST',
     headers: {

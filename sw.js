@@ -11,9 +11,13 @@
    cut short by a closed tab is not lost work. Photos also land here as they
    are viewed, so a partial copy is still useful.
 
-   Supabase is never cached here. Saved edits are the page's own business and
-   it keeps its own snapshot in IndexedDB, where it can be read and merged
-   rather than replayed blindly out of an HTTP cache. */
+   Supabase is never cached here, with one exception. Saved edits are the
+   page's own business and it keeps its own snapshot in IndexedDB, where it can
+   be read and merged rather than replayed blindly out of an HTTP cache. The
+   exception is hosted photos: thumbnails and card photos uploaded to Supabase
+   Storage, plus Unsplash picks. Each upload gets a fresh file name, so they
+   never change and are media like any other. The page sends the list it uses
+   (SAVE_URLS) and they are kept in MEDIA alongside the manifest's files. */
 
 const VERSION = 'v8';
 const SHELL = 'ti-shell-' + VERSION;
@@ -38,6 +42,10 @@ const SHELL_URLS = [
    uncached. */
 const MEDIA_PATH = /\/assets\//;
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+function isHostedPhoto(url) {
+  return (url.hostname.endsWith('.supabase.co') && url.pathname.startsWith('/storage/v1/object/public/'))
+    || url.hostname === 'images.unsplash.com';
+}
 
 /* Background download pacing. Two at a time leaves room for the page's own
    requests inside the browser's per-origin connection limit, which four did
@@ -73,6 +81,7 @@ self.addEventListener('message', event => {
   // Kept so a page that loads while a download is incomplete can nudge it
   // along, which is how a run cut short by a closed tab gets picked back up.
   if (msg.type === 'SAVE_MEDIA') event.waitUntil(saveMedia(true));
+  if (msg.type === 'SAVE_URLS' && Array.isArray(msg.urls)) event.waitUntil(saveHostedPhotos(msg.urls));
   if (msg.type === 'MEDIA_STATUS') event.waitUntil(reportStatus(event.source));
   if (msg.type === 'FORGET_MEDIA') event.waitUntil(caches.delete(MEDIA).then(() => reportStatus(event.source)));
 });
@@ -141,10 +150,64 @@ async function saveMedia(force) {
   }
 }
 
+/* The hosted photos the page's saved edits point at. Quiet and paced like
+   saveMedia, and it skips what is already held, so sending the full list on
+   every load costs a cache lookup per photo once the copy is complete. */
+let savingHosted = false;
+async function saveHostedPhotos(urls) {
+  if (savingHosted) return;
+  if (self.navigator.connection && self.navigator.connection.saveData) return;
+  savingHosted = true;
+  try {
+    const cache = await caches.open(MEDIA);
+    const todo = urls.filter(u => { try { return isHostedPhoto(new URL(u)); } catch (e) { return false; } });
+    let next = 0;
+    async function worker() {
+      while (next < todo.length) {
+        const url = todo[next++];
+        try {
+          if (!(await cache.match(url, { ignoreVary: true }))) {
+            await fetchHostedPhoto(cache, url);
+            await new Promise(r => setTimeout(r, BETWEEN_FILES_MS));
+          }
+        } catch (e) {}
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, todo.length) }, worker));
+  } finally {
+    savingHosted = false;
+  }
+}
+
+/* Always fetched in cors mode, even when the page asked as a plain <img>
+   (no-cors). Both hosts send Access-Control-Allow-Origin, so the copy kept is
+   a real response rather than an opaque one, which browsers pad heavily
+   against the storage quota. */
+async function fetchHostedPhoto(cache, url) {
+  const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
+  if (!res.ok) throw new Error(res.status);
+  await cache.put(url, res.clone());
+  return res;
+}
+
+async function hostedPhoto(req) {
+  const cache = await caches.open(MEDIA);
+  const hit = await cache.match(req.url, { ignoreVary: true });
+  if (hit) return hit;
+  try {
+    return await fetchHostedPhoto(cache, req.url);
+  } catch (e) {
+    // Not cached and not fetchable as cors: let the browser try it its own way.
+    return fetch(req).catch(() => Response.error());
+  }
+}
+
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+
+  if (isHostedPhoto(url)) return event.respondWith(hostedPhoto(req));
 
   // Saved edits and photo uploads must always hit the network, so that being
   // offline fails loudly enough for the page to queue the write itself.

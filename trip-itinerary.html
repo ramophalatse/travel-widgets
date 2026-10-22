@@ -2762,8 +2762,9 @@ customElements.define('loop-loader', LoopLoader);
                  upserts on (page, eid) and is last-write-wins, so keying the
                  queue the same way collapses repeat edits to one row for free
                  and makes a replay idempotent.
-       photos    card photo blobs, which cannot become a URL without the
-                 upload endpoint, so the bytes wait here for a connection.
+       photos    card photo and dropped image blobs, which cannot become a
+                 URL without the upload endpoint, so the bytes wait here for
+                 a connection.
 
      The queue is read back over the snapshot on load, otherwise a reload
      while still offline would show the stale server value for anything queued. */
@@ -2977,8 +2978,12 @@ customElements.define('loop-loader', LoopLoader);
   async function flushQueuedPhoto(item) {
     const blob = await idbGet('photos', item.eid);
     if (!blob) return 'rejected';
+    // Card photos are keyed by row; dropped thumbnails and images by edit id.
+    const kind = item.photoKind || 'card';
+    const target = kind === 'card' ? '&row=' + encodeURIComponent(item.rowKey)
+      : '&kind=' + kind + '&row=' + encodeURIComponent(item.eid);
     try {
-      const res = await fetch(CARD_PHOTO_FN + '?page=' + EDIT_PAGE_ID + '&row=' + encodeURIComponent(item.rowKey), {
+      const res = await fetch(CARD_PHOTO_FN + '?page=' + EDIT_PAGE_ID + target, {
         method: 'POST',
         headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'image/jpeg' },
         body: blob
@@ -2990,8 +2995,13 @@ customElements.define('loop-loader', LoopLoader);
       if (saved === 'ok') {
         // Swap the local blob URL for the hosted one now it exists, so the next
         // load does not depend on a queue entry that is about to be deleted.
-        const row = document.querySelector('.activity-row[data-row-key="' + CSS.escape(item.rowKey) + '"]');
-        if (row) setRowCardPhoto(row, data.url);
+        if (kind === 'card') {
+          const row = document.querySelector('.activity-row[data-row-key="' + CSS.escape(item.rowKey) + '"]');
+          if (row) setRowCardPhoto(row, data.url);
+        } else {
+          const el = document.querySelector('[data-eid="' + CSS.escape(item.eid) + '"]');
+          if (el) applyImageEdit(el, data.url);
+        }
       }
       return saved;
     } catch (e) {
@@ -3039,6 +3049,24 @@ customElements.define('loop-loader', LoopLoader);
   }
   function askWorker(msg) {
     if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage(msg);
+  }
+  /* Hosted photos (Storage uploads and Unsplash picks) live off this origin,
+     so the offline manifest cannot list them. The worker is handed the ones
+     the saved edits point at and keeps a copy of each, which is what keeps
+     thumbnails and card photos on screen with no signal now that the snapshot
+     carries their URLs rather than their bytes. Waits for the worker rather
+     than the controller, so a first visit is covered too. */
+  function saveHostedPhotosForOffline(store) {
+    if (!navigator.serviceWorker) return;
+    const urls = new Set();
+    Object.keys(store).forEach(eid => {
+      const e = store[eid];
+      if (/^(img-src|card-src|bg-image)$/.test(e.type) && /^https:\/\//.test(e.value)) urls.add(e.value.replace(/#.*$/, ''));
+    });
+    if (!urls.size) return;
+    navigator.serviceWorker.ready.then(reg => {
+      if (reg.active) reg.active.postMessage({ type: 'SAVE_URLS', urls: Array.from(urls) });
+    }).catch(() => {});
   }
 
   /* ── FORCE REFRESH ──────────────────────────────────────────────────────
@@ -5076,6 +5104,7 @@ customElements.define('loop-loader', LoopLoader);
   }
   async function applySavedEdits() {
     const store = await fetchEditStore();
+    saveHostedPhotosForOffline(store);
     // Remove activities first so a tombstone always wins over older field-level
     // edits that may still be present for the same row.
     Object.keys(store).forEach(eid => {
@@ -5177,12 +5206,6 @@ customElements.define('loop-loader', LoopLoader);
     if (!el.matches('[data-editable]')) return;
     saveEdit(el.dataset.eid, 'text', el.innerHTML);
   }
-  function readImageFile(file, cb) {
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = () => cb(reader.result);
-    reader.readAsDataURL(file);
-  }
   function optimizeThumbImage(file, cb) {
     if (!file || !file.type.startsWith('image/')) return;
     const reader = new FileReader();
@@ -5198,7 +5221,7 @@ customElements.define('loop-loader', LoopLoader);
         canvas.width = THUMB_TARGET_W;
         canvas.height = THUMB_TARGET_H;
         canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, THUMB_TARGET_W, THUMB_TARGET_H);
-        cb(canvas.toDataURL('image/jpeg', THUMB_QUALITY));
+        canvas.toBlob(cb, 'image/jpeg', THUMB_QUALITY);
       };
       img.src = reader.result;
     };
@@ -5214,20 +5237,52 @@ customElements.define('loop-loader', LoopLoader);
       const file = e.dataTransfer.files && e.dataTransfer.files[0];
       const isSlot = el.classList.contains('act-thumb-slot');
       const isThumb = isSlot || (el.tagName === 'IMG' && el.classList.contains('act-thumb'));
-      const processFile = isThumb ? optimizeThumbImage : readImageFile;
-      processFile(file, dataUrl => {
-        if (isSlot) {
-          fillThumbSlot(el, dataUrl);
-          saveEdit(el.dataset.eid, 'img-src', dataUrl);
-        } else if (el.tagName === 'IMG') {
-          el.src = dataUrl;
-          saveEdit(el.dataset.eid, 'img-src', dataUrl);
-        } else {
-          el.style.backgroundImage = "url('" + dataUrl + "')";
-          saveEdit(el.dataset.eid, 'bg-image', dataUrl);
-        }
-      });
+      const type = isSlot || el.tagName === 'IMG' ? 'img-src' : 'bg-image';
+      if (isThumb) optimizeThumbImage(file, blob => blob && saveDroppedImage(el, blob, 'thumb', type));
+      else resizeForCard(file).then(blob => saveDroppedImage(el, blob, 'image', type)).catch(err => console.error('[trip-itinerary] image drop failed', err));
     });
+  }
+  /* ── DROPPED IMAGES ─────────────────────────────────────────────────────
+     Thumbnails and other dropped images go to Storage through the same
+     `card-photo` function as card photos (kind=thumb / kind=image), so the
+     edits table holds a URL rather than a data URL. Inline thumbnails once grew
+     the edits fetch to 12 MB, slow enough to trip the anon statement timeout
+     and fall back to a stale snapshot. The image shows from a blob URL at once
+     and is swapped for the hosted one when the upload lands; offline, or if
+     the upload cannot connect, the bytes are parked like an offline card photo. */
+  function applyImageEdit(el, src) {
+    if (el.classList.contains('act-thumb-slot')) fillThumbSlot(el, src);
+    else if (el.tagName === 'IMG') el.src = src;
+    else el.style.backgroundImage = "url('" + src + "')";
+  }
+  async function parkDroppedImage(el, blob, kind, type) {
+    const eid = el.dataset.eid;
+    await idbPut('photos', blob, eid);
+    await queueEdit({ eid, type, kind: 'photo', photoKind: kind });
+    showSaveStatus('Saved on this device', 'ok');
+  }
+  async function saveDroppedImage(el, blob, kind, type) {
+    const eid = el.dataset.eid;
+    if (!eid) return;
+    applyImageEdit(el, URL.createObjectURL(blob));
+    if (isOffline()) return parkDroppedImage(el, blob, kind, type);
+    showSaveStatus('Uploading', 'busy');
+    let res;
+    try {
+      res = await fetch(CARD_PHOTO_FN + '?page=' + EDIT_PAGE_ID + '&kind=' + kind + '&row=' + encodeURIComponent(eid), {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'image/jpeg' },
+        body: blob
+      });
+    } catch (err) {
+      return parkDroppedImage(el, blob, kind, type);
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.url) {
+      console.error('[trip-itinerary] image upload failed', res.status, data.error);
+      return showSaveStatus('Upload failed', 'error');
+    }
+    if (await saveEdit(eid, type, data.url)) applyImageEdit(el, data.url);
   }
   function exportItinerary() {
     const clone = document.documentElement.cloneNode(true);
