@@ -386,6 +386,13 @@
      runtime to give the remove control something to anchor to. No overflow:hidden
      here: that would clip .act-thumb's hover scale. */
   .act-thumb-wrap{position:relative;width:190px;height:132px;}
+  /* BOOKED BADGE: a calendar tick pinned to the top-left of the thumbnail of a
+     stop with a confirmed booking. Added by applyBookedBadges() from
+     BOOKED_ROW_KEYS. Pointer-events are off so it never blocks the lightbox or
+     an edit-mode drop, and it hides with the photo when the slot is empty. */
+  .booked-badge{position:absolute;top:6px;left:6px;z-index:3;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,0.62);pointer-events:none;user-select:none;}
+  .booked-badge svg{width:18px;height:18px;fill:#fff;}
+  .act-thumb-slot:not(.filled) .booked-badge{display:none;}
   /* IMAGE DROP ZONES (edit mode). The list thumbnail and the card photo are two
      zones with one visual language: an icon top-right naming the zone, x in the corner
      to remove the photo (only when there is one), a Search chip bottom-left, and
@@ -3100,7 +3107,7 @@ customElements.define('loop-loader', LoopLoader);
     img.src = dataUrl;
     slot.classList.add('filled');
     const row = slot.closest('.activity-row');
-    if (row) { row.classList.add('has-thumb'); refreshRowCardZone(row); }
+    if (row) { row.classList.add('has-thumb'); refreshRowCardZone(row); applyBookedBadges([row]); }
   }
   /* ── REMOVING A THUMBNAIL ───────────────────────────────────────────────
      Removal is stored as its own edit type rather than as an empty `img-src`,
@@ -5168,7 +5175,7 @@ customElements.define('loop-loader', LoopLoader);
     clone.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
     // Both the wrapper and the remove control are runtime edit chrome; unwrap
     // back to the bare <img> the source authored.
-    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,.zone-icon,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
+    clone.querySelectorAll('.act-thumb-remove,.act-thumb-search,.zone-icon,.booked-badge,#unsplash-modal,.act-stay,.card-photo').forEach(el => el.remove());
     clone.querySelectorAll('[data-card-src],[data-card-removed]').forEach(el => { el.removeAttribute('data-card-src'); el.removeAttribute('data-card-removed'); });
     clone.querySelectorAll('.activity-row-delete').forEach(el => el.remove());
     clone.querySelectorAll('.act-thumb-wrap').forEach(wrap => {
@@ -5312,6 +5319,30 @@ customElements.define('loop-loader', LoopLoader);
     if (total) total.textContent = '~R7,215';
     const totalAmount = day.querySelector('.total-amount');
     if (totalAmount) totalAmount.textContent = '~R7,215';
+  }
+  // Stops with a confirmed booking, by stable row key.
+  const BOOKED_ROW_KEYS = [
+    'd2:christmas-spectacular-starring-the-radio-city-ro',
+    'd7:miami-heat-vs-charlotte-hornets-kaseya-center',
+    'd16:half-day-buggy-guided-adventure-eric-tours-inter'
+  ];
+  const BOOKED_ICON = '<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M180-80q-24 0-42-18t-18-42v-620q0-24 18-42t42-18h65v-60h65v60h340v-60h65v60h65q24 0 42 18t18 42v362l-60 60v-232H180v430h327l60 60H180Zm0-550h600v-130H180v130Zm0 0v-130 130ZM672-60 542-190l42-43 88 88 175-175 43 42L672-60Z"/></svg>';
+  /** Must run after wrapStaticThumbs(), so the badge has a wrapper or slot to
+   *  sit in. Safe to repeat: a thumb that already has its badge is skipped. */
+  function applyBookedBadges(rows) {
+    (rows || BOOKED_ROW_KEYS.map(key => document.querySelector('.activity-row[data-row-key="' + key + '"]')))
+      .forEach(row => {
+        if (!row || !BOOKED_ROW_KEYS.includes(row.dataset.rowKey)) return;
+        const holder = row.querySelector('.act-thumb-wrap, .act-thumb-slot');
+        if (!holder || holder.querySelector('.booked-badge')) return;
+        const badge = document.createElement('span');
+        badge.className = 'booked-badge';
+        badge.title = 'Booked';
+        badge.setAttribute('role', 'img');
+        badge.setAttribute('aria-label', 'Booked');
+        badge.innerHTML = BOOKED_ICON;
+        holder.appendChild(badge);
+      });
   }
   function applyGoalBadges() {
     document.querySelectorAll('.activity-row[data-goal]').forEach(row => {
@@ -5938,6 +5969,7 @@ customElements.define('loop-loader', LoopLoader);
     renderHeroSunTimes();
     renderAirbnbLinks();
     wrapStaticThumbs();
+    applyBookedBadges();
     ensureCardPhotoControls();
     renderBudgetMeters();
     markUnsplashCredits();
