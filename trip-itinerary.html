@@ -209,7 +209,7 @@
   .act-stay,.act-turo,.act-viator{display:inline-flex;align-items:center;vertical-align:middle;margin-top:7px;font-size:11px;}
   /* Trailing rather than leading gap, so a badge pushed onto a second line on
      a narrow screen still starts flush with the one above it. */
-  .act-body>.act-stay,.act-body>.act-turo,.act-body>.act-viator,.act-body>.act-rating,.act-body>:is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta){margin-right:8px;}
+  .act-body>.act-stay,.act-body>.act-turo,.act-body>.act-viator,.act-body>.act-rating,.act-body>:is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta){margin-right:8px;}
   .stay-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--airbnb) 38%,transparent);background:color-mix(in srgb,var(--airbnb) 7%,transparent);color:var(--airbnb-text);text-decoration:none;font-weight:600;transition:background 0.15s,border-color 0.15s;}
   .stay-pill:hover,.stay-pill:focus-visible{background:color-mix(in srgb,var(--airbnb) 14%,transparent);border-color:var(--airbnb);}
   .stay-pill svg{width:12px;height:12px;flex:none;fill:var(--airbnb);}
@@ -221,14 +221,15 @@
   .cv-review--turo .cv-review-name,.cv-review--turo .cv-review-meta{display:block;}
   .cv-review--turo .cv-review-score svg{width:20px;height:20px;fill:var(--turo);display:block;}
   .cv-card-tesla{margin:12px 0 2px;}
-  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta){display:flex;margin-top:0;padding:10px 12px;gap:10px;border-radius:14px;font-size:13px;line-height:1.2;}
-  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta) img{width:20px;height:20px;}
-  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta) img:first-child{width:28px;height:28px;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta){display:flex;margin-top:0;padding:10px 12px;gap:10px;border-radius:14px;font-size:13px;line-height:1.2;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta) img{width:20px;height:20px;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta) img:first-child{width:28px;height:28px;}
   .cv-card-tesla .tesla-trip-meta img.soc-icon:first-child{width:22px;height:22px;}
   /* The walking figure is tall and narrow, so it reads small at the shared
      first-child size. Give it its own height and let the width follow. */
   .cv-card-tesla .walk-trip-meta img:first-child{width:auto;height:26px;}
-  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta) strong{font-size:13px;}
+  .cv-card-tesla :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta) strong{font-size:13px;}
+  .cv-card-tesla .transit-trip-meta img,.cv-card-tesla .transit-trip-meta img:first-child{width:24px;height:24px;}
   /* Our Turo car, in Turo's key blue/purple (the same tone their own star
      ratings use). Same deeper-tone-for-light-mode treatment as Airbnb above. */
   :root{--turo:#593CFB;--turo-text:#4B32D9;}
@@ -325,13 +326,14 @@
   .act-cost{font-family:var(--mono);font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;}
   /* The walk badge is the Tesla badge's pedestrian twin: same pill, same
      accent, so a day that mixes driving and walking legs reads as one scale. */
-  :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta){display:inline-flex;align-items:center;vertical-align:middle;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
-  :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta) img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
-  :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta) img:first-child{width:20px;height:20px;}
-  .subway-trip-meta img:first-child{width:18px;height:18px;}
+  :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta){display:inline-flex;align-items:center;vertical-align:middle;gap:7px;margin-top:7px;padding:4px 8px;border:1px solid var(--border2);border-radius:999px;background:var(--bg3);font-family:var(--mono);font-size:10px;line-height:1;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta) img{width:14px;height:14px;object-fit:contain;filter:brightness(0) saturate(100%) invert(72%) sepia(45%) saturate(650%) hue-rotate(125deg) brightness(88%);}
+  :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta) img:first-child{width:20px;height:20px;}
+  /* Every icon in a multi-leg ride pill is the same size, not just the first. */
+  .transit-trip-meta img,.transit-trip-meta img:first-child{width:18px;height:18px;}
   .walk-trip-meta img:first-child{width:auto;height:17px;}
   :is(.tesla-trip-meta .soc-icon,.walk-trip-meta .walk-time-icon){margin-left:2px;}
-  :is(.tesla-trip-meta,.walk-trip-meta,.subway-trip-meta) strong{color:var(--text);font-weight:600;}
+  :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta) strong{color:var(--text);font-weight:600;}
   .tesla-trip-meta.is-charging{flex-wrap:wrap;}
   .tesla-trip-meta .charge-soc{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
   .act-turo .tesla-trip-meta{margin-top:0;margin-right:8px;}
@@ -5556,46 +5558,58 @@ customElements.define('loop-loader', LoopLoader);
     const rating = host && Array.from(host.children).find(c => c.matches('.act-rating,.act-stay,.act-turo,.act-viator,.stay-pill'));
     if (rating) rating.before(meta); else host?.appendChild(meta);
   }
-  /* Subway rides get the same pill: the line's icon and the time on the
-     train to the next stop. Where the note gives a ride time it is used as
-     is; otherwise the estimate is ~2 min a local stop, ~3 an express hop,
-     rounded up. Rail legs (AirTrain, LIRR, Metromover) are not subway rides
-     and stay unbadged, as does the mixed JFK transfer. */
-  function renderSubwayReferences() {
-    const subwayIcon = 'assets/nyc-miami-2026/icons/subway.svg';
+  /* Rides get the same pill as the walking legs: the mode's icon and the
+     time on board to the next stop (subway, rail such as the AirTrain and
+     LIRR, or Miami's Metromover). Where the note gives a ride time it is
+     used as is; otherwise the subway estimate is ~2 min a local stop, ~3 an
+     express hop, rounded up. A row that changes mode shows each leg. */
+  function renderTransitReferences() {
+    const icons = {
+      subway: ['assets/nyc-miami-2026/icons/subway.svg', 'Subway', 'by subway'],
+      train: ['assets/nyc-miami-2026/icons/train.svg', 'Train', 'by train'],
+      metromover: ['assets/nyc-miami-2026/icons/monorail.svg', 'Metromover', 'on the Metromover']
+    };
     const legs = [
+      // AirTrain T4 → Jamaica ~8 min plus LIRR to Penn ~20 min; then the
+      // downtown 1 from 34 St–Penn to Canal St, seven local stops.
+      ['AirTrain · LIRR · Subway → Arlo SoHo', [['train', 30], ['subway', 12]]],
       // Note: two stops, about 5 min on the train.
-      ['Subway · Nolita → Union Square · Uptown 6', 5],
+      ['Subway · Nolita → Union Square · Uptown 6', [['subway', 5]]],
       // Grand St to 47–50 Sts, five express-section stops.
-      ['Subway · Chinatown → Radio City · Uptown B / D', 12],
+      ['Subway · Chinatown → Radio City · Uptown B / D', [['subway', 12]]],
       // 50 St to Canal St, nine local stops.
-      ['Subway · Radio City → Arlo SoHo · Downtown 1', 18],
-      ['#1 train · Canal St → WTC Cortlandt', 6],
-      ['A or C · High St → 14 St–Eighth Ave', 20],
-      ['#7 train · 34 St–Hudson Yards → 5 Av–Bryant Park', 5],
-      ['E train · Fifth Av/53 St → Spring St', 15],
+      ['Subway · Radio City → Arlo SoHo · Downtown 1', [['subway', 18]]],
+      ['#1 train · Canal St → WTC Cortlandt', [['subway', 6]]],
+      ['A or C · High St → 14 St–Eighth Ave', [['subway', 20]]],
+      ['#7 train · 34 St–Hudson Yards → 5 Av–Bryant Park', [['subway', 5]]],
+      ['E train · Fifth Av/53 St → Spring St', [['subway', 15]]],
+      // Note: the free Omni Loop to Bayfront Park, about 10 min each way.
+      ['Pre-booked car to Adrienne Arsht Center · Metromover in', [['metromover', 10]]],
+      ['Metromover out · Pre-booked car home from Arsht Center', [['metromover', 10]]],
       // The E from Jackson Heights–Roosevelt Av to 42 St–Port Authority;
       // the free Q70 bus to the station is ~10 min more.
-      ['Arrive LGA · Q70 LaGuardia Link, then the E train', 25],
-      ['Subway uptown · B or C from 50th St to 72nd St', 6],
-      ['Subway south · Back down 5th Ave', 4],
-      ['Subway to Central Park · B or C to 72nd St', 6],
+      ['Arrive LGA · Q70 LaGuardia Link, then the E train', [['subway', 25]]],
+      ['Subway uptown · B or C from 50th St to 72nd St', [['subway', 6]]],
+      ['Subway south · Back down 5th Ave', [['subway', 4]]],
+      ['Subway to Central Park · B or C to 72nd St', [['subway', 6]]],
       // 42 St–Times Sq to Whitehall St, thirteen local stops.
-      ['R train · 42 St–Times Sq → Whitehall St', 26],
+      ['R train · 42 St–Times Sq → Whitehall St', [['subway', 26]]],
       // Note: eight stops north.
-      ['R train · Whitehall St → Prince St', 16],
-      ['R or W · Prince St → 42 St–Times Sq', 12]
+      ['R train · Whitehall St → Prince St', [['subway', 16]]],
+      ['R or W · Prince St → 42 St–Times Sq', [['subway', 12]]],
+      // Note: about 20 min.
+      ['LIRR · Penn Station → Jamaica', [['train', 20]]],
+      ['AirTrain · Jamaica → JFK Terminal 4', [['train', 8]]]
     ];
     document.querySelectorAll('.activity-row').forEach(row => {
-      if (row.querySelector('.subway-trip-meta')) return;
+      if (row.querySelector('.transit-trip-meta')) return;
       const name = row.querySelector('.act-name')?.textContent.trim();
       const leg = legs.find(([label]) => name === label);
       if (!leg) return;
-      const minutes = leg[1];
       const meta = document.createElement('div');
-      meta.className = 'subway-trip-meta';
-      meta.setAttribute('aria-label', `By subway: roughly ${minutes} minutes on the train`);
-      meta.innerHTML = `<img src="${subwayIcon}" alt="Subway"><strong>~${minutes} min</strong>`;
+      meta.className = 'transit-trip-meta';
+      meta.setAttribute('aria-label', leg[1].map(([mode, minutes]) => `${icons[mode][2]}, roughly ${minutes} minutes`).join('; then '));
+      meta.innerHTML = leg[1].map(([mode, minutes]) => `<img src="${icons[mode][0]}" alt="${icons[mode][1]}"><strong>~${minutes} min</strong>`).join('<span>·</span>');
       placeTravelBadge(row.querySelector('.act-body'), meta);
     });
   }
@@ -6040,13 +6054,13 @@ customElements.define('loop-loader', LoopLoader);
     renderWalkReferences();
     applyAirportRailTransfer();
     applySelfGuidedSohoWalk();
-    renderSubwayReferences();
+    renderTransitReferences();
     await applySavedEdits();
     wirePacking();
     applyAirportRailTransfer();
     applySelfGuidedSohoWalk();
     applySeptemberQA();
-    renderSubwayReferences();
+    renderTransitReferences();
     renderHeroSunTimes();
     renderAirbnbLinks();
     wrapStaticThumbs();
@@ -6668,7 +6682,7 @@ customElements.define('loop-loader', LoopLoader);
       ? taEl.dataset.ta.split(',').map(k => TRIPADVISOR[k.trim()]).filter(d => d && d.score != null) : [];
     const teslaMeta = row.querySelector('.tesla-trip-meta');
     const walkMeta = row.querySelector('.walk-trip-meta');
-    const subwayMeta = row.querySelector('.subway-trip-meta');
+    const transitMeta = row.querySelector('.transit-trip-meta');
     return {
       name, title: parts[0], subtitle: parts.slice(1).join(' · ').replace(/^\p{Ll}/u, c => c.toUpperCase()),
       time: txt(row.querySelector('.time-col')),
@@ -6684,7 +6698,7 @@ customElements.define('loop-loader', LoopLoader);
       viator: (v => v ? { url: v.href, name: v.title.replace(/ on Viator$/, ''), meta: txt(v.querySelector('.stay-meta')) } : null)(row.querySelector('.act-viator a')),
       teslaMeta: teslaMeta ? teslaMeta.outerHTML : '',
       walkMeta: walkMeta ? walkMeta.outerHTML : '',
-      subwayMeta: subwayMeta ? subwayMeta.outerHTML : '',
+      transitMeta: transitMeta ? transitMeta.outerHTML : '',
       flight: row.querySelector('.flight-trigger'),
       goal: row.dataset.goal || ''
     };
@@ -7023,7 +7037,7 @@ customElements.define('loop-loader', LoopLoader);
         + (s.fine.length ? '<ul class="cv-fine">' + s.fine.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>' : '')
         + teslaMetaHtml(s.teslaMeta)
         + teslaMetaHtml(s.walkMeta)
-        + teslaMetaHtml(s.subwayMeta)
+        + teslaMetaHtml(s.transitMeta)
         + reviewsHtml(s.ratings)
         + stayHtml(s.stay)
         + turoHtml(s.turo)
