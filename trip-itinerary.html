@@ -390,8 +390,11 @@
      stop with a confirmed booking. Added by applyBookedBadges() from
      BOOKED_ROW_KEYS. Pointer-events are off so it never blocks the lightbox or
      an edit-mode drop, and it hides with the photo when the slot is empty. */
-  .booked-badge{position:absolute;top:6px;left:6px;z-index:3;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,0.62);pointer-events:none;user-select:none;}
-  .booked-badge svg{width:18px;height:18px;fill:#fff;}
+  /* Fixed rather than --accent: the dark-theme accent is too pale to hold a
+     white icon over a photo. #059669 gives the tick about 3.8:1 contrast. */
+  :root{--booked-green:#059669;}
+  .booked-badge{position:absolute;top:6px;left:6px;z-index:3;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--booked-green);box-shadow:0 0 0 1.5px rgba(255,255,255,0.85),0 2px 6px rgba(0,0,0,0.35);pointer-events:none;user-select:none;}
+  .booked-badge svg{width:17px;height:17px;fill:#fff;}
   .act-thumb-slot:not(.filled) .booked-badge{display:none;}
   /* IMAGE DROP ZONES (edit mode). The list thumbnail and the card photo are two
      zones with one visual language: an icon top-right naming the zone, x in the corner
@@ -1114,7 +1117,7 @@
   /* Booked stops lead the top bar with the same calendar tick as their list
      thumbnail, sized to match the action buttons on the right. */
   .cv-media-lead{display:flex;align-items:center;gap:8px;min-width:0;}
-  .cv-booked{justify-content:center;flex:none;width:36px;height:36px;padding:0;}
+  .cv-booked{justify-content:center;flex:none;width:36px;height:36px;padding:0;background:var(--booked-green);border-color:rgba(255,255,255,0.85);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
   .cv-booked svg{width:18px;height:18px;fill:#fff;}
   .cv-media-actions{display:flex;gap:8px;flex:none;}
   /* Goal seal: under the day tag, top left, clear of the title and the right-hand strip. */
@@ -2610,7 +2613,7 @@ customElements.define('loop-loader', LoopLoader);
     'sunny-caribbee':{name:'Sunny Caribbee',score:4.3,reviews:106,url:'https://www.tripadvisor.com/Attraction_Review-g147355-d3314011-Reviews-Sunny_Caribbee_Spice_Shop_Art_Gallery-Road_Town_Tortola_British_Virgin_Islands.html'},
     'jr-oneal-gardens':{name:'J.R. O\u2019Neal Botanic Gardens',score:3.7,reviews:101,rank:'#3 of 17 things to do in Road Town',url:'https://www.tripadvisor.com/Attraction_Review-g147355-d147981-Reviews-J_R_O_Neal_Botanical_Gardens-Road_Town_Tortola_British_Virgin_Islands.html'},
     'mountain-top':{name:'Mountain Top',score:4.1,reviews:1491,rank:'#13 of 128 things to do in St. Thomas',url:'https://www.tripadvisor.com/Attraction_Review-g147404-d147722-Reviews-Mountain_Top-St_Thomas_U_S_Virgin_Islands.html'},
-    'lime-out':{name:'Lime Out St. John (sister bar)',score:4.8,reviews:543,rank:'#1 of 63 restaurants in St. John',url:'https://www.tripadvisor.com/Restaurant_Review-g147409-d16884942-Reviews-Lime_Out_St_John-St_John_U_S_Virgin_Islands.html'},
+    'lime-out':{name:'Lime Out St. Thomas',score:5.0,reviews:119,rank:'#3 of 214 restaurants in St. Thomas',url:'https://www.tripadvisor.com/Restaurant_Review-g147404-d34051729-Reviews-Lime_Out_St_Thomas-St_Thomas_U_S_Virgin_Islands.html'},
     'magens-bay':{name:'Magens Bay Beach',score:4.4,reviews:6262,rank:'#1 of 3 things to do in Magens Bay',url:'https://www.tripadvisor.com/Attraction_Review-g147406-d149849-Reviews-Magens_Bay_Beach-Magens_Bay_St_Thomas_U_S_Virgin_Islands.html'},
     'coki-beach':{name:'Coki Point Beach',score:4.1,reviews:4263,rank:'#4 of 10 things to do in Smith Bay',url:'https://www.tripadvisor.com/Attraction_Review-g12012628-d184550-Reviews-Coki_Point_Beach-Smith_Bay_East_End_St_Thomas_U_S_Virgin_Islands.html'},
     'brewers-bay':{name:"Brewer's Bay",score:4.5,reviews:198,rank:'#12 of 128 things to do in St. Thomas',url:'https://www.tripadvisor.com/Attraction_Review-g147404-d148868-Reviews-Brewer_s_Bay-St_Thomas_U_S_Virgin_Islands.html'},
