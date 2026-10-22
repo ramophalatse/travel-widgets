@@ -513,7 +513,7 @@
   <header>
     <div class="header-label">Family trip · Dec 2026 → Jan 2027</div>
     <h1>NYC &amp; Miami <em>savings schedule</em></h1>
-    <div class="header-meta">Flights paid · NCL Aqua cruise paid in full (balance R127,674 on 1 Oct) · R150,546 held in the trip fund · Restarted October 2026</div>
+    <div class="header-meta">Flights paid · NCL Aqua cruise paid in full (balance R127,674 on 1 Oct) · R143,655 held in the trip fund after paying the St. Thomas buggy (R6,890.81) on 22 Oct · Restarted October 2026</div>
   </header>
 
   <div class="metrics">
@@ -523,16 +523,16 @@
         <span class="display-val" id="total-display-val">·</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="total-input" value="348185" min="0" step="500" style="display:none">
+      <input type="number" id="total-input" value="340760" min="0" step="500" style="display:none">
       <div class="input-hint" id="total-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric metric-editable" id="paid-metric" title="Click to edit">
       <div class="metric-label">Trip fund set aside</div>
       <div class="metric-value" id="paid-display">
-        <span class="display-val" id="paid-display-val">R150,546</span>
+        <span class="display-val" id="paid-display-val">R143,655</span>
         <span class="edit-icon">✎</span>
       </div>
-      <input type="number" id="paid-input" value="150546" min="0" step="500" style="display:none">
+      <input type="number" id="paid-input" value="143655" min="0" step="500" style="display:none">
       <div class="input-hint" id="paid-hint" style="display:none">Press Enter to confirm</div>
     </div>
     <div class="metric">
@@ -574,7 +574,7 @@
   <p class="context-note">Agreed daily allowance: 15 land days at R5,000 = R75,000 (22 Dec to 2 Jan; 11 to 13 Jan). Onboard NCL Aqua spending is prepaid and budgeted at zero. Check actual meals and transfers on 3 and 10 January against existing allowances; no full daily allowance is added. Phones are R61,840 plus R50,000 other discretionary spending. The iPad mini and Watch Ultra are excluded. Cruise and flights are paid. Daily spend, phones, discretionary spending and Unam&rsquo;s allowance are reserved at fly-out, rather than treated as actual payments on that date. No new January savings are counted: January bookings must be funded before departure. The slider is a scenario, not an agreed or verified affordable savings commitment. Excursion and hotel payment dates remain planning placeholders where unconfirmed. Line by line detail is on the <a href="trip-fund.html">trip fund page</a>.</p>
 
   <footer>
-    <span>Figures in ZAR · Working estimate 20 October 2026 · Bookings R16.50/USD; phones R16.52/USD · Fees and final excursion costs to verify</span>
+    <span>Figures in ZAR · Working estimate 22 October 2026 · Bookings R16.50/USD; phones R16.52/USD · Fees and final excursion costs to verify</span>
     <span id="footer-rate">·</span>
   </footer>
 
@@ -584,7 +584,10 @@
 const FMT = v => 'R\u202f' + Math.round(v).toLocaleString('en-ZA');
 const FUNDING_DATES = [new Date(2026, 9, 19), new Date(2026, 10, 19), new Date(2026, 11, 19)];
 const FLYOUT = new Date(2026, 11, 21);
-const LS = 'nyc-miami-savings-v9';
+const LS = 'nyc-miami-savings-v10';
+// v9 held the pre-22 Oct defaults; carry its settings forward but not those two figures.
+const LS_PREVIOUS = 'nyc-miami-savings-v9';
+const PREVIOUS_DEFAULTS = { total: '348185', paid: '150546' };
 
 const PAYMENTS = [
   { label: 'Miami Airbnb', amount: 55817, due: new Date(2026, 11, 11) },
@@ -597,7 +600,6 @@ const PAYMENTS = [
   { label: 'Unam\u2019s allowance', amount: 5000, due: new Date(2026, 11, 21) },
   { label: 'Hotel fees and FX buffer', amount: 4527, due: new Date(2026, 11, 22) },
   { label: 'Viator Puerto Plata buggy tour, 2 bookings charged automatically', amount: 3658, due: new Date(2027, 0, 3) },
-  { label: 'St. Thomas buggy day (GetYourGuide, R460 promo applied), to book', amount: 7425, due: new Date(2027, 0, 4) },
   { label: 'Row NYC', amount: 40598, due: new Date(2027, 0, 5) },
 ];
 
@@ -617,7 +619,11 @@ function saveState() {
 
 function loadState() {
   try {
-    const s = JSON.parse(localStorage.getItem(LS) || '{}');
+    let s = JSON.parse(localStorage.getItem(LS) || 'null');
+    if (!s) {
+      s = JSON.parse(localStorage.getItem(LS_PREVIOUS) || '{}');
+      Object.keys(PREVIOUS_DEFAULTS).forEach(k => { if (String(s[k]) === PREVIOUS_DEFAULTS[k]) delete s[k]; });
+    }
     if (s.total) document.getElementById('total-input').value = s.total;
     if (s.paid)  document.getElementById('paid-input').value  = s.paid;
     if (s.monthly) document.getElementById('monthly').value = s.monthly;
