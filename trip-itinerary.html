@@ -5802,7 +5802,11 @@ customElements.define('loop-loader', LoopLoader);
     const coffee = Array.from(card?.querySelectorAll('.activity-row') || [])
       .find(r => authoredRowName(r).startsWith('Grab coffee'))?.querySelector('.act-note');
     if (coffee?.textContent.trim() === 'Fuel up before we move. The car is at 11:30am.') {
-      coffee.textContent = 'Fuel up in the arrivals hall before taking the AirTrain. Aim to leave by 11:00am; keep the self-guided walk flexible if bags take longer.';
+      coffee.textContent = 'Dunkin\u2019 in the Arrival Lounge is the only café outside security at Terminal 4: the rest of T4\u2019s food is airside, and there is a Hudson newsstand for snacks and drinks. One item and a drink each, then onto the AirTrain. Aim to leave by 11:00am; keep the self-guided walk flexible if bags take longer.';
+    }
+    const coffeeBody = coffee?.closest('.act-body');
+    if (coffeeBody && !coffeeBody.querySelector('.act-cost')) {
+      coffee.after(el('div', 'act-cost', '~R730–R870 for 4 (a coffee and a breakfast item each, airport prices)'));
     }
     const spend = Array.from(card?.querySelectorAll('.spend-row:not(.total)') || [])
       .find(r => r.querySelector('.spend-label')?.textContent.trim() === 'Agoda SUV · JFK Terminal 4 → Arlo SoHo');
@@ -5942,7 +5946,15 @@ customElements.define('loop-loader', LoopLoader);
     (birthdayTable ? spendRows(birthdayTable) : [])
       .filter(r => /Rockettes|Christmas Spectacular/i.test(r.querySelector('.spend-label')?.textContent || ''))
       .forEach(r => r.remove());
-    field('d2', 'Grab coffee', '.act-name', 'airside', 'in the arrivals hall');
+    // BKLYN Blend's JFK counter is in Terminal 8; T4's only landside café is Dunkin'.
+    const coffeeName = row('d2', 'Grab coffee')?.querySelector('.act-name');
+    if (coffeeName && /^Grab coffee (&|and) a bite airside$/.test(coffeeName.textContent.trim())) {
+      coffeeName.textContent = 'Coffee and a bite · Dunkin\u2019, Terminal 4 Arrivals Hall';
+    }
+    addSpend('d2', 'Dunkin\u2019 · JFK Terminal 4 arrivals x4', '~R730–R870');
+    const d2Spend = Array.from(day('d2')?.querySelectorAll('.spend-row:not(.total)') || []);
+    const dunkinSpend = d2Spend.find(r => r.querySelector('.spend-label')?.textContent.startsWith('Dunkin'));
+    if (dunkinSpend) d2Spend.find(r => r.querySelector('.spend-label')?.textContent.startsWith('AirTrain'))?.after(dunkinSpend);
     const tourThumb = row('d2', 'Free Tours by Foot')?.querySelector('.act-thumb');
     if (tourThumb?.alt === 'Dominique Ansel Bakery') {
       tourThumb.alt = 'SoHo and Nolita walking tour';
@@ -6765,7 +6777,6 @@ customElements.define('loop-loader', LoopLoader);
     'd1:pearl-lounge-terminal-a-international-departures': 'pearl-lounge',
     'd1:ey-1-departs-abu-dhabi-overnight-to-jfk': 'etihad-01',
     'd2:land-at-jfk-etihad-ey-1': 'jfk-airport',
-    'd2:grab-coffee-a-bite-airside': 'bklyn-blend',
     'd2:agoda-suv-departs-jfk-terminal-4': 'chevy-suburban',
     'd2:arrive-arlo-soho-drop-luggage': 'arlo-soho-morning',
     'd2:free-tours-by-foot-meet-at-spring-st': 'tours-by-foot',
