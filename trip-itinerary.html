@@ -1111,6 +1111,11 @@
   .cv-media-top{position:absolute;top:28px;left:16px;right:16px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;}
   .cv-glass{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(12,16,22,0.34);border:1px solid rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);color:#fff;font-size:12px;font-weight:500;white-space:nowrap;min-width:0;}
   .cv-tag{overflow:hidden;text-overflow:ellipsis;}
+  /* Booked stops lead the top bar with the same calendar tick as their list
+     thumbnail, sized to match the action buttons on the right. */
+  .cv-media-lead{display:flex;align-items:center;gap:8px;min-width:0;}
+  .cv-booked{justify-content:center;flex:none;width:36px;height:36px;padding:0;}
+  .cv-booked svg{width:18px;height:18px;fill:#fff;}
   .cv-media-actions{display:flex;gap:8px;flex:none;}
   /* Goal seal: under the day tag, top left, clear of the title and the right-hand strip. */
   .cv-goal{position:absolute;left:12px;top:68px;z-index:2;width:96px;height:auto;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,0.4));}
@@ -6918,8 +6923,11 @@ customElements.define('loop-loader', LoopLoader);
       cls = 'cv-card cv-card--stop';
       const top = s.ratings[0];
       const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.title + ', ' + place);
+      const booked = BOOKED_ROW_KEYS.includes(item.row.dataset.rowKey);
       media = '<div class="cv-media' + (image.real ? '' : ' cv-media--fallback') + '">' + mediaImg + progressHtml(item)
-        + '<div class="cv-media-top"><span class="cv-glass cv-tag">' + esc(d.dayLabel) + ' · ' + esc(d.dateLong) + '</span><span class="cv-media-actions">'
+        + '<div class="cv-media-top"><span class="cv-media-lead">'
+        + (booked ? '<span class="cv-glass cv-booked" role="img" aria-label="Booked" title="Booked">' + BOOKED_ICON + '</span>' : '')
+        + '<span class="cv-glass cv-tag">' + esc(d.dayLabel) + ' · ' + esc(d.dateLong) + '</span></span><span class="cv-media-actions">'
         + (image.real ? '<button type="button" class="cv-icon-btn" data-act="zoom" aria-label="View photo full size">' + ICON.zoom + '</button>' : '')
         + '<a class="cv-icon-btn" href="' + esc(mapsUrl) + '" target="_blank" rel="noopener noreferrer" aria-label="Search in Google Maps">' + ICON.directions + '</a>'
         + '</span></div>'
