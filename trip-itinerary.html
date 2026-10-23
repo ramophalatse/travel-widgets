@@ -1393,8 +1393,8 @@
       </div>
       <div class="day-card-body">
         <div class="activities">
-<div class="activity-row"><div class="time-col">9:00am</div><div class="act-body"><div class="act-name">Land at JFK · Etihad EY 1</div><div class="act-note">Clear immigration and collect our bags. Allow 90 min: we're travelling as a family of 4 over the holiday period.</div></div></div><div class="activity-row"><div class="time-col">10:30am</div><div class="act-body"><div class="act-name">Grab coffee & a bite airside</div><div class="act-note">Dunkin’ in the Arrival Lounge is the only café outside security at Terminal 4: the rest of T4’s food is airside, and there is a Hudson newsstand for snacks and drinks. One item and a drink each, to go: the driver is booked for 10:30am and waits free until 11:30am, so there is time, but no lingering.</div></div></div><div class="activity-row" data-authored-name="Agoda SUV departs JFK Terminal 4">
-  <div class="time-col">10:45am</div>
+<div class="activity-row"><div class="time-col">9:00am</div><div class="act-body"><div class="act-name">Land at JFK · Etihad EY 1</div><div class="act-note">Clear immigration and collect our bags. Allow 90 min: we're travelling as a family of 4 over the holiday period.</div></div></div><div class="activity-row" data-authored-name="Agoda SUV departs JFK Terminal 4">
+  <div class="time-col">10:30am</div>
   <div class="act-body">
     <div class="act-name">Private van · JFK Terminal 4 → Arlo SoHo</div>
     <div class="act-note">We’ll be picked up by our Mozio transfer, a Chrysler Pacifica or similar (4 pax, 5 bags). Transfer is booked for 10:30am at the Terminal 4 passenger pickup.</div>
@@ -5841,7 +5841,6 @@ customElements.define('loop-loader', LoopLoader);
   // afterwards so the older saved SUV, rail and Blacklane copy is replaced.
   const JFK_VAN_NOTE = 'We\u2019ll be picked up by our Mozio transfer, a Chrysler Pacifica or similar (4 pax, 5 bags). Transfer is booked for 10:30am at the Terminal 4 passenger pickup.';
   const LGA_SUV_NOTE = 'Our Escalade will pick us up at the Arlo\u2019s main entrance at 12:30pm. He\'ll only wait for 15 minutes, so we\'ll need to be downstairs with our bags ready to go. We should get to LaGuardia Terminal B in about 30 minutes.';
-  const COFFEE_NOTE = 'Dunkin’ in the Arrival Lounge is the only café outside security at Terminal 4: the rest of T4’s food is airside, and there is a Hudson newsstand for snacks and drinks. One item and a drink each, to go: the driver is booked for 10:30am and waits free until 11:30am, so there is time, but no lingering.';
   function applyAirportTransfers() {
     const card = document.querySelector('.day-card[data-day-key="d2"]');
     const xmas = document.querySelector('.day-card[data-day-key="d4"]');
@@ -5856,14 +5855,8 @@ customElements.define('loop-loader', LoopLoader);
     set(van, '.act-name', t => /^(Agoda SUV|Transfer SUV) departs JFK Terminal 4$|^AirTrain · LIRR/.test(t), 'Private van · JFK Terminal 4 → Arlo SoHo');
     set(van, '.act-note', t => /Chevy Suburban|Jamaica-bound AirTrain/.test(t), JFK_VAN_NOTE, true);
     set(van, '.act-cost', t => /R2,398|R1,006/.test(t), 'Booked · R1,583.81 (Agoda)');
-    set(van, '.time-col', t => t === '11:30am' || t === '11:00am', '10:45am');
+    set(van, '.time-col', t => t === '11:30am' || t === '11:00am', '10:30am');
     van?.querySelector('.act-rating[data-ta="airtrain-jfk"]')?.remove();
-    const coffee = find(card, 'Grab coffee');
-    set(coffee, '.act-note', t => t === 'Fuel up before we move. The car is at 11:30am.' || t.includes('then onto the AirTrain'), COFFEE_NOTE);
-    const coffeeNote = coffee?.querySelector('.act-note');
-    if (coffeeNote && !coffee.querySelector('.act-cost')) {
-      coffeeNote.after(el('div', 'act-cost', '~R730–R870 for 4 (a coffee and a breakfast item each, airport prices)'));
-    }
     set(find(card, 'Arrive Arlo SoHo'), '.time-col', t => t === '12:30pm', '11:45am');
 
     const suv = find(xmas, 'Blacklane departs · Arlo SoHo → LGA');
@@ -6023,15 +6016,6 @@ customElements.define('loop-loader', LoopLoader);
     (birthdayTable ? spendRows(birthdayTable) : [])
       .filter(r => /Rockettes|Christmas Spectacular/i.test(r.querySelector('.spend-label')?.textContent || ''))
       .forEach(r => r.remove());
-    // BKLYN Blend's JFK counter is in Terminal 8; T4's only landside café is Dunkin'.
-    const coffeeName = row('d2', 'Grab coffee')?.querySelector('.act-name');
-    if (coffeeName && /^Grab coffee (&|and) a bite airside$/.test(coffeeName.textContent.trim())) {
-      coffeeName.textContent = 'Coffee and a bite · Dunkin\u2019, Terminal 4 Arrivals Hall';
-    }
-    addSpend('d2', 'Dunkin\u2019 · JFK Terminal 4 arrivals x4', '~R730–R870');
-    const d2Spend = Array.from(day('d2')?.querySelectorAll('.spend-row:not(.total)') || []);
-    const dunkinSpend = d2Spend.find(r => r.querySelector('.spend-label')?.textContent.startsWith('Dunkin'));
-    if (dunkinSpend && d2Spend[0] !== dunkinSpend) d2Spend[0]?.before(dunkinSpend);
     const tourThumb = row('d2', 'Free Tours by Foot')?.querySelector('.act-thumb');
     if (tourThumb?.alt === 'Dominique Ansel Bakery') {
       tourThumb.alt = 'SoHo and Nolita walking tour';
