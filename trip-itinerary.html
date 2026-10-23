@@ -251,6 +251,21 @@
   .stay-pill--viator{border-color:color-mix(in srgb,var(--viator) 38%,transparent);background:color-mix(in srgb,var(--viator) 7%,transparent);color:var(--viator-text);}
   .stay-pill--viator:hover,.stay-pill--viator:focus-visible{background:color-mix(in srgb,var(--viator) 14%,transparent);border-color:var(--viator);}
   .stay-pill--viator svg{fill:var(--viator);}
+  /* Transfer fees, in each operator's key colour: Mozio's yellow (#FDD013,
+     from its icon, deepened for text on white) and Uber's black, which flips
+     to white in dark mode as Uber's own wordmark does. */
+  :root{--mozio:#FDD013;--mozio-text:#6E5800;--uber:#000000;}
+  @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--mozio-text:#FDD013;--uber:#FFFFFF;}}
+  :root[data-theme="dark"]{--mozio-text:#FDD013;--uber:#FFFFFF;}
+  .fee-pill{display:inline-flex;align-items:center;gap:6px;width:fit-content;margin-top:4px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--fee) 45%,transparent);background:color-mix(in srgb,var(--fee) 10%,transparent);color:var(--fee-text);font-weight:600;}
+  .fee-pill .act-cost{color:inherit;}
+  .fee-pill--mozio{--fee:var(--mozio);--fee-text:var(--mozio-text);}
+  .fee-pill--mozio svg{width:13px;height:13px;flex:none;}
+  .fee-pill--mozio > span{font-size:12px;}
+  .fee-pill--mozio .mozio-ring{fill:var(--text);}
+  .fee-pill--mozio .mozio-mark{fill:var(--mozio);}
+  .fee-pill--uber{--fee:var(--uber);--fee-text:var(--uber);}
+  .fee-pill--uber .uber-mark{width:30px;height:10.4px;flex:none;background:var(--uber);-webkit-mask:url(assets/nyc-miami-2026/icons/uber.svg) center/contain no-repeat;mask:url(assets/nyc-miami-2026/icons/uber.svg) center/contain no-repeat;}
   .cv-review--viator .cv-review-score{color:var(--viator);}
   .cv-review--viator .cv-review-name,.cv-review--viator .cv-review-meta{display:block;}
   .cv-review--link .cv-review-name,.cv-review--link .cv-review-meta{display:block;}
@@ -710,7 +725,7 @@
     .activity-row,.activity-row.has-thumb,.activity-row.has-thumb-slot{grid-template-columns:48px minmax(0,1fr);}
     .act-body{padding-right:0;}
     /* On a narrow phone a pill wraps inside the row rather than running past it. */
-    :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta,.stay-pill,.ta-pill){max-width:100%;flex-wrap:wrap;white-space:normal;}
+    :is(.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta,.stay-pill,.ta-pill,.fee-pill){max-width:100%;flex-wrap:wrap;white-space:normal;}
     .act-thumb,.act-thumb-wrap,.act-thumb-slot.filled,
     :root[data-edit="on"] .act-thumb-slot{grid-column:2;width:100%;max-width:100%;height:auto;aspect-ratio:16/10;margin-top:8px;object-fit:cover;}
     .act-thumb-wrap,.act-thumb-slot.filled,:root[data-edit="on"] .act-thumb-slot{display:block;}
@@ -5893,6 +5908,30 @@ customElements.define('loop-loader', LoopLoader);
       }
     });
   }
+  // Wrap each transfer's fee in its operator's pill. The .act-cost element is
+  // moved, not copied, so it keeps its edit key and any saved text.
+  const FEE_PILL_ROWS = [
+    ['d2', 'Agoda SUV departs JFK Terminal 4', 'mozio'],
+    ['d4', 'Blacklane departs · Arlo SoHo → LGA', 'mozio'],
+    ['d4', 'Bags · UberXXL to Miami Gardens', 'uber']
+  ];
+  const FEE_PILL_LOGOS = {
+    mozio: '<svg viewBox="0 0 162.53 159.4" aria-hidden="true"><path class="mozio-ring" d="M91.4,8.57c-39.28,0-71.13,31.85-71.13,71.13s31.85,71.13,71.13,71.13,71.13-31.85,71.13-71.13S130.69,8.57,91.4,8.57ZM92.72,114.74c-19.7,0-35.67-15.97-35.67-35.67s15.97-35.67,35.67-35.67,35.67,15.97,35.67,35.67-15.97,35.67-35.67,35.67Z"/><polygon class="mozio-mark" points="0 0 0 159.4 105.74 79.7 0 0"/></svg><span>Mozio</span>',
+    uber: '<span class="uber-mark" role="img" aria-label="Uber"></span>'
+  };
+  function renderTransferFeePills() {
+    FEE_PILL_ROWS.forEach(([key, name, brand]) => {
+      const row = Array.from(document.querySelectorAll(`.day-card[data-day-key="${key}"] .activity-row`))
+        .find(r => authoredRowName(r) === name);
+      const cost = row?.querySelector('.act-cost');
+      if (!cost || cost.closest('.fee-pill')) return;
+      const pill = document.createElement('div');
+      pill.className = 'fee-pill fee-pill--' + brand;
+      pill.innerHTML = FEE_PILL_LOGOS[brand];
+      cost.before(pill);
+      pill.appendChild(cost);
+    });
+  }
   // Public-street alternative to the tip-based tour. Retain the original row
   // keys and migrate the old saved spend table without writing over the store.
   const SOHO_HIGHLIGHTS = '<strong>Greene Street</strong>: cobblestones and the finest run of cast-iron façades in the SoHo Cast Iron Historic District.<br><strong>Haughwout Building</strong>, 488 Broadway: an 1857 cast-iron Venetian palazzo, and the first building with a commercial passenger lift, built by Otis.<br><strong>101 Spring Street</strong>: Donald Judd’s cast-iron home and studio, kept as he arranged it (exterior only).<br><strong>St. Patrick’s Old Cathedral</strong>, Mott St at Prince St: the city’s first Catholic cathedral, completed in 1815, behind its high brick churchyard wall.<br><strong>Prince and Elizabeth Streets</strong>: Nolita’s small boutiques and cafés, for a browse to finish.';
@@ -6178,6 +6217,7 @@ customElements.define('loop-loader', LoopLoader);
     applySelfGuidedSohoWalk();
     applySeptemberQA();
     renderTransitReferences();
+    renderTransferFeePills();
     renderHeroSunTimes();
     renderAirbnbLinks();
     wrapStaticThumbs();
