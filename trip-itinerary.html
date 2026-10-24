@@ -714,6 +714,43 @@
   .flight-family{margin-top:8px;font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--flight-muted);}
   .flight-modal-close{top:12px;right:12px;z-index:4;background:var(--flight-soft);color:var(--flight-text);}
 
+  /* SHOW TICKET: a replica of the printed ticket, so it keeps the show's own
+     colours in both themes. The artwork panel is the show's design; the stub
+     is rebuilt here with the booking details filled in. */
+  .ticket-modal-box{max-width:920px;padding:0;background:transparent;box-shadow:none;}
+  .show-ticket{display:grid;grid-template-columns:minmax(0,1fr) 340px;border-radius:20px;box-shadow:0 28px 80px rgba(0,0,0,0.34);background:#fab812;}
+  .ticket-art{display:block;width:100%;height:100%;aspect-ratio:643/400;object-fit:cover;border-radius:20px 0 0 20px;}
+  .ticket-stub{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:18px 14px 18px 20px;border-left:3px dotted rgba(255,248,230,0.75);border-radius:0 20px 20px 0;background:linear-gradient(90deg,#f2ab12 0%,#dc7a20 30%,#a8432c 68%,#7d2c22 86%,#5c1912 100%);color:#fff;min-width:0;}
+  .ticket-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;align-content:start;min-width:0;}
+  .ticket-field{grid-column:1/-1;min-width:0;}
+  .ticket-field.half{grid-column:auto;}
+  .ticket-label{font-family:var(--serif);font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(90,30,10,0.35);}
+  .ticket-value{margin-top:3px;padding:5px 8px;border-radius:2px;background:rgba(253,240,222,0.94);color:#3b1a0f;font-family:var(--sans);font-size:12.5px;font-weight:600;line-height:1.25;overflow-wrap:anywhere;}
+  .ticket-value.message{min-height:58px;font-size:12px;font-weight:500;}
+  .ticket-value .ticket-mono{font-family:var(--mono);font-size:12px;font-weight:500;}
+  .ticket-side{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;}
+  .ticket-side-top{display:flex;gap:5px;}
+  .ticket-stars{display:flex;flex-direction:column;gap:7px;color:#e9a531;}
+  .ticket-stars svg{width:24px;height:24px;display:block;filter:drop-shadow(0 1px 1px rgba(80,20,10,0.35));}
+  .ticket-tagline{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--serif);font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:rgba(255,255,255,0.92);}
+  .ticket-barcode{width:28px;height:96px;background:repeating-linear-gradient(0deg,#fff 0 2px,transparent 2px 4px,#fff 4px 5px,transparent 5px 8px,#fff 8px 11px,transparent 11px 13px);opacity:0.9;}
+  .ticket-modal-close{top:-40px;right:0;z-index:4;background:rgba(255,255,255,0.16);color:#fff;}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  @media(max-width:640px){
+    .ticket-modal-box{width:min(100%,430px);max-height:calc(100vh - 2rem);overflow-y:auto;border-radius:20px;}
+    .ticket-modal-close{top:10px;right:10px;background:rgba(40,10,5,0.45);}
+    .show-ticket{grid-template-columns:1fr;}
+    .ticket-art{height:auto;border-radius:20px 20px 0 0;}
+    /* Stacked, the gradient runs top to bottom and the side column becomes a row. */
+    .ticket-stub{grid-template-columns:1fr;padding:16px 16px 18px;border-left:0;border-top:3px dotted rgba(255,248,230,0.75);border-radius:0 0 20px 20px;background:linear-gradient(180deg,#e58b1c 0%,#b8502a 55%,#6e2419 100%);}
+    .ticket-side,.ticket-side-top{flex-direction:row;align-items:center;}
+    .ticket-side-top{gap:12px;}
+    .ticket-stars{flex-direction:row;gap:5px;}
+    .ticket-stars svg{width:18px;height:18px;}
+    .ticket-tagline{writing-mode:horizontal-tb;transform:none;letter-spacing:0.2em;}
+    .ticket-barcode{display:none;}
+  }
+
   /* RESPONSIVE */
   @media(max-width:640px){
     /* Two columns on a phone: the timecode, then everything else. A 190px photo
@@ -2156,6 +2193,31 @@
     </div>
   </div>
 </div>
+
+<div class="modal-overlay" id="ticket-modal" role="dialog" aria-modal="true" aria-labelledby="ticket-modal-title" onclick="closeShowTicket(event)">
+  <div class="modal-box ticket-modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close ticket-modal-close" type="button" aria-label="Close ticket" onclick="closeShowTicket()">✕</button>
+    <h2 class="sr-only" id="ticket-modal-title"></h2>
+    <div class="show-ticket">
+      <img class="ticket-art" id="ticket-art" src="" alt="">
+      <div class="ticket-stub">
+        <div class="ticket-fields">
+          <div class="ticket-field"><div class="ticket-label">Name</div><div class="ticket-value" id="ticket-name"></div></div>
+          <div class="ticket-field"><div class="ticket-label">Venue</div><div class="ticket-value" id="ticket-venue"></div></div>
+          <div class="ticket-field half"><div class="ticket-label">Date</div><div class="ticket-value" id="ticket-date"></div></div>
+          <div class="ticket-field half"><div class="ticket-label">Time</div><div class="ticket-value" id="ticket-time"></div></div>
+          <div class="ticket-field half"><div class="ticket-label">Section</div><div class="ticket-value" id="ticket-section"></div></div>
+          <div class="ticket-field half"><div class="ticket-label">Seat</div><div class="ticket-value" id="ticket-seat"></div></div>
+          <div class="ticket-field"><div class="ticket-label">Message</div><div class="ticket-value message"><span class="ticket-mono" id="ticket-order"></span><br><span id="ticket-message"></span></div></div>
+        </div>
+        <div class="ticket-side" aria-hidden="true">
+          <div class="ticket-side-top"><div class="ticket-stars"></div><div class="ticket-tagline">Enjoy your time!</div></div>
+          <div class="ticket-barcode"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <button type="button" class="chip-btn to-top" aria-label="Back to top">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
   <span class="chip-label">Back to top</span>
@@ -2339,6 +2401,54 @@ customElements.define('loop-loader', LoopLoader);
     document.body.style.overflow = '';
     if (flightTriggerToRestore) flightTriggerToRestore.focus();
     flightTriggerToRestore = null;
+  }
+  // Matched on the row's name (or its authored name, if a saved edit renamed it).
+  const SHOW_TICKETS = {
+    'lion-king':{match:/\bLion King\b/i,authoredName:'Broadway show · TKTS discounted tickets',title:'The Lion King',art:'assets/nyc-miami-2026/ticket-lion-king-art.jpg',artAlt:'Disney presents The Lion King, Broadway’s award-winning best musical',name:'Ramo · Fez · Unam',venue:'Minskoff Theatre · 200 W 45th St',date:'Sun 10 Jan 2027',time:'6:30pm',section:'Mezz · Row A',seat:'127 · 128 · 129',order:'Order #4GBEKX67',message:'3 Standard tickets, side by side in the front row of the mezzanine.'}
+  };
+  let ticketTriggerToRestore = null;
+  function initShowTickets() {
+    document.querySelectorAll('.activity-row').forEach(row => {
+      const name = row.querySelector('.act-name');
+      if (!name || row.querySelector('[data-ticket]')) return;
+      const key = Object.keys(SHOW_TICKETS).find(k => SHOW_TICKETS[k].match.test(name.textContent) || row.dataset.authoredName === SHOW_TICKETS[k].authoredName);
+      if (!key) return;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'flight-trigger';
+      button.dataset.ticket = key;
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4V7Z"/><path d="M15 7v10" stroke-dasharray="2 2"/></svg><span>View tickets</span>';
+      button.addEventListener('click', () => openShowTicket(key, button));
+      name.parentElement.appendChild(button);
+    });
+  }
+  function openShowTicket(key, trigger) {
+    const ticket = SHOW_TICKETS[key];
+    if (!ticket) return;
+    const fields = {
+      'ticket-modal-title':ticket.title + ' tickets','ticket-name':ticket.name,'ticket-venue':ticket.venue,
+      'ticket-date':ticket.date,'ticket-time':ticket.time,'ticket-section':ticket.section,
+      'ticket-seat':ticket.seat,'ticket-order':ticket.order,'ticket-message':ticket.message
+    };
+    Object.entries(fields).forEach(([id,value]) => { document.getElementById(id).textContent = value; });
+    const art = document.getElementById('ticket-art');
+    art.src = ticket.art;
+    art.alt = ticket.artAlt;
+    const stars = document.querySelector('#ticket-modal .ticket-stars');
+    if (!stars.children.length) stars.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8Z"/></svg>'.repeat(5);
+    ticketTriggerToRestore = trigger || null;
+    document.getElementById('ticket-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.querySelector('.ticket-modal-close').focus();
+  }
+  function closeShowTicket(event) {
+    const modal = document.getElementById('ticket-modal');
+    if (event && event.target !== modal) return;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    if (ticketTriggerToRestore) ticketTriggerToRestore.focus();
+    ticketTriggerToRestore = null;
   }
   function openLightboxFromBg(el,cap){var m=el.style.backgroundImage.match(/url\(["']?([^"')]+)["']?\)/);if(m)openLightbox(m[1],cap);}
   document.querySelectorAll('[data-dedup]').forEach(function(img){img.src=document.getElementById(img.dataset.dedup).src;});
@@ -2557,6 +2667,8 @@ customElements.define('loop-loader', LoopLoader);
       document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
       if (flightTriggerToRestore) flightTriggerToRestore.focus();
       flightTriggerToRestore = null;
+      if (ticketTriggerToRestore) ticketTriggerToRestore.focus();
+      ticketTriggerToRestore = null;
     }
   });
   (function initTheme() {
@@ -6283,6 +6395,7 @@ customElements.define('loop-loader', LoopLoader);
   window.editsReady = (async function initEditSystem() {
     restoreItineraryView();
     initFlightDetails();
+    initShowTickets();
     ensureRockettesSubwayLegs();
     ensureImageDropZones();
     tagEditableElements();
@@ -6858,6 +6971,7 @@ customElements.define('loop-loader', LoopLoader);
     star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8Z"/></svg>',
     ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>',
     plane: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16Z"/></svg>',
+    ticket: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4V7Z"/><path d="M15 7v10" stroke-dasharray="2 2"/></svg>',
     cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M2.5 6.5v11M21.5 6.5v11"/></svg>',
     image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/></svg>'
   };
@@ -6958,7 +7072,8 @@ customElements.define('loop-loader', LoopLoader);
       teslaMeta: teslaMeta ? teslaMeta.outerHTML : '',
       walkMeta: walkMeta ? walkMeta.outerHTML : '',
       transitMeta: transitMeta ? transitMeta.outerHTML : '',
-      flight: row.querySelector('.flight-trigger'),
+      flight: row.querySelector('.flight-trigger[data-flight]'),
+      ticket: row.querySelector('.flight-trigger[data-ticket]'),
       goal: row.dataset.goal || ''
     };
   }
@@ -7302,6 +7417,7 @@ customElements.define('loop-loader', LoopLoader);
         + viatorHtml(s.viator)
         + creditHtml(image.sharp || image.src)
         + (s.flight ? '<button type="button" class="cv-action" data-act="flight">' + ICON.plane + 'View flight details</button>' : '')
+        + (s.ticket ? '<button type="button" class="cv-action" data-act="ticket">' + ICON.ticket + 'View tickets</button>' : '')
         // Wide layouts only (CSS): stands in for the photo's thumbnail rail.
         + (item.i + 1 < item.day.rows.length
           ? '<div class="cv-later"><div class="cv-section-label">Later today</div>' + stopListHtml(item.day.first + 2 + item.i, Math.min(item.day.first + 1 + item.day.rows.length, item.day.first + 6 + item.i)) + (item.day.rows.length - item.i - 1 > 4 ? '<button type="button" class="cv-later-all" data-go="' + item.day.first + '">All ' + item.day.rows.length + ' stops today</button>' : '') + '</div>'
@@ -7669,6 +7785,11 @@ customElements.define('loop-loader', LoopLoader);
       case 'flight': {
         const s = stopInfo(item);
         if (s.flight && typeof openFlightDetails === 'function') openFlightDetails(s.flight.dataset.flight, el);
+        break;
+      }
+      case 'ticket': {
+        const s = stopInfo(item);
+        if (s.ticket && typeof openShowTicket === 'function') openShowTicket(s.ticket.dataset.ticket, el);
         break;
       }
     }
