@@ -5713,24 +5713,33 @@ customElements.define('loop-loader', LoopLoader);
      time on board to the next stop (subway, rail such as the AirTrain and
      LIRR, or Miami's Metromover). Where the note gives a ride time it is
      used as is; otherwise the subway estimate is ~2 min a local stop, ~3 an
-     express hop, rounded up. A row that changes mode shows each leg. */
+     express hop, rounded up. A row that changes mode shows each leg, and the
+     walks to and from the station ride along in the same pill, unless the
+     next row already badges the walk from the station. Walks of three
+     minutes or less are left out, as in renderWalkReferences. */
   function renderTransitReferences() {
     const icons = {
       subway: ['assets/nyc-miami-2026/icons/subway.svg', 'Subway', 'by subway'],
       train: ['assets/nyc-miami-2026/icons/train.svg', 'Train', 'by train'],
-      metromover: ['assets/nyc-miami-2026/icons/monorail.svg', 'Metromover', 'on the Metromover']
+      metromover: ['assets/nyc-miami-2026/icons/monorail.svg', 'Metromover', 'on the Metromover'],
+      walk: ['assets/nyc-miami-2026/icons/walk.svg', 'On foot', 'on foot']
     };
     const legs = [
       // Note: two stops, about 5 min on the train.
-      ['Subway · Nolita → Union Square · Uptown 6', [['subway', 5]]],
-      // Grand St to 47–50 Sts, five express-section stops.
-      ['Subway · Chinatown → Radio City · Uptown B / D', [['subway', 12]]],
-      // 50 St to Canal St, nine local stops.
-      ['Subway · Radio City → Arlo SoHo · Downtown 1', [['subway', 18]]],
+      // Walk: about 6 min to Bleecker St station.
+      ['Subway · Nolita → Union Square · Uptown 6', [['walk', 6], ['subway', 5]]],
+      // Grand St to 47–50 Sts, five express-section stops. Walk: about 10 min
+      // to Grand St; the 50th St exit to Radio City is a couple of minutes.
+      ['Subway · Chinatown → Radio City · Uptown B / D', [['walk', 10], ['subway', 12]]],
+      // 50 St to Canal St, nine local stops. OSRM foot: Radio City to the 1
+      // at Broadway ~0.5 km; Canal St at Varick to the Arlo ~0.3 km.
+      ['Subway · Radio City → Arlo SoHo · Downtown 1', [['walk', 6], ['subway', 18], ['walk', 4]]],
       ['#1 train · Canal St → WTC Cortlandt', [['subway', 6]]],
       ['A or C · High St → 14 St–Eighth Ave', [['subway', 20]]],
       ['#7 train · 34 St–Hudson Yards → 5 Av–Bryant Park', [['subway', 5]]],
-      ['E train · Fifth Av/53 St → Spring St', [['subway', 15]]],
+      // OSRM foot: the cube to Fifth Av/53 St ~0.5 km; note: Spring St is a
+      // 7 min walk from the Arlo.
+      ['E train · Fifth Av/53 St → Spring St', [['walk', 6], ['subway', 15], ['walk', 7]]],
       // Note: the free Omni Loop to Bayfront Park, about 10 min each way.
       ['Pre-booked car to Adrienne Arsht Center · Metromover in', [['metromover', 10]]],
       ['Metromover out · Pre-booked car home from Arsht Center', [['metromover', 10]]],
@@ -5738,29 +5747,43 @@ customElements.define('loop-loader', LoopLoader);
       // the free Q70 bus to the station is ~10 min more.
       ['Arrive LGA · Q70 LaGuardia Link, then the E train', [['subway', 25]]],
       ['Subway uptown · B or C from 50th St to 72nd St', [['subway', 6]]],
+      // The same d23 row after applySeptemberQA renames it: OSRM foot, Row NYC
+      // to the Times Sq shuttle ~0.5 km; the S to Grand Central ~2 min, then
+      // the 4/5 two express hops to 86 St. The walk on to the Met is on the
+      // Met's own row.
+      ['Subway to The Met · Times Sq → Grand Central → 86 St', [['walk', 6], ['subway', 8]]],
       // Note: eleven stops on the 6; eight back up to 59 St.
-      ['6 train · 86 St → Bleecker St', [['subway', 22]]],
-      ['6 train · Bleecker St → 59 St', [['subway', 16]]],
+      // Walks: about 10 min from the Met to 86 St; about 10 min from
+      // Hamburger America back to Bleecker St.
+      ['6 train · 86 St → Bleecker St', [['walk', 10], ['subway', 22]]],
+      ['6 train · Bleecker St → 59 St', [['walk', 10], ['subway', 16]]],
       ['Subway to Central Park · C from 42 St–Port Authority to 72 St', [['subway', 6]]],
       // 42 St–Times Sq to Whitehall St, thirteen local stops.
-      ['R train · 42 St–Times Sq → Whitehall St', [['subway', 26]]],
+      // OSRM foot: Row NYC to the Times Sq R platform ~0.5 km.
+      ['R train · 42 St–Times Sq → Whitehall St', [['walk', 6], ['subway', 26]]],
       // Note: four stops north to Canal St; Grand St to 42 St is four on the B/D.
       ['R train · Whitehall St → Canal St', [['subway', 8]]],
-      ['B or D · Grand St → 42 St–Bryant Park', [['subway', 12]]],
+      // Walks: about 6 min from North Dumpling to Grand St; about 10 min
+      // west along 42nd St to Row NYC.
+      ['B or D · Grand St → 42 St–Bryant Park', [['walk', 6], ['subway', 12], ['walk', 10]]],
       // Note: about 20 min.
       ['LIRR · Penn Station → Jamaica', [['train', 20]]],
       ['AirTrain · Jamaica → JFK Terminal 4', [['train', 8]]]
     ];
     document.querySelectorAll('.activity-row').forEach(row => {
-      if (row.querySelector('.transit-trip-meta')) return;
       const name = row.querySelector('.act-name')?.textContent.trim();
       const leg = legs.find(([label]) => name === label);
       if (!leg) return;
+      // The second pass re-badges a row renamed since the first (the d23 Met
+      // ride), and leaves every other badge as it is.
+      const existing = row.querySelector('.transit-trip-meta');
+      if (existing && existing.dataset.leg === name) return;
       const meta = document.createElement('div');
       meta.className = 'transit-trip-meta';
+      meta.dataset.leg = name;
       meta.setAttribute('aria-label', leg[1].map(([mode, minutes]) => `${icons[mode][2]}, roughly ${minutes} minutes`).join('; then '));
       meta.innerHTML = leg[1].map(([mode, minutes]) => `<img src="${icons[mode][0]}" alt="${icons[mode][1]}"><strong>~${minutes} min</strong>`).join('<span>·</span>');
-      placeTravelBadge(row.querySelector('.act-body'), meta);
+      if (existing) existing.replaceWith(meta); else placeTravelBadge(row.querySelector('.act-body'), meta);
     });
   }
   function renderTeslaTravelReferences() {
