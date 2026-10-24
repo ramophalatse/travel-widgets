@@ -2052,7 +2052,7 @@
 </div><div class="summary-section">
   <div class="summary-header"><div class="summary-title">Things to Book · Action List</div></div>
   <ul class="booking-list">
-    <li class="booking-item"><span class="booking-urgency urgency-later">Dec 24</span><span>Turo · Tesla Model Y · pickup ~8:10pm at the Target car park, 5601 NW 183rd St, Miami Gardens → Port Miami Jan 3 9:30am · set the return location to Port Miami in the app before driving off · photograph all four sides, the interior, the mileage and the battery level in the Turo app before driving off · check the host's charging rules in the listing · check the trip end shows Jan 3 9:30am · send Katherin our flight (AA 2328)</span></li>
+    <li class="booking-item"><span class="booking-urgency urgency-later">Dec 24</span><span>SpotHero · add the Tesla's licence plate to the College Station Garage booking (rental ID 136646610) once Turo hands over the car</span></li><li class="booking-item"><span class="booking-urgency urgency-later">Dec 24</span><span>Turo · Tesla Model Y · pickup ~8:10pm at the Target car park, 5601 NW 183rd St, Miami Gardens → Port Miami Jan 3 9:30am · set the return location to Port Miami in the app before driving off · photograph all four sides, the interior, the mileage and the battery level in the Turo app before driving off · check the host's charging rules in the listing · check the trip end shows Jan 3 9:30am · send Katherin our flight (AA 2328)</span></li>
         <li class="booking-item"><span class="booking-urgency urgency-soon">Book soon</span><span>IPPUDO 5th Avenue farewell ramen · Jan 12 · 8pm for 4 via Resy</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-soon">Book soon</span><span>Island Queen · Millionaire's Row Cruise x4 · islandqueencruises.com · Dec 26 3pm from Bayside</span></li>
     <li class="booking-item"><span class="booking-urgency urgency-soon">Book soon</span><span>Wynwood Walls timed tickets x4 · thewynwoodwalls.com · Dec 26 ~5pm · confirm holiday hours</span></li>
@@ -5485,6 +5485,7 @@ customElements.define('loop-loader', LoopLoader);
     'd2:christmas-spectacular-starring-the-radio-city-ro',
     'd4:blacklane-departs-arlo-soho-lga',
     'd7:miami-heat-vs-charlotte-hornets-kaseya-center',
+    'd7:park-college-station-garage',
     'd16:half-day-buggy-guided-adventure-eric-tours-inter',
     'd17:lime-out-taco-taxi-from-emerald-beach',
     'd17:norwegian-aqua-docks-at-havensight-collect-our-b',
@@ -5542,11 +5543,12 @@ customElements.define('loop-loader', LoopLoader);
     const arrival = rowAt('5:30pm');
     setRow(arrival, '4:15pm', 'Leave Airbnb · Drive to Kaseya Center', 'After dropping the kids at the Airbnb, head south to the game. Keep the tickets and phones with us.', 'Tesla');
     const dinner = rowAt('7:00pm');
-    setRow(dinner, '8:45pm', 'Post-game date night · Downtown Miami', 'Heat–Hornets first, then a relaxed dinner for the two of us nearby. We can choose somewhere casual when we see what we fancy.', '~R600');
+    setRow(dinner, '8:45pm', 'Post-game date night · Drive to dinner', 'Heat–Hornets first, then we pick up the car and find a spot for dinner with free parking, just the two of us. We can choose somewhere casual when we see what we fancy.', '~R600');
     if (arrival && dinner && !rowAt('5:00pm')) {
       const parking = document.createElement('div');
       parking.className = 'activity-row';
-      parking.innerHTML = '<div class="time-col">5:00pm</div><div class="act-body"><div class="act-name">Park · Gesu Parking Lot</div><div class="act-note">145 NE 2nd St, about a 9-minute walk to Kaseya Center. It keeps us away from the arena-side Biscayne Boulevard pinch and gives us a cleaner northbound exit after the game. Parking is booked in advance.</div><div class="act-cost">$17.55 incl. service fee</div></div>';
+      parking.dataset.authoredName = 'Park · College Station Garage';
+      parking.innerHTML = '<div class="time-col">5:00pm</div><div class="act-body"><div class="act-name">Park · College Station Garage</div><div class="act-note">190 NE 3rd St, about a 6-minute walk to Kaseya Center. The entrance is on the south side of NE 3rd St, a one-way street, between NE 1st and NE 2nd Ave. Scan the SpotHero QR code at the box with the red flashing lights to get in, and again to get out; there is no in and out. Booked 4:00pm to 10:00pm (SpotHero rental ID 136646610). After the game we drive out west along NE 3rd St and up NE 1st Ave to I-395, clear of Biscayne Boulevard.</div><div class="act-cost">Paid · R363.47 ($21.85 incl. service fee)</div></div>';
       arrival.after(parking);
     }
     if (arrival && dinner && !rowAt('6:00pm')) {
@@ -5561,15 +5563,6 @@ customElements.define('loop-loader', LoopLoader);
     if (title) title.textContent = 'Miami Heat vs Charlotte Hornets · Kaseya Center';
     const pill = day.querySelector('.pill-day');
     if (pill) pill.textContent = '101 lifetime goal';
-    const spendTable = day.querySelector('.spend-table');
-    if (spendTable && !Array.from(spendTable.querySelectorAll('.spend-row')).some(item => item.textContent.includes('Gesu Parking Lot'))) {
-      const parkingSpend = makeSpendRow('Parking · Gesu Parking Lot · 145 NE 2nd St', '$17.55 incl. service fee');
-      spendTable.querySelector('.spend-row.total')?.before(parkingSpend);
-      const total = spendTable.querySelector('.spend-row.total span:last-child');
-      if (total) total.textContent = '~R1,250 + $17.55 parking';
-    }
-    const totalAmount = day.querySelector('.total-amount');
-    if (totalAmount) totalAmount.textContent = '~R1,250 + $17.55 parking';
     hydrateActivityImageControls();
   }
   function moveAventuraChargeToRecoveryMorning() {
@@ -5661,13 +5654,12 @@ customElements.define('loop-loader', LoopLoader);
       ['Walk back to Row NYC · Drop shopping bags', 15],
       // Added 24 Oct, OSRM foot routes: 14 St–Eighth Ave to Chelsea Market
       // ~0.3 km; the Collins Ave garage down to Ocean Drive ~0.7 km; the
-      // Gesu lot to Kaseya Center's south side ~0.8 km (the booking says 9
-      // min); 86 St on Lexington to the Met's Fifth Ave steps ~0.8 km; Row
+      // College Station Garage to Kaseya Center's south side ~0.5 km; 86 St on Lexington to the Met's Fifth Ave steps ~0.8 km; Row
       // NYC up Eighth Ave to Real Kung Fu ~0.4 km; Rockefeller Center back
       // to the Row ~1.0 km.
       ['Chelsea Market · 75 Ninth Ave', 5],
       ['First look at Ocean Drive', 9],
-      ['Miami Heat vs Charlotte Hornets', 9],
+      ['Miami Heat vs Charlotte Hornets', 6],
       ['The Metropolitan Museum of Art', 10],
       ['Dinner · Real Kung Fu', 5],
       ['Back to Row NYC · Rest and change for dinner', 13],
@@ -5845,7 +5837,7 @@ customElements.define('loop-loader', LoopLoader);
       ['Head back toward North Miami Beach', 40, 30],
       ['Leave Dolphin Mall · Drive back to the Airbnb', 40, 30],
       ['Leave Airbnb · Drive to Kaseya Center', 31, 25, 'to Kaseya'],
-      ['Post-game date night · Downtown Miami', 31, 20, 'return home'],
+      ['Post-game date night · Drive to dinner', 31, 20, 'return home'],
       // ~6 km one way from NE 160th St to Aventura Mall; ~20% leaving home
       // minus 6 / 6.1 percentage points gives ~19% on arrival, before charging.
       ['Charge to 90% · Aventura Mall Supercharger', 6, 19, null, 90],
@@ -6205,7 +6197,9 @@ customElements.define('loop-loader', LoopLoader);
     note('d6', 'Leave Bayside promptly after the cruise and allow time for Wynwood parking. Tesla SoC badges remain rough planning estimates; the revised Design District route is not a measured range forecast. Use the car’s live route estimate.');
 
     replace(day('d7'), 'IKEA opens at 10am on Saturdays.', 'IKEA Miami currently opens at 10am on Sundays; recheck holiday hours.');
-    replace(day('d7'), '$17.55 incl. service fee', '~R319 ($17.55 incl. service fee)');
+    // Saved edits from the Gesu era: the dinner row now drives to dinner.
+    field('d7', 'Dinner at the Airbnb or casual nearby', '.act-name', 'Post-game · Downtown Miami', 'Post-game · Drive to dinner');
+    field('d7', 'Dinner at the Airbnb or casual nearby', '.act-note', 'then a relaxed dinner for the two of us nearby.', 'then we pick up the car and find a spot for dinner with free parking, just the two of us.');
     replace(day('d26'), '10 min north of the Airbnb in the Tesla.', 'Across the Intracoastal, southeast of the Airbnb. Check the driving route and beach parking; it is not a short walk from the house.');
     note('d26', 'The 6:15am charge is a solo early start; the family can sleep in. Allow closer to an hour including driving, charging and any queue. Lunch/dinner grocery costs and beach parking still depend on what we use.');
     note('d8', 'Robbie’s dock price and Bahia Honda’s fee come from recent listings, so confirm them on the day. Tesla SoC badges are planning estimates: use the car’s live route estimate, and charge longer in Marathon if it projects less than ~35% home.');
