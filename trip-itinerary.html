@@ -721,6 +721,8 @@
      is rebuilt here with the booking details filled in. */
   .ticket-modal-box{max-width:920px;padding:0;background:transparent;box-shadow:none;}
   .show-ticket{display:grid;grid-template-columns:minmax(0,1fr) 340px;border-radius:20px;box-shadow:0 28px 80px rgba(0,0,0,0.34);background:#fab812;}
+  .ticket-art-wrap{position:relative;min-width:0;container-type:inline-size;}
+  .ticket-overlay{display:none;}
   .ticket-art{display:block;width:100%;height:100%;aspect-ratio:643/400;object-fit:cover;border-radius:20px 0 0 20px;}
   .ticket-stub{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:18px 14px 18px 20px;border-left:3px dotted rgba(255,248,230,0.75);border-radius:0 20px 20px 0;background:linear-gradient(90deg,#f2ab12 0%,#dc7a20 30%,#a8432c 68%,#7d2c22 86%,#5c1912 100%);color:#fff;min-width:0;}
   .ticket-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;align-content:start;min-width:0;}
@@ -747,6 +749,19 @@
   .show-ticket--rockettes .ticket-side-top{display:none;}
   .show-ticket--rockettes .ticket-side{justify-content:stretch;}
   .show-ticket--rockettes .ticket-barcode{flex:1;width:44px;height:auto;opacity:0.95;}
+  /* Heat: the printed ticket already carries the date, time and venue, so the
+     whole design is the picture and the seat values are written onto it. The
+     positions are fractions of the 1425 x 459 artwork. On a phone the printed
+     text is too small to read, so the stub returns below it as a details panel. */
+  .show-ticket--nba{grid-template-columns:1fr;background:none;box-shadow:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.34));}
+  .show-ticket--nba .ticket-art{height:auto;border-radius:0;}
+  .show-ticket--nba .ticket-stub{display:none;}
+  .show-ticket--nba .ticket-overlay{display:block;position:absolute;inset:0;pointer-events:none;}
+  .ticket-ov{position:absolute;top:65%;transform:translateX(-50%);font-family:var(--sans);font-size:2.6cqw;font-weight:700;line-height:1;color:#111;white-space:nowrap;}
+  #ticket-ov-section{left:31.9%;}
+  #ticket-ov-row{left:44.8%;}
+  #ticket-ov-seat{left:56.4%;}
+  .ticket-ov.names{top:82%;left:46.7%;font-size:1.6cqw;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#444;}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
   @media(max-width:640px){
     .ticket-modal-box{width:min(100%,430px);max-height:calc(100vh - 2rem);overflow-y:auto;border-radius:20px;}
@@ -762,6 +777,10 @@
     .ticket-tagline{writing-mode:horizontal-tb;transform:none;letter-spacing:0.2em;}
     .ticket-barcode{display:none;}
     .show-ticket--rockettes{grid-template-columns:1fr;}
+    .show-ticket--nba .ticket-stub{display:grid;grid-template-columns:1fr;margin-top:10px;border:0;border-radius:20px;background:#e6e6e6;color:#111;}
+    .show-ticket--nba .ticket-label{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.08em;color:#333;text-shadow:none;}
+    .show-ticket--nba .ticket-value{background:#fff;color:#111;border-radius:6px;}
+    .show-ticket--nba .ticket-side{display:none;}
     .show-ticket--rockettes .ticket-art{border-radius:20px 20px 0 0;}
     .show-ticket--rockettes .ticket-stub{border-left:0;border-top:2px dashed rgba(255,255,255,0.85);}
     .show-ticket--rockettes .ticket-side{display:none;}
@@ -2215,7 +2234,10 @@
     <button class="modal-close ticket-modal-close" type="button" aria-label="Close ticket" onclick="closeShowTicket()">✕</button>
     <h2 class="sr-only" id="ticket-modal-title"></h2>
     <div class="show-ticket">
-      <img class="ticket-art" id="ticket-art" src="" alt="">
+      <div class="ticket-art-wrap">
+        <img class="ticket-art" id="ticket-art" src="" alt="">
+        <div class="ticket-overlay" aria-hidden="true"><span class="ticket-ov" id="ticket-ov-section"></span><span class="ticket-ov" id="ticket-ov-row"></span><span class="ticket-ov" id="ticket-ov-seat"></span><span class="ticket-ov names" id="ticket-ov-names"></span></div>
+      </div>
       <div class="ticket-stub">
         <div class="ticket-fields">
           <div class="ticket-field"><div class="ticket-label">Name</div><div class="ticket-value" id="ticket-name"></div></div>
@@ -2421,7 +2443,8 @@ customElements.define('loop-loader', LoopLoader);
   // Matched on the row's name (or its authored name, if a saved edit renamed it).
   const SHOW_TICKETS = {
     'lion-king':{match:/\bLion King\b/i,authoredName:'Broadway show · TKTS discounted tickets',title:'The Lion King',art:'assets/nyc-miami-2026/ticket-lion-king-art.jpg',artAlt:'Disney presents The Lion King, Broadway’s award-winning best musical',name:'Ramo · Fez · Unam',venue:'Minskoff Theatre · 200 W 45th St',date:'Sun 10 Jan 2027',time:'6:30pm',section:'Mezz · Row A',seat:'127 · 128 · 129',order:'Order #4GBEKX67',message:'3 Standard tickets, side by side in the front row of the mezzanine.'},
-    'rockettes':{match:/\bRockettes\b/i,variant:'rockettes',title:'Christmas Spectacular Starring the Radio City Rockettes',art:'assets/nyc-miami-2026/ticket-rockettes-art.jpg',artRatio:'907/524',artAlt:'Christmas Spectacular Starring the Radio City Rockettes',name:'Ramo · Fez · Tshiamo · Unam',venue:'Radio City Music Hall · 1260 Avenue of the Americas',date:'Tue 22 Dec 2026',time:'8:00pm',section:'2nd Mezz 5 · Row H',seat:'508 · 509 · 510 · 511',order:'Order #42-46125/NY6',message:'4 Standard Admission tickets, side by side in row H of the second mezzanine.'}
+    'rockettes':{match:/\bRockettes\b/i,variant:'rockettes',title:'Christmas Spectacular Starring the Radio City Rockettes',art:'assets/nyc-miami-2026/ticket-rockettes-art.jpg',artRatio:'907/524',artAlt:'Christmas Spectacular Starring the Radio City Rockettes',name:'Ramo · Fez · Tshiamo · Unam',venue:'Radio City Music Hall · 1260 Avenue of the Americas',date:'Tue 22 Dec 2026',time:'8:00pm',section:'2nd Mezz 5 · Row H',seat:'508 · 509 · 510 · 511',order:'Order #42-46125/NY6',message:'4 Standard Admission tickets, side by side in row H of the second mezzanine.'},
+    'heat':{match:/\bMiami Heat vs\b/i,variant:'nba',title:'Miami Heat vs Charlotte Hornets',art:'assets/nyc-miami-2026/ticket-heat-hornets.png',artRatio:'1425/459',artAlt:'Miami Heat vs Charlotte Hornets, Sun December 27th, 18:00, Kaseya Center, Miami, FL',name:'Ramo · Fez',venue:'Kaseya Center · Miami, FL',date:'Sun 27 Dec 2026',time:'6:00pm',section:'323 · Row 8',seat:'11 · 12',order:'',message:'Heat vs Hornets. 2 tickets, side by side in row 8.',overlay:{section:'323',row:'8',seat:'11 · 12',names:'Ramo · Fez'}}
   };
   let ticketTriggerToRestore = null;
   function initShowTickets() {
@@ -2455,6 +2478,8 @@ customElements.define('loop-loader', LoopLoader);
     art.src = ticket.art;
     art.alt = ticket.artAlt;
     art.style.aspectRatio = ticket.artRatio || '';
+    const overlay = ticket.overlay || {};
+    ['section','row','seat','names'].forEach(k => { document.getElementById('ticket-ov-' + k).textContent = overlay[k] || ''; });
     document.querySelector('#ticket-modal .show-ticket').className = 'show-ticket' + (ticket.variant ? ' show-ticket--' + ticket.variant : '');
     const stars = document.querySelector('#ticket-modal .ticket-stars');
     if (!stars.children.length) stars.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8Z"/></svg>'.repeat(5);
@@ -6437,6 +6462,7 @@ customElements.define('loop-loader', LoopLoader);
     // uploads made before those activities were renamed.
     applyDesignDistrictUpdate();
     applyHeatGameUpdate();
+    initShowTickets();
     applyGoalBadges();
     moveAventuraChargeToRecoveryMorning();
     moveFinalTopUpToDayTenMorning();
