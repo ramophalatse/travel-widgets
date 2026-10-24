@@ -2752,6 +2752,30 @@ customElements.define('loop-loader', LoopLoader);
     });
   }
   renderAirbnbLinks();
+
+  /* ROW NYC: the same rule for our Times Square hotel, Jan 10 to 13. Every
+     stop there that names the Row or the hotel, or collects the bags stored
+     with it, carries its Tripadvisor pill. Only the pills added here are
+     removed again, so the authored one on the check-in row stays put. */
+  const ROW_NYC_DAYS = ['d22', 'd23', 'd24', 'd25'];
+  const ROW_NYC_ROW = /\bRow NYC\b|\bhotel\b|Collect luggage/i;
+  function renderRowNycRatings() {
+    ROW_NYC_DAYS.forEach(key => document.querySelectorAll('.day-card[data-day-key="' + key + '"] .activity-row').forEach(row => {
+      const nameEl = row.querySelector('.act-name');
+      const body = row.querySelector('.act-body');
+      const had = row.querySelector('.act-rating[data-row-nyc]');
+      const wants = !!(nameEl && body && ROW_NYC_ROW.test(nameEl.textContent));
+      if (had && !wants) had.remove();
+      if (!wants || had || row.querySelector('[data-ta="row-nyc"]')) return;
+      const rating = el('div', 'act-rating');
+      rating.dataset.ta = 'row-nyc';
+      rating.dataset.rowNyc = '';
+      rating.setAttribute('data-ta-name', '');
+      body.appendChild(rating);
+      renderRating(rating);
+    }));
+  }
+  renderRowNycRatings();
   window.renderAirbnbLinks = renderAirbnbLinks;
 
   /* EDIT MODE */
@@ -6271,6 +6295,7 @@ customElements.define('loop-loader', LoopLoader);
     renderTransferFeePills();
     renderHeroSunTimes();
     renderAirbnbLinks();
+    renderRowNycRatings();
     wrapStaticThumbs();
     applyBookedBadges();
     ensureCardPhotoControls();
@@ -6282,7 +6307,7 @@ customElements.define('loop-loader', LoopLoader);
     decorateSubtext();
     wireSubtext();
     document.addEventListener('blur', handleEditableBlur, true);
-    document.addEventListener('blur', e => { if (e.target.closest && e.target.closest('.act-name')) renderAirbnbLinks(); }, true);
+    document.addEventListener('blur', e => { if (e.target.closest && e.target.closest('.act-name')) { renderAirbnbLinks(); renderRowNycRatings(); } }, true);
     document.querySelectorAll('[data-drop-image]').forEach(wireImageDrop);
     setEditMode(localStorage.getItem(EDIT_MODE_KEY) === '1');
     // Anything left over from a previous offline session goes up now, and the
