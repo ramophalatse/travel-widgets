@@ -660,6 +660,8 @@
   .flight-trigger{display:inline-flex;align-items:center;vertical-align:middle;gap:6px;margin-top:7px;padding:5px 9px;border:1px solid var(--border2);border-radius:999px;background:var(--bg2);color:var(--text2);font-family:var(--sans);font-size:11px;font-weight:600;line-height:1;cursor:pointer;transition:color 0.15s,border-color 0.15s,background 0.15s,transform 0.15s;}
   .flight-trigger:hover,.flight-trigger:focus-visible{color:var(--accent-text);border-color:var(--accent);background:var(--accent-bg);transform:translateY(-1px);outline:none;}
   .flight-trigger svg{width:13px;height:13px;display:block;}
+  /* A ratings pill runs wide with its rank text, so the ticket button takes its own line above it. */
+  .flight-trigger[data-ticket]:has(+ .act-rating){display:flex;width:max-content;}
   .flight-modal-box{max-width:840px;padding:0;background:transparent;box-shadow:none;}
   /* No overflow:hidden here on purpose. It used to be the corner clipper, but
      overflow clips descendants to the PADDING box — so the notch pseudo-elements
@@ -2435,7 +2437,9 @@ customElements.define('loop-loader', LoopLoader);
       button.setAttribute('aria-haspopup', 'dialog');
       button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4V7Z"/><path d="M15 7v10" stroke-dasharray="2 2"/></svg><span>View tickets</span>';
       button.addEventListener('click', () => openShowTicket(key, button));
-      name.parentElement.appendChild(button);
+      // Ahead of the row's pills (ratings, walking, transit), behind its captions.
+      const body = name.parentElement;
+      body.insertBefore(button, Array.from(body.children).find(el => !el.matches(CAPTION_SELECTOR)) || null);
     });
   }
   function openShowTicket(key, trigger) {
