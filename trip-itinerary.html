@@ -727,7 +727,8 @@
   .ticket-label{font-family:var(--serif);font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(90,30,10,0.35);}
   .ticket-value{margin-top:3px;padding:5px 8px;border-radius:2px;background:rgba(253,240,222,0.94);color:#3b1a0f;font-family:var(--sans);font-size:12.5px;font-weight:600;line-height:1.25;overflow-wrap:anywhere;}
   .ticket-value.message{min-height:58px;font-size:12px;font-weight:500;}
-  .ticket-value .ticket-mono{font-family:var(--mono);font-size:12px;font-weight:500;}
+  .ticket-value .ticket-mono{display:block;font-family:var(--mono);font-size:12px;font-weight:500;}
+  .ticket-value .ticket-mono:empty{display:none;}
   .ticket-side{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;}
   .ticket-side-top{display:flex;gap:5px;}
   .ticket-stars{display:flex;flex-direction:column;gap:7px;color:#e9a531;}
@@ -735,6 +736,15 @@
   .ticket-tagline{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--serif);font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:rgba(255,255,255,0.92);}
   .ticket-barcode{width:28px;height:96px;background:repeating-linear-gradient(0deg,#fff 0 2px,transparent 2px 4px,#fff 4px 5px,transparent 5px 8px,#fff 8px 11px,transparent 11px 13px);opacity:0.9;}
   .ticket-modal-close{top:-40px;right:0;z-index:4;background:rgba(255,255,255,0.16);color:#fff;}
+  /* Rockettes: a red stub with plain white fields and a full-height barcode. */
+  .show-ticket--rockettes{background:#b3141c;}
+  .show-ticket--rockettes .ticket-art{border-radius:20px 0 0 20px;}
+  .show-ticket--rockettes .ticket-stub{border-left:2px dashed rgba(255,255,255,0.85);background:radial-gradient(130% 95% at 85% 0%,#e8222d 0%,#c5161f 45%,#7a0d12 100%);}
+  .show-ticket--rockettes .ticket-label{font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:0.04em;text-shadow:none;}
+  .show-ticket--rockettes .ticket-value{background:#fff;color:#2a0a0c;border-radius:0;}
+  .show-ticket--rockettes .ticket-side-top{display:none;}
+  .show-ticket--rockettes .ticket-side{justify-content:stretch;}
+  .show-ticket--rockettes .ticket-barcode{flex:1;width:44px;height:auto;opacity:0.95;}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
   @media(max-width:640px){
     .ticket-modal-box{width:min(100%,430px);max-height:calc(100vh - 2rem);overflow-y:auto;border-radius:20px;}
@@ -749,6 +759,9 @@
     .ticket-stars svg{width:18px;height:18px;}
     .ticket-tagline{writing-mode:horizontal-tb;transform:none;letter-spacing:0.2em;}
     .ticket-barcode{display:none;}
+    .show-ticket--rockettes .ticket-art{border-radius:20px 20px 0 0;}
+    .show-ticket--rockettes .ticket-stub{border-left:0;border-top:2px dashed rgba(255,255,255,0.85);}
+    .show-ticket--rockettes .ticket-side{display:none;}
   }
 
   /* RESPONSIVE */
@@ -2208,7 +2221,7 @@
           <div class="ticket-field half"><div class="ticket-label">Time</div><div class="ticket-value" id="ticket-time"></div></div>
           <div class="ticket-field half"><div class="ticket-label">Section</div><div class="ticket-value" id="ticket-section"></div></div>
           <div class="ticket-field half"><div class="ticket-label">Seat</div><div class="ticket-value" id="ticket-seat"></div></div>
-          <div class="ticket-field"><div class="ticket-label">Message</div><div class="ticket-value message"><span class="ticket-mono" id="ticket-order"></span><br><span id="ticket-message"></span></div></div>
+          <div class="ticket-field"><div class="ticket-label">Message</div><div class="ticket-value message"><span class="ticket-mono" id="ticket-order"></span><span id="ticket-message"></span></div></div>
         </div>
         <div class="ticket-side" aria-hidden="true">
           <div class="ticket-side-top"><div class="ticket-stars"></div><div class="ticket-tagline">Enjoy your time!</div></div>
@@ -2404,14 +2417,15 @@ customElements.define('loop-loader', LoopLoader);
   }
   // Matched on the row's name (or its authored name, if a saved edit renamed it).
   const SHOW_TICKETS = {
-    'lion-king':{match:/\bLion King\b/i,authoredName:'Broadway show · TKTS discounted tickets',title:'The Lion King',art:'assets/nyc-miami-2026/ticket-lion-king-art.jpg',artAlt:'Disney presents The Lion King, Broadway’s award-winning best musical',name:'Ramo · Fez · Unam',venue:'Minskoff Theatre · 200 W 45th St',date:'Sun 10 Jan 2027',time:'6:30pm',section:'Mezz · Row A',seat:'127 · 128 · 129',order:'Order #4GBEKX67',message:'3 Standard tickets, side by side in the front row of the mezzanine.'}
+    'lion-king':{match:/\bLion King\b/i,authoredName:'Broadway show · TKTS discounted tickets',title:'The Lion King',art:'assets/nyc-miami-2026/ticket-lion-king-art.jpg',artAlt:'Disney presents The Lion King, Broadway’s award-winning best musical',name:'Ramo · Fez · Unam',venue:'Minskoff Theatre · 200 W 45th St',date:'Sun 10 Jan 2027',time:'6:30pm',section:'Mezz · Row A',seat:'127 · 128 · 129',order:'Order #4GBEKX67',message:'3 Standard tickets, side by side in the front row of the mezzanine.'},
+    'rockettes':{match:/\bRockettes\b/i,variant:'rockettes',title:'Christmas Spectacular Starring the Radio City Rockettes',art:'assets/nyc-miami-2026/ticket-rockettes-art.jpg',artRatio:'907/524',artAlt:'Christmas Spectacular Starring the Radio City Rockettes',name:'Ramo · Fez · Tshiamo · Unam',venue:'Radio City Music Hall · 1260 Avenue of the Americas',date:'Tue 22 Dec 2026',time:'8:00pm',section:'TBC',seat:'TBC',order:'',message:'A birthday-night finale. 4 tickets, paid R9,221.70 ($540).'}
   };
   let ticketTriggerToRestore = null;
   function initShowTickets() {
     document.querySelectorAll('.activity-row').forEach(row => {
       const name = row.querySelector('.act-name');
       if (!name || row.querySelector('[data-ticket]')) return;
-      const key = Object.keys(SHOW_TICKETS).find(k => SHOW_TICKETS[k].match.test(name.textContent) || row.dataset.authoredName === SHOW_TICKETS[k].authoredName);
+      const key = Object.keys(SHOW_TICKETS).find(k => SHOW_TICKETS[k].match.test(name.textContent) || (SHOW_TICKETS[k].authoredName && row.dataset.authoredName === SHOW_TICKETS[k].authoredName));
       if (!key) return;
       const button = document.createElement('button');
       button.type = 'button';
@@ -2435,6 +2449,8 @@ customElements.define('loop-loader', LoopLoader);
     const art = document.getElementById('ticket-art');
     art.src = ticket.art;
     art.alt = ticket.artAlt;
+    art.style.aspectRatio = ticket.artRatio || '';
+    document.querySelector('#ticket-modal .show-ticket').className = 'show-ticket' + (ticket.variant ? ' show-ticket--' + ticket.variant : '');
     const stars = document.querySelector('#ticket-modal .ticket-stars');
     if (!stars.children.length) stars.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8Z"/></svg>'.repeat(5);
     ticketTriggerToRestore = trigger || null;
