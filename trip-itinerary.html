@@ -4427,6 +4427,18 @@ customElements.define('loop-loader', LoopLoader);
     }
     return c;
   }
+  /** Captions (the cost line and the fine-print notes) always sit above a
+   *  row's pills. Pills are appended as they render, so the notes container,
+   *  created last, would otherwise land beneath them. */
+  const CAPTION_SELECTOR = '.act-name,.act-note,.act-subtext-row,.act-subtext-add,.act-cost,.act-notes';
+  function placeCaptionsAbovePills(row) {
+    const body = row.querySelector(':scope > .act-body');
+    const firstPill = body && Array.from(body.children).find(el => !el.matches(CAPTION_SELECTOR));
+    if (!firstPill) return;
+    body.querySelectorAll(':scope > .act-cost, :scope > .act-notes').forEach(el => {
+      if (firstPill.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) firstPill.before(el);
+    });
+  }
   function makeNoteRow(text) {
     const d = document.createElement('div');
     d.className = 'act-fineprint act-note-row';
@@ -4458,6 +4470,7 @@ customElements.define('loop-loader', LoopLoader);
   function decorateNotes() {
     document.querySelectorAll('.activity-row').forEach(row => {
       const c = notesContainer(row);
+      placeCaptionsAbovePills(row);
       c.querySelectorAll('.act-note-row').forEach(n => {
         if (!n.querySelector('.act-note-remove')) {
           const del = document.createElement('button');
