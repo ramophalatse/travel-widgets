@@ -871,6 +871,9 @@
      therefore exceed the normal expanded-body transition cap. Leave ample
      room for the added controls so the page itself remains scrollable. */
   :root[data-edit="on"] .day-card.open .day-card-body{max-height:100000px;}
+  /* Toggling edit mode snaps open cards to their new max-height; the 0.35s
+     ease would otherwise move the page after toggleEditMode() has pinned it. */
+  :root.edit-toggling .day-card-body{transition:none;}
   :root[data-edit="on"] [data-note-edit]{border-radius:4px;cursor:text;transition:background 0.15s;}
   :root[data-edit="on"] [data-note-edit]:hover{background:var(--accent-bg);}
   :root[data-edit="on"] [data-note-edit]:focus{outline:1px solid var(--accent);outline-offset:2px;background:var(--accent-bg);}
@@ -5385,8 +5388,54 @@ customElements.define('loop-loader', LoopLoader);
     localStorage.setItem(EDIT_MODE_KEY, on ? '1' : '0');
     if (packState.ready) renderPacking();
   }
+  /** Edit mode reveals controls (empty photo slots, add-subtext links, add-row
+   *  buttons) all down the page, so content above the viewport grows and the
+   *  row being looked at slides away. Safari has no native scroll anchoring,
+   *  and Chrome's misses this too, so the toggle pins whatever sits at the
+   *  middle of the screen to the same height. */
+  const EDIT_ANCHOR_SEL = '.activity-row, .pack-item, .day-card-header, .notice, .spend-table, .day-total-bar, .summary-section, .booking-item, .leg-intro, .leg-hero';
+  function editAnchorAt() {
+    const nav = document.querySelector('.nav-wrapper');
+    const top = nav ? nav.getBoundingClientRect().bottom : 0;
+    const mid = top + (innerHeight - top) / 2;
+    let best = null, bestDist = Infinity;
+    document.querySelectorAll(EDIT_ANCHOR_SEL).forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (!r.height || r.bottom < top || r.top > innerHeight) return;
+      // Prefer the innermost match that spans the middle, else the nearest.
+      const dist = r.top <= mid && r.bottom >= mid ? 0 : Math.min(Math.abs(r.top - mid), Math.abs(r.bottom - mid));
+      if (dist < bestDist || (dist === bestDist && best && best.contains(el))) { best = el; bestDist = dist; }
+    });
+    if (!best) return null;
+    // The packing list re-renders on toggle, so find its row again by id.
+    const packId = best.classList.contains('pack-item') ? best.dataset.packId : null;
+    return { el: best, packId, top: best.getBoundingClientRect().top };
+  }
+  function restoreEditAnchor(a) {
+    if (!a) return;
+    const el = a.el.isConnected ? a.el
+      : a.packId ? document.querySelector('.pack-item[data-pack-id="' + CSS.escape(a.packId) + '"]') : null;
+    if (!el || !el.getClientRects().length) return;
+    const delta = el.getBoundingClientRect().top - a.top;
+    if (Math.abs(delta) >= 1) window.scrollTo({ top: Math.max(0, scrollY + delta), behavior: 'instant' });
+  }
   function toggleEditMode() {
-    setEditMode(document.documentElement.dataset.edit !== 'on');
+    const anchor = editAnchorAt();
+    // Chrome's native anchoring picks its own node and pulls the page
+    // thousands of px against this correction, so it sits out the toggle.
+    const root = document.documentElement;
+    root.style.overflowAnchor = document.body.style.overflowAnchor = 'none';
+    root.classList.add('edit-toggling');
+    setEditMode(root.dataset.edit !== 'on');
+    restoreEditAnchor(anchor);
+    // Late layout (decorators, image slots) can still shift things; correct
+    // once more, unless the user has started scrolling in the meantime.
+    const settled = scrollY;
+    setTimeout(() => {
+      if (Math.abs(scrollY - settled) < 2) restoreEditAnchor(anchor);
+      root.style.overflowAnchor = document.body.style.overflowAnchor = '';
+      root.classList.remove('edit-toggling');
+    }, 80);
   }
   function handleEditableBlur(e) {
     const el = e.target;
