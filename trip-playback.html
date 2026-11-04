@@ -402,6 +402,7 @@ body.loading #controls,body.loading #stories{display:none;}
       </div>
       <button class="cb with-label" data-act="speed" id="btn-speed" title="Speed">Normal 1x</button>
       <button class="cb with-label" data-act="costs" id="btn-costs" title="Show costs (C)" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.6-3-1.6-1.7 0-3 .9-3 2.1 0 3 6 1.5 6 4.3 0 1.2-1.3 2.1-3 2.1-1.4 0-2.6-.6-3.1-1.7M12 6.5v1.4M12 16.4v1.1"/></svg>Costs</button>
+      <button class="cb with-label" data-act="music" id="btn-music" title="Music (M)" aria-pressed="true" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>Music</button>
       <button class="cb" data-act="overview" title="Overview (O)" aria-label="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></button>
       <button class="cb" data-act="fullscreen" id="btn-fs" title="Fullscreen (F)" aria-label="Fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       <a class="cb with-label" href="trip-itinerary.html" title="Back to the itinerary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Itinerary</a>
@@ -1496,12 +1497,141 @@ function findSceneByKey(key) {
   }
   return -1;
 }
+/* MUSIC. One looping track per leg. The title and route scenes borrow the
+   first leg's track and the finale keeps the last one, so the show opens and
+   closes on music. Crossing into another leg crossfades; pause fades out and
+   play fades back in where the track left off.
+   Gain runs through Web Audio rather than audio.volume, because iOS and iPadOS
+   ignore element volume, so fades would otherwise be hard cuts there. iOS also
+   only lets an element start inside a tap, so the first Play tap starts and
+   immediately parks every deck, which lets later crossfades start on their own.
+   A leg set to null is silent, and with every leg null nothing is requested
+   and the Music button stays hidden. */
+const MUSIC_DIR = 'assets/nyc-miami-2026/music/';
+const MUSIC = {
+  nyc1: null,   // e.g. { file: 'nyc1.mp3', title: 'Track title', artist: 'Artist' }
+  miami: null,
+  cruise: null,
+  nyc2: null
+};
+const MUSIC_LEVEL = 0.8, MUSIC_XFADE = 2.5, MUSIC_MUTE_KEY = 'trip-playback-music-muted';
+function legOf(sc) {
+  const legs = S.model ? S.model.legs : [];
+  if (!sc || !legs.length) return null;
+  if (sc.leg) return sc.leg.id;
+  return (sc.type === 'finale' ? legs[legs.length - 1] : legs[0]).id;
+}
+const Music = (() => {
+  const ids = Object.keys(MUSIC).filter(id => MUSIC[id] && MUSIC[id].file);
+  let ctx = null, master = null, cur = null, wanted = null, playing = false;
+  let muted = !!store.get(MUSIC_MUTE_KEY, false);
+  const decks = {};
+  function ensure() {
+    if (ctx || !ids.length) return !!ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    try {
+      ctx = new AC();
+      master = ctx.createGain();
+      master.gain.value = muted ? 0 : MUSIC_LEVEL;
+      master.connect(ctx.destination);
+      // Inside the user's tap: start and park every deck so iOS will let any
+      // of them start later without a tap of its own.
+      ids.forEach(id => { const d = deck(id); d.el.play().then(() => { if (d !== cur || !playing) d.el.pause(); }).catch(() => {}); });
+    } catch (e) { console.warn('[music]', e); ctx = null; }
+    return !!ctx;
+  }
+  function deck(id) {
+    if (decks[id]) return decks[id];
+    const t = MUSIC[id];
+    if (!t || !t.file || !ctx) return null;
+    const el = new Audio();
+    el.src = MUSIC_DIR + t.file; el.loop = true; el.preload = 'auto';
+    el.addEventListener('error', () => console.warn('[music] could not load ' + el.src));
+    const g = ctx.createGain(); g.gain.value = 0;
+    ctx.createMediaElementSource(el).connect(g); g.connect(master);
+    return (decks[id] = { id, el, g, t, stopT: 0 });
+  }
+  function ramp(param, to, sec) {
+    const now = ctx.currentTime;
+    param.cancelScheduledValues(now);
+    param.setValueAtTime(param.value, now);
+    param.linearRampToValueAtTime(to, now + Math.max(.05, sec));
+  }
+  function fadeOut(d, sec) {
+    ramp(d.g.gain, 0, sec);
+    clearTimeout(d.stopT);
+    d.stopT = setTimeout(() => { if (d !== cur || !playing) d.el.pause(); }, sec * 1000 + 150);
+  }
+  function fadeIn(d, sec) {
+    clearTimeout(d.stopT);
+    const p = d.el.play(); if (p && p.catch) p.catch(e => console.warn('[music]', e));
+    ramp(d.g.gain, 1, sec);
+  }
+  function apply(sec) {
+    if (!ctx) return;
+    const nextDeck = wanted ? deck(wanted) : null;
+    if (cur && cur !== nextDeck) fadeOut(cur, sec);
+    cur = nextDeck;
+    if (cur && playing) fadeIn(cur, sec);
+    meta();
+  }
+  function meta() {
+    if (!('mediaSession' in navigator) || !S.model) return;
+    const leg = S.model.legs.find(l => l.id === wanted);
+    const t = cur && cur.t;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: (t && t.title) || (leg ? leg.name : 'Trip Playback'),
+        artist: (t && t.artist) || 'Trip Playback',
+        album: leg ? leg.place || leg.name : 'Trip Playback',
+        artwork: leg && leg.hero ? [{ src: new URL(leg.hero, location.href).href, sizes: '1600x1600' }] : []
+      });
+      navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+    } catch (e) {}
+  }
+  function sync() {
+    const b = $('#btn-music');
+    if (!b) return;
+    b.hidden = !ids.length;
+    b.classList.toggle('on', !muted);
+    b.setAttribute('aria-pressed', String(!muted));
+    b.title = (muted ? 'Music off' : 'Music on') + ' (M)';
+  }
+  if ('mediaSession' in navigator && ids.length) {
+    const on = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch (e) {} };
+    on('play', () => play()); on('pause', () => pause());
+    on('nexttrack', () => nextDay()); on('previoustrack', () => prevDay());
+  }
+  return {
+    available: () => ids.length > 0,
+    sync,
+    setLeg(id) { if (id === wanted) return; wanted = id; apply(MUSIC_XFADE); },
+    play() {
+      playing = true;
+      if (!ensure()) return;
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      apply(1.2);
+    },
+    pause() { playing = false; if (ctx && cur) fadeOut(cur, .8); meta(); },
+    toggleMute() {
+      if (!ids.length) return;
+      muted = !muted; store.set(MUSIC_MUTE_KEY, muted);
+      if (ctx) ramp(master.gain, muted ? 0 : MUSIC_LEVEL, .6);
+      sync(); toast(muted ? 'Music off' : 'Music on');
+    },
+    state: () => ({ ids, wanted, cur: cur && cur.id, playing, muted, ctx: ctx && ctx.state,
+      decks: Object.values(decks).map(d => ({ id: d.id, paused: d.el.paused, t: +d.el.currentTime.toFixed(2), gain: +d.g.gain.value.toFixed(3) })) })
+  };
+})();
+
 async function go(i, opts = {}) {
   if (!S.scenes.length) return;
   i = clamp(i | 0, 0, S.scenes.length - 1);
   const tok = ++goTok;
   S.i = i; S.t = 0; S.ready = false;
   const sc = S.scenes[i];
+  Music.setLeg(legOf(sc));
   syncChrome();
   if (!opts.instant) await Promise.race([prepare(sc), sleep(1500)]);
   if (tok !== goTok) return;
@@ -1564,9 +1694,11 @@ function play() {
   S.playing = true; S.started = true;
   body.classList.add('playing', 'started'); body.classList.remove('paused');
   syncPlayButton(); lockOn(); poke();
+  Music.setLeg(legOf(S.scenes[S.i])); Music.play();
 }
 function pause() {
   S.playing = false;
+  Music.pause();
   body.classList.remove('playing'); body.classList.add('paused');
   body.classList.remove('ui-hidden');
   syncPlayButton(); lockOff(); setSpace();
@@ -1692,6 +1824,7 @@ function syncToggles() {
   $('#m-full').setAttribute('aria-pressed', S.mode === 'full'); $('#m-hl').setAttribute('aria-pressed', S.mode === 'highlights');
   $('#btn-speed').textContent = SPEEDS[S.speedIdx].label + ' ' + SPEEDS[S.speedIdx].v + 'x';
   const c = $('#btn-costs'); c.classList.toggle('on', S.costs); c.setAttribute('aria-pressed', S.costs);
+  Music.sync();
   const fs = !!document.fullscreenElement, f = $('#btn-fs'); f.innerHTML = fs ? ICON.fsOut : ICON.fsIn; f.setAttribute('aria-label', fs ? 'Exit fullscreen' : 'Fullscreen');
 }
 let toastT = 0;
@@ -1771,6 +1904,7 @@ document.addEventListener('click', e => {
     case 'mode-highlights': setMode('highlights'); break;
     case 'speed': cycleSpeed(); break;
     case 'costs': toggleCosts(); break;
+    case 'music': Music.toggleMute(); break;
     case 'overview': openOverview(); break;
     case 'closeOverview': closeOverview(); break;
     case 'fullscreen': toggleFS(); break;
@@ -1792,7 +1926,7 @@ addEventListener('keydown', e => {
     ' ': togglePlay, k: togglePlay, K: togglePlay,
     ArrowLeft: prev, ArrowRight: next, ArrowUp: prevDay, ArrowDown: nextDay,
     PageUp: prevLeg, PageDown: nextLeg, Home: restart,
-    o: openOverview, O: openOverview, f: toggleFS, F: toggleFS, c: toggleCosts, C: toggleCosts,
+    o: openOverview, O: openOverview, f: toggleFS, F: toggleFS, c: toggleCosts, C: toggleCosts, m: () => Music.toggleMute(), M: () => Music.toggleMute(),
     h: () => setMode(S.mode === 'full' ? 'highlights' : 'full'), H: () => setMode(S.mode === 'full' ? 'highlights' : 'full')
   };
   if (map[k]) { e.preventDefault(); map[k](); }
@@ -1866,7 +2000,7 @@ async function main() {
   setSpace();
   if (start > 0) { await go(start, { instant: true }); play(); }
   else go(0, { instant: true });
-  window.__playback = { S, go, play, pause, setMode, scenes: () => S.scenes, model: () => S.model, total: mode => totalFor(buildScenes(mode)) };
+  window.__playback = { S, go, play, pause, setMode, music: () => Music.state(), scenes: () => S.scenes, model: () => S.model, total: mode => totalFor(buildScenes(mode)) };
 }
 main();
 })();
