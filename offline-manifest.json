@@ -1,6 +1,6 @@
 {
-  "revision": "2026-11-04-204",
-  "bytes": 61386997,
+  "revision": "2026-11-04-205",
+  "bytes": 61521776,
   "files": [
     "cape-town-itinerary.html",
     "europe-itinerary.html",
@@ -12,6 +12,7 @@
     "trip-funding-decision.html",
     "trip-itinerary-230326.html",
     "trip-itinerary.html",
+    "trip-playback.html",
     "trip-savings-schedule.html",
     "assets/brand/apple-touch-icon.png",
     "assets/brand/favicon-180-dark.png",
