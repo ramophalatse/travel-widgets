@@ -767,7 +767,7 @@ function extract(win) {
   const STRIP = '.flight-trigger,.tesla-trip-meta,.walk-trip-meta,.transit-trip-meta,.act-rating,.stay-pill,.act-note-remove,button';
 
   const titleEl = doc.querySelector('.header-title');
-  const titleHTML = titleEl ? Array.from(titleEl.childNodes).map(n => n.nodeName === 'EM' ? '<em>' + esc(n.textContent) + '</em>' : esc(n.textContent)).join('').trim() : 'New York · Miami · <em>Caribbean</em>';
+  const titleHTML = titleEl ? Array.from(titleEl.childNodes).map(n => n.nodeName === 'EM' ? '<em>' + esc(n.textContent) + '</em>' : esc(n.textContent)).join('').trim().replace(/\s+·\s+/g, '&nbsp;· ') : 'New York&nbsp;· Miami&nbsp;· <em>Caribbean</em>';
   const names = (TK.rockettes && TK.rockettes.name) || (TR.length ? TR.map(t => t.name).join(' · ') : 'Ramo · Fez · Tshiamo · Unam');
   const sub = txt(doc.querySelector('.header-sub'));
   const model = {
