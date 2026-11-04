@@ -1,12 +1,14 @@
 {
-  "revision": "2026-10-01-194",
-  "bytes": 60547266,
+  "revision": "2026-11-04-204",
+  "bytes": 61386997,
   "files": [
     "cape-town-itinerary.html",
     "europe-itinerary.html",
+    "hotel-ratings.html",
     "leave-plan-2026.html",
     "rssc-asia-2028-itinerary.html",
     "travel_weather_widget.html",
+    "trip-fund.html",
     "trip-funding-decision.html",
     "trip-itinerary-230326.html",
     "trip-itinerary.html",
@@ -109,8 +111,13 @@
     "assets/nyc-miami-2026/hero-nyc1.jpg",
     "assets/nyc-miami-2026/hero-nyc2.jpg",
     "assets/nyc-miami-2026/icons/battery.svg",
+    "assets/nyc-miami-2026/icons/monorail.svg",
+    "assets/nyc-miami-2026/icons/mozio.svg",
+    "assets/nyc-miami-2026/icons/subway.svg",
     "assets/nyc-miami-2026/icons/tesla.svg",
     "assets/nyc-miami-2026/icons/timer.svg",
+    "assets/nyc-miami-2026/icons/train.svg",
+    "assets/nyc-miami-2026/icons/uber.svg",
     "assets/nyc-miami-2026/icons/walk.svg",
     "assets/nyc-miami-2026/new-york.jpg",
     "assets/nyc-miami-2026/thumb-911.jpg",
@@ -162,6 +169,7 @@
     "assets/nyc-miami-2026/thumb-john-pennekamp-entrance.jpg",
     "assets/nyc-miami-2026/thumb-key-largo.jpg",
     "assets/nyc-miami-2026/thumb-keys.jpg",
+    "assets/nyc-miami-2026/thumb-koreatown.jpg",
     "assets/nyc-miami-2026/thumb-kuu-fidi.jpg",
     "assets/nyc-miami-2026/thumb-la-guardia.jpg",
     "assets/nyc-miami-2026/thumb-lincoln-road.jpg",
@@ -193,6 +201,10 @@
     "assets/nyc-miami-2026/thumb-top-of-rock.jpg",
     "assets/nyc-miami-2026/thumb-tortola.jpg",
     "assets/nyc-miami-2026/thumb-walmart.jpg",
-    "assets/nyc-miami-2026/thumb-wynwood.jpg"
+    "assets/nyc-miami-2026/thumb-wave-runner.jpg",
+    "assets/nyc-miami-2026/thumb-wynwood.jpg",
+    "assets/nyc-miami-2026/ticket-heat-hornets.png",
+    "assets/nyc-miami-2026/ticket-lion-king-art.jpg",
+    "assets/nyc-miami-2026/ticket-rockettes-art.jpg"
   ]
 }

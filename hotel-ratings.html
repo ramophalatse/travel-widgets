@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Hotel ratings</title>
+<meta name="description" content="Phalatse Travel hotel ratings: our own stays, scored on one weighted rubric.">
+<link rel="icon" type="image/png" sizes="32x32" media="(prefers-color-scheme: dark)" href="assets/brand/favicon-32-dark.png">
+<link rel="icon" type="image/png" sizes="32x32" media="(prefers-color-scheme: light)" href="assets/brand/favicon-32-light.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Sora:wght@600;700;800&display=swap">
+<script>
+  /* Set the theme before first paint so the page never flashes the wrong one (shared ramo-theme key). */
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('ramo-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<style>
+    #hotel-ratings { color-scheme:light dark; --hr-bg:light-dark(#f7f6f1,#0a0f14); --hr-bg-deep:light-dark(#edebe5,#05080c); --hr-panel:light-dark(#ffffff,#151a20); --hr-surface:light-dark(#fdfcf9,#11151b); --hr-elevated:light-dark(#f1efeb,#20262c); --hr-ink:light-dark(#1f232a,#f1f4f7); --hr-muted:light-dark(#5f646b,#a1a9b1); --hr-faint:light-dark(#8b8f97,#697179); --hr-line:light-dark(rgba(20,22,28,.10),rgba(255,255,255,.085)); --hr-line-strong:light-dark(rgba(20,22,28,.20),rgba(255,255,255,.17)); --hr-accent:light-dark(#059669,#10b981); --hr-accent-fg:light-dark(#05080c,#06281d); --hr-soft:light-dark(#0596691a,#10b98122); --hr-glass:light-dark(rgba(255,255,255,.62),rgba(255,255,255,.045)); --hr-glass-item:light-dark(rgba(255,255,255,.34),rgba(255,255,255,.025)); --hr-shadow:none; --hr-ease:cubic-bezier(.34,1.56,.64,1); background:var(--hr-bg); color:var(--hr-ink); font:15px/1.6 'Hanken Grotesk',sans-serif; border-radius:18px; overflow:hidden; }
+    /* Criterion colours: brand categorical palette (ramo-colour.json palettes.categorical, Money Metrics lib/palette.ts),
+       same hex in both themes, as in the Money Metrics "Where it went" donut. Mirrored in the ROSETTE array in the script. */
+    #hotel-ratings { --hr-c0:#a78bfa; --hr-c1:#2dd4bf; --hr-c2:#fbbf24; --hr-c3:#60a5fa; --hr-c4:#f472b6; --hr-c5:#fb923c; }
+    #hotel-ratings[data-theme="light"] { color-scheme:light; --hr-shadow:0 1px 2px rgba(20,22,28,.05),0 12px 40px -16px rgba(20,22,28,.22); }
+    #hotel-ratings[data-theme="dark"] { color-scheme:dark; --hr-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 24px 60px -24px rgba(0,0,0,.7); }
+    #hotel-ratings * { box-sizing:border-box; }
+    #hotel-ratings [hidden] { display:none !important; }
+    #hotel-ratings h1,#hotel-ratings h2,#hotel-ratings h3,#hotel-ratings p,#hotel-ratings figure { margin:0; }
+    #hotel-ratings h1 { font:800 40px/1.06 'Sora',sans-serif; letter-spacing:-.045em; text-wrap:balance; }
+    #hotel-ratings h2 { font:800 20px/1.3 'Sora',sans-serif; letter-spacing:-.03em; text-wrap:balance; }
+    #hotel-ratings h3 { font:800 15px/1.4 'Sora',sans-serif; letter-spacing:-.03em; text-wrap:balance; }
+    #hotel-ratings button { font:inherit; color:inherit; cursor:pointer; }
+    #hotel-ratings :focus-visible { outline:2px solid var(--hr-accent); outline-offset:2px; }
+    #hotel-ratings .hr-num { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    #hotel-ratings .hr-eyebrow { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--hr-muted); }
+    #hotel-ratings .hr-sub { color:var(--hr-muted); font-size:13px; }
+    #hotel-ratings .hr-unit { color:var(--hr-muted); font-size:12px; }
+    #hotel-ratings .hr-card { position:relative; overflow:hidden; min-width:0; background:var(--hr-panel); border:1px solid var(--hr-line); border-radius:18px; box-shadow:var(--hr-shadow); }
+
+    /* Ghost watermark + glow (IX-2, fixed 56px) */
+    #hotel-ratings [data-ghost]::after { content:attr(data-ghost); position:absolute; top:0; right:-8px; color:transparent; background-image:linear-gradient(90deg,transparent,var(--hr-muted) 80%); background-clip:text; -webkit-background-clip:text; opacity:.15; font:italic 800 56px/1.1 'Sora',sans-serif; white-space:nowrap; pointer-events:none; user-select:none; z-index:0; }
+    #hotel-ratings [data-ghost]::before { content:''; position:absolute; top:-55px; right:-55px; width:190px; height:190px; border-radius:50%; background:radial-gradient(circle,color-mix(in oklab,var(--hr-accent) 40%,transparent),transparent 70%); filter:blur(8px); opacity:.4; pointer-events:none; z-index:0; }
+    #hotel-ratings [data-ghost]>* { position:relative; z-index:1; }
+
+    /* Hero */
+    #hotel-ratings .hr-hero { position:relative; overflow:hidden; border-bottom:1px solid var(--hr-line); background:linear-gradient(180deg,var(--hr-bg-deep),var(--hr-bg)); }
+    #hotel-ratings .hr-hero::before { content:''; position:absolute; inset:-40% -10% auto auto; width:70%; height:180%; background:radial-gradient(closest-side,color-mix(in oklab,var(--hr-accent) 26%,transparent),transparent); filter:blur(20px); opacity:.55; pointer-events:none; }
+    #hotel-ratings .hr-hero-inner { position:relative; max-width:1080px; margin:auto; padding:30px 28px 26px; display:grid; gap:26px; }
+    #hotel-ratings .hr-hero-top { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    #hotel-ratings .hr-brand-lockup { display:flex; align-items:center; gap:18px; min-width:0; }
+    #hotel-ratings .hr-logo { display:block; width:50px; height:auto; flex:0 0 auto; }
+    #hotel-ratings[data-theme="dark"] .hr-logo { filter:invert(1); }
+    #hotel-ratings .hr-brand-copy { min-width:0; display:grid; gap:8px; }
+    #hotel-ratings .hr-theme { flex:0 0 auto; align-self:flex-start; width:34px; height:34px; display:grid; place-items:center; padding:0; background:var(--hr-glass); border:1px solid var(--hr-line); border-radius:999px; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+    #hotel-ratings .hr-theme svg { width:16px; height:16px; }
+    #hotel-ratings[data-theme="light"] .hr-theme .hr-moon,#hotel-ratings[data-theme="dark"] .hr-theme .hr-sun { display:none; }
+
+    /* Stat tiles (CTL-7 figure row, CTL-8 fixed columns) */
+    #hotel-ratings .hr-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    #hotel-ratings .hr-stat { position:relative; overflow:hidden; padding:15px 18px 14px; border-radius:18px; border:1px solid var(--hr-line); background:var(--hr-glass); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:var(--hr-shadow); }
+    #hotel-ratings .hr-stat-label { color:var(--hr-muted); font-size:12px; }
+    #hotel-ratings .hr-figure-row { display:flex; align-items:baseline; gap:10px; min-width:0; margin-top:2px; }
+    #hotel-ratings .hr-value { flex:0 0 auto; font:500 30px/1.3 'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+    #hotel-ratings .hr-value small { font-size:13px; color:var(--hr-muted); letter-spacing:0; margin-left:3px; }
+    #hotel-ratings .hr-caption { min-width:0; color:var(--hr-muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* Main */
+    #hotel-ratings .hr-main { padding:24px 28px 28px; display:grid; gap:22px; max-width:1080px; margin:auto; }
+
+    /* Filter toolbar */
+    #hotel-ratings .hr-toolbar { padding:14px 16px 16px; display:grid; gap:12px; }
+    #hotel-ratings .hr-toolbar-top { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:28px; }
+    #hotel-ratings .hr-result { font-size:13px; color:var(--hr-muted); }
+    #hotel-ratings .hr-result strong { color:var(--hr-ink); font-weight:600; }
+    #hotel-ratings .hr-filters { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,1.45fr); gap:10px; }
+    #hotel-ratings .hr-filters label { display:grid; gap:5px; font-size:12px; color:var(--hr-muted); min-width:0; }
+    #hotel-ratings .hr-range { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    #hotel-ratings select,#hotel-ratings input { width:100%; min-width:0; height:38px; border:1px solid var(--hr-line); border-radius:11px; background-color:var(--hr-surface); color:var(--hr-ink); padding:0 11px; font:inherit; font-size:13px; transition:border-color 160ms ease,background-color 160ms ease; }
+    #hotel-ratings select { appearance:none; -webkit-appearance:none; padding-right:30px; text-overflow:ellipsis; background-image:linear-gradient(45deg,transparent 50%,var(--hr-muted) 50%),linear-gradient(135deg,var(--hr-muted) 50%,transparent 50%); background-position:calc(100% - 16px) 52%,calc(100% - 11px) 52%; background-size:5px 5px; background-repeat:no-repeat; }
+    #hotel-ratings select:hover,#hotel-ratings input:hover { border-color:var(--hr-line-strong); }
+    #hotel-ratings [data-active="true"] { border-color:color-mix(in oklab,var(--hr-accent) 60%,transparent); background-color:var(--hr-soft); }
+    #hotel-ratings input::placeholder { color:var(--hr-faint); }
+
+    /* Chip button (CTL-9: 28 / 14 / 6 / 1) */
+    #hotel-ratings .hr-chip { position:relative; display:inline-flex; align-items:center; justify-content:center; height:28px; padding:0 6px; border:1px solid var(--hr-line); border-radius:999px; background:transparent; color:var(--hr-muted); overflow:hidden; transition:padding 200ms ease-out,background-color 200ms ease-out,color 200ms ease-out,border-color 200ms ease-out; }
+    #hotel-ratings .hr-chip svg { width:14px; height:14px; flex:none; }
+    #hotel-ratings .hr-chip-label { max-width:0; opacity:0; margin-left:0; white-space:nowrap; font-size:12px; transition:max-width 200ms ease-out,opacity 200ms ease-out,margin-left 200ms ease-out; }
+    #hotel-ratings .hr-chip:not(:disabled):hover,#hotel-ratings .hr-chip:focus-visible,#hotel-ratings .hr-chip[data-peek] { padding:0 12px; color:var(--hr-ink); background:var(--hr-elevated); }
+    #hotel-ratings .hr-chip:not(:disabled):hover .hr-chip-label,#hotel-ratings .hr-chip:focus-visible .hr-chip-label,#hotel-ratings .hr-chip[data-peek] .hr-chip-label { max-width:120px; opacity:1; margin-left:6px; }
+    #hotel-ratings .hr-chip[data-state="active"] { border-color:color-mix(in oklab,var(--hr-accent) 60%,transparent); color:var(--hr-accent); background:var(--hr-soft); }
+    #hotel-ratings .hr-chip:disabled { opacity:.4; cursor:default; }
+
+    /* Section head + sliding pill (CTL-1..4) */
+    #hotel-ratings .hr-section-head { display:flex; align-items:center; justify-content:space-between; gap:14px 20px; flex-wrap:wrap; }
+    #hotel-ratings .hr-section-head .hr-unit { margin-top:2px; }
+    #hotel-ratings .hr-tabs { display:flex; position:relative; width:max-content; max-width:100%; padding:2px; border-radius:999px; border:1px solid var(--hr-line); background:color-mix(in srgb,var(--hr-elevated) 50%,transparent); }
+    #hotel-ratings .hr-tabs button { flex:0 0 auto; position:relative; z-index:1; background:transparent; border:0; padding:4px 13px; border-radius:999px; color:var(--hr-muted); font-size:13px; line-height:20px; white-space:nowrap; transition:color 200ms ease; }
+    #hotel-ratings .hr-tabs button:hover { color:var(--hr-ink); }
+    #hotel-ratings .hr-tabs button[aria-pressed="true"] { color:var(--hr-accent-fg); font-weight:700; }
+    #hotel-ratings .hr-thumb { position:absolute; left:0; top:0; border-radius:999px; background:var(--hr-accent); transition:transform 300ms var(--hr-ease),width 300ms var(--hr-ease),height 300ms var(--hr-ease); pointer-events:none; }
+    #hotel-ratings .hr-tabs:not([data-ready]) .hr-thumb { transition:none; }
+    #hotel-ratings .hr-mobile-metric { display:none; gap:5px; font-size:12px; color:var(--hr-muted); width:100%; }
+
+    /* Focus row: leaderboard + spotlight */
+    #hotel-ratings .hr-focus { display:grid; grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr); gap:18px; align-items:start; }
+    #hotel-ratings .hr-board { padding:18px 18px 16px; }
+    #hotel-ratings .hr-card-head { min-height:46px; margin-bottom:8px; }
+    #hotel-ratings .hr-card-head .hr-unit { margin-top:2px; }
+    #hotel-ratings .hr-rank-chart { --rank-col:34px; position:relative; min-height:44px; transition:height 220ms ease-in-out; }
+    #hotel-ratings .hr-bench { position:absolute; top:0; bottom:0; left:calc(var(--rank-col) + (100% - var(--rank-col) - 10px) * .5); border-left:1px dashed var(--hr-line-strong); pointer-events:none; }
+    #hotel-ratings .hr-rank-item { position:absolute; top:0; left:0; width:100%; height:54px; padding:0 10px 0 0; display:grid; grid-template-columns:var(--rank-col) minmax(0,1fr); align-items:center; background:transparent; border:0; border-radius:12px; text-align:left; transition:transform 250ms ease-in-out,background-color 160ms ease; }
+    #hotel-ratings .hr-rank-item:hover { background:color-mix(in srgb,var(--hr-elevated) 60%,transparent); }
+    #hotel-ratings .hr-rank-pos { justify-self:center; font:800 15px/1 'Sora',sans-serif; color:var(--hr-faint); letter-spacing:-.03em; }
+    #hotel-ratings .hr-rank-item[data-first] .hr-rank-pos { color:var(--hr-accent); }
+    #hotel-ratings .hr-rank-body { display:grid; gap:6px; min-width:0; }
+    #hotel-ratings .hr-rank-line { display:flex; align-items:baseline; gap:8px; min-width:0; }
+    #hotel-ratings .hr-rank-name { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #hotel-ratings .hr-rank-meta { flex:1 1 auto; min-width:0; font-size:12px; color:var(--hr-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #hotel-ratings .hr-rank-score { font-size:13px; font-weight:500; }
+    #hotel-ratings .hr-rank-track { height:6px; background:var(--hr-elevated); border-radius:999px; overflow:hidden; }
+    #hotel-ratings .hr-rank-fill { display:block; height:100%; background:color-mix(in oklab,var(--hr-accent) 55%,var(--hr-elevated)); border-radius:999px; transition:width 300ms var(--hr-ease),background-color 200ms ease; }
+    #hotel-ratings .hr-rank-item[aria-pressed="true"] { background:var(--hr-soft); }
+    #hotel-ratings .hr-rank-item[aria-pressed="true"] .hr-rank-fill { background:var(--hr-accent); }
+    #hotel-ratings .hr-rank-item[aria-pressed="true"] .hr-rank-pos { color:var(--hr-accent); }
+    #hotel-ratings .hr-rank-axis { position:relative; height:18px; margin:8px 10px 0 34px; color:var(--hr-muted); font:400 11px/18px 'JetBrains Mono',monospace; }
+    #hotel-ratings .hr-rank-axis span { position:absolute; top:0; }
+    #hotel-ratings .hr-rank-axis span:nth-child(1) { left:0; }
+    #hotel-ratings .hr-rank-axis span:nth-child(2) { left:50%; transform:translateX(-50%); }
+    #hotel-ratings .hr-rank-axis span:nth-child(3) { right:0; }
+
+    /* Spotlight */
+    #hotel-ratings .hr-detail { padding:20px; display:grid; gap:16px; }
+    #hotel-ratings .hr-spot-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+    #hotel-ratings .hr-spot-title { display:grid; gap:6px; min-width:0; }
+    #hotel-ratings .hr-spot-name { font:800 24px/1.12 'Sora',sans-serif; letter-spacing:-.04em; }
+    #hotel-ratings .hr-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+    #hotel-ratings .hr-tag { font-size:11px; line-height:20px; padding:0 9px; border-radius:999px; border:1px solid var(--hr-line); background:var(--hr-glass-item); color:var(--hr-muted); white-space:nowrap; }
+    #hotel-ratings .hr-spot-score { flex:0 0 auto; text-align:right; padding:8px 14px 6px; border-radius:16px; border:1px solid var(--hr-line-strong); background:var(--hr-glass); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+    #hotel-ratings .hr-spot-figure { display:block; font:500 40px/1 'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; letter-spacing:-.04em; color:var(--hr-accent); }
+    #hotel-ratings .hr-spot-body { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:8px; align-items:center; }
+    #hotel-ratings .hr-rosette-wrap { display:grid; gap:2px; justify-items:center; }
+    #hotel-ratings .hr-rosette { display:block; width:100%; max-width:300px; height:auto; overflow:visible; }
+    #hotel-ratings .hr-ro-disc { fill:var(--hr-elevated); }
+    #hotel-ratings .hr-ro-rim { fill:none; stroke:var(--hr-line-strong); stroke-width:1; }
+    #hotel-ratings .hr-ro-adequate { fill:none; stroke:var(--hr-panel); stroke-width:1.25; stroke-dasharray:3 4; opacity:.7; pointer-events:none; }
+    #hotel-ratings .hr-ro-wedge { transform-box:view-box; transform-origin:150px 125px; stroke-width:0; transition:opacity 160ms ease,stroke-width 160ms ease; animation:hr-pop 520ms var(--hr-ease) both; }
+    #hotel-ratings .hr-ro-label { fill:var(--hr-muted); font:500 12px 'Hanken Grotesk',sans-serif; transition:fill 160ms ease; }
+    #hotel-ratings .hr-rosette[data-focus] .hr-ro-wedge:not(.is-focus) { opacity:.3; }
+    #hotel-ratings .hr-rosette[data-focus] .hr-ro-wedge.is-focus { stroke:var(--hi); stroke-width:2; }
+    #hotel-ratings .hr-ro-wedge { cursor:pointer; }
+    #hotel-ratings .hr-ro-wedge:focus { outline:none; }
+    #hotel-ratings .hr-ro-wedge:focus-visible { stroke:var(--hr-ink); stroke-width:2.5; }
+    #hotel-ratings .hr-contrib-row[data-crit] { cursor:pointer; }
+    #hotel-ratings .hr-rosette[data-focus] .hr-ro-label.is-focus { fill:var(--hr-ink); }
+    #hotel-ratings .hr-swatch { flex:none; width:8px; height:8px; border-radius:999px; background:var(--sw); transition:box-shadow 200ms ease; }
+    #hotel-ratings .hr-contrib-row.is-focus .hr-swatch,#hotel-ratings .hr-contrib-row[data-crit]:hover .hr-swatch { box-shadow:0 0 6px var(--sw); }
+    #hotel-ratings .hr-contrib-label { display:flex; align-items:center; gap:8px; min-width:0; }
+    @keyframes hr-pop { from { transform:scale(0); } to { transform:scale(1); } }
+    #hotel-ratings .hr-rosette-key { font-size:11px; color:var(--hr-muted); text-align:center; max-width:30ch; }
+    #hotel-ratings .hr-contrib { display:grid; font-size:12px; }
+    #hotel-ratings .hr-contrib-row { display:grid; grid-template-columns:minmax(0,1fr) 28px 58px; gap:6px; align-items:baseline; padding:6px 8px; border-radius:8px; transition:background-color 160ms ease; }
+    #hotel-ratings .hr-contrib-row[data-crit]:hover,#hotel-ratings .hr-contrib-row.is-focus { background:color-mix(in oklab,var(--sw) 10%,transparent); box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--sw) 20%,transparent),0 0 16px -4px color-mix(in oklab,var(--sw) 22%,transparent); }
+    #hotel-ratings .hr-contrib-row>span:not(:first-child) { text-align:right; }
+    #hotel-ratings .hr-contrib-head { color:var(--hr-faint); font-size:11px; padding-bottom:4px; }
+    #hotel-ratings .hr-contrib-total { border-top:1px solid var(--hr-line); margin-top:4px; padding-top:8px; font-weight:600; }
+    #hotel-ratings .hr-pts small { color:var(--hr-faint); font-size:10px; }
+    #hotel-ratings .hr-notes { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #hotel-ratings .hr-note { padding:12px 14px; border-radius:14px; border:1px solid var(--hr-line); background:var(--hr-glass-item); font-size:13px; }
+    #hotel-ratings .hr-note-title { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; margin-bottom:4px; }
+    #hotel-ratings .hr-note-title svg { width:14px; height:14px; flex:none; }
+    #hotel-ratings .hr-note[data-kind="good"] .hr-note-title svg { color:var(--hr-accent); }
+    #hotel-ratings .hr-note[data-kind="improve"] .hr-note-title svg { color:var(--hr-muted); }
+    #hotel-ratings .hr-meta { font-size:11px; color:var(--hr-muted); }
+
+    /* Scatter */
+    #hotel-ratings .hr-plot-card { padding:18px; }
+    #hotel-ratings .hr-plot-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; min-height:46px; }
+    #hotel-ratings .hr-legend { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--hr-muted); padding-top:4px; }
+    #hotel-ratings .hr-legend span { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+    #hotel-ratings .hr-legend i { display:inline-block; width:14px; border-top:1px dashed var(--hr-muted); }
+    #hotel-ratings .hr-rate-chart { position:relative; height:300px; overflow:clip; }
+    #hotel-ratings .hr-rate-svg { display:block; width:100%; height:100%; }
+    #hotel-ratings .hr-rate-svg text { fill:var(--hr-muted); font:400 11px 'JetBrains Mono',monospace; }
+    #hotel-ratings .hr-rate-svg .hr-axis-title { font-family:'Hanken Grotesk',sans-serif; font-size:12px; }
+    #hotel-ratings .hr-rate-svg .hr-ref { stroke:var(--hr-muted); stroke-dasharray:4 4; opacity:.7; }
+    #hotel-ratings .hr-rate-svg .hr-ref-label { font-size:10px; }
+    #hotel-ratings .hr-point { position:absolute; top:0; left:0; z-index:2; display:grid; place-items:center; width:32px; height:32px; padding:0; background:transparent; border:0; border-radius:999px; transition:transform 300ms var(--hr-ease); }
+    #hotel-ratings .hr-point::after { content:''; display:block; width:12px; height:12px; border-radius:999px; background:color-mix(in oklab,var(--hr-accent) 70%,var(--hr-panel)); box-shadow:0 0 0 2px var(--hr-panel); transition:width 200ms var(--hr-ease),height 200ms var(--hr-ease),box-shadow 200ms ease,background-color 200ms ease; }
+    #hotel-ratings .hr-point:hover::after { background:var(--hr-accent); }
+    #hotel-ratings .hr-point[aria-pressed="true"] { z-index:3; }
+    #hotel-ratings .hr-point[aria-pressed="true"]::after { width:16px; height:16px; background:var(--hr-accent); box-shadow:0 0 0 3px var(--hr-panel),0 0 0 9px var(--hr-soft); }
+    #hotel-ratings .hr-point-label { position:absolute; top:0; left:0; z-index:1; padding:2px 8px; border-radius:999px; border:1px solid var(--hr-line); background:var(--hr-glass); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); font-size:12px; font-weight:600; white-space:nowrap; pointer-events:none; transition:transform 300ms var(--hr-ease); }
+    #hotel-ratings .hr-chart-empty { color:var(--hr-muted); font-size:13px; padding:22px 0; }
+
+    /* Table */
+    #hotel-ratings .hr-table-card { padding:18px 18px 8px; }
+    #hotel-ratings .hr-table-wrap { overflow-x:auto; margin:0 -8px; }
+    #hotel-ratings table { border-collapse:collapse; width:100%; font-size:13px; }
+    #hotel-ratings th { text-align:left; color:var(--hr-muted); font-weight:400; font-size:12px; padding:10px 10px; border-bottom:1px solid var(--hr-line); white-space:nowrap; }
+    #hotel-ratings th.hr-num,#hotel-ratings td.hr-num { text-align:right; }
+    #hotel-ratings td { padding:11px 10px; border-bottom:1px solid var(--hr-line); vertical-align:top; }
+    #hotel-ratings tbody tr:last-child td { border-bottom:0; }
+    #hotel-ratings tbody tr { transition:background-color 160ms ease; }
+    #hotel-ratings tbody tr:hover { background:color-mix(in srgb,var(--hr-elevated) 55%,transparent); }
+    #hotel-ratings tr[aria-selected="true"] { background:var(--hr-soft); }
+    #hotel-ratings tr[aria-selected="true"] td:first-child { box-shadow:inset 3px 0 0 var(--hr-accent); }
+    #hotel-ratings .hr-rank-cell { font:800 14px/1.4 'Sora',sans-serif; color:var(--hr-faint); }
+    #hotel-ratings tr[aria-selected="true"] .hr-rank-cell { color:var(--hr-accent); }
+    #hotel-ratings .hr-property { padding:0; border:0; background:transparent; text-align:left; font-weight:600; text-decoration:underline; text-decoration-color:var(--hr-line-strong); text-underline-offset:3px; }
+    #hotel-ratings .hr-property:hover { text-decoration-color:var(--hr-accent); }
+    #hotel-ratings .hr-cell-sub { color:var(--hr-muted); font-size:12px; margin-top:2px; }
+    #hotel-ratings .hr-empty { padding:24px 8px; color:var(--hr-muted); }
+    #hotel-ratings .hr-footer { color:var(--hr-muted); font-size:12px; max-width:70ch; }
+    #hotel-ratings[data-density="compact"] td { padding-top:7px; padding-bottom:7px; }
+
+    @media(max-width:680px) {
+      #hotel-ratings .hr-hero-inner { padding:22px 20px 20px; gap:20px; }
+      #hotel-ratings h1 { font-size:30px; }
+      #hotel-ratings .hr-brand-lockup { gap:12px; }
+      #hotel-ratings .hr-logo { width:34px; }
+      #hotel-ratings .hr-theme { width:44px; height:44px; }
+      #hotel-ratings .hr-stats { grid-template-columns:1fr; gap:10px; }
+      #hotel-ratings .hr-value { font-size:26px; }
+      #hotel-ratings .hr-main { padding:20px; gap:18px; }
+      #hotel-ratings .hr-filters { grid-template-columns:1fr 1fr; }
+      #hotel-ratings .hr-filters .hr-rate { grid-column:1 / -1; }
+      #hotel-ratings select,#hotel-ratings input { font-size:16px; height:44px; }
+      #hotel-ratings .hr-chip::before { content:''; position:absolute; inset:-8px; }
+      #hotel-ratings .hr-tabs { display:none; }
+      #hotel-ratings .hr-mobile-metric { display:grid; }
+      #hotel-ratings .hr-focus { grid-template-columns:1fr; }
+      #hotel-ratings .hr-board,#hotel-ratings .hr-plot-card,#hotel-ratings .hr-table-card { padding:14px; }
+      #hotel-ratings .hr-detail { padding:16px; }
+      #hotel-ratings .hr-rank-item { height:58px; }
+      #hotel-ratings .hr-spot-name { font-size:21px; }
+      #hotel-ratings .hr-spot-figure { font-size:32px; }
+      #hotel-ratings .hr-spot-body,#hotel-ratings .hr-notes { grid-template-columns:1fr; }
+      #hotel-ratings .hr-plot-head { flex-direction:column; min-height:0; margin-bottom:6px; }
+      #hotel-ratings .hr-rate-chart { height:260px; }
+      #hotel-ratings .hr-point { width:44px; height:44px; }
+      #hotel-ratings .hr-property { min-height:44px; }
+    }
+    @media(pointer:coarse) { #hotel-ratings .hr-rank-item { height:58px; } #hotel-ratings .hr-point { width:44px; height:44px; } }
+    @media(prefers-reduced-motion:reduce) { #hotel-ratings *,#hotel-ratings *::before,#hotel-ratings *::after { transition:none !important; animation:none !important; } }
+    /* ── Live page additions: page frame, account actions, entry dialogs ── */
+    html { background:#f7f6f1; }
+    html[data-theme="dark"] { background:#0a0f14; }
+    body { margin:0; }
+    #hotel-ratings { border-radius:0; min-height:100vh; min-height:100dvh; }
+    #hotel-ratings .hr-hero-top { flex-wrap:wrap; }
+    #hotel-ratings .hr-actions { display:flex; align-items:center; gap:8px; margin-left:auto; flex:0 0 auto; align-self:flex-start; }
+    #hotel-ratings .hr-btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; height:34px; padding:0 14px; border-radius:999px; border:1px solid transparent; font-size:13px; font-weight:700; white-space:nowrap; transition:transform 160ms var(--hr-ease),background-color 160ms ease,border-color 160ms ease,color 160ms ease; }
+    #hotel-ratings .hr-btn svg { width:16px; height:16px; flex:none; }
+    #hotel-ratings .hr-btn-primary { background:var(--hr-accent); color:var(--hr-accent-fg); }
+    #hotel-ratings .hr-btn-primary:hover:not(:disabled) { background:color-mix(in oklab,var(--hr-accent) 86%,white); }
+    #hotel-ratings .hr-btn-quiet { background:var(--hr-glass); border-color:var(--hr-line); color:var(--hr-ink); }
+    #hotel-ratings .hr-btn-quiet:hover:not(:disabled) { border-color:var(--hr-line-strong); background:var(--hr-elevated); }
+    #hotel-ratings .hr-btn-danger { background:transparent; border-color:color-mix(in oklab,#dc2626 45%,transparent); color:light-dark(#b91c1c,#f87171); }
+    #hotel-ratings .hr-btn-danger[data-armed] { background:light-dark(#dc2626,#ef4444); border-color:transparent; color:#fff; }
+    #hotel-ratings .hr-btn:active:not(:disabled) { transform:scale(.97); }
+    #hotel-ratings .hr-btn:disabled { opacity:.5; cursor:default; }
+    #hotel-ratings .hr-chip.hr-chip-text { padding:0 12px; color:var(--hr-ink); }
+    #hotel-ratings .hr-chip.hr-chip-text .hr-chip-label { max-width:none; opacity:1; margin-left:6px; }
+    #hotel-ratings .hr-chip.hr-chip-text.hr-chip-bare .hr-chip-label { margin-left:0; }
+
+    /* Loading, first-run and drafts */
+    #hotel-ratings .hr-state { padding:28px; display:grid; gap:12px; justify-items:start; }
+    #hotel-ratings .hr-state h2 { font-size:24px; }
+    #hotel-ratings .hr-state .hr-sub { font-size:14px; max-width:58ch; }
+    #hotel-ratings .hr-rubric { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 6px; }
+    #hotel-ratings .hr-rubric span { display:inline-flex; align-items:center; gap:7px; font-size:12px; line-height:26px; padding:0 11px 0 9px; border-radius:999px; border:1px solid var(--hr-line); background:var(--hr-glass-item); }
+    #hotel-ratings .hr-rubric b { font:500 11px 'JetBrains Mono',monospace; color:var(--hr-muted); }
+    #hotel-ratings .hr-loading { color:var(--hr-muted); font-size:14px; padding:22px 24px; }
+    #hotel-ratings .hr-drafts { padding:16px 18px 10px; }
+    #hotel-ratings .hr-draft { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid var(--hr-line); font-size:13px; }
+    #hotel-ratings .hr-draft:first-of-type { border-top:0; }
+    #hotel-ratings .hr-draft-name { font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #hotel-ratings .hr-draft-meta { color:var(--hr-muted); font-size:12px; }
+
+    /* Spotlight additions */
+    #hotel-ratings .hr-spot-foot { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    #hotel-ratings .hr-coverage { font-size:11px; color:var(--hr-muted); padding:6px 8px 0; }
+    #hotel-ratings .hr-ro-label.is-unscored { fill:var(--hr-faint); }
+
+    /* Dialogs */
+    #hotel-ratings .hr-dialog { width:min(660px,calc(100% - 32px)); max-height:calc(100dvh - 32px); padding:0; border:1px solid var(--hr-line-strong); border-radius:18px; background:var(--hr-panel); color:var(--hr-ink); box-shadow:0 30px 90px -24px rgba(0,0,0,.55); overflow:hidden; }
+    #hotel-ratings .hr-dialog.hr-dialog-small { width:min(420px,calc(100% - 32px)); }
+    #hotel-ratings .hr-dialog[open] { display:flex; flex-direction:column; animation:hr-rise 280ms var(--hr-ease) both; }
+    #hotel-ratings .hr-dialog::backdrop { background:rgba(5,8,12,.52); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+    @keyframes hr-rise { from { opacity:0; transform:translateY(14px) scale(.98); } to { opacity:1; transform:none; } }
+    #hotel-ratings .hr-dialog form { display:flex; flex-direction:column; min-height:0; flex:1 1 auto; margin:0; }
+    #hotel-ratings .hr-dialog-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 20px 14px; border-bottom:1px solid var(--hr-line); }
+    #hotel-ratings .hr-dialog-head h2 { font-size:20px; }
+    #hotel-ratings .hr-dialog-body { overflow:auto; padding:18px 20px 22px; display:grid; gap:24px; overscroll-behavior:contain; }
+    #hotel-ratings .hr-dialog-foot { display:flex; align-items:center; gap:8px; padding:12px 20px; border-top:1px solid var(--hr-line); background:var(--hr-surface); flex-wrap:wrap; }
+    #hotel-ratings .hr-dialog-foot .hr-spacer { flex:1 1 auto; }
+    #hotel-ratings .hr-fs { display:grid; gap:12px; min-width:0; }
+    #hotel-ratings .hr-fs-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    #hotel-ratings .hr-fs-head h3 { font-size:15px; }
+    #hotel-ratings .hr-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    #hotel-ratings .hr-grid-3 { grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr) minmax(0,1fr); }
+    #hotel-ratings .hr-field { display:grid; gap:5px; font-size:12px; color:var(--hr-muted); min-width:0; align-content:start; }
+    #hotel-ratings .hr-field.hr-span { grid-column:1 / -1; }
+    #hotel-ratings .hr-field em { font-style:normal; color:var(--hr-faint); }
+    #hotel-ratings textarea { width:100%; min-height:76px; border:1px solid var(--hr-line); border-radius:11px; background-color:var(--hr-surface); color:var(--hr-ink); padding:9px 11px; font:inherit; font-size:13px; line-height:1.5; resize:vertical; transition:border-color 160ms ease; }
+    #hotel-ratings textarea:hover { border-color:var(--hr-line-strong); }
+    #hotel-ratings input:focus-visible,#hotel-ratings select:focus-visible,#hotel-ratings textarea:focus-visible { outline:2px solid var(--hr-accent); outline-offset:1px; }
+    #hotel-ratings .hr-form-total { font-size:13px; color:var(--hr-muted); }
+    #hotel-ratings .hr-form-total strong { color:var(--hr-accent); font:500 18px 'JetBrains Mono',monospace; margin-right:3px; }
+    #hotel-ratings .hr-form-hint { font-size:12px; color:var(--hr-muted); margin-top:-4px; }
+    #hotel-ratings .hr-scores { display:grid; gap:8px; }
+    #hotel-ratings .hr-score-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:2px 12px; padding:10px 12px 6px; border:1px solid var(--hr-line); border-radius:14px; background:var(--hr-glass-item); transition:border-color 160ms ease,background-color 160ms ease; }
+    #hotel-ratings .hr-score-row:not(.is-unscored) { border-color:color-mix(in oklab,var(--sw) 35%,transparent); background:color-mix(in oklab,var(--sw) 6%,transparent); }
+    #hotel-ratings .hr-score-name { display:flex; align-items:center; gap:8px; min-width:0; font-size:13px; font-weight:600; }
+    #hotel-ratings .hr-score-name small { font-weight:400; color:var(--hr-faint); font-size:11px; }
+    #hotel-ratings .hr-score-row .hr-swatch { box-shadow:0 0 6px var(--sw); }
+    #hotel-ratings .hr-score-row.is-unscored .hr-swatch { box-shadow:none; opacity:.5; }
+    #hotel-ratings .hr-score-out { justify-self:end; font:500 14px 'JetBrains Mono',monospace; white-space:nowrap; }
+    #hotel-ratings .hr-score-out span { font:400 12px 'Hanken Grotesk',sans-serif; color:var(--hr-muted); margin-left:6px; }
+    #hotel-ratings .hr-score-row.is-unscored .hr-score-out { font:400 12px 'Hanken Grotesk',sans-serif; color:var(--hr-faint); }
+    #hotel-ratings .hr-score-ctl { grid-column:1 / -1; display:flex; align-items:center; gap:10px; }
+    #hotel-ratings input[type="range"] { flex:1 1 auto; height:30px; padding:0; border:0; background:transparent; accent-color:var(--sw); cursor:pointer; }
+    #hotel-ratings .hr-score-row.is-unscored input[type="range"] { opacity:.45; filter:grayscale(1); }
+    #hotel-ratings .hr-score-row.is-unscored .hr-clear { visibility:hidden; }
+    #hotel-ratings .hr-form-error { margin:0; padding:10px 12px; border-radius:12px; font-size:13px; color:light-dark(#991b1b,#fecaca); background:light-dark(#fef2f2,rgba(239,68,68,.12)); border:1px solid light-dark(#fecaca,rgba(239,68,68,.35)); }
+
+    /* Status toast */
+    #hotel-ratings .hr-toast { position:fixed; left:50%; bottom:22px; z-index:30; max-width:calc(100% - 32px); transform:translate(-50%,16px); opacity:0; padding:9px 16px; border-radius:999px; background:var(--hr-ink); color:var(--hr-panel); font-size:13px; font-weight:600; pointer-events:none; box-shadow:0 12px 30px -10px rgba(0,0,0,.45); transition:opacity 200ms ease,transform 320ms var(--hr-ease); }
+    #hotel-ratings .hr-toast[data-show] { opacity:1; transform:translate(-50%,0); }
+    #hotel-ratings .hr-toast[data-tone="error"] { background:light-dark(#b91c1c,#ef4444); color:#fff; }
+
+    @media(max-width:680px) {
+      #hotel-ratings .hr-btn { height:44px; }
+      #hotel-ratings .hr-state { padding:22px 18px; }
+      #hotel-ratings .hr-dialog { width:calc(100% - 16px); max-height:calc(100dvh - 16px); }
+      #hotel-ratings .hr-dialog-head,#hotel-ratings .hr-dialog-body,#hotel-ratings .hr-dialog-foot { padding-left:16px; padding-right:16px; }
+      #hotel-ratings .hr-grid,#hotel-ratings .hr-grid-3 { grid-template-columns:1fr 1fr; }
+      #hotel-ratings .hr-grid-3 .hr-field:first-child { grid-column:1 / -1; }
+      #hotel-ratings textarea { font-size:16px; }
+      #hotel-ratings input[type="range"] { height:44px; }
+      #hotel-ratings .hr-dialog-foot .hr-btn { flex:1 1 auto; }
+      #hotel-ratings .hr-dialog-foot .hr-spacer { display:none; }
+    }
+    #hotel-ratings #hr-content { display:grid; gap:22px; min-width:0; }
+    @media(max-width:680px) { #hotel-ratings #hr-content { gap:18px; } }
+</style>
+</head>
+<body>
+<div id="hotel-ratings" aria-label="Hotel ratings">
+  <header class="hr-hero">
+    <div class="hr-hero-inner">
+      <div class="hr-hero-top">
+        <div class="hr-brand-lockup">
+          <img class="hr-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMzEuODIgMTk0Ljk5Ij4KICA8ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPgogICAgPHBhdGggZD0iTTcyLjQxLDBjMzQuNzksMy42OCw2Mi4zMiwzNS4yNSw1OS4xNyw3MS41NS0yLjgsMzIuMjgtMjguMzMsNTcuNy02MC41Niw2MC4yMi04LjU3LjY3LTE2LjM2LjE4LTI1LjM3LjI5bC0uMDIsNjIuOTEtMTIuNzIuMDJjLTExLjY0LjAyLTIxLjAyLTguMjgtMjMuMjctMTkuODItMS4zNS02LjkyLS43OC0xNC4zOSwxLjIxLTIxLjQxLDYuMDEtMjEuMTksMjEuMjgtNTMuNTgsMzguODMtNjQuODYsNi42Mi00LjI1LDE0LjQzLTIuMSwxNy45Nyw0LjM3bDMuNjQsNi42NGMxLjIyLDIuMjMsNC41NiwzLjMzLDYuMzgsMi40NiwzLjY4LTEuNzcsMy4yNi00LjExLDIuNTQtNy42NGwtNS41My0yNy40LDE2LjQ5LTIzLjIzYzEuNS0yLjExLjg4LTcuMjMtLjYzLTguOTRzLTYuNzEtMi43MS05LjIzLS45MWwtMjMuMiwxNi41My0zMS4xNi02LjI5Yy0xLjUyLS4zMS0zLjk2LDIuNzYtNC4xLDQuMy0uNTgsNi41Myw4LjUyLDYuMzksMTMuNjQsMTIuNjUsMTEuNTgsMTQuMTYtMjAuNDksMzUuMDMtMzYuNDgsNDEuNTdWMTVDMi4xMiw3LjUyLDcuNTEsMi4xLDE1LDBoNTcuNDFaIi8+CiAgPC9nPgo8L3N2Zz4=" width="132" height="195" alt="Phalatse Travel">
+          <div class="hr-brand-copy">
+            <div class="hr-eyebrow">Phalatse Travel</div>
+            <h1>Hotel ratings</h1>
+            <p class="hr-sub">Personal stay assessments, all scored on the same rubric.</p>
+          </div>
+        </div>
+        <div class="hr-actions">
+          <button id="hr-add" class="hr-btn hr-btn-primary" type="button" data-action="add" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add stay</button>
+          <button id="hr-account" class="hr-chip hr-chip-text" type="button" data-action="signin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg><span class="hr-chip-label">Sign in</span></button>
+          <button id="hr-theme" class="hr-theme" type="button" aria-label="Switch colour theme"><svg class="hr-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><svg class="hr-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button>
+        </div>
+      </div>
+      <div class="hr-stats" aria-live="polite" aria-atomic="true">
+        <div class="hr-stat" data-ghost="Stays"><div><div class="hr-stat-label">Matching properties</div><div class="hr-figure-row"><span id="hr-count" class="hr-value">0</span><span class="hr-caption" id="hr-count-caption">latest finalised stay each</span></div></div></div>
+        <div class="hr-stat" data-ghost="Quality"><div><div class="hr-stat-label">Mean quality score</div><div class="hr-figure-row"><span class="hr-value"><span id="hr-average">–</span><small>/ 100</small></span><span class="hr-caption">same rubric, finalised stays</span></div></div></div>
+        <div class="hr-stat" data-ghost="Nightly"><div><div class="hr-stat-label">Median nightly rate</div><div class="hr-figure-row"><span class="hr-value" id="hr-median">–</span><span class="hr-caption">incl. taxes and fees</span></div></div></div>
+      </div>
+    </div>
+  </header>
+  <main class="hr-main">
+    <p id="hr-loading" class="hr-card hr-loading">Loading stays…</p>
+
+    <section id="hr-welcome" class="hr-card" data-ghost="First stay" hidden><div id="hr-welcome-body" class="hr-state"></div></section>
+
+    <section id="hr-drafts" class="hr-card hr-drafts" data-ghost="Drafts" aria-label="Your drafts" hidden>
+      <div>
+        <div class="hr-card-head"><h3>Your drafts</h3><p class="hr-unit">Only you can see these. They join the rankings once saved as finished.</p></div>
+        <div id="hr-draft-list"></div>
+      </div>
+    </section>
+
+    <div id="hr-content" hidden>
+    <section class="hr-card hr-toolbar" data-ghost="Filters" aria-label="Filter reviewed properties">
+      <div>
+        <div class="hr-toolbar-top">
+          <p class="hr-result" id="hr-result" aria-live="polite"></p>
+          <button id="hr-reset" class="hr-chip" type="button" aria-label="Reset filters" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span class="hr-chip-label">Reset filters</span></button>
+        </div>
+      </div>
+      <div class="hr-filters">
+        <label>Country<select id="hr-country"><option value="">All countries</option></select></label>
+        <label>City<select id="hr-city"><option value="">All cities</option></select></label>
+        <label>Brand<select id="hr-brand"><option value="">All brands</option></select></label>
+        <label>Stars<select id="hr-stars"><option value="">Any classification</option><option value="1">1 star</option><option value="2">2 stars</option><option value="3">3 stars</option><option value="4">4 stars</option><option value="5">5 stars</option><option value="unknown">Unclassified</option></select></label>
+        <label>Year of stay<select id="hr-year"><option value="">All years</option></select></label>
+        <label class="hr-rate">Nightly rate, ZAR<div class="hr-range"><input id="hr-min" type="number" min="0" step="100" placeholder="Min" aria-label="Minimum nightly rate in ZAR"><input id="hr-max" type="number" min="0" step="100" placeholder="Max" aria-label="Maximum nightly rate in ZAR"></div></label>
+      </div>
+    </section>
+
+    <div class="hr-section-head">
+      <div><h2 id="hr-ranking-title">Overall rankings</h2><p class="hr-unit" id="hr-ranking-sub">Weighted score out of 100 across six criteria</p></div>
+      <div class="hr-tabs" role="group" aria-label="Rank by attribute">
+        <span class="hr-thumb" aria-hidden="true"></span>
+        <button type="button" data-metric="overall" aria-pressed="true">Overall</button>
+        <button type="button" data-metric="0" aria-pressed="false">Design</button>
+        <button type="button" data-metric="1" aria-pressed="false">Location</button>
+        <button type="button" data-metric="2" aria-pressed="false">Amenities</button>
+        <button type="button" data-metric="3" aria-pressed="false">Facilities</button>
+        <button type="button" data-metric="4" aria-pressed="false">Service</button>
+        <button type="button" data-metric="5" aria-pressed="false">Experience</button>
+      </div>
+      <label class="hr-mobile-metric">Rank by<select id="hr-mobile-metric"><option value="overall">Overall</option><option value="0">Room &amp; hotel design</option><option value="1">Location</option><option value="2">Amenities</option><option value="3">Facilities</option><option value="4">Service</option><option value="5">Overall experience</option></select></label>
+    </div>
+
+    <section class="hr-focus" aria-label="Rankings and selected stay">
+      <article id="hr-board" class="hr-card hr-board" data-ghost="Overall">
+        <div>
+          <div class="hr-card-head"><h3>Ranked properties</h3><p class="hr-unit" id="hr-rank-units">Overall score / 100. Dashed line marks adequate.</p></div>
+          <div id="hr-rank-chart" class="hr-rank-chart" aria-label="Ranked property scores"><span class="hr-bench" aria-hidden="true"></span></div>
+          <div id="hr-rank-axis" class="hr-rank-axis" aria-hidden="true"><span>0</span><span id="hr-rank-mid">50</span><span id="hr-rank-max">100</span></div>
+          <div id="hr-rank-empty" class="hr-chart-empty" hidden></div>
+        </div>
+      </article>
+      <aside id="hr-detail" class="hr-card hr-detail" data-ghost="The stay" aria-label="Selected stay details" aria-live="polite"></aside>
+    </section>
+
+    <section class="hr-card hr-plot-card" data-ghost="Nightly" aria-label="Score against nightly rate">
+      <div>
+        <div class="hr-plot-head">
+          <div><h3>Score and nightly rate</h3><p class="hr-unit" id="hr-rate-units">Overall score / 100 against ZAR per night</p></div>
+          <div class="hr-legend" aria-hidden="true"><span><i></i>Median rate</span><span><i></i>Mean score</span></div>
+        </div>
+        <div id="hr-rate-chart" class="hr-rate-chart"><svg class="hr-rate-svg" role="img" aria-label="Property score versus nightly rate"></svg></div>
+        <div id="hr-rate-empty" class="hr-chart-empty" hidden></div>
+      </div>
+    </section>
+
+    <section class="hr-card hr-table-card" data-ghost="Stays" aria-label="All matching stays">
+      <div>
+        <div class="hr-card-head"><h3>All matching stays</h3><p class="hr-unit">Ranked by the selected criterion</p></div>
+        <div class="hr-table-wrap">
+          <table aria-label="Filtered hotel ranking"><thead><tr><th scope="col">Rank</th><th scope="col">Property and room</th><th scope="col">Brand and stars</th><th scope="col" class="hr-num">ZAR / night</th><th scope="col" id="hr-metric-head" class="hr-num">Score / 100</th></tr></thead><tbody id="hr-rows"></tbody></table>
+          <p id="hr-empty" class="hr-empty" hidden></p>
+        </div>
+      </div>
+    </section>
+    </div>
+    <p class="hr-footer">Rankings reflect our own stays, not an external hotel survey. Each criterion is scored out of 10 and the overall score is out of 100. Criteria we did not experience stay unscored, and the total is scaled to the points that were scored. Drafts are excluded, and prices never affect quality scores.</p>
+  </main>
+
+  <dialog id="hr-signin-dialog" class="hr-dialog hr-dialog-small" aria-labelledby="hr-signin-title">
+    <form id="hr-signin-form" novalidate>
+      <div class="hr-dialog-head"><div><h2 id="hr-signin-title">Sign in</h2><p class="hr-sub">Use the account you sign in to Money Metrics with.</p></div><button type="button" class="hr-chip" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="hr-dialog-body" style="gap:12px">
+        <label class="hr-field">Email<input id="hr-si-email" type="email" autocomplete="username" required></label>
+        <label class="hr-field">Password<input id="hr-si-password" type="password" autocomplete="current-password" required></label>
+        <p id="hr-si-error" class="hr-form-error" role="alert" hidden></p>
+      </div>
+      <div class="hr-dialog-foot"><span class="hr-spacer"></span><button type="button" class="hr-btn hr-btn-quiet" data-close>Cancel</button><button id="hr-si-submit" type="submit" class="hr-btn hr-btn-primary">Sign in</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="hr-form-dialog" class="hr-dialog" aria-labelledby="hr-f-title">
+    <form id="hr-form" novalidate>
+      <div class="hr-dialog-head"><div><h2 id="hr-f-title">Add a stay</h2><p class="hr-sub" id="hr-f-sub">Score what you experienced. Leave the rest unscored.</p></div><button type="button" class="hr-chip" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="hr-dialog-body">
+        <section class="hr-fs" aria-labelledby="hr-fs-property">
+          <div class="hr-fs-head"><h3 id="hr-fs-property">The property</h3></div>
+          <div class="hr-grid">
+            <label class="hr-field hr-span">Property name<input id="hr-f-property" list="hr-dl-property" autocomplete="off" required maxlength="120"></label>
+            <label class="hr-field">City<input id="hr-f-city" list="hr-dl-city" autocomplete="off" required maxlength="80"></label>
+            <label class="hr-field">Country<input id="hr-f-country" list="hr-dl-country" autocomplete="off" required maxlength="80"></label>
+            <label class="hr-field">Brand <em>(blank for independent)</em><input id="hr-f-brand" list="hr-dl-brand" autocomplete="off" maxlength="80"></label>
+            <label class="hr-field">Star classification<select id="hr-f-stars"><option value="">Unclassified</option><option value="1">1 star</option><option value="2">2 stars</option><option value="3">3 stars</option><option value="4">4 stars</option><option value="5">5 stars</option></select></label>
+          </div>
+        </section>
+        <section class="hr-fs" aria-labelledby="hr-fs-stay">
+          <div class="hr-fs-head"><h3 id="hr-fs-stay">The stay</h3></div>
+          <div class="hr-grid">
+            <label class="hr-field hr-span">Room <em>(optional)</em><input id="hr-f-room" autocomplete="off" maxlength="120" placeholder="Garden balcony king"></label>
+            <label class="hr-field">Check-in<input id="hr-f-checkin" type="date" required></label>
+            <label class="hr-field">Check-out <em>(optional)</em><input id="hr-f-checkout" type="date"></label>
+          </div>
+          <div class="hr-grid hr-grid-3">
+            <label class="hr-field">Nightly rate, incl. taxes and fees<input id="hr-f-amount" type="number" min="0" step="0.01" inputmode="decimal"></label>
+            <label class="hr-field">Currency<input id="hr-f-currency" list="hr-dl-currency" autocomplete="off" maxlength="3" value="ZAR" style="text-transform:uppercase"></label>
+            <label class="hr-field">Includes <em>(optional)</em><input id="hr-f-inclusions" autocomplete="off" maxlength="200" placeholder="Breakfast"></label>
+          </div>
+          <div class="hr-grid" id="hr-f-zarwrap" hidden>
+            <label class="hr-field">Same rate in ZAR<input id="hr-f-zar" type="number" min="0" step="0.01" inputmode="decimal"></label>
+            <label class="hr-field">Converted on<input id="hr-f-zaron" type="date"></label>
+          </div>
+        </section>
+        <section class="hr-fs" aria-labelledby="hr-fs-scores">
+          <div class="hr-fs-head"><h3 id="hr-fs-scores">Scores</h3><span id="hr-f-total" class="hr-form-total" aria-live="polite"></span></div>
+          <p class="hr-form-hint">0 is a complete failure, 5 is adequate and 10 is the outstanding benchmark. Drag a slider to score it.</p>
+          <div id="hr-f-scores" class="hr-scores"></div>
+        </section>
+        <section class="hr-fs" aria-labelledby="hr-fs-notes">
+          <div class="hr-fs-head"><h3 id="hr-fs-notes">Notes</h3></div>
+          <label class="hr-field">What stood out<textarea id="hr-f-highlight" maxlength="1000"></textarea></label>
+          <label class="hr-field">Room for improvement<textarea id="hr-f-improve" maxlength="1000"></textarea></label>
+        </section>
+        <p id="hr-f-error" class="hr-form-error" role="alert" hidden></p>
+      </div>
+      <div class="hr-dialog-foot">
+        <button id="hr-f-delete" type="button" class="hr-btn hr-btn-danger" hidden>Delete stay</button>
+        <span class="hr-spacer"></span>
+        <button type="submit" value="draft" class="hr-btn hr-btn-quiet">Save as draft</button>
+        <button type="submit" value="final" class="hr-btn hr-btn-primary">Save stay</button>
+      </div>
+    </form>
+  </dialog>
+  <datalist id="hr-dl-property"></datalist><datalist id="hr-dl-city"></datalist><datalist id="hr-dl-country"></datalist><datalist id="hr-dl-brand"></datalist>
+  <datalist id="hr-dl-currency"><option value="ZAR"><option value="USD"><option value="EUR"><option value="GBP"><option value="AED"><option value="JOD"><option value="SGD"><option value="THB"><option value="JPY"><option value="AUD"><option value="CHF"><option value="MUR"></datalist>
+  <div id="hr-toast" class="hr-toast" role="status" aria-live="polite"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+    (() => {
+      const root = document.getElementById('hotel-ratings');
+
+      /* ── Supabase: the shared That Sorted Life project, same publishable key as the other widgets.
+         Anyone can read finalised stays; only an editor signed in with their Supabase account can write
+         or see drafts (RLS on public.hotel_stays, editors listed in public.hotel_rating_editors). ── */
+      const SUPABASE_URL = 'https://cwnlofcrstwxoemzyazm.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_YR2yvumMz2KJdYWv8-YmWw_twduUCXn';
+      const REST = SUPABASE_URL + '/rest/v1', AUTH = SUPABASE_URL + '/auth/v1';
+      const SESSION_KEY = 'hotel-ratings-session', CACHE_KEY = 'hotel-ratings-cache', VIEW_KEY = 'hotel-ratings-view';
+
+      const labels = ['Room & hotel design','Location','Amenities','Facilities','Service','Overall experience'];
+      const short = ['Design','Location','Amenities','Facilities','Service','Experience'];
+      const weights = [20,15,10,15,20,20];
+      const SCORE_COLS = ['score_design','score_location','score_amenities','score_facilities','score_service','score_experience'];
+      const ANCHORS = ['complete failure','very poor','very poor','below standard','below standard','adequate','good','very good','excellent','exceptional','outstanding'];
+      const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+      const store = {
+        get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+        set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+        del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+      };
+      const el = id => root.querySelector('#hr-' + id);
+      const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const currency = n => 'R ' + Math.round(n).toLocaleString('en-ZA');
+      const fmtAmount = n => Number(n).toLocaleString('en-ZA', { maximumFractionDigits: 2 });
+      const fmtScore = v => (v % 1 ? v.toFixed(1) : String(v));
+      const compact = () => matchMedia('(pointer:coarse)').matches || matchMedia('(max-width:680px)').matches;
+      const uniq = list => [...new Set(list.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+
+      /* ── Auth: Supabase GoTrue over plain fetch, matching the other widgets (no client library). ── */
+      let session = store.get(SESSION_KEY);
+      const isEditor = () => !!(session && session.editor);
+      function setSession(j) {
+        session = { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600), email: (j.user && j.user.email) || (session && session.email) || '', editor: !!(session && session.editor) };
+        store.set(SESSION_KEY, session);
+      }
+      function clearSession() { session = null; store.del(SESSION_KEY); }
+      async function authPost(path, body, token) {
+        const headers = { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' };
+        if (token) headers.Authorization = 'Bearer ' + token;
+        const res = await fetch(AUTH + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
+        let j = {}; try { j = await res.json(); } catch (e) {}
+        if (!res.ok) { const err = new Error(j.error_description || j.msg || j.message || 'Request failed (' + res.status + ')'); err.status = res.status; throw err; }
+        return j;
+      }
+      let refreshing = null;
+      async function accessToken() {
+        if (!session) return null;
+        if (session.expires_at - 60 > Date.now() / 1000) return session.access_token;
+        if (!refreshing) refreshing = authPost('/token?grant_type=refresh_token', { refresh_token: session.refresh_token })
+          .then(setSession)
+          .catch(e => { if (e.status >= 400 && e.status < 500) { clearSession(); renderAuth(); } throw e; })
+          .finally(() => { refreshing = null; });
+        await refreshing;
+        return session ? session.access_token : null;
+      }
+      async function api(path, { method = 'GET', body, prefer } = {}) {
+        let token = null;
+        try { token = await accessToken(); } catch (e) { if (method !== 'GET') throw e; }
+        if (method !== 'GET' && !token) { const err = new Error('Sign in to save changes.'); err.status = 401; throw err; }
+        const headers = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + (token || SUPABASE_KEY) };
+        if (body !== undefined) headers['Content-Type'] = 'application/json';
+        if (prefer) headers.Prefer = prefer;
+        const res = await fetch(REST + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+        if (!res.ok) { let m = ''; try { const j = await res.json(); m = j.message || ''; } catch (e) {} const err = new Error(m || 'Request failed (' + res.status + ')'); err.status = res.status; throw err; }
+        return res.status === 204 ? null : res.json();
+      }
+      const checkEditor = () => api('/rpc/is_hotel_rating_editor', { method: 'POST', body: {} }).then(Boolean);
+
+      /* ── Data ── */
+      function parts(d) { const [y, m, day] = d.split('-').map(Number); return { y, m, day }; }
+      function fmtDate(d) { const p = parts(d); return `${p.day} ${MONTHS[p.m - 1]} ${p.y}`; }
+      function fmtRange(a, b) {
+        const s = parts(a); if (!b || b === a) return fmtDate(a);
+        const e = parts(b);
+        if (s.y === e.y && s.m === e.m) return `${s.day}–${e.day} ${MONTHS[s.m - 1]} ${s.y}`;
+        if (s.y === e.y) return `${s.day} ${MONTHS[s.m - 1]} – ${e.day} ${MONTHS[e.m - 1]} ${s.y}`;
+        return `${fmtDate(a)} – ${fmtDate(b)}`;
+      }
+      function scoreTotal(scores) {
+        let pts = 0, w = 0;
+        scores.forEach((v, i) => { if (v != null) { pts += v * weights[i] / 10; w += weights[i]; } });
+        return { overall: w ? Math.round(pts / w * 1000) / 10 : null, coverage: w, scored: scores.filter(v => v != null).length };
+      }
+      function toStay(r) {
+        const scores = SCORE_COLS.map(c => (r[c] == null ? null : Number(r[c])));
+        const { overall, coverage, scored } = scoreTotal(scores);
+        const amount = r.rate_amount == null ? null : Number(r.rate_amount);
+        const rate = r.rate_zar != null ? Number(r.rate_zar) : (r.rate_currency === 'ZAR' ? amount : null);
+        const nights = r.check_out ? Math.round((Date.parse(r.check_out) - Date.parse(r.check_in)) / 864e5) : null;
+        return {
+          id: r.id, row: r, name: r.property, brand: r.brand || 'Independent', city: r.city, country: r.country, stars: r.stars ?? null,
+          room: r.room || '', checkIn: r.check_in, year: r.check_in.slice(0, 4), date: fmtRange(r.check_in, r.check_out), nights,
+          rate, amount, code: r.rate_currency, zarOn: r.rate_zar_on, inclusions: r.inclusions || '',
+          scores, overall, coverage, scored, note: r.highlight || '', improve: r.improve || '', status: r.status,
+          key: (r.property.trim() + '|' + r.city.trim()).toLowerCase()
+        };
+      }
+      let rows = [], stays = [], loadState = 'loading';
+      const finals = () => stays.filter(s => s.status === 'final' && s.overall != null);
+      const pending = () => stays.filter(s => s.status !== 'final' || s.overall == null);
+
+      async function load() {
+        const cached = store.get(CACHE_KEY);
+        if (!rows.length && cached && Array.isArray(cached.rows)) { rows = cached.rows.filter(r => isEditor() || r.status === 'final'); if (rows.length) loadState = 'ready'; ingest(); }
+        try {
+          const data = await api('/hotel_stays?select=*&order=check_in.desc');
+          rows = data; loadState = 'ready';
+          store.set(CACHE_KEY, { rows: data, at: Date.now() });
+        } catch (e) {
+          console.warn('[hotel-ratings] load failed', e);
+          loadState = rows.length ? 'ready' : 'error';
+          if (rows.length) toast('Offline: showing stays saved on this device', 'error');
+        }
+        ingest();
+      }
+
+      /* ── View state: filters and ranking live per browser; theme shares the origin-wide ramo-theme key. ── */
+      const filterKeys = ['country','city','brand','stars','min','max','year'];
+      const defaults = { country:'', city:'', brand:'', stars:'', min:'', max:'', year:'', metric:'overall', selected:'' };
+      function validState(saved) { const s = { ...defaults, ...(saved || {}) }; if (!['overall','0','1','2','3','4','5'].includes(s.metric)) s.metric = 'overall'; return s; }
+      let state = validState(store.get(VIEW_KEY));
+      state.theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+      function save() { const { theme, ...view } = state; store.set(VIEW_KEY, view); }
+
+      function fillOptions() {
+        const f = finals();
+        const set = (id, allLabel, vals) => { el(id).replaceChildren(new Option(allLabel, ''), ...vals.map(v => new Option(v, v))); };
+        set('country', 'All countries', uniq(f.map(s => s.country)));
+        set('brand', 'All brands', uniq(f.map(s => s.brand)));
+        set('year', 'All years', uniq(f.map(s => s.year)).reverse());
+        ['country','brand','year'].forEach(k => { if (state[k] && ![...el(k).options].some(o => o.value === state[k])) state[k] = ''; });
+        const dl = (id, vals) => { el('dl-' + id).replaceChildren(...vals.map(v => new Option(v, v))); };
+        dl('property', uniq(stays.map(s => s.name))); dl('city', uniq(stays.map(s => s.city))); dl('country', uniq(stays.map(s => s.country))); dl('brand', uniq(stays.map(s => s.row.brand)));
+      }
+      function syncControls() {
+        const cities = uniq(finals().filter(s => !state.country || s.country === state.country).map(s => s.city));
+        if (state.city && !cities.includes(state.city)) state.city = '';
+        el('city').replaceChildren(new Option('All cities', ''), ...cities.map(v => new Option(v, v)));
+        filterKeys.forEach(k => { el(k).value = state[k]; el(k).dataset.active = String(state[k] !== ''); });
+        el('reset').disabled = !filterKeys.some(k => state[k] !== '');
+      }
+
+      const metricValue = s => (state.metric === 'overall' ? s.overall : s.scores[Number(state.metric)]);
+      const ceiling = () => (state.metric === 'overall' ? 100 : 10);
+      let visibleStays = [], ranks = new Map();
+      const rankNodes = new Map(), pointNodes = new Map();
+      const chartD3 = globalThis.d3;
+      const rankChart = el('rank-chart'), rateChart = el('rate-chart');
+      const pointLabel = document.createElement('div'); pointLabel.className = 'hr-point-label'; pointLabel.setAttribute('aria-hidden', 'true'); pointLabel.hidden = true; rateChart.append(pointLabel);
+
+      function buildNodes() {
+        rankNodes.forEach(n => n.remove()); pointNodes.forEach(n => n.remove()); rankNodes.clear(); pointNodes.clear();
+        finals().forEach(stay => {
+          const row = document.createElement('button'); row.type = 'button'; row.className = 'hr-rank-item'; row.dataset.stay = stay.id; row.hidden = true;
+          row.innerHTML = `<span class="hr-rank-pos"></span><span class="hr-rank-body"><span class="hr-rank-line"><span class="hr-rank-name">${esc(stay.name)}</span><span class="hr-rank-meta">${esc(stay.city)}, ${esc(stay.brand)}</span><span class="hr-rank-score hr-num"></span></span><span class="hr-rank-track"><span class="hr-rank-fill"></span></span></span>`;
+          rankChart.append(row); rankNodes.set(stay.id, row);
+          const point = document.createElement('button'); point.type = 'button'; point.className = 'hr-point'; point.dataset.stay = stay.id; point.hidden = true;
+          rateChart.append(point); pointNodes.set(stay.id, point);
+        });
+      }
+
+      function renderLeaderboard(filtered, emptyText) {
+        const max = ceiling(), metric = state.metric === 'overall' ? 'Overall score' : labels[Number(state.metric)];
+        el('rank-units').textContent = `${metric} / ${max}. Dashed line marks adequate (${max / 2}).`;
+        el('board').dataset.ghost = state.metric === 'overall' ? 'Overall' : short[Number(state.metric)];
+        el('rank-mid').textContent = max / 2; el('rank-max').textContent = max;
+        rankNodes.forEach(node => { node.hidden = true; });
+        const rowHeight = compact() ? 58 : 54;
+        rankChart.style.height = filtered.length * rowHeight + 'px';
+        rankChart.hidden = !filtered.length; el('rank-axis').hidden = !filtered.length; el('rank-empty').hidden = !!filtered.length; el('rank-empty').textContent = emptyText;
+        filtered.forEach((stay, index) => {
+          const row = rankNodes.get(stay.id), value = metricValue(stay), rank = ranks.get(stay.id);
+          if (!row) return;
+          row.hidden = false; row.style.transform = `translateY(${index * rowHeight}px)`;
+          row.toggleAttribute('data-first', rank === 1);
+          row.setAttribute('aria-pressed', String(stay.id === state.selected));
+          row.setAttribute('aria-label', `Rank ${rank}, ${stay.name}: ${value.toFixed(1)} out of ${max}. View stay details.`);
+          row.querySelector('.hr-rank-pos').textContent = rank;
+          row.querySelector('.hr-rank-score').textContent = value.toFixed(1);
+          row.querySelector('.hr-rank-fill').style.width = value / max * 100 + '%';
+        });
+      }
+
+      function renderScatter(all, emptyText) {
+        const max = ceiling(), metric = state.metric === 'overall' ? 'Overall score' : labels[Number(state.metric)];
+        const filtered = all.filter(s => s.rate != null);
+        el('rate-units').textContent = `${metric} / ${max} against ZAR per night`;
+        pointNodes.forEach(node => { node.hidden = true; }); pointLabel.hidden = true;
+        rateChart.hidden = !filtered.length; el('rate-empty').hidden = !!filtered.length;
+        el('rate-empty').textContent = all.length ? 'None of these stays has a nightly rate in ZAR yet. Add one to plot it here.' : emptyText;
+        if (!chartD3 || !filtered.length) { if (!chartD3 && filtered.length) { rateChart.hidden = true; el('rate-empty').hidden = false; el('rate-empty').textContent = 'The rate chart could not load. Scores remain available in the table.'; } return; }
+        const width = rateChart.clientWidth, height = rateChart.clientHeight; if (width < 1 || height < 1) return;
+        const margin = { left: 44, right: 20, top: 28, bottom: 40 }, radius = 10;
+        const [minRate, maxRate] = chartD3.extent(filtered, s => s.rate), [minScore, maxScore] = chartD3.extent(filtered, metricValue);
+        const ratePad = Math.max((maxRate - minRate) * 0.10, maxRate * 0.08, 100), scorePad = Math.max((maxScore - minScore) * 0.18, max * 0.04);
+        const x = chartD3.scaleLinear().domain([Math.max(0, minRate - ratePad), maxRate + ratePad]).nice(4).range([margin.left + radius, width - margin.right - radius]);
+        const y = chartD3.scaleLinear().domain([Math.max(0, minScore - scorePad), Math.min(max, maxScore + scorePad)]).nice(4).range([height - margin.bottom - radius, margin.top + radius]);
+        const svg = chartD3.select(rateChart.querySelector('svg')).attr('viewBox', `0 0 ${width} ${height}`).attr('aria-label', `${metric} versus nightly rate in ZAR for ${filtered.length} properties. Score axis runs from ${y.domain()[0]} to ${y.domain()[1]}.`);
+        svg.selectAll('*').remove();
+        svg.append('title').text(`${metric} versus nightly rate`);
+        svg.append('desc').text('Each point is one property. Select a point to view its score breakdown. Dashed lines mark the median nightly rate and mean score of the plotted properties.');
+        const yAxis = svg.append('g').attr('transform', `translate(${margin.left},0)`).call(chartD3.axisLeft(y).ticks(4).tickSize(-(width - margin.left - margin.right)).tickPadding(8));
+        yAxis.select('.domain').remove(); yAxis.selectAll('.tick line').attr('stroke', 'var(--hr-line)');
+        const xTicks = width < 360 ? [x.domain()[0], (x.domain()[0] + x.domain()[1]) / 2, x.domain()[1]] : x.ticks(5);
+        const kFormat = chartD3.format('~s');
+        const xAxis = svg.append('g').attr('transform', `translate(0,${height - margin.bottom})`).call(chartD3.axisBottom(x).tickValues(xTicks).tickFormat(d => 'R' + kFormat(d)).tickSize(0).tickPadding(10));
+        xAxis.select('.domain').attr('stroke', 'var(--hr-line-strong)');
+        svg.append('text').attr('class', 'hr-axis-title').attr('x', width - margin.right).attr('y', height - 4).attr('text-anchor', 'end').text('Nightly rate (ZAR)');
+        svg.append('text').attr('class', 'hr-axis-title').attr('x', 0).attr('y', 12).attr('text-anchor', 'start').text('Score / ' + max);
+        if (filtered.length > 1) {
+          const rates = filtered.map(s => s.rate).sort((a, b) => a - b), mid = Math.floor(rates.length / 2), median = rates.length % 2 ? rates[mid] : (rates[mid - 1] + rates[mid]) / 2;
+          const mean = chartD3.mean(filtered, metricValue), mx = x(median), my = y(mean);
+          svg.append('line').attr('class', 'hr-ref').attr('x1', mx).attr('x2', mx).attr('y1', margin.top).attr('y2', height - margin.bottom);
+          svg.append('line').attr('class', 'hr-ref').attr('x1', margin.left).attr('x2', width - margin.right).attr('y1', my).attr('y2', my);
+          svg.append('text').attr('class', 'hr-ref-label').attr('x', mx + 5).attr('y', margin.top + 2).text(currency(median));
+          svg.append('text').attr('class', 'hr-ref-label').attr('x', width - margin.right).attr('y', my - 6).attr('text-anchor', 'end').text('mean ' + mean.toFixed(1));
+        }
+        const hit = compact() ? 44 : 32;
+        filtered.forEach(stay => {
+          const point = pointNodes.get(stay.id); if (!point) return;
+          const value = metricValue(stay), px = x(stay.rate), py = y(value);
+          point.hidden = false; point.style.transform = `translate(${px - hit / 2}px,${py - hit / 2}px)`;
+          point.setAttribute('aria-pressed', String(stay.id === state.selected));
+          point.setAttribute('aria-label', `${stay.name}: ${currency(stay.rate)} per night, ${value.toFixed(1)} out of ${max}. View stay details.`);
+          if (stay.id === state.selected) {
+            pointLabel.textContent = `${stay.name}  ${value.toFixed(1)}`; pointLabel.hidden = false;
+            const w = pointLabel.offsetWidth, h = pointLabel.offsetHeight;
+            const left = px + w + 18 > width ? px - w - 14 : px + 14, top = Math.max(0, py - h - 8);
+            pointLabel.style.transform = `translate(${left}px,${top}px)`;
+          }
+        });
+      }
+
+      function wedgePath(cx, cy, r, a0, a1) {
+        const p = a => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
+        const [x0, y0] = p(a0), [x1, y1] = p(a1);
+        return `M${cx},${cy}L${x0.toFixed(2)},${y0.toFixed(2)}A${r.toFixed(2)},${r.toFixed(2)} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(2)},${y1.toFixed(2)}Z`;
+      }
+      // Same treatment as Money Metrics' CategoryDonut: categorical hex, 135deg gradient (lighter and more saturated
+      // top-left, deeper bottom-right), a two-layer drop-shadow glow in the slice's own colour, and angular gaps instead of strokes.
+      const ROSETTE = ['#a78bfa','#2dd4bf','#fbbf24','#60a5fa','#f472b6','#fb923c'];
+      function hexToHsl(hex) {
+        const m = hex.replace('#', ''), r = parseInt(m.slice(0, 2), 16) / 255, g = parseInt(m.slice(2, 4), 16) / 255, b = parseInt(m.slice(4, 6), 16) / 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2; if (max === min) return [0, 0, l * 100];
+        const d = max - min, s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        const h = max === r ? ((g - b) / d + (g < b ? 6 : 0)) / 6 : max === g ? ((b - r) / d + 2) / 6 : ((r - g) / d + 4) / 6;
+        return [h * 360, s * 100, l * 100];
+      }
+      function hslShift(hex, dl, ds = 0) { const [h, s, l] = hexToHsl(hex), cl = v => Math.max(0, Math.min(100, v)); return `hsl(${h.toFixed(1)} ${cl(s + ds).toFixed(1)}% ${cl(l + dl).toFixed(1)}%)`; }
+      function rosette(stay) {
+        const cx = 150, cy = 125, R = 82, gap = 1.25; let a = -90, bg = '', wedges = '', text = '', defs = '';
+        stay.scores.forEach((score, i) => {
+          const span = weights[i] * 3.6, a0 = a + gap, a1 = a + span - gap, mid = a + span / 2, col = ROSETTE[i], has = score != null;
+          if (has) {
+            const r = R * Math.sqrt(score / 10);
+            defs += `<linearGradient id="hr-ro-g${i}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${hslShift(col, 12, 15)}"/><stop offset="100%" stop-color="${hslShift(col, -10, 10)}"/></linearGradient>`
+              + `<filter id="hr-ro-f${i}" x="-35%" y="-35%" width="170%" height="170%"><feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="${col}" flood-opacity=".85"/><feDropShadow dx="0" dy="0" stdDeviation=".8" flood-color="${hslShift(col, 20, 15)}" flood-opacity=".9"/></filter>`;
+            bg += `<path class="hr-ro-bg" fill="${col}" fill-opacity=".14" d="${wedgePath(cx, cy, R, a0, a1)}"/>`;
+            wedges += `<path class="hr-ro-wedge" data-crit="${i}" data-metric="${i}" data-toggle tabindex="0" role="button" aria-pressed="false" aria-label="${labels[i]}, ${score.toFixed(1)} out of 10. Rank properties by ${labels[i].toLowerCase()}." fill="url(#hr-ro-g${i})" filter="url(#hr-ro-f${i})" style="--hi:${hslShift(col, 20, 10)};animation-delay:${i * 45}ms" d="${wedgePath(cx, cy, r, a0, a1)}"/>`;
+          } else {
+            bg += `<path class="hr-ro-bg" fill="${col}" fill-opacity=".04" stroke="${col}" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3 3" d="${wedgePath(cx, cy, R, a0, a1)}"/>`;
+          }
+          const c = Math.cos(mid * Math.PI / 180), s = Math.sin(mid * Math.PI / 180), lx = cx + (R + 12) * c, ly = cy + (R + 12) * s + (s > 0.5 ? 6 : s < -0.5 ? -2 : 4);
+          text += `<text class="hr-ro-label${has ? '' : ' is-unscored'}" data-crit="${i}" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${c > 0.3 ? 'start' : c < -0.3 ? 'end' : 'middle'}">${short[i]}</text>`;
+          a += span;
+        });
+        const desc = stay.scores.map((v, i) => `${labels[i]} ${v == null ? 'not scored' : v.toFixed(1)}`).join(', ');
+        return `<svg class="hr-rosette" viewBox="0 0 300 250" role="group" aria-label="Score rosette for ${esc(stay.name)}: ${desc}."><defs>${defs}</defs>${bg}<circle class="hr-ro-rim" cx="${cx}" cy="${cy}" r="${R + 3}"/>${wedges}<circle class="hr-ro-adequate" cx="${cx}" cy="${cy}" r="${(R * Math.SQRT1_2).toFixed(2)}"/>${text}</svg>`;
+      }
+      const icon = {
+        good: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.9 5.3.7a.5.5 0 0 1 .3.9l-3.9 3.7 1 5.3a.5.5 0 0 1-.8.6L12 15.8l-4.7 2.6a.5.5 0 0 1-.8-.6l1-5.3-3.9-3.7a.5.5 0 0 1 .3-.9l5.3-.7z"/></svg>',
+        improve: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>',
+        edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>'
+      };
+      function rateText(s) {
+        if (s.rate != null && s.code !== 'ZAR' && s.amount != null) return `${currency(s.rate)} per night (${esc(s.code)} ${fmtAmount(s.amount)}${s.zarOn ? `, converted ${fmtDate(s.zarOn)}` : ''})`;
+        if (s.rate != null) return `${currency(s.rate)} per night`;
+        if (s.amount != null) return `${esc(s.code)} ${fmtAmount(s.amount)} per night`;
+        return 'No nightly rate recorded';
+      }
+      function renderSpotlight(selected) {
+        const detail = el('detail'); detail.hidden = !selected; if (!selected) { detail.innerHTML = ''; return; }
+        const rows = selected.scores.map((v, i) => `<div class="hr-contrib-row" data-crit="${i}" data-metric="${i}" data-toggle style="--sw:var(--hr-c${i})"><span class="hr-contrib-label"><i class="hr-swatch" aria-hidden="true"></i>${labels[i]}</span><span class="hr-num">${v == null ? '–' : v.toFixed(1)}</span><span class="hr-num hr-pts">${v == null ? '–' : (v * weights[i] / 10).toFixed(1)}<small> / ${weights[i]}</small></span></div>`).join('');
+        const missing = 6 - selected.scored;
+        const coverage = missing ? `<p class="hr-coverage">${missing === 1 ? 'One criterion' : missing + ' criteria'} not scored, so the total is scaled from the ${selected.coverage} points that were.</p>` : '';
+        const tags = [esc(selected.brand), selected.stars ? selected.stars + '-star' : 'Unclassified', esc(selected.date)];
+        if (selected.nights) tags.push(selected.nights === 1 ? '1 night' : selected.nights + ' nights');
+        const notes = [selected.note && `<div class="hr-note" data-kind="good"><div class="hr-note-title">${icon.good}What stood out</div><p>${esc(selected.note)}</p></div>`, selected.improve && `<div class="hr-note" data-kind="improve"><div class="hr-note-title">${icon.improve}Room for improvement</div><p>${esc(selected.improve)}</p></div>`].filter(Boolean);
+        const where = [esc(selected.city) + ', ' + esc(selected.country), selected.room && esc(selected.room)].filter(Boolean).join('. ');
+        detail.innerHTML = `<div class="hr-spot-head"><div class="hr-spot-title"><div class="hr-eyebrow">Selected stay, rank ${ranks.get(selected.id)}</div><h3 class="hr-spot-name">${esc(selected.name)}</h3><p class="hr-sub">${where}</p><div class="hr-tags">${tags.map(t => `<span class="hr-tag">${t}</span>`).join('')}</div></div><div class="hr-spot-score"><span class="hr-spot-figure">${selected.overall.toFixed(1)}</span><span class="hr-unit">overall / 100</span></div></div>
+          <div class="hr-spot-body"><figure class="hr-rosette-wrap">${rosette(selected)}<figcaption class="hr-rosette-key">Wedge angle is the criterion's weight. Wedge area is the points it earned. Dashed ring marks adequate. Select a wedge to rank by it.</figcaption></figure>
+          <div class="hr-contrib" role="table" aria-label="Score breakdown"><div class="hr-contrib-row hr-contrib-head" role="row"><span role="columnheader">Criterion</span><span role="columnheader">/ 10</span><span role="columnheader">Points</span></div>${rows}<div class="hr-contrib-row hr-contrib-total"><span>Total</span><span></span><span class="hr-num">${selected.overall.toFixed(1)}<small style="color:var(--hr-faint);font-size:10px;font-weight:400"> / 100</small></span></div>${coverage}</div></div>
+          ${notes.length ? `<div class="hr-notes">${notes.join('')}</div>` : ''}
+          <div class="hr-spot-foot"><p class="hr-meta">${rateText(selected)}${selected.inclusions ? `, including ${esc(selected.inclusions.toLowerCase())}` : ''}. Scored on rubric ${esc(selected.row.rubric_version)}; the rate never affects the score.</p>${isEditor() ? `<button type="button" class="hr-chip hr-chip-text" data-edit="${selected.id}">${icon.edit}<span class="hr-chip-label">Edit stay</span></button>` : ''}</div>`;
+        detail.querySelectorAll('.hr-contrib-row[data-crit]').forEach(r => { r.setAttribute('role', 'row'); r.querySelectorAll('span').forEach(c => c.setAttribute('role', 'cell')); });
+      }
+
+      function renderWelcome(hasPending) {
+        const body = el('welcome-body');
+        if (loadState === 'error') {
+          body.innerHTML = `<h2>Stays didn't load</h2><p class="hr-sub">The ratings database couldn't be reached. Check the connection and try again.</p><button type="button" class="hr-btn hr-btn-primary" data-action="retry">Try again</button>`;
+          return;
+        }
+        const rubric = labels.map((l, i) => `<span><i class="hr-swatch" style="--sw:var(--hr-c${i})" aria-hidden="true"></i>${l}<b>${weights[i]}</b></span>`).join('');
+        const lead = hasPending ? 'Your drafts are below. Save one as finished and it joins the rankings.' : 'Each stay is scored on six criteria out of 10, weighted to a total out of 100. Five everywhere is adequate and comes to 50.';
+        const action = isEditor() ? `<button type="button" class="hr-btn hr-btn-primary" data-action="add">${hasPending ? 'Add a stay' : 'Add the first stay'}</button>` : `<button type="button" class="hr-btn hr-btn-primary" data-action="signin">Sign in to add a stay</button>`;
+        body.innerHTML = `<h2>No stays rated yet</h2><p class="hr-sub">${lead}</p><div class="hr-rubric" aria-label="Criteria and their weights out of 100">${rubric}</div>${action}`;
+      }
+      function renderDrafts(list) {
+        const show = isEditor() && list.length > 0;
+        el('drafts').hidden = !show; if (!show) return;
+        el('draft-list').innerHTML = list.map(s => `<div class="hr-draft"><div style="min-width:0"><div class="hr-draft-name">${esc(s.name)}</div><div class="hr-draft-meta">${esc(s.city)}, ${esc(s.date)}. ${s.status === 'draft' ? 'Draft' : 'Finished but unscored'}${s.scored ? `, ${s.scored} of 6 scored` : ''}</div></div><button type="button" class="hr-chip hr-chip-text" data-edit="${s.id}">${icon.edit}<span class="hr-chip-label">Edit</span></button></div>`).join('');
+      }
+
+      function matches(s) {
+        const rateActive = state.min !== '' || state.max !== '';
+        return (!state.country || s.country === state.country) && (!state.city || s.city === state.city) && (!state.brand || s.brand === state.brand)
+          && (!state.stars || (state.stars === 'unknown' ? s.stars === null : s.stars === Number(state.stars)))
+          && (!rateActive || (s.rate != null && (state.min === '' || s.rate >= Number(state.min)) && (state.max === '' || s.rate <= Number(state.max))));
+      }
+      // Rankings use each property's latest finalised stay within the selected year.
+      function rankPool() {
+        const latest = new Map();
+        finals().forEach(s => { if (state.year && s.year !== state.year) return; const cur = latest.get(s.key); if (!cur || s.checkIn > cur.checkIn) latest.set(s.key, s); });
+        return [...latest.values()];
+      }
+
+      let lastSelected = null;
+      function render() {
+        root.dataset.theme = state.theme;
+        el('theme').setAttribute('aria-label', state.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        const ready = loadState !== 'loading' || stays.length > 0, f = finals(), p = pending();
+        el('loading').hidden = ready;
+        el('welcome').hidden = !ready || f.length > 0;
+        el('content').hidden = f.length === 0;
+        if (ready && !f.length) renderWelcome(isEditor() && p.length > 0);
+        renderDrafts(p);
+
+        const pool = rankPool();
+        const filtered = pool.filter(matches).filter(s => metricValue(s) != null).sort((a, b) => metricValue(b) - metricValue(a) || a.name.localeCompare(b.name));
+        if (!filtered.some(s => s.id === state.selected)) state.selected = filtered[0]?.id || '';
+        ranks = new Map(); let rank = 0, previous = null;
+        filtered.forEach((s, i) => { const v = metricValue(s); if (v !== previous) rank = i + 1; previous = v; ranks.set(s.id, rank); });
+        const emptyText = state.metric !== 'overall' && pool.filter(matches).length ? `No matching stay has a ${labels[Number(state.metric)].toLowerCase()} score yet.` : 'No properties match these filters. Widen the rate range or reset the filters.';
+
+        el('count').textContent = filtered.length;
+        el('count-caption').textContent = pool.length ? `of ${pool.length}, latest finalised stay each` : 'latest finalised stay each';
+        el('result').innerHTML = `Showing <strong>${filtered.length}</strong> of ${pool.length} ${pool.length === 1 ? 'property' : 'properties'}`;
+        el('average').textContent = filtered.length ? (filtered.reduce((sum, s) => sum + s.overall, 0) / filtered.length).toFixed(1) : '–';
+        const rates = filtered.map(s => s.rate).filter(v => v != null).sort((a, b) => a - b), mid = Math.floor(rates.length / 2);
+        el('median').textContent = rates.length ? currency(rates.length % 2 ? rates[mid] : (rates[mid - 1] + rates[mid]) / 2) : '–';
+        const title = state.metric === 'overall' ? 'Overall' : labels[Number(state.metric)];
+        el('ranking-title').textContent = title + ' rankings';
+        el('ranking-sub').textContent = state.metric === 'overall' ? 'Weighted score out of 100 across six criteria' : `${labels[Number(state.metric)]} score out of 10, worth ${weights[Number(state.metric)]} of 100 points`;
+        el('metric-head').textContent = state.metric === 'overall' ? 'Score / 100' : 'Score / 10';
+        root.querySelectorAll('.hr-tabs [data-metric]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.metric === state.metric)));
+        el('mobile-metric').value = state.metric;
+        requestAnimationFrame(updateThumb);
+        el('rows').innerHTML = filtered.map(s => `<tr aria-selected="${s.id === state.selected}"><td class="hr-rank-cell">${ranks.get(s.id)}</td><td><button type="button" class="hr-property" data-stay="${s.id}" aria-label="View ${esc(s.name)}">${esc(s.name)}</button><div class="hr-cell-sub">${esc(s.city)}${s.room ? ', ' + esc(s.room) : ''}</div></td><td>${esc(s.brand)}<div class="hr-cell-sub">${s.stars ? s.stars + (s.stars === 1 ? ' star' : ' stars') : 'Unclassified'}</div></td><td class="hr-num">${s.rate == null ? '–' : currency(s.rate)}</td><td class="hr-num">${metricValue(s).toFixed(1)}</td></tr>`).join('');
+        el('empty').hidden = filtered.length > 0; el('empty').textContent = emptyText;
+        const selected = filtered.find(s => s.id === state.selected);
+        if (!selected || selected.id !== lastSelected || !el('detail').firstChild) renderSpotlight(selected);
+        else { const e = el('detail').querySelector('.hr-eyebrow'); if (e) e.textContent = `Selected stay, rank ${ranks.get(selected.id)}`; }
+        lastSelected = selected?.id || null;
+        visibleStays = filtered;
+        if (!el('content').hidden) { renderLeaderboard(filtered, emptyText); renderScatter(filtered, emptyText); }
+        applyFocus();
+      }
+      function ingest() {
+        stays = rows.map(toStay); lastSelected = null;
+        buildNodes(); fillOptions(); syncControls(); render();
+      }
+      function updateThumb() {
+        const tabs = root.querySelector('.hr-tabs'), active = tabs.querySelector('[aria-pressed="true"]'), thumb = tabs.querySelector('.hr-thumb');
+        if (!tabs.offsetWidth || !active) return;
+        thumb.style.width = active.offsetWidth + 'px'; thumb.style.height = active.offsetHeight + 'px'; thumb.style.transform = `translate(${active.offsetLeft}px,${active.offsetTop}px)`;
+        requestAnimationFrame(() => { tabs.dataset.ready = 'true'; });
+      }
+
+      /* ── Toast ── */
+      let toastTimer = 0;
+      function toast(text, tone) {
+        const t = el('toast'); t.textContent = text; t.dataset.tone = tone || 'ok'; t.dataset.show = '';
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => { delete t.dataset.show; }, tone === 'error' ? 5000 : 2200);
+      }
+
+      /* ── Account ── */
+      function renderAuth() {
+        el('add').hidden = !isEditor();
+        const acct = el('account');
+        acct.dataset.action = session ? 'signout' : 'signin';
+        acct.querySelector('.hr-chip-label').textContent = session ? 'Sign out' : 'Sign in';
+        acct.setAttribute('aria-label', session ? `Sign out${session.email ? ' ' + session.email : ''}` : 'Sign in to add and edit stays');
+        lastSelected = null;
+      }
+      const signinDialog = el('signin-dialog');
+      function openSignin() { el('si-error').hidden = true; el('si-password').value = ''; signinDialog.showModal(); el('si-email').focus(); }
+      el('signin-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = el('si-email').value.trim(), password = el('si-password').value, btn = el('si-submit');
+        const fail = msg => { el('si-error').textContent = msg; el('si-error').hidden = false; };
+        if (!email || !password) return fail('Enter your email and password.');
+        btn.disabled = true; btn.textContent = 'Signing in…';
+        try {
+          setSession(await authPost('/token?grant_type=password', { email, password }));
+          if (!(await checkEditor())) { await signOut(true); return fail("This account can't edit hotel ratings."); }
+          session.editor = true; store.set(SESSION_KEY, session);
+          signinDialog.close(); renderAuth(); toast('Signed in'); load();
+        } catch (err) {
+          clearSession();
+          fail(err.status === 400 ? "That email and password don't match." : err instanceof TypeError ? "Couldn't reach the sign-in service. Check the connection." : err.message);
+        } finally { btn.disabled = false; btn.textContent = 'Sign in'; }
+      });
+      async function signOut(quiet) {
+        const token = session && session.access_token;
+        clearSession(); renderAuth();
+        if (token) authPost('/logout', {}, token).catch(() => {});
+        if (!quiet) { rows = rows.filter(r => r.status === 'final'); store.set(CACHE_KEY, { rows, at: Date.now() }); ingest(); toast('Signed out'); }
+      }
+
+      /* ── Stay form ── */
+      const formDialog = el('form-dialog'), form = el('form');
+      let editing = null, formScores = Array(6).fill(null), armTimer = 0;
+      el('f-scores').innerHTML = labels.map((l, i) => `<div class="hr-score-row is-unscored" data-i="${i}" style="--sw:var(--hr-c${i})"><div class="hr-score-name"><i class="hr-swatch" aria-hidden="true"></i><span>${l}</span><small>${weights[i]} pts</small></div><output class="hr-score-out" id="hr-f-out${i}" for="hr-f-s${i}">Not scored</output><div class="hr-score-ctl"><input type="range" id="hr-f-s${i}" data-i="${i}" min="0" max="10" step="0.5" value="5" aria-label="${l} score out of 10"><button type="button" class="hr-chip hr-chip-text hr-chip-bare hr-clear" data-clear="${i}" aria-label="Clear the ${l.toLowerCase()} score"><span class="hr-chip-label">Clear</span></button></div></div>`).join('');
+      function paintScore(i) {
+        const v = formScores[i], row = el('f-scores').children[i], range = row.querySelector('input'), out = row.querySelector('output');
+        row.classList.toggle('is-unscored', v == null);
+        out.innerHTML = v == null ? 'Not scored' : `${fmtScore(v)}<span>${ANCHORS[Math.floor(v)]}</span>`;
+        if (v != null) range.value = v;
+        range.setAttribute('aria-valuetext', v == null ? 'Not scored' : `${fmtScore(v)} out of 10, ${ANCHORS[Math.floor(v)]}`);
+      }
+      function paintTotal() {
+        const { overall, scored } = scoreTotal(formScores);
+        el('f-total').innerHTML = overall == null ? 'Nothing scored yet' : `<strong>${overall.toFixed(1)}</strong>/ 100${scored < 6 ? `, ${scored} of 6 scored` : ''}`;
+      }
+      el('f-scores').addEventListener('input', e => { const r = e.target.closest('input[type="range"]'); if (!r) return; const i = Number(r.dataset.i); formScores[i] = Number(r.value); paintScore(i); paintTotal(); });
+      // A tap on the thumb at its resting value fires no input event, so a press also counts as scoring it.
+      el('f-scores').addEventListener('pointerup', e => { const r = e.target.closest('input[type="range"]'); if (!r) return; const i = Number(r.dataset.i); if (formScores[i] == null) { formScores[i] = Number(r.value); paintScore(i); paintTotal(); } });
+      el('f-scores').addEventListener('click', e => { const b = e.target.closest('[data-clear]'); if (!b) return; const i = Number(b.dataset.clear); formScores[i] = null; el('f-scores').children[i].querySelector('input').value = 5; paintScore(i); paintTotal(); });
+      function syncCurrency() {
+        const c = el('f-currency').value.trim().toUpperCase();
+        el('f-zarwrap').hidden = !c || c === 'ZAR';
+      }
+      el('f-currency').addEventListener('input', syncCurrency);
+      el('f-checkin').addEventListener('change', () => { el('f-checkout').min = el('f-checkin').value; });
+      el('f-property').addEventListener('change', () => {
+        if (editing) return;
+        const name = el('f-property').value.trim().toLowerCase();
+        const match = stays.filter(s => s.name.trim().toLowerCase() === name).sort((a, b) => b.checkIn.localeCompare(a.checkIn))[0];
+        if (!match) return;
+        [['city', match.city], ['country', match.country], ['brand', match.row.brand || '']].forEach(([k, v]) => { if (!el('f-' + k).value) el('f-' + k).value = v; });
+        if (!el('f-stars').value && match.stars) el('f-stars').value = String(match.stars);
+      });
+      function disarmDelete() { const b = el('f-delete'); delete b.dataset.armed; b.textContent = 'Delete stay'; clearTimeout(armTimer); }
+      function formError(msg) { el('f-error').textContent = msg; el('f-error').hidden = !msg; if (msg) el('f-error').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+      function formBusy(on) { form.querySelectorAll('.hr-dialog-foot button').forEach(b => { b.disabled = on; }); }
+      function openForm(stay) {
+        editing = stay || null; form.reset(); formError(''); disarmDelete(); formBusy(false);
+        const r = stay ? stay.row : {};
+        el('f-title').textContent = stay ? 'Edit stay' : 'Add a stay';
+        el('f-sub').textContent = stay ? `${stay.name}, ${stay.date}` : 'Score what you experienced. Leave the rest unscored.';
+        el('f-delete').hidden = !stay;
+        const val = (id, v) => { el('f-' + id).value = v ?? ''; };
+        val('property', r.property); val('city', r.city); val('country', r.country); val('brand', r.brand); val('stars', r.stars ? String(r.stars) : '');
+        val('room', r.room); val('checkin', r.check_in); val('checkout', r.check_out); val('amount', r.rate_amount); val('currency', r.rate_currency || 'ZAR');
+        val('inclusions', r.inclusions); val('zar', r.rate_zar); val('zaron', r.rate_zar_on); val('highlight', r.highlight); val('improve', r.improve);
+        el('f-checkout').min = r.check_in || '';
+        formScores = stay ? stay.scores.slice() : Array(6).fill(null);
+        formScores.forEach((v, i) => { el('f-scores').children[i].querySelector('input').value = v ?? 5; paintScore(i); });
+        paintTotal(); syncCurrency();
+        formDialog.showModal(); el('f-property').focus(); el('f-property').closest('.hr-dialog-body').scrollTop = 0;
+      }
+      const saveErrorText = err => (err instanceof TypeError ? "Couldn't reach the database. Check the connection and try again."
+        : err.status === 401 || err.status === 403 ? 'Your sign-in has expired or this account cannot edit. Sign in again and retry.' : err.message);
+      function commitRow(row, removedId) {
+        rows = removedId ? rows.filter(r => r.id !== removedId) : rows.some(r => r.id === row.id) ? rows.map(r => (r.id === row.id ? row : r)) : [row, ...rows];
+        rows.sort((a, b) => b.check_in.localeCompare(a.check_in));
+        store.set(CACHE_KEY, { rows, at: Date.now() });
+        if (row && row.status === 'final') { state.selected = row.id; state.year = ''; }
+        ingest(); save();
+      }
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const status = e.submitter && e.submitter.value === 'draft' ? 'draft' : 'final';
+        if (!form.reportValidity()) return;
+        const v = id => el('f-' + id).value.trim();
+        const num = id => (v(id) === '' ? null : Number(v(id)));
+        const code = (v('currency') || 'ZAR').toUpperCase();
+        if (!/^[A-Z]{3}$/.test(code)) return formError('Use a three-letter currency code, such as ZAR or USD.');
+        if (v('checkout') && v('checkout') < v('checkin')) return formError('Check-out has to be on or after check-in.');
+        if (status === 'final' && formScores.every(s => s == null)) return formError('Score at least one criterion, or save it as a draft.');
+        const payload = {
+          property: v('property'), brand: v('brand') || null, city: v('city'), country: v('country'), stars: v('stars') ? Number(v('stars')) : null,
+          room: v('room') || null, check_in: v('checkin'), check_out: v('checkout') || null, rate_amount: num('amount'), rate_currency: code,
+          rate_zar: code === 'ZAR' ? null : num('zar'), rate_zar_on: code === 'ZAR' ? null : (v('zaron') || null), inclusions: v('inclusions') || null,
+          highlight: v('highlight') || null, improve: v('improve') || null, status
+        };
+        SCORE_COLS.forEach((c, i) => { payload[c] = formScores[i]; });
+        formError(''); formBusy(true);
+        try {
+          const res = editing
+            ? await api('/hotel_stays?id=eq.' + encodeURIComponent(editing.id), { method: 'PATCH', body: payload, prefer: 'return=representation' })
+            : await api('/hotel_stays', { method: 'POST', body: payload, prefer: 'return=representation' });
+          if (!res || !res[0]) throw Object.assign(new Error('Nothing was saved.'), { status: 403 });
+          formDialog.close(); commitRow(res[0]);
+          toast(status === 'draft' ? 'Draft saved' : 'Stay saved');
+        } catch (err) { formError(saveErrorText(err)); } finally { formBusy(false); }
+      });
+      el('f-delete').addEventListener('click', async () => {
+        const b = el('f-delete');
+        if (!b.hasAttribute('data-armed')) { b.dataset.armed = ''; b.textContent = 'Confirm delete'; clearTimeout(armTimer); armTimer = setTimeout(disarmDelete, 4000); return; }
+        disarmDelete(); formBusy(true);
+        try {
+          const res = await api('/hotel_stays?id=eq.' + encodeURIComponent(editing.id), { method: 'DELETE', prefer: 'return=representation' });
+          if (!res || !res[0]) throw Object.assign(new Error('Nothing was deleted.'), { status: 403 });
+          const id = editing.id; formDialog.close(); commitRow(null, id); toast('Stay deleted');
+        } catch (err) { formError(saveErrorText(err)); } finally { formBusy(false); }
+      });
+      formDialog.addEventListener('close', () => { editing = null; disarmDelete(); });
+      form.addEventListener('input', () => { if (!el('f-error').hidden) formError(''); });
+      // Enter in a text field saves the stay as finished, not as a draft (the first submit button in the footer).
+      form.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input:not([type="range"])')) { e.preventDefault(); form.requestSubmit(form.querySelector('button[value="final"]')); } });
+
+      /* ── Events ── */
+      el('theme').addEventListener('click', () => {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = state.theme;
+        try { localStorage.setItem('ramo-theme', state.theme); } catch (e) {}
+        render();
+      });
+      el('mobile-metric').addEventListener('change', () => { state.metric = el('mobile-metric').value; render(); save(); });
+      const reset = el('reset'); let peekTimer = 0;
+      reset.addEventListener('click', () => {
+        if (matchMedia('(hover:none)').matches && !reset.dataset.peek) { reset.dataset.peek = ''; clearTimeout(peekTimer); peekTimer = setTimeout(() => delete reset.dataset.peek, 2500); return; }
+        delete reset.dataset.peek; filterKeys.forEach(k => { state[k] = ''; }); syncControls(); render(); save();
+      });
+      new ResizeObserver(updateThumb).observe(root.querySelector('.hr-tabs'));
+      new ResizeObserver(() => { if (!el('content').hidden) { renderLeaderboard(visibleStays, el('rank-empty').textContent); renderScatter(visibleStays, el('rate-empty').textContent); } }).observe(rateChart);
+      ['country','city','brand','stars','year'].forEach(k => el(k).addEventListener('change', () => { state[k] = el(k).value; if (k === 'country') state.city = ''; syncControls(); render(); save(); }));
+      ['min','max'].forEach(k => el(k).addEventListener('input', () => { state[k] = el(k).value; syncControls(); render(); save(); }));
+      root.addEventListener('click', e => {
+        const close = e.target.closest('[data-close]'); if (close) { close.closest('dialog').close(); return; }
+        const edit = e.target.closest('[data-edit]'); if (edit) { const s = stays.find(x => x.id === edit.dataset.edit); if (s) openForm(s); return; }
+        const action = e.target.closest('[data-action]');
+        if (action) {
+          const a = action.dataset.action;
+          if (a === 'signin') openSignin(); else if (a === 'signout') signOut(); else if (a === 'add') openForm(null); else if (a === 'retry') { loadState = 'loading'; render(); load(); }
+          return;
+        }
+        const metric = e.target.closest('[data-metric]'), stay = e.target.closest('[data-stay]');
+        if (metric) { const m = metric.dataset.metric; state.metric = metric.hasAttribute('data-toggle') && state.metric === m ? 'overall' : m; hoverCrit = null; }
+        else if (stay) state.selected = stay.dataset.stay; else return;
+        render(); save();
+      });
+      // Rosette highlight: a hovered criterion previews; otherwise the selected ranking criterion stays lit (overall lights none).
+      let hoverCrit = null;
+      function applyFocus() {
+        const ro = el('detail').querySelector('.hr-rosette'); if (!ro) return;
+        const active = state.metric === 'overall' ? null : state.metric, crit = hoverCrit ?? active;
+        if (crit == null) delete ro.dataset.focus; else ro.dataset.focus = crit;
+        el('detail').querySelectorAll('[data-crit]').forEach(n => n.classList.toggle('is-focus', n.dataset.crit === crit));
+        el('detail').querySelectorAll('.hr-ro-wedge').forEach(w => w.setAttribute('aria-pressed', String(w.dataset.crit === active)));
+      }
+      function focusCrit(crit) { hoverCrit = crit; applyFocus(); }
+      el('detail').addEventListener('pointerover', e => focusCrit(e.target.closest('[data-crit]')?.dataset.crit ?? null));
+      el('detail').addEventListener('pointerleave', () => focusCrit(null));
+      el('detail').addEventListener('keydown', e => { const w = e.target.closest('.hr-ro-wedge'); if (w && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); w.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
+
+      /* ── Start ── */
+      renderAuth(); render(); load();
+      if (session) checkEditor().then(ed => { if (!session) return; if (session.editor !== ed) { session.editor = ed; store.set(SESSION_KEY, session); renderAuth(); load(); } }).catch(e => { if (!session || e.status === 401) { clearSession(); renderAuth(); render(); } });
+      if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    })();
+</script>
+</body>
+</html>
