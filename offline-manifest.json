@@ -1,6 +1,6 @@
 {
-  "revision": "2026-11-04-205",
-  "bytes": 61521776,
+  "revision": "2026-11-04-209",
+  "bytes": 85158761,
   "files": [
     "cape-town-itinerary.html",
     "europe-itinerary.html",
@@ -120,6 +120,10 @@
     "assets/nyc-miami-2026/icons/train.svg",
     "assets/nyc-miami-2026/icons/uber.svg",
     "assets/nyc-miami-2026/icons/walk.svg",
+    "assets/nyc-miami-2026/music/cruise.mp3",
+    "assets/nyc-miami-2026/music/miami.mp3",
+    "assets/nyc-miami-2026/music/nyc1.mp3",
+    "assets/nyc-miami-2026/music/nyc2.mp3",
     "assets/nyc-miami-2026/new-york.jpg",
     "assets/nyc-miami-2026/thumb-911.jpg",
     "assets/nyc-miami-2026/thumb-abu-dhabi.jpg",

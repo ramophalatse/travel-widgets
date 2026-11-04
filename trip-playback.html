@@ -1508,11 +1508,16 @@ function findSceneByKey(key) {
    A leg set to null is silent, and with every leg null nothing is requested
    and the Music button stays hidden. */
 const MUSIC_DIR = 'assets/nyc-miami-2026/music/';
+/* loopAt is where the track's trailing silence begins (measured with
+   ffmpeg silencedetect at -50dB), so a loop restarts as the fade-out ends
+   instead of after a dead gap. lufs is the integrated loudness (ffmpeg
+   ebur128); louder tracks are turned down to match the quietest, never
+   boosted, so the TV volume holds steady from leg to leg. */
 const MUSIC = {
-  nyc1: null,   // e.g. { file: 'nyc1.mp3', title: 'Track title', artist: 'Artist' }
-  miami: null,
-  cruise: null,
-  nyc2: null
+  nyc1: { file: 'nyc1.mp3', title: 'Lo Fi Chill', artist: 'ElectroAnimals', loopAt: 158.85, lufs: -9.8 },
+  miami: { file: 'miami.mp3', title: 'An Emotional Piano', loopAt: 211.0, lufs: -12.5 },
+  cruise: { file: 'cruise.mp3', artist: 'ArtIss', loopAt: 116.9, lufs: -11.4 },
+  nyc2: { file: 'nyc2.mp3', loopAt: 98.5, lufs: -7.9 }
 };
 const MUSIC_LEVEL = 0.8, MUSIC_XFADE = 2.5, MUSIC_MUTE_KEY = 'trip-playback-music-muted';
 function legOf(sc) {
@@ -1523,6 +1528,8 @@ function legOf(sc) {
 }
 const Music = (() => {
   const ids = Object.keys(MUSIC).filter(id => MUSIC[id] && MUSIC[id].file);
+  const quietest = Math.min(...ids.map(id => MUSIC[id].lufs).filter(Number.isFinite));
+  const levelFor = t => Number.isFinite(t.lufs) && Number.isFinite(quietest) ? Math.min(1, Math.pow(10, (quietest - t.lufs) / 20)) : 1;
   let ctx = null, master = null, cur = null, wanted = null, playing = false;
   let muted = !!store.get(MUSIC_MUTE_KEY, false);
   const decks = {};
@@ -1548,9 +1555,10 @@ const Music = (() => {
     const el = new Audio();
     el.src = MUSIC_DIR + t.file; el.loop = true; el.preload = 'auto';
     el.addEventListener('error', () => console.warn('[music] could not load ' + el.src));
+    if (t.loopAt) el.addEventListener('timeupdate', () => { if (el.currentTime >= t.loopAt) el.currentTime = 0; });
     const g = ctx.createGain(); g.gain.value = 0;
     ctx.createMediaElementSource(el).connect(g); g.connect(master);
-    return (decks[id] = { id, el, g, t, stopT: 0 });
+    return (decks[id] = { id, el, g, t, level: levelFor(t), stopT: 0 });
   }
   function ramp(param, to, sec) {
     const now = ctx.currentTime;
@@ -1566,7 +1574,7 @@ const Music = (() => {
   function fadeIn(d, sec) {
     clearTimeout(d.stopT);
     const p = d.el.play(); if (p && p.catch) p.catch(e => console.warn('[music]', e));
-    ramp(d.g.gain, 1, sec);
+    ramp(d.g.gain, d.level, sec);
   }
   function apply(sec) {
     if (!ctx) return;
@@ -1620,8 +1628,9 @@ const Music = (() => {
       if (ctx) ramp(master.gain, muted ? 0 : MUSIC_LEVEL, .6);
       sync(); toast(muted ? 'Music off' : 'Music on');
     },
+    seek: (id, t) => { if (decks[id]) decks[id].el.currentTime = t; },
     state: () => ({ ids, wanted, cur: cur && cur.id, playing, muted, ctx: ctx && ctx.state,
-      decks: Object.values(decks).map(d => ({ id: d.id, paused: d.el.paused, t: +d.el.currentTime.toFixed(2), gain: +d.g.gain.value.toFixed(3) })) })
+      decks: Object.values(decks).map(d => ({ id: d.id, paused: d.el.paused, t: +d.el.currentTime.toFixed(2), gain: +d.g.gain.value.toFixed(3), level: +d.level.toFixed(3) })) })
   };
 })();
 
@@ -2000,7 +2009,7 @@ async function main() {
   setSpace();
   if (start > 0) { await go(start, { instant: true }); play(); }
   else go(0, { instant: true });
-  window.__playback = { S, go, play, pause, setMode, music: () => Music.state(), scenes: () => S.scenes, model: () => S.model, total: mode => totalFor(buildScenes(mode)) };
+  window.__playback = { S, go, play, pause, setMode, music: () => Music.state(), musicSeek: Music.seek, scenes: () => S.scenes, model: () => S.model, total: mode => totalFor(buildScenes(mode)) };
 }
 main();
 })();
