@@ -1,6 +1,6 @@
 {
-  "revision": "2026-11-04-209",
-  "bytes": 85158761,
+  "revision": "2026-11-05-214",
+  "bytes": 87661364,
   "files": [
     "cape-town-itinerary.html",
     "europe-itinerary.html",
@@ -210,6 +210,11 @@
     "assets/nyc-miami-2026/thumb-wynwood.jpg",
     "assets/nyc-miami-2026/ticket-heat-hornets.png",
     "assets/nyc-miami-2026/ticket-lion-king-art.jpg",
-    "assets/nyc-miami-2026/ticket-rockettes-art.jpg"
+    "assets/nyc-miami-2026/ticket-rockettes-art.jpg",
+    "assets/rssc-asia-2028/cover-hk.jpg",
+    "assets/rssc-asia-2028/cover-japan.jpg",
+    "assets/rssc-asia-2028/cover-korea.jpg",
+    "assets/rssc-asia-2028/cover-taiwan.jpg",
+    "assets/rssc-asia-2028/cover-tokyo.jpg"
   ]
 }

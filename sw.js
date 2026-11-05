@@ -19,13 +19,15 @@
    never change and are media like any other. The page sends the list it uses
    (SAVE_URLS) and they are kept in MEDIA alongside the manifest's files. */
 
-const VERSION = 'v8';
+const VERSION = 'v9';
 const SHELL = 'ti-shell-' + VERSION;
 const MEDIA = 'ti-media-' + VERSION;
 const SCOPE = new URL(self.registration.scope);
 
 const SHELL_URLS = [
   'trip-itinerary.html',
+  'rssc-asia-2028-itinerary.html',
+  'rssc-asia-2028.webmanifest',
   'offline-manifest.json',
   'manifest.webmanifest',
   'assets/nyc-miami-2026/icons/tesla.svg',
