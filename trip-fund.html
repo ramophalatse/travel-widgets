@@ -208,7 +208,7 @@
     <p class="card-sub">Fixed bookings come first. After the St. Thomas buggy was paid from it, the fund runs out just short of the end of transport.</p>
     <table id="alloc">
       <thead><tr>
-        <th>Item</th><th class="num">Still to pay</th><th class="num">From trip fund</th><th class="num">Not yet funded</th><th>When</th><th class="notes">Notes</th>
+        <th>Item</th><th class="num">Still to pay</th><th class="num">Covered by fund</th><th class="num">Not yet funded</th><th>When</th><th class="notes">Notes</th>
       </tr></thead>
       <tbody></tbody>
       <tfoot></tfoot>
@@ -336,12 +336,12 @@
     const tr = el('tr');
     const when = el('td', 'when', row.when);
     when.dataset.label = 'When';
-    tr.append(itemCell(row), numCell('Still to pay', row.due), numCell('From trip fund', row.fund),
+    tr.append(itemCell(row), numCell('Still to pay', row.due), numCell('Covered by fund', row.fund),
       numCell('Not yet funded', row.due - row.fund, { pill: true }), when, noteCell(row.id, row.item));
     allocBody.appendChild(tr);
   });
   const allocFoot = el('tr');
-  allocFoot.append(el('td', 'item', 'Total'), numCell('Still to pay', totalDue), numCell('From trip fund', totalFund),
+  allocFoot.append(el('td', 'item', 'Total'), numCell('Still to pay', totalDue), numCell('Covered by fund', totalFund),
     numCell('Not yet funded', totalGap, { pill: true }), el('td'), el('td'));
   document.querySelector('#alloc tfoot').appendChild(allocFoot);
 
